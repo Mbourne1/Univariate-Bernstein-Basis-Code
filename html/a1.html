@@ -1,0 +1,1708 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>a1</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-05-06"><meta name="DC.source" content="a1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Choose example set</a></li><li><a href="#5">Calculate required binomial coefficients for</a></li><li><a href="#6">Get exact values of u v and d in 'Standard Bernstein Basis'</a></li><li><a href="#8">Calculate Degree of Approximate Greatest Common Divisor</a></li><li><a href="#10">Preprocessor 01 - Calculating geometric means</a></li><li><a href="#11">Preprocessor 2 and 3 - Obtaining initial alpha and theta</a></li><li><a href="#12">Scale f and g using alpha and theta</a></li><li><a href="#13">Obtain initial values of quotient polynomials u and v.</a></li><li><a href="#14">Obtaining Values of Uk and Vk</a></li><li><a href="#15">For output checking values of uk and vk</a></li><li><a href="#16">Obtaining value for dk: the common divisor by Approximate Polynomial Factorisation</a></li><li><a href="#17">Building Matrix Yk</a></li><li><a href="#19">Initial Partial Derivatives</a></li><li><a href="#21">START OF OUTPUTS AFTER REFINEMENT</a></li><li><a href="#22">Calculating differences between divisor calculated (dc) and divosor exact (de)</a></li><li><a href="#23">SECTION FOR REPORT PURPOSES PART 2.1</a></li><li><a href="#24">%% SECTION FOR REPORT PURPOSES PART 2.2</a></li><li><a href="#25">SECTION FOR REPORT PURPOSES PART 2.2</a></li><li><a href="#26">Report Part THREE</a></li><li><a href="#27">OUTPUT - Obtain maximum and minimum values of the matrix H*Bk+Ek*G*dstar</a></li><li><a href="#28">Plotting Minimal residuals, minimal angles...</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [] = a1(example_number,ec,maxiterations)
+</pre><pre class="codeinput"><span class="comment">%   example_number  :</span>
+<span class="comment">%   ec              : error level eg 1e-7</span>
+<span class="comment">%   maxiterations   : max number of iterations of lse problem before exit</span>
+<span class="comment">%   withQ           : 1/0 - Where Q is diagonal of combinatorial factors</span>
+<span class="comment">%                     of u and v. DS(f,g)Q*[u;v] = 0</span>
+
+withQ=1;
+withG=1;
+
+addpath <span class="string">'Core'</span>
+addpath <span class="string">'Measures'</span>
+addpath <span class="string">'Examples'</span>
+
+<span class="comment">%For Graphing Purposes</span>
+    FontSize = 15;
+    LineWidth = 1.5;
+    MarkerSize = 10;
+<span class="comment">%For Saving Purposes</span>
+    dir = <span class="string">'..\..\..\CodeOutputs'</span>;
+    filenameA = <span class="string">'Example'</span>;
+    filenameB = int2str(example_number);
+    filenameD = [<span class="string">'_noise'</span> int2str(log10(ec))] ;
+</pre><pre class="codeoutput">Error using a1 (line 22)
+Not enough input arguments.
+</pre><h2>Choose example set<a name="3"></a></h2><pre class="codeinput"> [f_roots g_roots d_roots degree_exact u_roots v_roots] =<span class="keyword">...</span>
+    ReportExamples(example_number);
+</pre><p>using roots stored as f and g and obtain polys in scaled bernstein basis B_poly returns coefficients <img src="a1_eq11321.png" alt="$a_{i}$">\binom{m}{i} in a scaled bernstein basis. We deal with bernstein basis so wish to remove the (mchoosei) such that we have <img src="a1_eq11321.png" alt="$a_{i}$"> only which is the coefficient in the Bersntein Basis..   fx_exact_bi = \hat{a}_{i} binom{m}{i}   gx_exact_bi = \hat{b}_{i} binom{n}{i}</p><pre class="codeinput">    fx_exact_bi = B_poly(f_roots); <span class="comment">%fx_bi is of form :- $a_{i}$ (m choose i)</span>
+    gx_exact_bi = B_poly(g_roots); <span class="comment">%gx_bi is of form :- bi (n choose i)</span>
+
+<span class="comment">%Get the degree m of f, and degree n of g</span>
+
+    m=length(fx_exact_bi) - 1;
+    n=length(gx_exact_bi) - 1;
+    minimum_degree = min(m,n);
+
+<span class="comment">%Initialise some useful vectors of length m, m-k, n, n-k and k</span>
+    vecm = 0:1:m;
+    vecmk = 0:1:m-degree_exact;
+    vecn = 0:1:n;
+    vecnk = 0:1:n-degree_exact;
+    veck=0:1:degree_exact;
+</pre><h2>Calculate required binomial coefficients for<a name="5"></a></h2><p>f - Binomial coefficients stored as Bi_m g - Binomial coefficients stored as Bi_n u - Binomial coefficients stored as Bi_mk v - Binomial coefficients stored as Bi_nk d - Binomial coefficients stored as Bi_k Bi_m  = binom{m}{0}, binom{m}{1}, ... , binom{m}{m} Bi_n  = binom{n}{0}, binom{n}{1}, ... , binom{n}{n} Bi_nk = binom{n-k}{0}, binom{n-k}{1}, ... , binom{n-k}{n-k} Bi_mk = binom{m-k}{0}, binom{m-k}{1}, ... , binom{m-k}{m-k} Bi_k  = binom{k}{0}, binom{k}{1}, ... , binom{k}{k}</p><pre class="codeinput">    Bi_m = zeros(1,m+1);
+    Bi_n = zeros(1,n+1);
+    Bi_nk= zeros(1,n-degree_exact+1);
+    Bi_mk= zeros(1,m-degree_exact+1);
+    Bi_k = zeros(1,degree_exact+1);
+
+    <span class="keyword">for</span> i=1:1:m+1
+        Bi_m(i) = nchoosek(m,i-1);
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> i=1:1:n+1
+        Bi_n(i) = nchoosek(n,i-1);
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> i=1:1:n-degree_exact+1
+        Bi_nk(i) = nchoosek(n-degree_exact,i-1);
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> i=1:1:m-degree_exact+1
+        Bi_mk(i) = nchoosek(m-degree_exact,i-1);
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> i=1:1:degree_exact+1
+        Bi_k(i) = nchoosek(degree_exact,i-1);
+    <span class="keyword">end</span>
+</pre><h2>Get exact values of u v and d in 'Standard Bernstein Basis'<a name="6"></a></h2><p>for purposes of comparing outputs. Note that these values are only used to compare to computed values. u_bi_exact = <img src="a1_eq42676.png" alt="$\hat{u}_{i}$"> binom{m-k}{i} u_bb_exact = <img src="a1_eq42676.png" alt="$\hat{u}_{i}$"> v_bi_exact = <img src="a1_eq17731.png" alt="$\hat{v}_{i}$"> binom{n-k}{i} v_bb_exact = <img src="a1_eq17731.png" alt="$\hat{v}_{i}$"> d_bi_exact = <img src="a1_eq93105.png" alt="$\hat{d}_{i}$"> binom{k}{i} d_bb_exact = <img src="a1_eq93105.png" alt="$\hat{d}_{i}$"></p><pre class="codeinput">    uk_bi_exact     = B_poly(u_roots);
+    uk_exact        = uk_bi_exact./Bi_mk;
+    vk_bi_exact     = B_poly(v_roots);
+    vk_exact        = vk_bi_exact./Bi_nk;
+
+    dk_bi_exact     = B_poly(d_roots);
+    dk_exact        = dk_bi_exact./Bi_k;
+</pre><p>Coefficients in 'Standard Bernstein Basis' fx_exact has coefficients of the form : \hat{a}_{i} gx_exact has coefficients of the form : \hat{b}_{i}</p><pre class="codeinput">    fx_exact = fx_exact_bi./Bi_m;
+    gx_exact = gx_exact_bi./Bi_n;
+
+<span class="comment">% Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.</span>
+<span class="comment">% fx = \hat{a}_{i}  + delta\hat{a}_{i}  == a_{i}</span>
+<span class="comment">% gx = \hat{b}_{i}  + delta\hat{b}_{i}  == b_{i}</span>
+
+    fx = Noise(fx_exact,ec,24);
+    gx = Noise(gx_exact,ec,22);
+
+<span class="comment">% Now obtain coefficients of Polynomials In 'Scaled Bernstein Basis', which</span>
+<span class="comment">% are also noisy fx_bi = ai(mchoosei), gx_bi = bi(nchoosei)</span>
+
+    <span class="comment">%fx_bi = fx.*Bi_m;</span>
+    <span class="comment">%gx_bi = gx.*Bi_n;</span>
+</pre><h2>Calculate Degree of Approximate Greatest Common Divisor<a name="8"></a></h2><pre class="codeinput">    [degree_calc] = GetDegree(fx,gx,degree_exact,ec, example_number);
+</pre><p>Build the Diagonal H^{-1} H^{-1}[c(uk)c(vk)]Q_{k}</p><pre class="codeinput">    H1 = diag(1./Bi_m);
+    H2 = diag(1./Bi_n);
+    H  = diag(1./[Bi_m Bi_n]);
+</pre><h2>Preprocessor 01 - Calculating geometric means<a name="10"></a></h2><p>Based on occurences of elements of f and g in the sylvester subresultant Dk^{-1}S(f,g)Qk</p><pre class="codeinput">    gm_f = GM4(fx,n,degree_exact);
+    gm_g = GM4(gx,m,degree_exact);
+
+<span class="comment">% Normalise fx -&gt; fx_n</span>
+<span class="comment">% fx_n = \bar{a}_{i}</span>
+<span class="comment">% gx_n = \bar{b}_{i}</span>
+
+    fx_n = fx./gm_f;
+    gx_n = gx./gm_g;
+
+<span class="comment">% Normalised fx with binomials</span>
+<span class="comment">% fx_n_bi = \bar{a}_{i} binom{m}{i}</span>
+<span class="comment">% gx_n_bi = \bar{b}_{i} binom{n}{i}</span>
+
+    <span class="comment">%fx_n_bi = fx_n.*Bi_m;</span>
+    <span class="comment">%gx_n_bi = gx_n.*Bi_n;</span>
+</pre><h2>Preprocessor 2 and 3 - Obtaining initial alpha and theta<a name="11"></a></h2><p>for subresultant k where k is the degree of the AGCD</p><pre class="codeinput">    [alpha_opt,theta_opt] = OptimalAlphaAndTheta(fx_n,gx_n,degree_exact,withQ);
+</pre><h2>Scale f and g using alpha and theta<a name="12"></a></h2><p>fw_n      = \bar{a}_{i} \theta^{i} gw_n      = \bar{b}_{i} \theta^{i} fw_n_bi   = \bar{a}_{i} \theta^{i} \binom{m}{i} gw_n_bi   = \bar{b}_{i} \theta^{i} \binom{n}{i}</p><pre class="codeinput">    fw_n = fx_n.*theta_opt.^(vecm);
+    gw_n = gx_n.*theta_opt.^(vecn);
+
+    <span class="comment">%fw_n_bi = fx_n_bi.*theta_opt.^(vecm);</span>
+    <span class="comment">%gw_n_bi = gx_n_bi.*theta_opt.^(vecn);</span>
+</pre><h2>Obtain initial values of quotient polynomials u and v.<a name="13"></a></h2><pre>For all columns in Sk(f,g) (where k is degree of gcd) remove column and
+find residual sk(f,g)[v,-u].
+Find minimum residual and use column index, to calculate values of uk
+and vk</pre><pre class="codeinput"><span class="comment">%Build the initial subresultant - all columns included</span>
+
+    Sk = Subresultant(fw_n,alpha_opt * gw_n,degree_exact,withQ);
+
+
+    <span class="comment">%For each column index. remove column from Sk and calculate residual,</span>
+    <span class="comment">%minimal angle, condition number and svd as methods for obtaining optimal</span>
+    <span class="comment">%column</span>
+
+    [residual, angle, con_number_k, smallest_singular_k] = GetVectors(Sk);
+
+    <span class="comment">% Find column which gives minimal residual, angle, condition number and</span>
+    <span class="comment">% singular value.</span>
+
+    [col1] = find( residual == min(min(residual)));
+    [col2] = find( angle == min(min(angle)));
+    [col3] = find( con_number_k == min(min(con_number_k)));
+    [col4] = find( smallest_singular_k == max(max(smallest_singular_k)));
+
+    col = mode([col1 col2 col3 col4]);
+
+
+    display(<span class="string">'############################################################'</span>)
+    display(<span class="string">'         Optimal Column             '</span>)
+    display(<span class="string">'By Resiudual | By Angle | By Condition | By Singular Value'</span>)
+    display([col1  col2  col3  col4])
+    display(<span class="string">'############################################################'</span>)
+
+    [Aki cki] = RemoveSubresultantColumn(Sk,col);
+
+    SNTLN(fw_n,alpha_opt * gw_n,degree_calc,col)
+
+
+<span class="comment">% cols = [col1 col2 col3 col4]</span>
+<span class="comment">% Replace the coefficient in the ith position with 1. Where ith position</span>
+<span class="comment">% corresponds to the index 'col'.</span>
+<span class="comment">% Method uses qr decomposition, but could use pseudoinverse. x = A^{-1}b</span>
+
+    [~,n2] = size(Aki);
+    [Q,R] = qr(Aki);
+    R1 = R(1:n2,:);
+    cd = Q'*cki;
+    c = cd(1:n2,:);
+    x_ls = R1\c;
+
+    vecx =[
+         x_ls(1:(col)-1);
+         -1;
+         x_ls(col:end);
+         ];
+</pre><h2>Obtaining Values of Uk and Vk<a name="14"></a></h2><p>uk    =   u_{k,i}   \theta^{i} vk    =   v_{k,i}   \theta^{i} uk_bi =   u{k,i}    \theta^{i} binom{m-k}{i} vk_bi =   v_{k,i}   \theta^{i} binom{n-k}{i}</p><pre class="codeinput">    <span class="keyword">switch</span> withQ
+        <span class="keyword">case</span> 1 <span class="comment">% Sk = DTQ so vk uk without nchoose i</span>
+            vk      =   vecx(1:n-degree_exact+1);
+            uk      =   -vecx(n-degree_exact+2:end);
+            vk_bi   =   vecx(1:n-degree_exact+1).* Bi_nk'; <span class="comment">% vki = vki*theta^i * (nchoosei)</span>
+            uk_bi   =   -vecx(n-degree_exact+2:end) .* Bi_mk'; <span class="comment">%uki = uki * theta^i * (nchoosei)</span>
+
+        <span class="keyword">case</span> 0 <span class="comment">% Sk = DT so vk uk contain nchoosei</span>
+            vk      =   vecx(1:n-degree_exact+1)      ./ Bi_nk';
+            uk      =   vecx(n-degree_exact+2:end)    ./ Bi_mk';
+            vk_bi   =   vecx(1:n-degree_exact+1); <span class="comment">% vki = vki*theta^i * (nchoosei)</span>
+            uk_bi   =   -vecx(n-degree_exact+2:end); <span class="comment">%uki = uki * theta^i * (nchoosei)</span>
+
+    <span class="keyword">end</span>
+
+<span class="comment">% Output condition numbers involved in calculating vk and uk</span>
+
+    display(<span class="string">'############################################################'</span>);
+
+    display(<span class="string">'Conditions when calculating [uk vk]'</span>)
+    display(<span class="string">'Condition Aki = '</span>);
+    cond(Aki)
+
+    display(<span class="string">'############################################################'</span>);
+</pre><h2>For output checking values of uk and vk<a name="15"></a></h2><pre class="codeinput">    display(<span class="string">'############################################################'</span>)
+    display(<span class="string">'Comparing vk and vk_calc'</span>);
+
+        vk_calc_output  = vk ./( theta_opt.^(vecnk))';
+        vk_calc_output  = vk_calc_output./vk_calc_output(1);
+
+        vk_exact_output = vk_exact./ vk_exact(1);
+
+        v               = [vk_exact_output' vk_calc_output]
+
+        norm_vk = norm(vk_exact_output' - vk_calc_output)/norm(vk_exact)
+
+    display(<span class="string">'#########################################'</span>);
+    display(<span class="string">'Comparing uk and uk_calc'</span>)
+
+        uk_calc_output  = uk ./( theta_opt.^(vecmk))';
+        uk_calc_output  = uk_calc_output./uk_calc_output(1);
+
+        uk_exact_output = uk_exact./uk_exact(1);
+
+        u               = [uk_exact_output' uk_calc_output]
+
+        norm_uk = norm(uk_exact_output' - uk_calc_output)/norm(uk_exact)
+
+    display(<span class="string">'#########################################'</span>)
+</pre><h2>Obtaining value for dk: the common divisor by Approximate Polynomial Factorisation<a name="16"></a></h2><pre class="codeinput"><span class="comment">%H^{-1}[ C(uk) C(vk)]G d* = [f;g]</span>
+<span class="comment">%Build Toeplitz Matrices of uk, vk including binomial coefficients</span>
+
+    C1 = Cauchy(uk_bi,degree_exact);
+    C2 = Cauchy(vk_bi,degree_exact);
+    C = [C1 ; C2];
+
+<span class="comment">%Build the RHS Vector of f and g, not including binomial coefficients</span>
+
+    bk = [fw_n,alpha_opt.*gw_n].';
+
+<span class="comment">%If working with G - set G to combinatorial factors of d*</span>
+<span class="comment">%Else set G to identity matrix</span>
+
+    <span class="keyword">switch</span> withG <span class="comment">% where Gd* = dk</span>
+        <span class="keyword">case</span> 1
+            G = diag(Bi_k);
+        <span class="keyword">case</span> 0
+            G = eye(length(Bi_k));
+    <span class="keyword">end</span>
+
+<span class="comment">%Calculate d* by psuedo inverse, note if excluding G, d* includes combinatorial factors.</span>
+
+    A = H*C*G;
+    [~,n2] = size(A);
+    [Q,R] = qr(A);
+    R1 = R(1:n2,:);
+    cd = Q'*bk;
+    c = cd(1:n2,:);
+    x_ls = R1\c;
+
+    dstar = x_ls;
+    dk = G*dstar;
+
+<span class="comment">% Calculate the associated residual</span>
+    rk = bk-((H*C*G)*dstar);
+
+<span class="comment">% OUTPUTS</span>
+    display(<span class="string">'#############################################################'</span>)
+
+    display(<span class="string">'Coniditon Numbers in finding dk with and without G'</span>)
+
+        condition_H = cond(H);
+        condition_C = cond(C);
+        condition_G = cond(G);
+        condition_HC = cond(H*C)
+        condition_HCG = cond(H*C*G)
+
+    display(<span class="string">'#############################################################'</span>)
+
+    di = dstar./(theta_opt.^(veck)).'; <span class="comment">% di = d(initial) used later</span>
+</pre><h2>Building Matrix Yk<a name="17"></a></h2><p>recall H Yk zk  = H Ek rk</p><pre class="codeinput">    ok1 = theta_opt.^(vecmk);
+    ok2 = theta_opt.^(vecnk);
+    Yk = BuildYk(ok1,ok2,G,dstar,m,n,degree_exact);
+</pre><p>Initialise S - Matrix such that sk = S * pt Initialise T - Matrix such that tk = T * qt</p><pre class="codeinput">    S = diag(theta_opt.^vecm);
+    T = diag(theta_opt.^vecn);
+
+<span class="comment">% Initialise zk - Structured perturbations of u and v</span>
+
+    zk = zeros(m+n-2*degree_exact+2,1);
+</pre><h2>Initial Partial Derivatives<a name="19"></a></h2><pre class="codeinput">    partial_f = vecm    .*fx_n     .*theta_opt.^(vecm-1);
+    partial_g = vecn    .*gx_n     .*theta_opt.^(vecn-1);
+
+    lk = dstar./(theta_opt.^veck');
+    partial_dstar=veck'.*dstar./theta_opt;
+
+    partial_uk = vecmk .*uk_bi' ./theta_opt;
+    partial_vk = vecnk .*vk_bi' ./theta_opt;
+
+    partial_C1=Cauchy(partial_uk,degree_exact);
+    partial_C2=Cauchy(partial_vk,degree_exact);
+
+<span class="comment">% Initialise variables</span>
+
+    gnew=rk; <span class="comment">% the initial value of the right hand side vector</span>
+    beta(1)=0; <span class="comment">% Initial value of beta</span>
+    theta(1)=theta_opt; <span class="comment">%Initial optimised value of theta</span>
+    pk=zeros(m+1,1);
+    qk=zeros(n+1,1);
+</pre><p>Construct the coefficient matrix in the equation that defines the constraint for the LSE problem.</p><pre class="codeinput">    C_temp=[(-1)*S,<span class="keyword">...</span>
+        zeros(m+1,n+1),<span class="keyword">...</span>
+        zeros(m+1,1), <span class="keyword">...</span>
+        -partial_f.'+<span class="keyword">...</span>
+        (H1*partial_C1*G*dstar)+<span class="keyword">...</span>
+        (H1*C1*G*partial_dstar);
+        zeros(n+1,m+1),<span class="keyword">...</span>
+        -alpha_opt*T,<span class="keyword">...</span>
+        -gw_n.',<span class="keyword">...</span>
+        (- alpha_opt*partial_g.')+<span class="keyword">...</span>
+        (H2*partial_C2*G*dstar)+<span class="keyword">...</span>
+        (H2*C2*G*partial_dstar)];
+    C=[H*Yk,C_temp];
+    condition_intial_C_LSE = cond(C)
+
+<span class="comment">% The initial value of the right hand side vector in the equation</span>
+<span class="comment">% that defines the approximate polynomial factorisation.</span>
+
+    ek=bk;
+    E=eye(2*m+2*n-2*degree_exact+6);
+    fnew=zeros(2*m+2*n-2*degree_exact+6,1);
+
+    ite=1;
+    u2 = uk_bi./theta(1).^vecmk' ; <span class="comment">% [.. uki (m-k)choosei..]</span>
+    v2 = vk_bi./theta(1).^vecnk' ;  <span class="comment">% [.. vki (n-k)choosei..]</span>
+
+<span class="comment">% Start the iterative procedure for the solution of the LSE problem.</span>
+<span class="keyword">while</span> (norm(rk)/norm(ek) &gt;=1e-15) || (ite == 1)
+
+    <span class="comment">% The iterative procedure must be performed at least once, and</span>
+    <span class="comment">% thus the statement ite == 1 is included.</span>
+    ite=ite+1;
+
+    <span class="keyword">if</span> ite&gt;maxiterations  <span class="comment">% break if more than 50 iterations are required</span>
+        <span class="keyword">break</span>;
+    <span class="keyword">end</span>
+
+    <span class="comment">% Use the QR decomposition to solve the LSE problem.</span>
+    y=LSE(E,fnew,C,gnew);
+    [delta_zk, delta_pk, delta_qk, delta_beta, delta_theta] =<span class="keyword">...</span>
+        GetVarFromLSE(y,m,n,degree_exact);
+
+    <span class="comment">% Update variables zk, pk, qk, beta, theta</span>
+    zk = zk+delta_zk;
+    pk = pk+delta_pk;
+    qk = qk+delta_qk;
+    beta(ite)  = beta(ite-1)+delta_beta;
+    theta(ite) = theta(ite-1)+delta_theta;
+
+    <span class="comment">%update the iterative value of f and g</span>
+    fw2=fx_n.*(theta(ite).^vecm);
+    gw2=gx_n.*(theta(ite).^vecn);
+
+    <span class="comment">%update matrices S and T</span>
+    S = diag(theta(ite).^vecm);
+    T = diag(theta(ite).^vecn);
+
+    <span class="comment">%Update vectors of thetas</span>
+    ok1=theta(ite).^vecmk;
+    ok2=theta(ite).^vecnk;
+
+    <span class="comment">% update dstar</span>
+    dstar = lk.*(theta(ite).^veck');
+
+    <span class="comment">% Update the matrices Bk, Ek and Yk.</span>
+    C1=Cauchy(u2.*ok1',degree_exact);
+    C2=Cauchy(v2.*ok2',degree_exact);
+    B=[C1;C2];
+
+    E1=Cauchy(zk(1:m-degree_exact+1).*ok1',degree_exact);
+    E2=Cauchy(zk(m-degree_exact+2:m+n-2*degree_exact+2).*ok2',degree_exact);
+    Ek=[E1;E2];
+
+    Y = BuildYk(ok1,ok2,G,dstar,m,n,degree_exact);
+
+    sk=pk.*(theta(ite).^vecm');
+    tk=qk.*(theta(ite).^vecn');
+
+    <span class="comment">% Calculate partial derivatives wrt theta</span>
+
+    partial_sk=vecm'.*pk.*theta(ite).^(vecm-1)';
+    partial_tk=vecn'.*qk.*theta(ite).^(vecn-1)';
+
+    partial_f=vecm.*fx_n.*(theta(ite).^(vecm-1));
+    partial_g=vecn.*gx_n.*(theta(ite).^(vecn-1));
+
+    partial_C1=Cauchy(vecmk'.*u2.*ok1'./theta(ite),degree_exact);
+    partial_C2=Cauchy(vecnk'.*v2.*ok2'./theta(ite),degree_exact);
+
+    partial_E1=Cauchy(vecmk'.*zk(1:m-degree_exact+1).*ok1'/theta(ite),degree_exact);
+    partial_E2=Cauchy(vecnk'.*zk(m-degree_exact+2:m+n-2*degree_exact+2).*ok2'/<span class="keyword">...</span>
+        theta(ite),degree_exact);
+
+    partial_dstar= veck'.*lk.*(theta(ite).^(veck-1))';
+
+
+    C_temp=[(-1)*S,<span class="keyword">...</span>
+        zeros(m+1,n+1),<span class="keyword">...</span>
+        zeros(m+1,1),<span class="keyword">...</span>
+        -(partial_f'+partial_sk)+<span class="keyword">...</span>
+        ((H1*partial_C1*G)*dstar)+<span class="keyword">...</span>
+        ((H1*partial_E1*G)*dstar)+<span class="keyword">...</span>
+        ((H1*C1*G)*partial_dstar)+<span class="keyword">...</span>
+        ((H1*E1*G)*partial_dstar);
+        zeros(n+1,m+1),<span class="keyword">...</span>
+        -(alpha_opt+beta(ite))*T,<span class="keyword">...</span>
+        -gw2.'-tk,<span class="keyword">...</span>
+        -(alpha_opt+beta(ite))*(partial_g.'+partial_tk)+<span class="keyword">...</span>
+        ((H2*partial_C2*G)*dstar)+<span class="keyword">...</span>
+        ((H2*partial_E2*G)*dstar)+((H2*C2*G)*partial_dstar)+<span class="keyword">...</span>
+        ((H2*E2*G)*partial_dstar)];
+    C=[H*Y,C_temp];
+    Condition_C_LSE = cond(C);
+
+    <span class="comment">% Calculate the residual and update gnew.</span>
+
+    rk=[fw2.'+sk;(alpha_opt+beta(ite))*(gw2.'+tk)]-((H*(B+Ek)*G)*dstar);
+    gnew=rk;
+
+    <span class="comment">% Update the vector fnew in the LSE problem</span>
+    <span class="comment">% and ek, the right hand side vector in the equation that is</span>
+    <span class="comment">% solved iteratively.</span>
+
+    fnew=-[zk; pk; qk; beta(ite); theta(ite)-theta_opt];
+    ek=[fw2.'+sk; (alpha_opt+beta(ite)).*(gw2.'+tk)];
+
+    res(ite)=norm(rk)/norm(ek);
+<span class="keyword">end</span>
+</pre><h2>START OF OUTPUTS AFTER REFINEMENT<a name="21"></a></h2><pre class="codeinput">    res=norm(rk)/norm(ek);
+    minim(degree_exact)=norm(E*y-fnew); <span class="comment">% the value of ||E*y-f||</span>
+
+    Condition_Coefficient_Matrix = cond(H*(B+Ek)*G);
+    Condition_C = cond(C);
+    iterationsRequired = ite;
+</pre><h2>Calculating differences between divisor calculated (dc) and divosor exact (de)<a name="22"></a></h2><pre class="codeinput"><span class="comment">%SECTION FOR REPORT PURPOSES</span>
+
+    format <span class="string">short</span>
+    de = (dk_exact./dk_exact(1)).';
+    de = (de./norm(de));
+
+    dc = G*dstar;
+    dc = dc./(Bi_k.');
+    <span class="keyword">try</span>
+        dc = dc./(theta(ite).^veck).';
+    <span class="keyword">catch</span>
+        dc = dc./(theta(ite-1).^veck).'
+    <span class="keyword">end</span>
+
+    dc = dc./dc(1);
+    dc = dc./norm(dc);
+
+    norm_m1 = ((de-dc)./de);
+    norm_m1 = norm(norm_m1);
+
+    di_n = di./di(1);
+    di_n = di_n./norm(di_n);
+    display(<span class="string">'###################################'</span>);
+    display(<span class="string">'D_Exact D_Calc D_initial'</span>)
+    results = [de dc di_n]
+
+    delta = (de-dk)./de;
+    theta = theta;
+</pre><h2>SECTION FOR REPORT PURPOSES PART 2.1<a name="23"></a></h2><p>Calculate the error in vk, before refinement which is used in calculating the initial value of dk</p><pre class="codeinput"><span class="comment">%Prepare vkexact</span>
+    vkexact = vk_exact;
+    vkexact_noisy = Noise(vkexact,ec,21);
+
+<span class="comment">%Divide by leading coefficients.</span>
+    vkexact_noisy = vkexact_noisy./vkexact_noisy(1);
+    vkexact = vkexact./vkexact(1);
+
+<span class="comment">%Normalise</span>
+    vkexact_noisy = vkexact_noisy./norm(vkexact_noisy);
+    vkexact = vkexact./norm(vkexact);
+
+<span class="comment">%Prepare vk computed - the initial value of vk</span>
+
+    vkcomp = vk./(theta_opt.^vecnk)';
+    vkcomp = vkcomp./vkcomp(1);
+    vkcomp = vkcomp./norm(vkcomp);
+
+<span class="comment">%Prepare vk computed post iteration such that perturbations are included</span>
+
+    vkcomp_ite = v2 + zk(m-degree_exact+2:m+n-2*degree_exact+2);
+    vkcomp_ite = vkcomp_ite./Bi_nk';
+    vkcomp_ite = vkcomp_ite./vkcomp_ite(1);
+    vkcomp_ite = vkcomp_ite./norm(vkcomp_ite);
+
+<span class="comment">%Get Componentwise Errors</span>
+
+    Componentwise_Error_Exact_vk = abs(vkexact_noisy - vkexact) ./abs(vkexact);
+    Componentwise_Error_Computed_vk = abs(vkcomp' - vkexact)./abs(vkexact);
+    Componentwise_Error_Computed_vk_ite = abs(vkcomp_ite' - vkexact) ./abs(vkexact);
+
+<span class="comment">%Plot Graphs</span>
+
+    ya1 = log10(Componentwise_Error_Computed_vk)';
+    yb1 = log10(Componentwise_Error_Exact_vk)';
+    yc1 = log10(Componentwise_Error_Computed_vk_ite)';
+
+    figure(110)
+
+
+    x = 1:1:length(Componentwise_Error_Computed_vk);
+    plot(x,ya1,<span class="string">'-r+'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Red'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+    hold <span class="string">on</span>
+    plot(x,yb1,<span class="string">'-bx'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Blue'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+    plot(x,yc1,<span class="string">'-gx'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Green'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+
+    hold <span class="string">off</span>
+    ylabel(<span class="string">'log_{10} Componenetwise Error'</span>,<span class="string">'FontSize'</span>,FontSize);
+    xlabel(<span class="string">'Index d_{i}'</span>,<span class="string">'FontSize'</span>,FontSize);
+    hleg = legend(<span class="string">'Componentwise Error of Computed vk'</span>,<span class="keyword">...</span>
+        <span class="string">'Componentwise Error of exact vk'</span>,<span class="keyword">...</span>
+        <span class="string">'Componentwise Error Computed Vk Post Iterations'</span>);
+    axis([1,length(Componentwise_Error_Computed_vk),-inf,inf]);
+
+    average_difference_vk = norm(log10(Componentwise_Error_Computed_vk / Componentwise_Error_Exact_vk))
+
+
+<span class="comment">%Save Outputs</span>
+
+
+    filenameB = int2str(example_number);
+    filenameC = <span class="string">'_ComponenetwiseErrorAnalysis_vk'</span>;
+    filenameD = [<span class="string">'_noise'</span> int2str(log10(ec))];
+    filename = [filenameA  filenameB  filenameC filenameD];
+    file = fullfile(dir,filename);
+
+    Save(figure(111),file);
+</pre><h2>%% SECTION FOR REPORT PURPOSES PART 2.2<a name="24"></a></h2><p>Calculate the error in uk, before refinement</p><pre class="codeinput">    ukexact = uk_exact;
+    ukexact_noisy = Noise(ukexact,ec,24);
+
+<span class="comment">% Divide Noisy and nonnoisy by leading coefficient.</span>
+
+    ukexact_noisy = ukexact_noisy./ukexact_noisy(1);
+    ukexact = ukexact./ukexact(1);
+
+<span class="comment">% Normalise</span>
+
+    ukexact_noisy = ukexact_noisy./norm(ukexact_noisy);
+    ukexact = ukexact./norm(ukexact);
+
+<span class="comment">% Prepare uk computed</span>
+
+    ukcomp = uk./theta_opt.^vecmk';
+    ukcomp = ukcomp./ukcomp(1);
+    ukcomp = (ukcomp./norm(ukcomp))';
+
+<span class="comment">% Prepare uk computed post iteration such that perturbations are included</span>
+
+    ukcomp_ite = u2 + zk(1:m-degree_exact+1);
+    ukcomp_ite = ukcomp_ite./Bi_mk';
+    ukcomp_ite = ukcomp_ite./ukcomp_ite(1);
+    ukcomp_ite = ukcomp_ite./norm(ukcomp_ite);
+
+<span class="comment">% Obtain Componentwise Errors</span>
+
+    Componentwise_Error_Exact_uk = abs(ukexact_noisy - ukexact) ./abs(ukexact);
+    Componentwise_Error_Computed_uk = abs(ukcomp  - ukexact)./abs(ukexact);
+    Componentwise_Error_Computed_uk_ite = abs(ukcomp_ite'  - ukexact)./abs(ukexact);
+
+<span class="comment">%Plot the Results</span>
+
+    ya2 = log10(Componentwise_Error_Computed_uk)';
+    yb2 = log10(Componentwise_Error_Exact_uk)';
+    yc3 = log10(Componentwise_Error_Computed_uk_ite)';
+
+    figure(111)
+
+    x = 1:1:length(Componentwise_Error_Computed_uk);
+    plot(x,ya2,<span class="string">'-r+'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Red'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+    hold <span class="string">on</span>
+    plot(x,yb2,<span class="string">'-bx'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Blue'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+    plot(x,yc3,<span class="string">'-gx'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Green'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+    hold <span class="string">off</span>
+    ylabel(<span class="string">'log_{10} Componenetwise Error'</span>,<span class="string">'FontSize'</span>,FontSize);
+    xlabel(<span class="string">'Index d_{i}'</span>,<span class="string">'FontSize'</span>,FontSize);
+    hleg = legend(<span class="string">'Componentwise Error of Computed uk'</span>,<span class="keyword">...</span>
+        <span class="string">'Componentwise Error of exact uk'</span>,<span class="keyword">...</span>
+        <span class="string">'Componentwise Error of computer uk Post Iterations'</span>);
+    axis([1,length(Componentwise_Error_Computed_uk),-inf,inf]);
+
+    average_difference_uk = norm(log10(Componentwise_Error_Computed_uk / Componentwise_Error_Exact_uk))
+
+
+<span class="comment">%Saving Outputs</span>
+
+    filenameC = <span class="string">'_ComponenetwiseErrorAnalysis_uk'</span>;
+    filename = [filenameA  filenameB  filenameC filenameD];
+    file = fullfile(dir,filename);
+
+
+    Save(figure(111),file);
+</pre><h2>SECTION FOR REPORT PURPOSES PART 2.2<a name="25"></a></h2><pre class="codeinput"><span class="comment">%Take d in bern basis, add noise to coefficients</span>
+
+    dexact = dk_exact;
+    dexact_noisy = Noise(dexact,ec,24);
+
+<span class="comment">%Divide NOISY and NON-NOISY dexact by leading coefficient</span>
+
+    dexact_noisy = dexact_noisy./dexact_noisy(1);
+    dexact = dexact./dexact(1);
+
+<span class="comment">%Normalise</span>
+
+    dexact = dexact/norm(dexact);
+    dexact_noisy = dexact_noisy/norm(dexact_noisy);
+
+   <span class="comment">%dcomp = d_first_approximation./(Bi_k');</span>
+
+    dcomp = (G*dstar./(Bi_k.'))';
+
+    dcomp = dcomp./theta(ite).^veck;
+    dcomp = dcomp./dcomp(1);
+    dcomp = (dcomp/norm(dcomp));
+
+<span class="comment">%Componentwise Error of exact</span>
+
+    Componentwise_Error_Exact_dk = abs(dexact_noisy - dexact) ./abs(dexact);
+    Componentwise_Error_Computed_dk = abs(dexact - dcomp)./abs(dexact);
+
+
+<span class="comment">% Plot Graph</span>
+
+    ya3 = log10(Componentwise_Error_Computed_dk)';
+    yb3 = log10(Componentwise_Error_Exact_dk)';
+
+    figure(112)
+        x = 1:1:length(Componentwise_Error_Computed_dk);
+        plot(x,ya3,<span class="string">'-r+'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Red'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+        hold <span class="string">on</span>
+        plot(x,yb3,<span class="string">'-bx'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Blue'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+        hold <span class="string">off</span>
+        ylabel(<span class="string">'log_{10} Componenetwise Error'</span>,<span class="string">'FontSize'</span>,FontSize);
+        xlabel(<span class="string">'Index d_{i}'</span>,<span class="string">'FontSize'</span>,FontSize);
+        hleg = legend(<span class="string">'Componentwise Error of Computed divisor'</span>,<span class="keyword">...</span>
+            <span class="string">'Componentwise Error of Exact Divisor'</span>);
+         axis([1,length(Componentwise_Error_Computed_dk),-inf,inf]);
+
+
+    average_difference_dk = norm(log10(Componentwise_Error_Computed_dk / Componentwise_Error_Exact_dk))
+
+<span class="comment">% Save Outputs</span>
+
+
+    filenameC = <span class="string">'_ComponenetwiseErrorAnalysis'</span>;
+    filename = [filenameA  filenameB  filenameC filenameD];
+    file = fullfile(dir,filename);
+
+    Save(figure(112),file);
+</pre><h2>Report Part THREE<a name="26"></a></h2><pre class="codeinput"><span class="comment">%BUILD THE Sylvester Matrix of (S(f,g) noisy and S(F+s,G+t)) and compare SVDs</span>
+
+    f_new = fw2.'+sk;
+    g_new =  (alpha_opt+beta(ite)).*(gw2.'+tk);
+
+    f_new_bi = f_new.*Bi_m';
+    g_new_bi = g_new.*Bi_n';
+
+
+<span class="comment">%Let Y_1 be a vector of singular values ofD^{-1}*S(f,g)*Q where f and g</span>
+<span class="comment">%are noisy coefficients before any normalization, preprocessing or</span>
+<span class="comment">%refinement</span>
+<span class="comment">%</span>
+
+    S_noisy  = Subresultant(fx,gx,1,withQ);
+    [~, Y_1, ~] = svd(S_noisy);
+    y1 = diag(Y_1);
+    y1 = log10(y1./y1(1));
+
+<span class="comment">%Let y2 be a vector of singular values of D^{-1}*S(f,g)*Q where f and g</span>
+<span class="comment">%are noisy coefficients after preprocessing operations</span>
+
+    S_afterPreProc = Subresultant(fw_n,alpha_opt * gw_n,1,withQ);
+    [~, Y_2, ~] = svd(S_afterPreProc);
+    y2 = diag(Y_2);
+    y2 = log10(y2./y2(1));
+
+<span class="comment">%Let y2 be a vector of singular values of D^{-1}*S(f,g)*Q where f and g</span>
+<span class="comment">%are the noisy coefficients after preprocessing operations and</span>
+<span class="comment">%refinement where f = f+s and g = g+t</span>
+
+    S_afterRefinement  = Subresultant(f_new,g_new,1,withQ);
+    [~, Y_3, ~] = svd(S_afterRefinement);
+    y3 = diag(Y_3);
+    y3 = log10(y3./y3(1));
+
+<span class="comment">%Plot the Graph</span>
+    figure(9)
+
+    [x1,~] = size(y1);
+    rank = x1 - degree_exact;
+    x = 1:1:x1;
+
+    plot(x,y1,<span class="string">'--go'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Green'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+        hold <span class="string">on</span>
+        plot(x,y2,<span class="string">'-r+'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Red'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+        plot(x,y3,<span class="string">'-bx'</span>,<span class="string">'LineWidth'</span>,LineWidth,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Blue'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+        plot(rank,y1(rank),<span class="string">'rs'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Black'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+        plot(rank,y2(rank),<span class="string">'rs'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Black'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+        plot(rank,y3(rank),<span class="string">'rs'</span>,<span class="string">'MarkerFaceColor'</span>,<span class="string">'Black'</span>,<span class="string">'MarkerSize'</span>,MarkerSize)
+        hold <span class="string">off</span>
+        axis([1,x1,-inf,inf])
+        ylabel(<span class="string">'log_{10} Singular Values \sigma_{i}/\sigma_{1}'</span>,<span class="string">'FontSize'</span> ,FontSize);
+        xlabel(<span class="string">'Index of Singular Values \sigma_{i}'</span>,<span class="string">'FontSize'</span>,FontSize);
+        hleg = legend(<span class="string">'Before Refinement or preproc'</span>,<span class="keyword">...</span>
+            <span class="string">'Before Refinement post preproc'</span>,<span class="string">'After Refinement'</span>);
+
+
+<span class="comment">% Save Outputs</span>
+
+    filenameC = <span class="string">'_SingularValueDecomposition_Noisy_Preprocessed_Refined'</span>;
+    filename = [filenameA  filenameB  filenameC filenameD];
+    file = fullfile(dir,filename);
+
+    Save(figure(9),file);
+</pre><h2>OUTPUT - Obtain maximum and minimum values of the matrix H*Bk+Ek*G*dstar<a name="27"></a></h2><pre class="codeinput">    [maximum,minimum] = getElems(H,B,Ek,G);
+</pre><h2>Plotting Minimal residuals, minimal angles...<a name="28"></a></h2><pre class="codeinput">rmpath <span class="string">'Core'</span>
+rmpath <span class="string">'Measures'</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+
+<span class="keyword">function</span> [maximum, minimum] = getElems(H,B,Ek,G)
+    <span class="comment">%Note when wout G = G is set to identity</span>
+    C1  = abs(H*(B+Ek)*G);
+    maximum = max(C1(:));
+    minimum = min(nonzeros(C1(:)));
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> [delta_zk, delta_pk, delta_qk, delta_beta, delta_theta] =<span class="keyword">...</span>
+    GetVarFromLSE(y,m,n,degree_exact)
+    <span class="comment">% Retrieve the variables that make up the vector y.</span>
+    delta_zk=y(1:m+n-2*degree_exact+2);
+    delta_pk=y(m+n-2*degree_exact+3:2*m+n-2*degree_exact+3);
+    delta_qk=y(2*m+n-2*degree_exact+4:2*m+2*n-2*degree_exact+4);
+    delta_beta=y(end-1);
+    delta_theta=y(end);
+<span class="keyword">end</span>
+
+
+<span class="keyword">function</span> Yk = BuildYk(ok1, ok2, G, dstar, m, n, degree_exact)
+    <span class="comment">%   vecmk : [m-k, m-k-1, ... 1, 0]</span>
+    <span class="comment">%   vecnk : [n-k, n-k-1, ... 1, 0]</span>
+    <span class="comment">%   G     : Diagonal of binom coeff of dk</span>
+    <span class="comment">%   dstar : Coefficients of dk excl Diagonals</span>
+    <span class="comment">%   m     : degree of poly f</span>
+    <span class="comment">%   n     : degree of poly g</span>
+    C3 = Cauchy(G*dstar,m-degree_exact);
+    C4 = Cauchy(G*dstar,n-degree_exact);
+    Y1 = C3 * diag(ok1);
+    Y2 = C4 * diag(ok2);
+    Y3 = zeros(m+1,n+1-degree_exact);
+    Y4 = zeros(n+1,m+1-degree_exact);
+
+    Yk = [Y1 Y3;
+          Y4 Y2];
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [] = a1(example_number,ec,maxiterations)
+%   example_number  :
+%   ec              : error level eg 1e-7
+%   maxiterations   : max number of iterations of lse problem before exit
+%   withQ           : 1/0 - Where Q is diagonal of combinatorial factors 
+%                     of u and v. DS(f,g)Q*[u;v] = 0  
+
+withQ=1;
+withG=1;
+
+addpath 'Core'
+addpath 'Measures'
+addpath 'Examples'
+
+%For Graphing Purposes
+    FontSize = 15;
+    LineWidth = 1.5;
+    MarkerSize = 10;
+%For Saving Purposes
+    dir = '..\..\..\CodeOutputs';
+    filenameA = 'Example';
+    filenameB = int2str(example_number);
+    filenameD = ['_noise' int2str(log10(ec))] ;
+%% Choose example set
+    
+ [f_roots g_roots d_roots degree_exact u_roots v_roots] =...
+    ReportExamples(example_number);
+
+%%
+% using roots stored as f and g and obtain polys in scaled bernstein basis
+% B_poly returns coefficients $a_{i}$\binom{m}{i} in a scaled bernstein basis.
+% We deal with bernstein basis so wish to remove the (mchoosei) such that
+% we have $a_{i}$ only which is the coefficient in the Bersntein Basis..
+%   fx_exact_bi = \hat{a}_{i} binom{m}{i}
+%   gx_exact_bi = \hat{b}_{i} binom{n}{i}
+
+    fx_exact_bi = B_poly(f_roots); %fx_bi is of form :- $a_{i}$ (m choose i)
+    gx_exact_bi = B_poly(g_roots); %gx_bi is of form :- bi (n choose i)
+
+%Get the degree m of f, and degree n of g
+    
+    m=length(fx_exact_bi) - 1; 
+    n=length(gx_exact_bi) - 1;
+    minimum_degree = min(m,n);
+
+%Initialise some useful vectors of length m, m-k, n, n-k and k
+    vecm = 0:1:m;
+    vecmk = 0:1:m-degree_exact;
+    vecn = 0:1:n;
+    vecnk = 0:1:n-degree_exact;
+    veck=0:1:degree_exact;
+
+%% Calculate required binomial coefficients for 
+% f - Binomial coefficients stored as Bi_m
+% g - Binomial coefficients stored as Bi_n
+% u - Binomial coefficients stored as Bi_mk
+% v - Binomial coefficients stored as Bi_nk
+% d - Binomial coefficients stored as Bi_k
+% Bi_m  = binom{m}{0}, binom{m}{1}, ... , binom{m}{m}
+% Bi_n  = binom{n}{0}, binom{n}{1}, ... , binom{n}{n}
+% Bi_nk = binom{n-k}{0}, binom{n-k}{1}, ... , binom{n-k}{n-k}  
+% Bi_mk = binom{m-k}{0}, binom{m-k}{1}, ... , binom{m-k}{m-k}  
+% Bi_k  = binom{k}{0}, binom{k}{1}, ... , binom{k}{k}
+
+    Bi_m = zeros(1,m+1);
+    Bi_n = zeros(1,n+1);
+    Bi_nk= zeros(1,n-degree_exact+1);
+    Bi_mk= zeros(1,m-degree_exact+1);
+    Bi_k = zeros(1,degree_exact+1);
+
+    for i=1:1:m+1
+        Bi_m(i) = nchoosek(m,i-1);
+    end
+    for i=1:1:n+1
+        Bi_n(i) = nchoosek(n,i-1);
+    end
+    for i=1:1:n-degree_exact+1
+        Bi_nk(i) = nchoosek(n-degree_exact,i-1);
+    end
+    for i=1:1:m-degree_exact+1
+        Bi_mk(i) = nchoosek(m-degree_exact,i-1);
+    end
+    for i=1:1:degree_exact+1
+        Bi_k(i) = nchoosek(degree_exact,i-1);
+    end
+    
+ %% Get exact values of u v and d in 'Standard Bernstein Basis'
+% for purposes of comparing outputs. Note that these values are only used
+% to compare to computed values.
+% u_bi_exact = $\hat{u}_{i}$ binom{m-k}{i}
+% u_bb_exact = $\hat{u}_{i}$ 
+% v_bi_exact = $\hat{v}_{i}$ binom{n-k}{i}
+% v_bb_exact = $\hat{v}_{i}$
+% d_bi_exact = $\hat{d}_{i}$ binom{k}{i}
+% d_bb_exact = $\hat{d}_{i}$
+
+    uk_bi_exact     = B_poly(u_roots);    
+    uk_exact        = uk_bi_exact./Bi_mk;  
+    vk_bi_exact     = B_poly(v_roots);    
+    vk_exact        = vk_bi_exact./Bi_nk; 
+
+    dk_bi_exact     = B_poly(d_roots);    
+    dk_exact        = dk_bi_exact./Bi_k;      
+
+    
+%% 
+% Coefficients in 'Standard Bernstein Basis'
+% fx_exact has coefficients of the form : \hat{a}_{i}
+% gx_exact has coefficients of the form : \hat{b}_{i}
+    
+    fx_exact = fx_exact_bi./Bi_m;  
+    gx_exact = gx_exact_bi./Bi_n; 
+
+% Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'. 
+% fx = \hat{a}_{i}  + delta\hat{a}_{i}  == a_{i}
+% gx = \hat{b}_{i}  + delta\hat{b}_{i}  == b_{i}
+    
+    fx = Noise(fx_exact,ec,24);
+    gx = Noise(gx_exact,ec,22);
+
+% Now obtain coefficients of Polynomials In 'Scaled Bernstein Basis', which
+% are also noisy fx_bi = ai(mchoosei), gx_bi = bi(nchoosei)
+
+    %fx_bi = fx.*Bi_m;
+    %gx_bi = gx.*Bi_n;
+
+%% Calculate Degree of Approximate Greatest Common Divisor
+
+    [degree_calc] = GetDegree(fx,gx,degree_exact,ec, example_number);
+            
+%%
+% Build the Diagonal H^{-1} 
+% H^{-1}[c(uk)c(vk)]Q_{k}
+
+    H1 = diag(1./Bi_m);
+    H2 = diag(1./Bi_n);
+    H  = diag(1./[Bi_m Bi_n]);
+    
+%% Preprocessor 01 - Calculating geometric means 
+% Based on occurences of elements of f and g in the sylvester subresultant
+% Dk^{-1}S(f,g)Qk
+
+    gm_f = GM4(fx,n,degree_exact);
+    gm_g = GM4(gx,m,degree_exact);
+
+% Normalise fx -> fx_n
+% fx_n = \bar{a}_{i}
+% gx_n = \bar{b}_{i}
+    
+    fx_n = fx./gm_f;
+    gx_n = gx./gm_g;
+
+% Normalised fx with binomials
+% fx_n_bi = \bar{a}_{i} binom{m}{i}
+% gx_n_bi = \bar{b}_{i} binom{n}{i}
+
+    %fx_n_bi = fx_n.*Bi_m;
+    %gx_n_bi = gx_n.*Bi_n;
+
+%% Preprocessor 2 and 3 - Obtaining initial alpha and theta
+% for subresultant k where k is the degree of the AGCD
+
+    [alpha_opt,theta_opt] = OptimalAlphaAndTheta(fx_n,gx_n,degree_exact,withQ);
+
+
+%% Scale f and g using alpha and theta
+% fw_n      = \bar{a}_{i} \theta^{i}
+% gw_n      = \bar{b}_{i} \theta^{i}
+% fw_n_bi   = \bar{a}_{i} \theta^{i} \binom{m}{i}
+% gw_n_bi   = \bar{b}_{i} \theta^{i} \binom{n}{i}
+
+    fw_n = fx_n.*theta_opt.^(vecm);
+    gw_n = gx_n.*theta_opt.^(vecn);
+
+    %fw_n_bi = fx_n_bi.*theta_opt.^(vecm);
+    %gw_n_bi = gx_n_bi.*theta_opt.^(vecn);
+
+%% Obtain initial values of quotient polynomials u and v.
+%  For all columns in Sk(f,g) (where k is degree of gcd) remove column and
+%  find residual sk(f,g)[v,-u]. 
+%  Find minimum residual and use column index, to calculate values of uk 
+%  and vk
+
+%Build the initial subresultant - all columns included
+    
+    Sk = Subresultant(fw_n,alpha_opt * gw_n,degree_exact,withQ);
+ 
+    
+    %For each column index. remove column from Sk and calculate residual,
+    %minimal angle, condition number and svd as methods for obtaining optimal
+    %column
+
+    [residual, angle, con_number_k, smallest_singular_k] = GetVectors(Sk);
+
+    % Find column which gives minimal residual, angle, condition number and
+    % singular value.
+
+    [col1] = find( residual == min(min(residual)));      
+    [col2] = find( angle == min(min(angle)));      
+    [col3] = find( con_number_k == min(min(con_number_k)));      
+    [col4] = find( smallest_singular_k == max(max(smallest_singular_k)));      
+    
+    col = mode([col1 col2 col3 col4]);
+    
+
+    display('############################################################')
+    display('         Optimal Column             ')
+    display('By Resiudual | By Angle | By Condition | By Singular Value')
+    display([col1  col2  col3  col4])
+    display('############################################################')
+    
+    [Aki cki] = RemoveSubresultantColumn(Sk,col);
+    
+    SNTLN(fw_n,alpha_opt * gw_n,degree_calc,col)
+    
+    
+% cols = [col1 col2 col3 col4]
+% Replace the coefficient in the ith position with 1. Where ith position 
+% corresponds to the index 'col'.
+% Method uses qr decomposition, but could use pseudoinverse. x = A^{-1}b
+
+    [~,n2] = size(Aki);
+    [Q,R] = qr(Aki);
+    R1 = R(1:n2,:);
+    cd = Q'*cki;
+    c = cd(1:n2,:);
+    x_ls = R1\c;
+    
+    vecx =[
+         x_ls(1:(col)-1);
+         -1;
+         x_ls(col:end);
+         ];   
+    
+%% Obtaining Values of Uk and Vk
+% uk    =   u_{k,i}   \theta^{i}
+% vk    =   v_{k,i}   \theta^{i}
+% uk_bi =   u{k,i}    \theta^{i} binom{m-k}{i}
+% vk_bi =   v_{k,i}   \theta^{i} binom{n-k}{i}
+
+    switch withQ 
+        case 1 % Sk = DTQ so vk uk without nchoose i
+            vk      =   vecx(1:n-degree_exact+1);
+            uk      =   -vecx(n-degree_exact+2:end);
+            vk_bi   =   vecx(1:n-degree_exact+1).* Bi_nk'; % vki = vki*theta^i * (nchoosei) 
+            uk_bi   =   -vecx(n-degree_exact+2:end) .* Bi_mk'; %uki = uki * theta^i * (nchoosei)
+        
+        case 0 % Sk = DT so vk uk contain nchoosei
+            vk      =   vecx(1:n-degree_exact+1)      ./ Bi_nk';
+            uk      =   vecx(n-degree_exact+2:end)    ./ Bi_mk';
+            vk_bi   =   vecx(1:n-degree_exact+1); % vki = vki*theta^i * (nchoosei) 
+            uk_bi   =   -vecx(n-degree_exact+2:end); %uki = uki * theta^i * (nchoosei)
+           
+    end
+    
+% Output condition numbers involved in calculating vk and uk
+
+    display('############################################################');
+    
+    display('Conditions when calculating [uk vk]')
+    display('Condition Aki = ');
+    cond(Aki)
+        
+    display('############################################################');
+
+
+%% For output checking values of uk and vk
+    display('############################################################')
+    display('Comparing vk and vk_calc');
+    
+        vk_calc_output  = vk ./( theta_opt.^(vecnk))';
+        vk_calc_output  = vk_calc_output./vk_calc_output(1);
+
+        vk_exact_output = vk_exact./ vk_exact(1);
+
+        v               = [vk_exact_output' vk_calc_output]
+
+        norm_vk = norm(vk_exact_output' - vk_calc_output)/norm(vk_exact)
+
+    display('#########################################');
+    display('Comparing uk and uk_calc')
+
+        uk_calc_output  = uk ./( theta_opt.^(vecmk))';
+        uk_calc_output  = uk_calc_output./uk_calc_output(1);
+    
+        uk_exact_output = uk_exact./uk_exact(1);
+    
+        u               = [uk_exact_output' uk_calc_output]
+        
+        norm_uk = norm(uk_exact_output' - uk_calc_output)/norm(uk_exact)
+    
+    display('#########################################')
+
+%% Obtaining value for dk: the common divisor by Approximate Polynomial Factorisation
+%H^{-1}[ C(uk) C(vk)]G d* = [f;g]         
+%Build Toeplitz Matrices of uk, vk including binomial coefficients 
+
+    C1 = Cauchy(uk_bi,degree_exact);
+    C2 = Cauchy(vk_bi,degree_exact);
+    C = [C1 ; C2];
+
+%Build the RHS Vector of f and g, not including binomial coefficients
+    
+    bk = [fw_n,alpha_opt.*gw_n].';
+
+%If working with G - set G to combinatorial factors of d*
+%Else set G to identity matrix
+
+    switch withG % where Gd* = dk
+        case 1
+            G = diag(Bi_k);
+        case 0
+            G = eye(length(Bi_k));
+    end
+
+%Calculate d* by psuedo inverse, note if excluding G, d* includes combinatorial factors.    
+    
+    A = H*C*G;
+    [~,n2] = size(A);
+    [Q,R] = qr(A);
+    R1 = R(1:n2,:);
+    cd = Q'*bk;
+    c = cd(1:n2,:);
+    x_ls = R1\c;
+    
+    dstar = x_ls;
+    dk = G*dstar;
+    
+% Calculate the associated residual    
+    rk = bk-((H*C*G)*dstar);
+    
+% OUTPUTS
+    display('#############################################################')
+    
+    display('Coniditon Numbers in finding dk with and without G')
+        
+        condition_H = cond(H);
+        condition_C = cond(C);
+        condition_G = cond(G);
+        condition_HC = cond(H*C)
+        condition_HCG = cond(H*C*G)
+    
+    display('#############################################################')
+
+    di = dstar./(theta_opt.^(veck)).'; % di = d(initial) used later
+
+    
+%% Building Matrix Yk
+% recall H Yk zk  = H Ek rk
+
+    ok1 = theta_opt.^(vecmk);
+    ok2 = theta_opt.^(vecnk);
+    Yk = BuildYk(ok1,ok2,G,dstar,m,n,degree_exact);
+
+%%
+% Initialise S - Matrix such that sk = S * pt
+% Initialise T - Matrix such that tk = T * qt
+
+    S = diag(theta_opt.^vecm);
+    T = diag(theta_opt.^vecn);
+
+% Initialise zk - Structured perturbations of u and v
+
+    zk = zeros(m+n-2*degree_exact+2,1);
+
+%% Initial Partial Derivatives
+
+    partial_f = vecm    .*fx_n     .*theta_opt.^(vecm-1);
+    partial_g = vecn    .*gx_n     .*theta_opt.^(vecn-1);
+
+    lk = dstar./(theta_opt.^veck');
+    partial_dstar=veck'.*dstar./theta_opt; 
+
+    partial_uk = vecmk .*uk_bi' ./theta_opt;
+    partial_vk = vecnk .*vk_bi' ./theta_opt;
+
+    partial_C1=Cauchy(partial_uk,degree_exact);
+    partial_C2=Cauchy(partial_vk,degree_exact);
+
+% Initialise variables 
+
+    gnew=rk; % the initial value of the right hand side vector
+    beta(1)=0; % Initial value of beta
+    theta(1)=theta_opt; %Initial optimised value of theta
+    pk=zeros(m+1,1);
+    qk=zeros(n+1,1);
+
+%%
+% Construct the coefficient matrix in the equation that defines
+% the constraint for the LSE problem.
+
+    C_temp=[(-1)*S,...
+        zeros(m+1,n+1),...
+        zeros(m+1,1), ...         
+        -partial_f.'+...
+        (H1*partial_C1*G*dstar)+...
+        (H1*C1*G*partial_dstar);
+        zeros(n+1,m+1),...
+        -alpha_opt*T,...
+        -gw_n.',...
+        (- alpha_opt*partial_g.')+...
+        (H2*partial_C2*G*dstar)+...
+        (H2*C2*G*partial_dstar)];
+    C=[H*Yk,C_temp];
+    condition_intial_C_LSE = cond(C)
+
+% The initial value of the right hand side vector in the equation
+% that defines the approximate polynomial factorisation.
+   
+    ek=bk;  
+    E=eye(2*m+2*n-2*degree_exact+6);
+    fnew=zeros(2*m+2*n-2*degree_exact+6,1);
+
+    ite=1;
+    u2 = uk_bi./theta(1).^vecmk' ; % [.. uki (m-k)choosei..]
+    v2 = vk_bi./theta(1).^vecnk' ;  % [.. vki (n-k)choosei..]
+
+% Start the iterative procedure for the solution of the LSE problem.
+while (norm(rk)/norm(ek) >=1e-15) || (ite == 1)
+    
+    % The iterative procedure must be performed at least once, and
+    % thus the statement ite == 1 is included.
+    ite=ite+1;
+    
+    if ite>maxiterations  % break if more than 50 iterations are required
+        break;
+    end
+
+    % Use the QR decomposition to solve the LSE problem. 
+    y=LSE(E,fnew,C,gnew);
+    [delta_zk, delta_pk, delta_qk, delta_beta, delta_theta] =...
+        GetVarFromLSE(y,m,n,degree_exact);
+    
+    % Update variables zk, pk, qk, beta, theta    
+    zk = zk+delta_zk;
+    pk = pk+delta_pk;
+    qk = qk+delta_qk;
+    beta(ite)  = beta(ite-1)+delta_beta;
+    theta(ite) = theta(ite-1)+delta_theta;
+
+    %update the iterative value of f and g
+    fw2=fx_n.*(theta(ite).^vecm);
+    gw2=gx_n.*(theta(ite).^vecn);  
+
+    %update matrices S and T 
+    S = diag(theta(ite).^vecm);
+    T = diag(theta(ite).^vecn);
+
+    %Update vectors of thetas 
+    ok1=theta(ite).^vecmk; 
+    ok2=theta(ite).^vecnk; 
+    
+    % update dstar
+    dstar = lk.*(theta(ite).^veck');
+    
+    % Update the matrices Bk, Ek and Yk.
+    C1=Cauchy(u2.*ok1',degree_exact);  
+    C2=Cauchy(v2.*ok2',degree_exact);
+    B=[C1;C2];
+    
+    E1=Cauchy(zk(1:m-degree_exact+1).*ok1',degree_exact);
+    E2=Cauchy(zk(m-degree_exact+2:m+n-2*degree_exact+2).*ok2',degree_exact);
+    Ek=[E1;E2]; 
+
+    Y = BuildYk(ok1,ok2,G,dstar,m,n,degree_exact);
+
+    sk=pk.*(theta(ite).^vecm');
+    tk=qk.*(theta(ite).^vecn'); 
+    
+    % Calculate partial derivatives wrt theta
+        
+    partial_sk=vecm'.*pk.*theta(ite).^(vecm-1)';
+    partial_tk=vecn'.*qk.*theta(ite).^(vecn-1)';
+
+    partial_f=vecm.*fx_n.*(theta(ite).^(vecm-1));
+    partial_g=vecn.*gx_n.*(theta(ite).^(vecn-1));
+
+    partial_C1=Cauchy(vecmk'.*u2.*ok1'./theta(ite),degree_exact);
+    partial_C2=Cauchy(vecnk'.*v2.*ok2'./theta(ite),degree_exact);   
+    
+    partial_E1=Cauchy(vecmk'.*zk(1:m-degree_exact+1).*ok1'/theta(ite),degree_exact);
+    partial_E2=Cauchy(vecnk'.*zk(m-degree_exact+2:m+n-2*degree_exact+2).*ok2'/...
+        theta(ite),degree_exact);
+    
+    partial_dstar= veck'.*lk.*(theta(ite).^(veck-1))'; 
+    
+    
+    C_temp=[(-1)*S,...
+        zeros(m+1,n+1),...
+        zeros(m+1,1),...
+        -(partial_f'+partial_sk)+...
+        ((H1*partial_C1*G)*dstar)+...
+        ((H1*partial_E1*G)*dstar)+...
+        ((H1*C1*G)*partial_dstar)+...
+        ((H1*E1*G)*partial_dstar);
+        zeros(n+1,m+1),...
+        -(alpha_opt+beta(ite))*T,...
+        -gw2.'-tk,...
+        -(alpha_opt+beta(ite))*(partial_g.'+partial_tk)+...
+        ((H2*partial_C2*G)*dstar)+...
+        ((H2*partial_E2*G)*dstar)+((H2*C2*G)*partial_dstar)+...
+        ((H2*E2*G)*partial_dstar)];
+    C=[H*Y,C_temp];
+    Condition_C_LSE = cond(C);
+    
+    % Calculate the residual and update gnew.
+    
+    rk=[fw2.'+sk;(alpha_opt+beta(ite))*(gw2.'+tk)]-((H*(B+Ek)*G)*dstar);     
+    gnew=rk;
+
+    % Update the vector fnew in the LSE problem 
+    % and ek, the right hand side vector in the equation that is
+    % solved iteratively.
+    
+    fnew=-[zk; pk; qk; beta(ite); theta(ite)-theta_opt];
+    ek=[fw2.'+sk; (alpha_opt+beta(ite)).*(gw2.'+tk)];
+    
+    res(ite)=norm(rk)/norm(ek);     
+end 
+
+
+
+%% START OF OUTPUTS AFTER REFINEMENT
+    res=norm(rk)/norm(ek);  
+    minim(degree_exact)=norm(E*y-fnew); % the value of ||E*y-f||
+
+    Condition_Coefficient_Matrix = cond(H*(B+Ek)*G);
+    Condition_C = cond(C);
+    iterationsRequired = ite;
+    
+%% Calculating differences between divisor calculated (dc) and divosor exact (de)
+    
+
+%SECTION FOR REPORT PURPOSES  
+
+    format short
+    de = (dk_exact./dk_exact(1)).';
+    de = (de./norm(de));
+
+    dc = G*dstar;
+    dc = dc./(Bi_k.');
+    try
+        dc = dc./(theta(ite).^veck).';
+    catch
+        dc = dc./(theta(ite-1).^veck).'
+    end
+    
+    dc = dc./dc(1);
+    dc = dc./norm(dc);
+    
+    norm_m1 = ((de-dc)./de);
+    norm_m1 = norm(norm_m1);
+    
+    di_n = di./di(1);
+    di_n = di_n./norm(di_n);
+    display('###################################');
+    display('D_Exact D_Calc D_initial')
+    results = [de dc di_n]
+    
+    delta = (de-dk)./de;
+    theta = theta;
+    
+%% SECTION FOR REPORT PURPOSES PART 2.1
+% Calculate the error in vk, before refinement which is used in calculating
+% the initial value of dk   
+
+%Prepare vkexact
+    vkexact = vk_exact;
+    vkexact_noisy = Noise(vkexact,ec,21);
+    
+%Divide by leading coefficients.
+    vkexact_noisy = vkexact_noisy./vkexact_noisy(1);
+    vkexact = vkexact./vkexact(1);
+    
+%Normalise
+    vkexact_noisy = vkexact_noisy./norm(vkexact_noisy);
+    vkexact = vkexact./norm(vkexact);
+      
+%Prepare vk computed - the initial value of vk
+
+    vkcomp = vk./(theta_opt.^vecnk)';
+    vkcomp = vkcomp./vkcomp(1);
+    vkcomp = vkcomp./norm(vkcomp);
+    
+%Prepare vk computed post iteration such that perturbations are included    
+
+    vkcomp_ite = v2 + zk(m-degree_exact+2:m+n-2*degree_exact+2);
+    vkcomp_ite = vkcomp_ite./Bi_nk';
+    vkcomp_ite = vkcomp_ite./vkcomp_ite(1);
+    vkcomp_ite = vkcomp_ite./norm(vkcomp_ite);
+    
+%Get Componentwise Errors
+
+    Componentwise_Error_Exact_vk = abs(vkexact_noisy - vkexact) ./abs(vkexact);
+    Componentwise_Error_Computed_vk = abs(vkcomp' - vkexact)./abs(vkexact);
+    Componentwise_Error_Computed_vk_ite = abs(vkcomp_ite' - vkexact) ./abs(vkexact);
+    
+%Plot Graphs
+    
+    ya1 = log10(Componentwise_Error_Computed_vk)';
+    yb1 = log10(Componentwise_Error_Exact_vk)';
+    yc1 = log10(Componentwise_Error_Computed_vk_ite)';
+    
+    figure(110)
+    
+    
+    x = 1:1:length(Componentwise_Error_Computed_vk);
+    plot(x,ya1,'-r+','LineWidth',LineWidth,'MarkerFaceColor','Red','MarkerSize',MarkerSize)
+    hold on
+    plot(x,yb1,'-bx','LineWidth',LineWidth,'MarkerFaceColor','Blue','MarkerSize',MarkerSize)
+    plot(x,yc1,'-gx','LineWidth',LineWidth,'MarkerFaceColor','Green','MarkerSize',MarkerSize)
+    
+    hold off
+    ylabel('log_{10} Componenetwise Error','FontSize',FontSize);
+    xlabel('Index d_{i}','FontSize',FontSize);
+    hleg = legend('Componentwise Error of Computed vk',...
+        'Componentwise Error of exact vk',...
+        'Componentwise Error Computed Vk Post Iterations');
+    axis([1,length(Componentwise_Error_Computed_vk),-inf,inf]);
+    
+    average_difference_vk = norm(log10(Componentwise_Error_Computed_vk / Componentwise_Error_Exact_vk))
+
+    
+%Save Outputs
+
+    
+    filenameB = int2str(example_number);
+    filenameC = '_ComponenetwiseErrorAnalysis_vk';
+    filenameD = ['_noise' int2str(log10(ec))]; 
+    filename = [filenameA  filenameB  filenameC filenameD];
+    file = fullfile(dir,filename);
+    
+    Save(figure(111),file);
+
+    
+    
+%% %% SECTION FOR REPORT PURPOSES PART 2.2
+% Calculate the error in uk, before refinement
+% 
+    
+    ukexact = uk_exact;
+    ukexact_noisy = Noise(ukexact,ec,24);
+    
+% Divide Noisy and nonnoisy by leading coefficient.
+    
+    ukexact_noisy = ukexact_noisy./ukexact_noisy(1);
+    ukexact = ukexact./ukexact(1);
+
+% Normalise
+ 
+    ukexact_noisy = ukexact_noisy./norm(ukexact_noisy); 
+    ukexact = ukexact./norm(ukexact);
+    
+% Prepare uk computed
+
+    ukcomp = uk./theta_opt.^vecmk';
+    ukcomp = ukcomp./ukcomp(1);
+    ukcomp = (ukcomp./norm(ukcomp))';
+   
+% Prepare uk computed post iteration such that perturbations are included
+
+    ukcomp_ite = u2 + zk(1:m-degree_exact+1);
+    ukcomp_ite = ukcomp_ite./Bi_mk';
+    ukcomp_ite = ukcomp_ite./ukcomp_ite(1);
+    ukcomp_ite = ukcomp_ite./norm(ukcomp_ite);
+
+% Obtain Componentwise Errors
+    
+    Componentwise_Error_Exact_uk = abs(ukexact_noisy - ukexact) ./abs(ukexact);
+    Componentwise_Error_Computed_uk = abs(ukcomp  - ukexact)./abs(ukexact);
+    Componentwise_Error_Computed_uk_ite = abs(ukcomp_ite'  - ukexact)./abs(ukexact);
+  
+%Plot the Results
+
+    ya2 = log10(Componentwise_Error_Computed_uk)';
+    yb2 = log10(Componentwise_Error_Exact_uk)';
+    yc3 = log10(Componentwise_Error_Computed_uk_ite)';
+    
+    figure(111)
+    
+    x = 1:1:length(Componentwise_Error_Computed_uk);
+    plot(x,ya2,'-r+','LineWidth',LineWidth,'MarkerFaceColor','Red','MarkerSize',MarkerSize)
+    hold on
+    plot(x,yb2,'-bx','LineWidth',LineWidth,'MarkerFaceColor','Blue','MarkerSize',MarkerSize)
+    plot(x,yc3,'-gx','LineWidth',LineWidth,'MarkerFaceColor','Green','MarkerSize',MarkerSize)
+    hold off
+    ylabel('log_{10} Componenetwise Error','FontSize',FontSize);
+    xlabel('Index d_{i}','FontSize',FontSize);
+    hleg = legend('Componentwise Error of Computed uk',...
+        'Componentwise Error of exact uk',...
+        'Componentwise Error of computer uk Post Iterations');
+    axis([1,length(Componentwise_Error_Computed_uk),-inf,inf]);
+    
+    average_difference_uk = norm(log10(Componentwise_Error_Computed_uk / Componentwise_Error_Exact_uk))
+
+    
+%Saving Outputs
+    
+    filenameC = '_ComponenetwiseErrorAnalysis_uk';
+    filename = [filenameA  filenameB  filenameC filenameD];
+    file = fullfile(dir,filename);
+    
+    
+    Save(figure(111),file);
+    
+
+    
+%% SECTION FOR REPORT PURPOSES PART 2.2
+
+%Take d in bern basis, add noise to coefficients
+    
+    dexact = dk_exact;
+    dexact_noisy = Noise(dexact,ec,24);
+    
+%Divide NOISY and NON-NOISY dexact by leading coefficient
+    
+    dexact_noisy = dexact_noisy./dexact_noisy(1);
+    dexact = dexact./dexact(1);
+    
+%Normalise
+
+    dexact = dexact/norm(dexact);
+    dexact_noisy = dexact_noisy/norm(dexact_noisy);
+    
+   %dcomp = d_first_approximation./(Bi_k');     
+    
+    dcomp = (G*dstar./(Bi_k.'))';
+   
+    dcomp = dcomp./theta(ite).^veck;
+    dcomp = dcomp./dcomp(1);
+    dcomp = (dcomp/norm(dcomp));
+    
+%Componentwise Error of exact
+
+    Componentwise_Error_Exact_dk = abs(dexact_noisy - dexact) ./abs(dexact);
+    Componentwise_Error_Computed_dk = abs(dexact - dcomp)./abs(dexact);
+
+
+% Plot Graph
+
+    ya3 = log10(Componentwise_Error_Computed_dk)';
+    yb3 = log10(Componentwise_Error_Exact_dk)';
+    
+    figure(112)
+        x = 1:1:length(Componentwise_Error_Computed_dk);
+        plot(x,ya3,'-r+','LineWidth',LineWidth,'MarkerFaceColor','Red','MarkerSize',MarkerSize)
+        hold on
+        plot(x,yb3,'-bx','LineWidth',LineWidth,'MarkerFaceColor','Blue','MarkerSize',MarkerSize)
+        hold off
+        ylabel('log_{10} Componenetwise Error','FontSize',FontSize);
+        xlabel('Index d_{i}','FontSize',FontSize);
+        hleg = legend('Componentwise Error of Computed divisor',...
+            'Componentwise Error of Exact Divisor');
+         axis([1,length(Componentwise_Error_Computed_dk),-inf,inf]);
+    
+     
+    average_difference_dk = norm(log10(Componentwise_Error_Computed_dk / Componentwise_Error_Exact_dk))
+     
+% Save Outputs   
+    
+    
+    filenameC = '_ComponenetwiseErrorAnalysis';
+    filename = [filenameA  filenameB  filenameC filenameD];
+    file = fullfile(dir,filename);
+    
+    Save(figure(112),file);
+%% Report Part THREE 
+%BUILD THE Sylvester Matrix of (S(f,g) noisy and S(F+s,G+t)) and compare SVDs
+
+    f_new = fw2.'+sk;
+    g_new =  (alpha_opt+beta(ite)).*(gw2.'+tk);
+        
+    f_new_bi = f_new.*Bi_m';
+    g_new_bi = g_new.*Bi_n';
+    
+
+%Let Y_1 be a vector of singular values ofD^{-1}*S(f,g)*Q where f and g 
+%are noisy coefficients before any normalization, preprocessing or 
+%refinement
+%
+
+    S_noisy  = Subresultant(fx,gx,1,withQ); 
+    [~, Y_1, ~] = svd(S_noisy);
+    y1 = diag(Y_1);  
+    y1 = log10(y1./y1(1));
+    
+%Let y2 be a vector of singular values of D^{-1}*S(f,g)*Q where f and g
+%are noisy coefficients after preprocessing operations 
+        
+    S_afterPreProc = Subresultant(fw_n,alpha_opt * gw_n,1,withQ);
+    [~, Y_2, ~] = svd(S_afterPreProc);
+    y2 = diag(Y_2);   
+    y2 = log10(y2./y2(1));
+    
+%Let y2 be a vector of singular values of D^{-1}*S(f,g)*Q where f and g
+%are the noisy coefficients after preprocessing operations and
+%refinement where f = f+s and g = g+t
+    
+    S_afterRefinement  = Subresultant(f_new,g_new,1,withQ); 
+    [~, Y_3, ~] = svd(S_afterRefinement);
+    y3 = diag(Y_3);   
+    y3 = log10(y3./y3(1));
+  
+%Plot the Graph     
+    figure(9)
+    
+    [x1,~] = size(y1);
+    rank = x1 - degree_exact;
+    x = 1:1:x1;
+
+    plot(x,y1,'REPLACE_WITH_DASH_DASHgo','LineWidth',LineWidth,'MarkerFaceColor','Green','MarkerSize',MarkerSize)
+        hold on
+        plot(x,y2,'-r+','LineWidth',LineWidth,'MarkerFaceColor','Red','MarkerSize',MarkerSize)
+        plot(x,y3,'-bx','LineWidth',LineWidth,'MarkerFaceColor','Blue','MarkerSize',MarkerSize)
+        plot(rank,y1(rank),'rs','MarkerFaceColor','Black','MarkerSize',MarkerSize)
+        plot(rank,y2(rank),'rs','MarkerFaceColor','Black','MarkerSize',MarkerSize)
+        plot(rank,y3(rank),'rs','MarkerFaceColor','Black','MarkerSize',MarkerSize)
+        hold off
+        axis([1,x1,-inf,inf])
+        ylabel('log_{10} Singular Values \sigma_{i}/\sigma_{1}','FontSize' ,FontSize);
+        xlabel('Index of Singular Values \sigma_{i}','FontSize',FontSize);
+        hleg = legend('Before Refinement or preproc',...
+            'Before Refinement post preproc','After Refinement');
+        
+        
+% Save Outputs
+
+    filenameC = '_SingularValueDecomposition_Noisy_Preprocessed_Refined';
+    filename = [filenameA  filenameB  filenameC filenameD];
+    file = fullfile(dir,filename);
+    
+    Save(figure(9),file);
+    
+    
+    
+%% OUTPUT - Obtain maximum and minimum values of the matrix H*Bk+Ek*G*dstar
+
+    [maximum,minimum] = getElems(H,B,Ek,G);
+
+%%   Plotting Minimal residuals, minimal angles... 
+    
+
+rmpath 'Core'
+rmpath 'Measures'
+
+
+end
+
+
+function [maximum, minimum] = getElems(H,B,Ek,G)
+    %Note when wout G = G is set to identity
+    C1  = abs(H*(B+Ek)*G);
+    maximum = max(C1(:));
+    minimum = min(nonzeros(C1(:)));
+end
+
+
+function [delta_zk, delta_pk, delta_qk, delta_beta, delta_theta] =...
+    GetVarFromLSE(y,m,n,degree_exact)
+    % Retrieve the variables that make up the vector y.
+    delta_zk=y(1:m+n-2*degree_exact+2);
+    delta_pk=y(m+n-2*degree_exact+3:2*m+n-2*degree_exact+3);
+    delta_qk=y(2*m+n-2*degree_exact+4:2*m+2*n-2*degree_exact+4);
+    delta_beta=y(end-1);
+    delta_theta=y(end);
+end
+
+
+function Yk = BuildYk(ok1, ok2, G, dstar, m, n, degree_exact)
+    %   vecmk : [m-k, m-k-1, ... 1, 0]
+    %   vecnk : [n-k, n-k-1, ... 1, 0]
+    %   G     : Diagonal of binom coeff of dk
+    %   dstar : Coefficients of dk excl Diagonals
+    %   m     : degree of poly f
+    %   n     : degree of poly g
+    C3 = Cauchy(G*dstar,m-degree_exact);
+    C4 = Cauchy(G*dstar,n-degree_exact);
+    Y1 = C3 * diag(ok1);
+    Y2 = C4 * diag(ok2);
+    Y3 = zeros(m+1,n+1-degree_exact);
+    Y4 = zeros(n+1,m+1-degree_exact);
+
+    Yk = [Y1 Y3;
+          Y4 Y2];
+end
+
+
+
+##### SOURCE END #####
+--></body></html>

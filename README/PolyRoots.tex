@@ -1,0 +1,133 @@
+
+
+\documentclass[a4paper,11pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{amsmath}
+%\usepackage{psfrag}
+\usepackage[dvips]{graphicx}
+
+%New commands
+\newcommand{\GCD}{\textrm{GCD}}
+\newcommand{\AGCD}{\textrm{AGCD}}
+\newcommand{\ML}{\textrm{ML}}
+\newcommand{\MDL}{\textrm{MDL}}
+\newcommand{\rank}{\textrm{rank}}
+\newcommand{\STLN}{\textrm{STLN}}
+\newcommand{\SNTLN}{\textrm{SNTLN}}
+\newcommand{\LSE}{\textrm{LSE}}
+\newcommand{\SVD}{\textrm{SVD}}
+\newcommand{\QR}{\textrm{QR}}
+\newcommand{\APF}{\textrm{APF}}
+
+
+\setlength{\topmargin}{-2.0cm}
+%\setlength{\textheight}{25.5cm}
+\setlength{\textheight}{26cm}
+%\setlength{\textwidth}{16cm}
+\setlength{\textwidth}{17.5cm}
+%%\setlength{\oddsidemargin}{0cm}
+\setlength{\oddsidemargin}{-0.5cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt} % adjusts the spacing between paragraphs
+
+\begin{document}
+%\begin{center}
+%Response to referees' comments for GR/T24036/01:
+%\end{center}
+%
+\begin{center}
+Degree of an $\AGCD$ of two Bernstein polynomials
+\end{center}
+%
+\date{}
+%
+
+\hrulefill
+
+%\thispagestyle{empty}  % no page number is printed  on this page
+
+\vspace{0.5cm}
+
+This note describes the programs
+%
+\begin{center}
+\texttt{o\_roots.m} and \texttt{o\_gcd.m}
+\end{center}
+%
+The first is for calculating the roots of a polynomial in the Bernstein basis. The second is for calculating the GCD of two arbitrary polynomials. Both of these files use \texttt{o1.m} to calculate a $\GCD$ and quotient polynomials. 
+ Bernstein polynomials $f(y)$ and $g(y)$. The modified matrix
+$S(f,g)$.
+
+The programs are executed by typing
+%
+%
+\begin{center}
+\texttt{o\_roots(n,ec\_min,ec\_max,BOOL\_SNTLN,BOOL\_APF,BOOL\_DENOM,BOOL\_PREPROC,BOOL\_LOG)} and \\
+\texttt{o\_gcd(n,ec\_min,ec\_max,BOOL\_SNTLN,BOOL\_APF,BOOL\_DENOM,BOOL\_PREPROC,BOOL\_LOG)}
+\end{center}
+%
+ where
+%
+\begin{description}
+\item{\hspace{0.7cm} 
+\texttt{n} is an integer that defines the polynomials $f(y)$ in the program
+\texttt{Root\_examples.m}} or polynomials $f(y)$ and $g(y)$ in the program \texttt{GCD\_examples.m} for \texttt{o\_roots} and \texttt{o\_gcd.m} respectively.
+%
+\item{\hspace{0.7cm} \texttt{ec\_min} and \texttt{ec\_max} are the minimum and maximum ratios:
+
+
+%
+\begin{align*}
+\frac{\textrm{noise level}}{\textrm{signal level}}
+\end{align*}
+%
+measured in the componentwise sense.}
+\item{\hspace{0.7cm}
+\texttt{BOOL\_SNTLN} is a boolean value, whether structured perturbations are added to the Sylvester matrix.
+}
+\texttt{BOOL\_APF} is a boolean value, whether structured perturbations are added to the Approximate polynomial factorisation.
+}
+
+\end{description}
+%
+The differences in the programs are:
+\begin{itemize}
+\item{
+The program \text{o\_gcd.m} takes two polynomials $f(y)$ and $g(y)$ and calculates the $\GCD$ of their perturbed forms.
+}
+\item{
+The program \text{o\_roots.m} takes only one exact polynomial $\hat{f}(y)$ adds noise to its coefficients such that $f(y)$ is the noisy form, calculates it's derivative $f'(y)$ and performs a $\gcd$ calculation to obtain $d_{1}(y)$. A new $\gcd$ calculation is performed on d(y) and its derivative. This is performed iteratively until the GCD calculation output is a scalar. The set of gcd values $d_{1},d_{2},\dots d_n$ are used to compute the roots and corresponding multiplicities of $\hat{f}(y)$
+}
+%
+
+\end{itemize}
+
+\vspace{0.5cm}    
+
+
+Examples of executing the programs  are
+%
+
+\texttt{o1(5,1e-8), o2(15,1e-7), o3(21,1e-5)} and \texttt{o4(30,1e-7)}.
+
+$\hfill\Box$
+
+
+
+The programs produce the following output:
+%
+
+%
+
+%
+
+
+
+\end{document}
+
+
+
+
+
