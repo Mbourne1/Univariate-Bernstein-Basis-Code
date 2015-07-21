@@ -429,7 +429,7 @@ while condition > (max_error) && ite < max_iterations
     
     [res_ux(ite),res_vx(ite)] = Term_Criterion_APF(fx_p,gx_p,sx_p,...
         tx_p,ukx,vkx,dkx,t,1.0);
-    % End Edit
+    % Edit End
     
 end
 

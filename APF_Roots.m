@@ -370,7 +370,7 @@ PostAPF_theta = theta(ite);
 PostAPF_dx = dw./(theta(ite).^veck);
 
 % update value of the input polynomial f
-PostAPF_fx = fw + sw ./ (theta(ite) .^ vecm);
+PostAPF_fx = (fw + sw) ./ (theta(ite) .^ vecm);
 
 % update values of the input polynomial g, which is now calculated by
 % derivative constraint.

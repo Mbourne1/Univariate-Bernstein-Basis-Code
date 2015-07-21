@@ -371,12 +371,22 @@ switch bool_apf
                 [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_theta] = ...
                     APF_Roots(fx_new,ux,vx,theta_opt,dx,t);
                 
+                PostAPF_fx-fx_new
+                
+                
+                der_fx = zeros(m,1)
+                for i = 0:1:m-1
+                    der_fx(i+1) = m.* (gm_fx./ gm_gx).*(fx_new(i+2) - fx_new(i+1));
+                end
+                
+                
                 % Build Post APF_gx
                 PostAPF_gx = zeros(m,1)
                 for i = 0:1:m-1
                    PostAPF_gx(i+1) = m.*(gm_fx./ gm_gx) .* (PostAPF_fx(i+2) - PostAPF_fx(i+1));
                 end
-%                  
+
+                
                 PostAPF_gx ./ gx_new
                 
             case 0

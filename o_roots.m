@@ -145,8 +145,8 @@ global bool_plotgraphs
 global bool_sylvesterBuildMethod
 global Bool_APFBuildMethod
 
-bool_SNTLN_Roots = 1;
-bool_APF_Roots = 1;
+bool_SNTLN_Roots = 0;
+bool_APF_Roots = 0;
 bool_q = 1;
 bool_log = 1;
 bool_deconvolve = 1;
@@ -180,7 +180,7 @@ min_delta_mag_rowsum = 3;
 %   1 - output u v and d in terms of w (coefficients include theta)
 %   0 - output u v and d in terms of x
 global output_format
-output_format = 1;
+output_format = 0;
 
 
 % geometricMeanMethod
