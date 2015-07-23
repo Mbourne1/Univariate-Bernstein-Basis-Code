@@ -447,6 +447,8 @@ if ite == max_iterations
     return 
     
 end
+
+try
 % EDIT 01/06/2015 16:34:00
 switch bool_plotgraphs
     case 1
@@ -457,7 +459,11 @@ plotgraphs3(res_ux,res_vx,res_uw,res_vw);
 % alpha, theta and the residual.
 plotgraphs4(alpha,theta,residual);
 end
+catch
+    fprintf('Can not perform plotgraphs3 and plotgraphs4, not enough iterations performed\n')
+end
 % END EDIT 01/06/2015 16:34:00
+
 
 % Display number of iterations
 fprintf('--------------------------------------------------------------------------- \n')

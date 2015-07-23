@@ -63,7 +63,7 @@ end
 end
 
 
-function DC1Q1 = BuildToeplitz_Naive(fx,theta,n,k)
+function DT1Q1 = BuildToeplitz_Naive(fx,theta,n,k)
 
 m = length(fx)-1;
 
@@ -72,6 +72,8 @@ m = length(fx)-1;
 D = BuildD(m,n,k);
 
 % Build matrix T
+T1 = zeros(m+n-k+1,n-k+1);
+
 % for each column j
 for j = 0:1:n-k
     % for each row i
@@ -82,6 +84,8 @@ end
         
 % Build matrix Q1
 Q1 = BuildQ1(n,t);
+
+DT1Q1 = D*T1*Q1;
 
 end
 
@@ -270,13 +274,6 @@ for j = 0:1:n-k
     end
 end
 
-end
-
-
-function nCk = lnnchoosek(n,k)
-% Perform nchoosek in logs.
-
-nCk = log10(factorial(n)) - log10(factorial(n-k)) - log10(factorial(k));
 end
 
 

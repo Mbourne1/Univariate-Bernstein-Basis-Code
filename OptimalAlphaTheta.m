@@ -4,6 +4,10 @@ function [alpha,theta]=OptimalAlphaTheta(F_max,F_min,G_max,G_min)
 % S_{k}(f,g)Q_{k} = D^{-1}_{k}T_{k}Q_{k}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%							Inputs
+
+
 % F_max   :  A vector of length m+1, such that F_max(i) stores the
 %            element of maximum magnitude of S(f,g)Q that contains the
 %            coefficient a(i) of f, i=1,...,m+1.
@@ -16,6 +20,7 @@ function [alpha,theta]=OptimalAlphaTheta(F_max,F_min,G_max,G_min)
 % G_min   :  A vector of length n+1, such that G_min(i) stores the
 %            element of minimum magnitude of S(f,g)Q that contains the
 %            coefficient b(i) of g, i=1,...,n+1.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Define vector f

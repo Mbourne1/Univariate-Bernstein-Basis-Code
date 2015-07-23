@@ -86,8 +86,6 @@ switch bool_plotgraphs
         PlotQRMaxMinDiagElem = 1;
         PlotAlpha = 1;
         PlotTheta = 1;
-        PlotHeatMapSk = 0;
-        PlotHeatMapQR = 0;
         PlotResiduals = 1;
         PlotDiagonalElements = 0;
     case 0
@@ -97,8 +95,6 @@ switch bool_plotgraphs
         PlotQRMaxMinDiagElem = 0;
         PlotAlpha = 0;
         PlotTheta = 0;
-        PlotHeatMapSk = 0;
-        PlotHeatMapQR = 0;
         PlotResiduals = 0;
         PlotDiagonalElements = 0;
 end
@@ -547,12 +543,12 @@ end
 % Output just corresponding to calculated value of the degree.
 % Output subresultant S_{t}, alpha_{t}, theta_{t}, and corresponding
 % geometric means.
-out_subresultant_unprocessed = cell2mat(Sylvester_array_unproc(deg_calc));
-out_subresultant_preprocessed = cell2mat(Sylvester_array_preprocessed(deg_calc));
-out_alpha = alpha_vec(deg_calc);
-out_theta = theta_vec(deg_calc);
-out_gm_fx = gm_fx_vec(deg_calc);
-out_gm_gx = gm_gx_vec(deg_calc);
+% out_subresultant_unprocessed = cell2mat(Sylvester_array_unproc(deg_calc));
+% out_subresultant_preprocessed = cell2mat(Sylvester_array_preprocessed(deg_calc));
+% out_alpha = alpha_vec(deg_calc);
+% out_theta = theta_vec(deg_calc);
+% out_gm_fx = gm_fx_vec(deg_calc);
+% out_gm_gx = gm_gx_vec(deg_calc);
 
 % Output all subresultants, all optimal alphas, all optimal thetas and all
 % geometric means for each subresultant S_{k} where k = 1,...,min(m,n)

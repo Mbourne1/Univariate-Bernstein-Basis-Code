@@ -315,7 +315,9 @@ end
 
 % Build Sylvester Matrix for normalised, refined coefficients, used in
 % comparing singular values.
-Sylvester_3 = Subresultant_BernsteinBasis(fx,gx,theta_opt,alpha_opt,1);
+% EDIT - 23/07/2015 - This has been updated to fx_new rather than fx, since
+% this includes SNTLN Struct. pert. Similarly for g.
+Sylvester_3 = Subresultant_BernsteinBasis(fx_new,gx_new,theta_opt,alpha_opt,1);
 
 
 % Obtain AGCD - Approximate Greatest Common Divisor
@@ -371,23 +373,12 @@ switch bool_apf
                 [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_theta] = ...
                     APF_Roots(fx_new,ux,vx,theta_opt,dx,t);
                 
-                PostAPF_fx-fx_new
-                
-                
-                der_fx = zeros(m,1)
-                for i = 0:1:m-1
-                    der_fx(i+1) = m.* (gm_fx./ gm_gx).*(fx_new(i+2) - fx_new(i+1));
-                end
-                
-                
                 % Build Post APF_gx
-                PostAPF_gx = zeros(m,1)
+                PostAPF_gx = zeros(m,1);
                 for i = 0:1:m-1
                    PostAPF_gx(i+1) = m.*(gm_fx./ gm_gx) .* (PostAPF_fx(i+2) - PostAPF_fx(i+1));
                 end
 
-                
-                PostAPF_gx ./ gx_new
                 
             case 0
                 [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_theta] = ...
@@ -499,28 +490,29 @@ end
 GCDMethod = 0;
 switch GCDMethod
     case 2 % Use Last non zero row
-        a1 = rref(transpose(Sylvester_1))
-        a2 = rref(transpose(Sylvester_2))
-        a3 = rref(transpose(Sylvester_3))
-        a4 = rref(transpose(subresultant_preproc))
+        a1 = rref(transpose(Sylvester_1));
+        a2 = rref(transpose(Sylvester_2));
+        a3 = rref(transpose(Sylvester_3));
+        a4 = rref(transpose(subresultant_preproc));
         
         
         data = a3;
         data( ~any(data,2), : ) = [];  %rows
-        data = data(end,:)
+        data = data(end,:);
         
         % Get number of cols in the row.
-        k = size(data,2)
+        k = size(data,2);
         
-        for i = 0:k-1
+        Bi_k = zeros(1,k);
+        for i = 0:1:k-1
             Bi_k(i+1) = nchoosek(k-1,i);
         end
         
-        data = data.*Bi_k
+        data = data.*Bi_k;
         
         data( :, ~any(data,1) ) = [];  %columns
         data = data./data(1);
-        %d_output = data'
+        d_output = data';
         
 end
 

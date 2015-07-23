@@ -50,10 +50,6 @@ function [resid_u,resid_v] = ScaleCoprime(u,v,f,g,t)
 
 
 
-% Calculate the degrees of f and g.
-m = length(f)-1;
-n = length(g)-1;
-
 % Construct the right hand side vector = [fx;gx].
 bk = [f;g];
 

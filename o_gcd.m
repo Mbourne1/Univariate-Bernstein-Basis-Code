@@ -318,6 +318,27 @@ gx = VariableNoise(g_exact,emin,emax,seed);
 [f_calc,g_calc,d_calc,u_calc,v_calc] = o1(fx,gx);
 
 
+% output_format (bool)
+% The format of output 
+%   1 - output u v and d in terms of w (coefficients include theta)
+%   0 - output u v and d in terms of x
+switch output_format
+    case 0 % output in terms of fx,gx,dx 
+        f_calc = f_calc;
+        g_calc = g_calc;
+        u_calc = u_calc;
+        v_calc = v_calc;
+        d_calc = d_calc;
+        
+    case 1 % output in terms of fw,gw,dw
+        f_calc = f_calc ./ (theta.^vecm);
+        g_calc = g_calc ./ (theta.^vecn);
+        u_calc = u_calc ./ (theta.^vecmk);
+        v_calc = v_calc ./ (theta.^vecnk);
+        d_calc = d_calc ./ (theta.^vecnk);
+        
+end
+
 switch bool_bezout
     % Obtain the gcd by bezoutian method
     case 1
