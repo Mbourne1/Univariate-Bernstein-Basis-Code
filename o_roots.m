@@ -165,7 +165,7 @@ Bool_APFBuildMethod = 1;
 % small, to assume that the sylvester matrix is rank deficient)
 % then degree is one. otherwise degree is zero
 global nominal_value
-nominal_value = 10;
+nominal_value = 100;
 
 % let x be the maximum change in ratio_maxmin_rowsum vector if abs(x) <
 % nominal_value_2, if the change is minimal, then all subresultants should
@@ -194,7 +194,7 @@ output_format = 0;
 % 2 -   Set geometric mean equal to one, essentially eliminating the
 %       preprocessor.
 global geometricMeanMethod
-geometricMeanMethod = 0;
+geometricMeanMethod = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -258,6 +258,12 @@ fprintf('\t \t \t \t \t Root \t \t \t \t\t  Multiplicity \n')
 fprintf('%30.15f %30.15f \t \t\n',[exact_roots(:,1),exact_roots(:,2)]');
 fprintf('\n');
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This section calculates the roots by several methods
+
+
 % Calculate roots by mymethod.
 clc_roots_mymthd = o_roots_mymethod(ex,emin,emax,seed);
 
@@ -273,47 +279,68 @@ clc_roots_intvlBsctn = o_roots_bisection(ex,emin,emax,seed);
 % Calculate roots by 'Subdivisiton' Method
 clc_roots_subdivision = o_roots_subdivision(ex,emin,emax,seed);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 
 
 % Get vector of exact roots, and extract multiplicities.
-% eg: if root one has multiplicity 5, then X1 = [r1 r1 r1 r1 r1 ...]
+% eg: if root one has multiplicity 5, then the vector would be given by
+% X1 = [r1 r1 r1 r1 r1 ...]. 
 
-% Let n1 be the total number of non distinct roots
-n1 = sum(exact_roots(:,2));
+% Let sum_mult_exct be the sum of all multiplicities of the exact roots
+sum_mult_exct = sum(exact_roots(:,2));
 
-% Initialise a vector to store the nondistinct roots (contains repetition)
-nondistinctRoots_exct = zeros(n1,1);
+% Initialise a vector to store the roots where roots with high multiplicity
+% are repeated.
+nondistinctRoots_exct = zeros(sum_mult_exct,1);
 
+% Initialise a count
 count = 1;
+
+% for each exact root r_{i}
 for i = 1:1:size(exact_roots,1)
+    
     % Get multiplicty of root i
     m = exact_roots(i,2);
+    
+    % for j = 1,...,m
     for j = 1:1:m
-        % Repeat root m times, where m is multplicity
+        
+        % Add the root to a vector of nondistinct roots
         nondistinctRoots_exct(count,1) = exact_roots(i,1);
+        
+        % Increment the counter
         count = count + 1;
     end
 end
 
-% Get vector of my calculated roots
-% Form a vector of roots
+% Get vector of roots calculated by my method, and extract multiplicities.
+% eg: if r_{1} has multiplicity 5, then the vector would be given by
+% X1 = [r1 r1 r1 r1 r1 ...]. 
 
-% Let n2 be the total number of nondistinct roots obtained from my method
-num_nondistinct_rt_mymthd = sum(clc_roots_mymthd(:,2));
+% Let sum_rt_mult_mymthd be the sum of all of the multiplicities of all of the
+% roots obtained by my method
+sum_rt_mult_mymthd = sum(clc_roots_mymthd(:,2));
 
 % Initialise a vector to store the nondistinct roots
-nondistinctRoots_mymthd = zeros(num_nondistinct_rt_mymthd,1);
+nondistinctRoots_mymthd = zeros(sum_rt_mult_mymthd,1);
 
 % Initialise a count
 count = 1;
 
 % for each unique root i
 for i = 1:1:size(clc_roots_mymthd,1)
+    
     % Get multiplicty of root i
     m = clc_roots_mymthd(i,2);
     
-    % for each of the m roots at i
+    % for each of the m roots at r_{i}
     for j = 1:1:m
+        
+        % Add the root to a vector of nondistinct roots
         nondistinctRoots_mymthd(count,1) = clc_roots_mymthd(i,1);
+        
+        % Increment the counter
         count = count + 1;
     end
 end
@@ -321,31 +348,58 @@ end
 
 % Get vector of roots by matlab method
 
-% Let n3 be the total number of nondistinct roots obtained from matlab
-% method
-n_nondistinctRoots_mtlb = sum(clc_roots_mtlb(:,2));
-nondistinctRoots_mtlb = zeros(n_nondistinctRoots_mtlb,1);
+% Let sum_rt_mlt_mtlb be the sum of all of the multiplicities of all of the
+% roots obtained by my matlab method
+sum_rt_mlt_mtlb = sum(clc_roots_mtlb(:,2));
+
+% Initialise a vector to store the nondistinct roots
+nondistinctRoots_mtlb = zeros(sum_rt_mlt_mtlb,1);
+
+% initialise a counter
 count = 1;
+
+% for each unique root i
 for i = 1:1:length(clc_roots_mtlb)
+    
     % Get multiplicty of root i
     m = clc_roots_mtlb(i,2);
+    
+    % for each of the m roots at r_{i}
     for j = 1:1:m
+        
+        % Add the root to a vector of nondistinct roots
         nondistinctRoots_mtlb(count,1) = clc_roots_mtlb(i,1);
+        
+        % Increment the counter
         count = count + 1;
     end
 end
 
-%
 % Get the roots by MULTROOT zheng function
-% Form a vector of roots from MULTROOT.
-n_nondistinctRoots_mltrt = sum(clc_roots_mltrt(:,2));
-nondistinctRoots_mltrt = zeros(n_nondistinctRoots_mltrt,1);
+
+% Let sum_root_mult_mltrt be the sum of all of the multiplicities of all of
+% the roots obtained by my multroot method
+sum_root_mult_mltrt = sum(clc_roots_mltrt(:,2));
+
+% Initialise a vector to store the nondistinct roots
+nondistinctRoots_mltrt = zeros(sum_root_mult_mltrt,1);
+
+% Initialise a count
 count = 1;
+
+% for each unique root r_{i}
 for i = 1:1:size(clc_roots_mltrt,1)
-    % Get multiplicty of root i
+    
+    % Get multiplicty of root r_{i}
     m = clc_roots_mltrt(i,2);
+    
+    % for each of the m roots at r_{i}
     for j = 1:1:m
+        
+        % Add the root to a vector of nondistinct roots
         nondistinctRoots_mltrt(count,1) = clc_roots_mltrt(i,1);
+        
+        % Increment the counter
         count = count + 1;
     end
 end
@@ -354,24 +408,38 @@ end
 % Get the roots by interval bisection
 %
 try
-    n_nondistinctRoots_bsctn = sum(clc_roots_intvlBsctn(:,2));
-    nondistinctRoots_bsctn = zeros(n_nondistinctRoots_bsctn,1);
+    % Let sum_root_mult_bsctn be the sum of all of the multiplicities of all of
+    % the roots obtained by my bisection method
+    sum_root_mult_bsctn = sum(clc_roots_intvlBsctn(:,2));
+    
+    % Initialise a vector to store the nondistinct roots
+    nondistinctRoots_bsctn = zeros(sum_root_mult_bsctn,1);
+    
+    % Initialise a counter
     count = 1;
     
     for i = 1:1:size(clc_roots_intvlBsctn,1)
+        
         % Get multiplicty of root i
         m = clc_roots_intvlBsctn(i,2);
+        
+        % for each of the m roots at r_{i}
         for j = 1:1:m
+            
+            % Ad the root to a vector of nondistinct roots
             nondistinctRoots_bsctn(count,1) = clc_roots_intvlBsctn(i,1);
+            
+            % Increment the counter
             count = count + 1;
         end
     end
 catch
 end
+
+
 %
 % Plot the graph real (x) imaginary (y) components of the nondistinct roots
 % obtained by the root calculating methods.
-
 
 figure()
 scatter(real(nondistinctRoots_exct),imag(nondistinctRoots_exct),'black*','DisplayName','Exact Roots');

@@ -17,7 +17,8 @@ function [a,t]=RootsExamples(n,seed)
         
         case -1
             a = [ 
-                0.1     1
+                0.1     1;
+                0.5     1;
                 ];
             
         case 0
@@ -117,10 +118,27 @@ function [a,t]=RootsExamples(n,seed)
                 1.2     9
                 0.10003245657   10
                 ];
-                       
+       
+        % cases with roots of same multiplicites
+        case 11
+            a = [
+                0.1     1;
+                0.4     2;
+                0.7     2;
+                ];
+            
+        case 12
+            a = [
+                0.1     1;
+                0.5     2;
+                0.6     2;
+                0.9     3;
+            
+            ];
+            
         case 20
             m = 4;
-            intvl_low = -1;
+            intvl_low = 0;
             intvl_high = 1;
             a = BuildPolynomial(m,intvl_low, intvl_high,seed);
             
@@ -133,7 +151,7 @@ function [a,t]=RootsExamples(n,seed)
          case 22
             m = 10;
             intvl_low = 0;
-            intvl_high = 5;
+            intvl_high = 1;
             a = BuildPolynomial(m,intvl_low, intvl_high,seed);
             
          case 23

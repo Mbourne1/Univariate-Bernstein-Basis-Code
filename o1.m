@@ -122,8 +122,8 @@ switch bool_q
 end
 
 if t2 == 0
-    f_output = 1;
-    g_output = 1;
+    f_output = fx;
+    g_output = gx;
     d_output = 1;
     u_output = 1;
     v_output = 1;

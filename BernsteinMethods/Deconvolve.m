@@ -1,15 +1,21 @@
 function hi = Deconvolve(set_g)
-%% Performs a series of d deconvolutions over a set of polynomials,
+% Performs a series of d deconvolutions over a set of polynomials,
 % where each polynomial g_{i} appears in two deconvolutions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Input:
-% set_g - set of input polynomials g(y) to be deconvolved. Each g_{i} has a
-% different number of elements, so set_g is a cell array.
-% BOOL_LOG - (Boolean)
-%   1 :- Perform calculations by log method
-%   0 :- Perform calculations by standard method.
-% Output:
+
+%                               Inputs
+
+
+% set_g :   set of input polynomials g(y) to be deconvolved. Each g_{i} has a
+%           different number of elements, so set_g is a cell array.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%                               Outputs
+
+
 % h_{i} = g_{i-1}/g_{i}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -36,10 +42,16 @@ end
 function hi = Deconvolve_Independent(set_g)
 % Perform a series of deconvolutions independently, and output the
 % solutions as an array of vectors.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%                          Inputs
+
+
 % set_g : the array of polynomials on which deconvolution is performed.
-% BOOL_LOG : whether log is used in calculating binomial coefficients
-% BOOL_DENOM: whether denominator is included in the right hand side
-% vector.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % for each item in set g starting at
 for i = 1:1:length(set_g)-1
@@ -88,7 +100,7 @@ h1 = x_ls;
 end
 
 function D0C1Q1 = BuildD0C1Q1_nchoosek(f1,m0)
-%% Build a partition D_{i-1}C_{i}Q_{i} of the DCQ matrix
+% Build a partition D_{i-1}C_{i}Q_{i} of the DCQ matrix
 global bool_denom_syl
 
 m1 = length(f1)-1;
@@ -109,7 +121,7 @@ for j = 0:1:m0-m1
     end
 end
 
-% If including the denominator
+% % If including the denominator
 switch bool_denom_syl
     case 1
         denom = nchoosek(m0,m1);

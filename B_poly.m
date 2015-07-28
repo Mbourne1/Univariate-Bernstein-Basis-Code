@@ -22,7 +22,7 @@ function [f_bi]=B_poly(A)
 end
 
 
-function [t]=B_conv(rooot,mult)
+function [t]=B_conv(root,mult)
 %% This function convolves the vector [-r 1-r] with itself m times.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Inputs:
@@ -39,11 +39,11 @@ function [t]=B_conv(rooot,mult)
 
 
     if mult==1
-        t=[-rooot,1-rooot];
+        t=[-root,1-root];
     else
 
-        q=[-rooot,1-rooot];
-        t=[-rooot,1-rooot];
+        q=[-root,1-root];
+        t=[-root,1-root];
         for k=2:1:mult
             t=conv(t,q);
         end

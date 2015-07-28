@@ -217,7 +217,7 @@ w1{ite_num-1} = h1{ite_num-1};
 [~,c] = size(w1);
 
 % initialise an empty set
-wp1 = [];
+root_arr = [];
 
 % for each multiplicity in w1.
 for i = 1:1:c
@@ -225,32 +225,65 @@ for i = 1:1:c
     % if the polynomial of said multiplicity is of length 2, degree 1, then
     % only one root exists for this multiplicity. Add it to the list wp1.
     if (length(w1{i}) == 2)
-        wp = [];
-        % get the polynomial, whose roots have multiplicty i, in bernstein form
-        xx = w1{i}';
-        % Normalise the polynomial
-        xx = xx./xx(1);
-        % Convert to power form
-        yy = [xx(:,1) xx(:,2)-xx(:,1)];
-        yy = [-yy(:,1)./yy(:,2) yy(:,2)./yy(:,2)];
-        wp1 = [wp1 ; yy];
+        
+                
+        % get the polynomial, whose roots have multiplicty i, in bernstein 
+        % form, where coefficients are in terms of (1-y)^{m-i}y^{i}.
+        aw = w1{i};
+        
+        % Normalise the polynomial coefficients
+        aw = aw./aw(1);
+        
+        % Convert to power form, so that coefficients are in terms of y^{i}
+        % rather than (1-y)^{m-i}y^{i}.
+        a_pwr = [aw(1,:) ; aw(2,:)-aw(1,:)]; 
+        
+        % Obtain the root in terms of y, and set multiplicity to one.
+        a_rt = [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)];
+        
+        % add the root to the [root, mult] matrix
+        root_arr = [root_arr ; a_rt];
+        
     elseif (length(w1{i}) > 2)
         % The given multiplicity contains more than one root, such that
         % number of coefficients in greater than 2, use MATLAB roots
         % function to find roots.
         % display('Multiplicity contains more than one root. ')
         
-        w1{i}';
-        n = length(w1{i}) -1;
+        % get the polynomial a(w), whose roots have multiplicity i, in bernstein
+        % form.
+        aw = w1{i};
+        
+        % Normalise the polynomial coefficients
+        aw = aw./aw(1);
+        
+        % get the degree of a(w)
+        n = length(w1{i}) - 1;
+        
+        % get the corresponding binomial coefficients
+        bi_n = zeros(n+1,1);
         for y = 0:1:n
             bi_n(y+1) = nchoosek(n,y);
         end
-        w1{i} = w1{i}'.* bi_n;
-        xx = roots(w1{i});
-        xxy = [1- xx./(1+xx) ];
-        one = ones(length(xxy),1);
-        xxy = [xxy one];
-        wp1 = [wp1 ; xxy];
+        
+        % get aw including its binomial coefficients.
+        aw_binom = flipud(aw .* bi_n);
+        
+        % get the roots in terms of z^{i} where z^{i} =(\frac{y}{(1-y)})^{i}.
+        rt_wrt_z = roots(aw_binom);
+        
+        % get the root in terms of y
+        roots_wrt_y = [rt_wrt_z./(1.+rt_wrt_z) ]; %Edit 27/07
+        
+        % Initialise a vector of ones
+        one = ones(length(roots_wrt_y),1);
+        
+        % get the roots with respect to y, and their multiplicities all set
+        % to one.
+        roots_wrt_y = [roots_wrt_y one];
+        
+        % add the roots to the array of roots
+        root_arr = [root_arr ; roots_wrt_y];
     end
 end
 
@@ -269,7 +302,7 @@ end
 
 
 
-roots_calc = [wp1(:,1) flipud(roots_multiplicty)];
+roots_calc = [root_arr(:,1) flipud(roots_multiplicty)];
 
 %% Print the calculated roots and the corresponding multiplicities.
 fprintf('\nROOTS CALCULATED BY MY METHOD \n');
