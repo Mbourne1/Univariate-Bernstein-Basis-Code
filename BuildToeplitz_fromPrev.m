@@ -1,4 +1,4 @@
-function C1a = BuildToeplitz2(m,n,k,C_0a)
+function C1a = BuildToeplitz_fromPrev(m,n,k,C_0a)
 % Build Toeplitz Matrix (Partition of Sylvester Matrix) in the 'Build Up' method.
 % m : degree of polynomial f n : degree of polynomial g k : index of
 % subresultant S_{k} to be built. C_0a : the preceeding Partition, from

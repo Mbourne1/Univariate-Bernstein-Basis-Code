@@ -26,12 +26,14 @@ function hi = Deconvolve(set_g)
 global bool_deconvolve
 
 switch bool_deconvolve
-    case 0
+    case 'single'
         % Deconvolve independent method
         hi = Deconvolve_Independent(set_g);
-    case 1
+    case 'batch'
         % Deconvolve Batch Method
         hi = Deconvolve_Batch(set_g);
+    otherwise
+        error('bool_deconvolve must be either single or batch')
 end
 
 
@@ -123,7 +125,8 @@ end
 
 % % If including the denominator
 switch bool_denom_syl
-    case 1
+    case 'y'
+        % Included denominator in sylvester matrix
         denom = nchoosek(m0,m1);
         D0C1Q1 = D0C1Q1 ./ denom ;
 end

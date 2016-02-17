@@ -1,4 +1,4 @@
-function [dw] = GetGCD(uw,vw,fw_n,gw_n,t)
+function [dx] = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta)
 % Get The Coefficients of the approximate GCD using Quotient Polynomials.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -26,35 +26,46 @@ global Bool_APFBuildMethod
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get degree of polynomials f
-m = length(fw_n)-1;
-
+[r,c] = size(fx_n);
+m = r-1;
 % Get degree of polynomial g
-n = length(gw_n)-1;
+[r,c] = size(gx_n);
+n = r-1;
+
+% Get fw and gw
+fw_n = fx_n .* theta.^(0:1:m)';
+gw_n = gx_n .* theta.^(0:1:n)';
+
+% Get uw and vw
+uw = ux .* theta.^(0:1:m-t)';
+vw = vx .* theta.^(0:1:n-t)';
 
 % Build solution vector bk = [f;g]
-bk = [fw_n ; gw_n];
+bk = [fw_n ; alpha .* gw_n];
 
 % Build the coefficient vector HCG
 
 switch Bool_APFBuildMethod
-    case 1 % use my method.
+    case 'rearranged' % use rearranged method with common denominator
         switch bool_log
-            case 1 % use logs
+            case 'y' % use logs
                 C1 =  BuildC1_log(uw,m,t);
                 C2 =  BuildC1_log(vw,n,t);
                 
-            case 0 % use nchoosek
+            case 'n' % use nchoosek
                 C1 =  BuildC1_nchoosek(uw,m,t);
                 C2 =  BuildC1_nchoosek(vw,n,t);
         end
         HCG = [C1 ; C2];
-    case 0 % use premade matrix method
+    case 'standard' % use premade matrix method
         
         H = BuildH(m,n);
         C = BuildC(uw,vw,t);
         G = BuildG(t);
         
         HCG = H*C*G;
+    otherwise
+        error('Bool_APFBuildMethod must either be (standard) or (rearranged)')
 end
 
 
@@ -84,6 +95,7 @@ catch
     fprintf('Could not perform QR Decomposition used in obtaining the coefficients of the GCD.')
 end
 
+dx = dw./(theta.^(0:1:t)');
 
 
 end
@@ -121,13 +133,18 @@ end
 
 
 switch bool_denom_apf
-    case 1 % Denominator included
+    case 'y' 
+        % Denominator included
                 
         DenomEval_log = lnnchoosek(m,t);
         
         DenomEval_exp = 10.^DenomEval_log;
         
         C = C./DenomEval_exp;
+    case 'n'
+        % Exclude Denominator
+    otherwise 
+        error('bool_denom_apf')
 end
 
 end
@@ -145,87 +162,17 @@ for j= 0:1:t
 end
 
 switch bool_denom_apf
-    case 1
+    case 'y'
+        % Include the denominator
         C = C./nchoosek(m,t);
+    case 'n'
+        % Exclude the denominator
+    otherwise
+        error('bool_denom_apf must be either y or n')
 end
 
 end
 
 
-function H = BuildH(m,n)
-% Build the diagonal matrix H_{k}^{-1} consisting of binomial coefficients
-% corresponding to f and g. The Coefficient matrix is given by
-% H_{k}^{-1}C_{k}(u,v)G_{k}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Inputs:
-% m : degree of polynomial f
-% n : degree of polynomial g
-% t : degree of gcd.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Build partition H1, diagonal binomial coefficients corresponding to
-% polynomial f.
-H1 = BuildH_Partition(m);
-
-% Build partition H2, diagonal binomial coefficients corresponding to
-% polynomial g.
-H2 = BuildH_Partition(n);
-
-% Form diagonal matrix of the two partitions.
-H = blkdiag(H1,H2);
-end
-
-function H1 = BuildH_Partition(m)
-%% Build partition of the Matrix H.
-
-% Initalise empty vector H1
-H1 = zeros(1,m+1);
-
-% For each element in H1, get the binomial coefficient \binom{m}{i}
-for i=0:1:m
-    H1(i+1) = 1./nchoosek(m,i);
-end
-
-% Form matrix from vector by diagonalizing H1.
-H1 = diag(H1);
-
-end
-
-function C = BuildC(u,v,t)
-%% Build the Matric C(f,g) = [C(f) | C(g)] \in \mathbb{R}^{(m+n+2)\times(k+1)}
-
-% Build partition of C corresponding to polynomial u
-C1 = BuildC_Partition(u,t);
-
-% Build partition of C corresponding to polynomial v
-C2 = BuildC_Partition(v,t);
-
-C = [C1 ; C2];
-end
-
-function C1 = BuildC_Partition(u,t)
-
-m = length(u)-1 +t;
-
-C1 = zeros(m+1,t+1);
-
-% for each column in C1
-for j=0:1:t
-    % for each coefficient u_{i} in u
-    for i=j:1:j+m-t
-        C1(i+1,j+1) = u(i-j+1) .* nchoosek(m-t,i-j);
-    end
-end
-end
-
-function G = BuildG(t)
-
-G = zeros(1,t+1);
-
-for i=0:1:t
-    G(i+1) = nchoosek(t,i);
-end
 
 
-G = diag(G);
-end

@@ -1,22 +1,23 @@
 
 function [P] = BuildDP(m,n,theta,mincol,t)
 % Build the matrix DP.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 %                              Inputs
-
+%
 % m :   Degree of polynomial f
-
+%
 % n :   Degree of polynomial g
-
+%
 % theta :   Optimal value of theta
-
+%
 % num_mincol :  index of column c_{k} removed from S_{k}(f,g), index starts
 %               at 1
-
+%
 % t :   Degree of GCD
+%
+%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if mincol <= (n-t+1) % the optimal column is from poly f
     
@@ -86,10 +87,12 @@ global bool_log
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch bool_log
-    case 1 % use log
+    case 'y' % use log
         G = LeftDG_Build_log(m,n,t,mincol,theta);
-    case 0 % use nchoosek
+    case 'n' % use nchoosek
         G = LeftDG_Build_nchoosek(m,n,t,mincol,theta);
+    otherwise
+        error('bool_log must be either y or n')
 end
 end
 
@@ -121,12 +124,14 @@ global bool_log
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch bool_log
-    case 1 % use logs
+    case 'y' % use logs
         G = RightDG_Build_log(n,m,t,mincol,theta);
-    case 0 % use nchoosek
+    case 'n' % use nchoosek
         warning('off','all');
         G = RightDG_Build_nchoosek(n,m,t,mincol,theta);
         warning('on','all');
+    otherwise 
+        error('bool_log must be either y or n')
 end
 end
 
@@ -147,8 +152,7 @@ function [G] = LeftDG_Build_nchoosek(m,n,t,num_mincolumn,theta)
 
 % theta -
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                           Global Variables
 
 % BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
@@ -179,8 +183,13 @@ G = diag(G);
 
 
 switch bool_denom_syl
-    case 1 % If denominator is included in coefficient matrix.
+    case 'y' 
+        % Included denominator in coefficient matrix.
         G = G./ nchoosek(m+n-t,n-t);
+    case 'n'
+        % Exclude
+    otherwise 
+        error('bool_denom_syl must be either y or n')
 end
 
 end
@@ -238,7 +247,8 @@ end
 G = diag(G);
 
 switch bool_denom_syl
-    case 1 % if denominator is included in coefficient matrix.
+    case 'y' 
+        % Included denominator in coefficient matrix.
         
         % Evaluate binomial coefficient in denominator in logs
         Denom_Eval_log = lnnchoosek(m+n-t,n-t);
@@ -248,6 +258,11 @@ switch bool_denom_syl
         
         % Divide G by the denominator.
         G = G./Denom_Eval_exp;
+    case 'n'
+        % Exclude denominator from coefficient matrix
+    otherwise
+        error('bool_denom_syl must be either y or n')
+        
 end
 
 
@@ -299,8 +314,14 @@ end
 G = diag(G);
 
 switch bool_denom_syl
-    case 1 % if denominator is included in coefficient matrix.
+    case 'y' 
+        % Denominator is included in coefficient matrix.
         G = G./ nchoosek(m+n-t,m-t);
+    case 'n'
+        % Denominator is excluded from the coefficient matrix
+    otherwise
+        error('bool_denom_syl must be either y or n')
+        
 end
 
 
@@ -360,7 +381,7 @@ end
 G = diag(G);
 
 switch bool_denom_syl
-    case 1
+    case 'y'
         % Include the denominator
         
         Denom_log = lnnchoosek(m+n-t,n);
@@ -368,6 +389,10 @@ switch bool_denom_syl
         Denom_exp = 10.^Denom_log;
         
         G = G./ Denom_exp;
+    case 'n'
+        % Exclude the denominator
+    otherwise
+        error('bool_denom_syl must be either y or n')
 end
 
 end

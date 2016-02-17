@@ -49,7 +49,7 @@ function opt_col = GetOptimalColumn(Sk)
 %Obtain the column for which the residual is minimal.
     [~,opt_col] = min(log10(residuals_QR));
 
-fprintf('Optimal column for removal is %i\n\n',opt_col);
+%fprintf('Optimal column for removal is %i\n\n',opt_col);
 
 
 end

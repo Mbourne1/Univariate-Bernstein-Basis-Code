@@ -1,15 +1,15 @@
-function HYQ = BuildHYQ(dx,m,n,alpha,theta)
+function HYQ = BuildHYQ(dx,m,n,theta)
 
 
-    HYQ_v1 = BuildHYQ1(dx,m,n,alpha,theta);
-    HYQ_v2 = BuildHYQ2(dx,m,n,alpha,theta);
+    HYQ_v1 = BuildHYQ1(dx,m,n,theta);
+    HYQ_v2 = BuildHYQ2(dx,m,n,theta);
     
     HYQ = HYQ_v1;
     
     
 end
 
-function HYQ = BuildHYQ1(dx,m,n,alpha,theta)
+function HYQ = BuildHYQ1(dx,m,n,theta)
 
 % Builds the Matrix H.Y.Q where Y_{k} performs a change of variable.
 % E(w).d = Y(d).w where d is vector of coefficients of GCD, and w is vector
@@ -45,14 +45,15 @@ global bool_log
 
 
 switch bool_log
-    case 0 % Use Nchoosek
+    case 'n' % Use Nchoosek
         A = BuildHYPartition_nchoosek(dx,m,theta);
         B = BuildHYPartition_nchoosek(dx,n,theta);
         
-    case 1 % use logs
+    case 'y' % use logs
         A = BuildHYPartition_log(dx,m,theta);
         B = BuildHYPartition_log(dx,n,theta);
-        
+    otherwise 
+        error('err')
 end
 
 HYQ = blkdiag(A,B);
@@ -100,9 +101,13 @@ for j = 0:1:(m-t)
 end
 
 switch bool_denom_apf
-    case 1
+    case 'y'
         % include the denominator
         A = A./nchoosek(m,t);
+    case 'n'
+        A = A;
+    otherwise 
+        error(err)
 end
 end
 
@@ -163,11 +168,13 @@ end
 
 
 switch bool_denom_apf
-    case 1
+    case 'y'
         Denom_eval_log = lnnchoosek(m,t);
         Denom_eval_exp = 10.^Denom_eval_log;
         A = A ./ Denom_eval_exp;
-        
+    case 'n'
+    otherwise
+        error(err)
 end
 
 
@@ -175,7 +182,7 @@ end
 
 
 
-function HYQ = BuildHYQ2(dx,m,n,alpha,theta)
+function HYQ = BuildHYQ2(dx,m,n,theta)
 
 % Get the degree of the gcd
 t = length(dx)-1;

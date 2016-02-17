@@ -1,13 +1,4 @@
 function DY = BuildDY(m,n,t,opt_col,x,alpha,theta)
-
-   DY =  BuildDY1(m,n,t,opt_col,x,alpha,theta);
-
-   
-end
-
-
-
-function DY = BuildDY1(m,n,t,opt_col,x,alpha,theta)
 % USED IN SNTLN function
 
 % Construct Matrix DY, such that E_{k}(z)x = D^{-1}Y_{k}(x)z, where E_{k}(z) is a 
@@ -52,11 +43,11 @@ global bool_log
 
 
 switch bool_log
-    case 0 % Use nchoosek method
+    case 'n' % Use nchoosek method
         
         DY = BuildDY_nchoosek(m,n,t,opt_col,x,alpha,theta);
         
-    case 1 % Use Logs method
+    case 'y' % Use Logs method
         
         DY = BuildDY_log(m,n,t,opt_col,x,alpha,theta);
 end
@@ -112,9 +103,9 @@ c_leftmatrix = (n-t+1);
 c_rightmatrix = (m-t+1);
 
 
-X1 = x_ls_wrt_w(1:c_leftmatrix);
+Xv_w = x_ls_wrt_w(1:c_leftmatrix);
 
-X2 = x_ls_wrt_w(c_leftmatrix+1:c_leftmatrix+c_rightmatrix);
+Xu_w = x_ls_wrt_w(c_leftmatrix+1:c_leftmatrix+c_rightmatrix);
 
 
 %Build Empty Sylvester Matrix
@@ -125,26 +116,26 @@ Y1 = zeros(m+n-t+1,m+1);
 Y2 = zeros(m+n-t+1,n+1);
 
 % Build the first half of the matrix DY
+
 % For each column j = 0,...,
 for j=0:1:m
     % For each row i = j,...,
-    for i=j:1:j + length(X1)-1
+    for i=j:1:j + length(Xv_w)-1
         Y1(i+1,j+1) = ...
-            X1(i-j+1) .*(theta^(j)) ...
+            Xv_w(i-j+1) .*(theta^(j)) ...
             .* nchoosek(m+n-t-i,n-t-(i-j)) ...
             .* nchoosek(i,i-j);
     end
 end
-%X1(i-j+1) .*(theta^(j)) ...
 
 
 % Build the second half of the matrix DY
 % for each column j = 0,...,n
 for j=0:1:n
     % for each row i = j,...,
-    for i=j:1:j + length(X2)-1
+    for i=j:1:j + length(Xu_w)-1
         Y2(i+1,j+1)= ...
-            X2(i-j+1).*(theta^(j)) .* ...
+            Xu_w(i-j+1).*(theta^(j)) .* ...
             nchoosek(m+n-t-i,m-t-(i-j)) .*...
             nchoosek(i,i-j);
     end
@@ -153,11 +144,11 @@ end
 
 
 switch bool_denom_syl
-    case 1
+    case 'y'
         %Include the denominator
         Y1 = Y1./nchoosek(m+n-t,n-t);
         Y2 = alpha.*Y2./nchoosek(m+n-t,m-t);
-    case 0
+    case 'n'
         % Exclude the denominator
         
         Y2 = alpha.*Y2;
@@ -262,7 +253,8 @@ end
 
 
 switch bool_denom_syl
-    case 1 % Include the denominator in the coefficient matrix.
+    case 'y' 
+        % Include the denominator in the coefficient matrix.
         
         % Evaluate the binomial coefficient in the denominator of the first
         % partiton
@@ -286,7 +278,8 @@ switch bool_denom_syl
         % Divide the second partition by the constant common denominator.
         Y2 = (alpha.*Y2)./Denom2_eval_exp;
         
-    case 0 % Exclude the denominator
+    case 'n' 
+        % Exclude the denominator from the Sylvester Matrix
         Y2 = alpha.*Y2;
         
 end

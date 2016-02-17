@@ -1,4 +1,4 @@
-function [f_roots,g_roots] = BuildRandomPolynomial(m,intvl_low,intvl_high,seed)
+function [f_roots,g_roots] = BuildPolynomial(m,intvl_low,intvl_high,seed)
     % ignores the interval size given on input
     % does not consider close roots, which may be shared in f and g, but not
     % considered in d.

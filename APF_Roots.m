@@ -96,28 +96,31 @@ Partial_uw_wrt_theta = vecmk .*(uw./theta(ite));
 
 % Build H_{t}C(f,g)G_{t}
 switch Bool_APFBuildMethod
-    case 0
+    case 'standard'
         H1 = BuildH1(m);
         C1 = BuildC1Partition(uw,t);
         G  = BuildG(t);
         H1C1G = H1*C1*G;
-    case 1
+    case 'rearranged'
         
         % Edit 02/06/2015 17:00:00
         % Change the way HCG matrix is built
         H1C1G       = BuildHCGPart(uw,t);
-        
+    otherwise
+        error()
 end
 
 
 
 % Build HCG with respect to theta
 switch Bool_APFBuildMethod
-    case 0 % Build Naive method, calculate H C and G independently
+    case 'standard' 
+        % Build Naive method, calculate H C and G independently
         C1_wrt_theta    = BuildC1Partition(Partial_uw_wrt_theta,t);
         H1C1G_wrt_theta = H1*C1_wrt_theta*G;
 
-    case 1 % Build the matrix HCG
+    case 'rearranged'
+        % Build the matrix HCG
         H1C1G_wrt_theta     = BuildHCGPart(Partial_uw_wrt_theta,t);   
 end
 
@@ -221,23 +224,26 @@ while condition > (max_error) && ite < max_iterations
 
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G
     switch Bool_APFBuildMethod
-        case 0
+        case 'standard'
             C1      = BuildC1Partition(uw,t);
             H1C1G   = H1*C1*G;
-        case 1
+        case 'rearranged'
             H1C1G   = BuildHCGPart(uw,t); 
+        otherwise
+            error()
     end
 
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G with respect to
     % theta
     switch Bool_APFBuildMethod
-        case 0
+        case 'standard'
             C1_wrt_theta    = BuildC1Partition(uw_wrt_theta,t);
             H1C1G_wrt_theta = H1*C1_wrt_theta*G;
 
-        case 1   
+        case 'rearranged'
             H1C1G_wrt_theta = BuildHCGPart(uw_wrt_theta,t);
-      
+        otherwise
+            error('Err')
     end
     
     % Get perturbation vector, and seperate in to perturbations of f,
@@ -252,11 +258,11 @@ while condition > (max_error) && ite < max_iterations
     
     % Build Matrices H_{1}E_{1}(z1)G and H_{2}E_{2}(z2)G
     switch Bool_APFBuildMethod
-        case 0
+        case 'standard'
             E1 = BuildC1Partition(z1w,t);
             H1E1G = H1*E1*G;
 
-        case 1 
+        case 'rearranged'
             H1E1G = BuildHCGPart(z1w,t);
 
     end
@@ -265,13 +271,14 @@ while condition > (max_error) && ite < max_iterations
     % H_{2}E_{2}(z2)G with respect to theta
     
     switch Bool_APFBuildMethod
-        case 0
+        case 'standard'
             E1_wrt_theta = BuildC1Partition(z1w_wrt_theta,t);
             H1E1G_wrt_theta = H1 * E1_wrt_theta * G;
  
-        case 1
+        case 'rearranged'
             H1E1G_wrt_theta = BuildHCGPart(z1w_wrt_theta,t);
-            
+        otherwise
+            error('err')
     end
     
     
@@ -311,12 +318,14 @@ while condition > (max_error) && ite < max_iterations
     
     % Calculate Matrix H(C+E)G
     switch Bool_APFBuildMethod
-        case 0
+        case 'standard'
             H1C1E1G = H1 * (C1+E1) * G;
             HCEG = H1C1E1G;
-        case 1
+        case 'rearranged'
             H1C1E1G = BuildHCGPart(uw+z1w,t);
             HCEG    = H1C1E1G;
+        otherwise
+            error('Err')
     end
     
     % Calculate the new residual

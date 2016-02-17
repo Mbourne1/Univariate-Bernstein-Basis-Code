@@ -1,6 +1,6 @@
 function [] = DegreeElevateMatrixMethod(fx,r)
-% given polynomial coefficients fx in Bernstein basis, and number of degree
-% elevations given by r. Perform r fold degree elevation.
+% Given the coefficients of the polynomial f(x) in Bernstein basis, and 
+% the number of degree elevations r. Perform r fold degree elevation.
 
 % let m be the degree of polynomial f
 m = length(fx)-1;
@@ -8,6 +8,7 @@ m = length(fx)-1;
 for i = 0:1:m+r
     D(i+1) = nchoosek(m+r,i)
 end
+
 D = diag(1./D);
 
 E = zeros(m+r+1,m+1)

@@ -29,29 +29,3 @@ for c = a:inc:b
 end
 
 end
-
-function [xx] =  Bernstein_Eval(f,c)
-% Evaluate function f at point c.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Inputs.
-
-
-% f :   Polynomial f
-
-% c :   Point at which we evaluate polynomial f.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
- y = c;
- m = length(f)-1;
- x = zeros(length(f),1);
- 
-    for i = 0:length(f)-1
-        x(i+1) = f(i+1) .* nchoosek(m,i) .* (1-y)^(m-i) .* y^i ;
-    end
-    
-    xx = sum(x);
-    
-end

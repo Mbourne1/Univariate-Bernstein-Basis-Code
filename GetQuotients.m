@@ -1,36 +1,23 @@
-function [uw,vw ] = GetQuotients(Aki,cki,n,t,opt_col)
-% obtain coefficients of quotient polynomials u and v
+function [ux,vx] = GetQuotients(fx_n,gx_n,t,alpha,theta)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Get degrees of input polynomials
+[r,c] = size(fx_n);
+m = r-1;
+[r,c] = size(gx_n);
+n = r-1;
 
-%                           Inputs
 
-% Aki :- LHS Sylvester matrix excluding optimal column
+% Build the t^th subresultant
+Sk = BuildSubresultant(fx_n,gx_n,t,alpha,theta);
 
-% cki :- RHS Column, removed from sylvester matrix S_{t}
+% Get the optimal column for removal
+[opt_col] = GetOptimalColumn(Sk);
 
-% t :- Degree of the GCD.
+% Remove optimal column
+Aki = Sk;
+Aki(:,opt_col) = [];
+cki = Sk(:,opt_col);
 
-% opt_col :- index of the removed column.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Outputs.
-
-% uw and vw are in the modified bernstein form, u_{i}\theta^{i} and 
-% v_{i}\theta^{i}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Remove the optimal column from the sylvester matrix to form Ak and ck,
-% where Ak is the Sylvester Matrix with the column removed, and ck is the
-% removed column.
-
-% Display the condition number of the coefficient matrix DTQ (The Sylvester
-% Matrix) used to calculate the solution vector x = [-v;u]
-
-%display('Condition Number of DTQ used in finding quotient polynomials')
-%disp(cond(Aki));
 inversionMethod = 0;
 
 switch inversionMethod
@@ -59,8 +46,12 @@ vecx =[
 vw      =   vecx(1:n-t+1);
 uw      =   -vecx(n-t+2:end);
 
+% Divide vw and uw to obtain ux and vx
 
+theta_nt = theta.^(0:1:n-t);
+theta_mt = theta.^(0:1:m-t);
 
-
+vx = vw./theta_nt';
+ux = uw./theta_mt';
 
 end

@@ -1,103 +1,72 @@
-function [] = o_gcd(ex,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_DENOM,BOOL_PREPROC,seed)
-% Obtain the gcd of two polynomials defined in the example file.
+function [] = o_gcd(ex,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_PREPROC,seed)
+% Obtain the Greatest Common Divisor (GCD) of two polynomials defined in
+% the example file.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ex - (Int) Example Number
-% emin - Signal to noise ratio (minimum)
-% emax - Signal to noise ratio (maximum)
-
+%
+%   Inputs.
+%
+% ex:   Example Number
+%
+% emin: Signal to noise ratio (minimum)
+%
+% emax: Signal to noise ratio (maximum)
+%
+% BOOL_SNTLN
+%
+% BOOL_APF
+%
+% BOOL_DENOM
+%
+% BOOL_PREPROC
+%
+% seed
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 addpath 'BernsteinMethods'
 addpath 'Bezoutian'
 
-
-
-global fignum
-fignum = 50;
-
-
-% Initialise global variables to be used across the code
-
-% bool_bezout (boolean)
-% 1 - Include bernstein-bezoutian matrix method for comparison purposes.
-% 0 - Dont Include bernstein bezoutian matrix
 global bool_bezout
-bool_bezout = 1;
-
-% BOOL_SNTLN - (Boolean)
-%    1 :- Include Structured Perturbations in Sylvester Matrix S_{k} before
-%    calculating quotients u_{k}, v_{k} and GCD d_{k}.
-%    0 :- Don't Include Structured Perturbations.
 global bool_sntln
-bool_sntln = BOOL_SNTLN;
-
-% BOOL_APF - (Boolean)
-%    1 :- Apply Structured Perturbations to the Approximate Polynomial
-%    Factorisation, before obtaining GCD d_{k}.
-%    0 :- Don't Include Structured Perturbations.
 global bool_apf
+global bool_denom_syl
+global bool_denom_apf
+global bool_preproc
+global bool_q
+global bool_log
+global PLOT_GRAPHS
+global MAX_ERROR_SNTLN
+global MAX_ITERATIONS_SNTLN
+global MAX_ERROR_APF
+global MAX_ITERATIONS_APF
+global bool_sylvesterBuildMethod
+global Bool_APFBuildMethod
+global geometricMeanMethod
+global SEED
+
+bool_bezout = 0;
+bool_sntln = BOOL_SNTLN;
 bool_apf = BOOL_APF;
 
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
-global bool_denom_syl
-bool_denom_syl = BOOL_DENOM;
+bool_denom_syl = 'y';
+bool_denom_apf = 'y';
 
-% BOOL_PREPROC - (Boolean) It has been shown that the inclusion of
-% preprocessors Geometric mean, scaling by alpha, change of independent
-% variable, yield improved results.
-%   1 :- Include Preprocessors.
-%   0 :- Exclude Preprocessors.
-global bool_preproc
 bool_preproc = BOOL_PREPROC;
+bool_q = 'y';
+bool_log = 'n';
 
-% BOOL_Q - (Boolean) Consists of binomial coefficients of coprime
-% polynomials.
-%   1 :- Include the binomial coefficients from the null space in the
-%    Sylvester Matrix.
-%   0 :- Exclude the binomial coefficients from the null space in the
-%    Sylvester Matrix.
-global bool_q
-bool_q = 1;
+PLOT_GRAPHS = 'n';
 
-% BOOL_LOG - (Boolean)
-%   1 :- Perform combinatorial calculations by log method
-%   0 :- Perform combinatorial calculations by standard method.
-global bool_log
-bool_log = 1;
+MAX_ITERATIONS_SNTLN = 50;
+MAX_ITERATIONS_APF = 50;
 
-% bool_plotgraphs (boolean)
-% 1 - Plot graphs for computations of calculating gcd
-% 0 - Avoid plotting graphs (Speed up)
-global bool_plotgraphs
-bool_plotgraphs = 1;
+MAX_ERROR_APF = 1e-10;
+MAX_ERROR_SNTLN = 1e-10;
 
-% set maximum error for sntln problem
-global max_error
-max_error = 1e-15;
+SEED = seed;
 
-% set maximum number of iterations in the SNTLN and APF problem
-global max_iterations
-max_iterations = 50;
-
-% bool_sylvesterBuildMethod (boolean)
-% 1 :   Build based on individual elements of the Sylvester matrix, each
-%       (i,j) element is calculated independently.
-% 0 :   Use Naive method calculate D, calculate S, calculate Q, then
-%       calculate DTQ.
-global bool_sylvesterBuildMethod
-bool_sylvesterBuildMethod = 1;
-
-% geometric mean method (bool)
-% 0 - Matlab Method
-% 1 - My Geometric Mean
-% 2 - Set Geometric Mean = 1
-global geometricMeanMethod
-geometricMeanMethod = 0;
-
+bool_sylvesterBuildMethod = 'standard';
+Bool_APFBuildMethod = 'standard';
+geometricMeanMethod = 'matlab';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % nominal value used when:
@@ -107,43 +76,39 @@ geometricMeanMethod = 0;
 % small, to assume that the sylvester matrix is rank deficient)
 % then degree is one. otherwise degree is zero
 global nominal_value
-nominal_value = 100;
+nominal_value = 10;
 
 % let x be the maximum change in ratio_maxmin_rowsum vector if abs(x) <
 % nominal_value_2, if the change is minimal, then all subresultants should
 % be classed as rank deficient.
 
 global min_delta_mag_rowsum
-min_delta_mag_rowsum = 1;
+min_delta_mag_rowsum = 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% output_format (bool) 
+% output_format (bool)
 % the format of output from file o1.m
 %   1 - output u v and d in terms of w (coefficients include theta)
-%   0 - output u v and d in terms of x 
+%   0 - output u v and d in terms of x
 global output_format
-output_format = 0;
+output_format = 'dx';
 
-% Bool_APFBuildMethod
-% 1 :   Build based on individual elements of the Sylvester matrix, each
-%       (i,j) element is calculated independently.
-% 0 :   Use Naive method calculate D, calculate S, calculate Q, then
-%       calculate DTQ.
-global Bool_APFBuildMethod
-Bool_APFBuildMethod = 1;
-
+%%
 % bool_SNTLN_ROOTS
-%   1 - Use Roots based SNTLN method, which has the added constraints that
-%   g is the derivative of f.
-%   0 - Use standard SNTLN where f and g are unconstrained
-global bool_SNTLN_Roots 
-bool_SNTLN_Roots = 0;
+% RootSpecificSNTLN :   Use Roots based SNTLN method, which has the added constraints that
+%                       g is the derivative of f.
+% StandardSNTLN :   Use standard SNTLN where f and g are unconstrained
+global bool_SNTLN_Roots
+bool_SNTLN_Roots = 'StandardSNTLN';
 
 % bool_APF_Roots
-%   1 - Use roots based APF method, which has added constraings.
-%   0 - use standard apf method where f and g are unconstrained.
+% RootSpecificAPF :   Use roots based APF method, which has added constraings.
+% StandardAPF :   Use standard apf method where f and g are unconstrained.
 global bool_APF_Roots
-bool_APF_Roots = 0;
+bool_APF_Roots = 'StandardAPF';
+%%
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                Consistency of input parameters.
@@ -170,7 +135,7 @@ if (bool_q == 0)
     fprintf('Denominator must be included when excluding matrix Q \n');
 end
 
-% Print the parameters.
+%% Print the parameters.
 fprintf('--------------------------------------------------------------------------- \n')
 fprintf('PARAMETERS:\n')
 fprintf('\n')
@@ -191,50 +156,42 @@ addpath 'Examples'
 
 
 % Get roots from example file
-[f_roots, g_roots,d_roots,rankloss,u_roots,v_roots] = PreviousExamples(ex,seed);
+[f_roots, g_roots,d_roots,t_exact,u_roots,v_roots] = Examples_GCD(ex);
 
-% print out the exact roots of f,g and d
-fprintf('\nRoots of f \n');
-fprintf('\t Root \t \t \t \t\t \t \t   Multiplicity \n')
-fprintf('%30.15f \t \t \t %30.15f   \t \t \n',[f_roots(:,1),f_roots(:,2)]');
-fprintf('\n');
-
-fprintf('\nRoots of g \n');
-fprintf('\t Root \t \t \t \t\t \t \t   Multiplicity \n')
-fprintf('%30.15f \t \t \t %30.15f   \t \t \n',[g_roots(:,1),g_roots(:,2)]');
-fprintf('\n');
-
-fprintf('\nRoots of d \n');
-fprintf('\t Root \t \t \t \t\t \t \t   Multiplicity \n')
-fprintf('%30.15f \t \t \t %30.15f   \t \t \n',[d_roots(:,1),d_roots(:,2)]');
-fprintf('\n');
-
-vec_dist = zeros(length(f_roots),length(g_roots));
-
-% for each root in f, get the minimum distance to roots in g
-for i = 1:1:length(f_roots)
-    for j = 1:1:length(g_roots)
-        vec_dist(i,j) = f_roots(i,1) - g_roots(j,1) ;
-    end
-end
+PrintRoots('f',f_roots)
+PrintRoots('g',g_roots)
+PrintRoots('d',d_roots)
 
 % given the roots of f and g, plot them on a line
-figure(50)
-hold on
-title('Roots of f and g on the real interval')
-scatter(f_roots(:,1),ones(size(f_roots(:,1))),'s','DisplayName','Roots of f')
-scatter(g_roots(:,1),ones(size(g_roots(:,1))),'x','DisplayName','Roots of g')
-scatter(d_roots(:,1),ones(size(d_roots(:,1))),'o','DisplayName','Roots of GCD')
-xlabel('Real')
-
-legend(gca,'show')
-hold off
+switch PLOT_GRAPHS
+    case 'n'
+        % Dont plot graphs
+    case 'y'
+        figure('name','Exact roots of f(x), g(x) and d(x)')
+        hold on
+        title('Roots of f and g on the real interval')
+        scatter(f_roots(:,1),ones(size(f_roots(:,1))),'s','DisplayName','Roots of f(x)')
+        try
+            scatter(g_roots(:,1),ones(size(g_roots(:,1))),'x','DisplayName','Roots of g(x)')
+        catch
+            fprintf('could not plot exact roots of g\n')
+        end
+        try
+            scatter(d_roots(:,1),ones(size(d_roots(:,1))),'o','DisplayName','Roots of d(x)')
+        catch
+            fprintf('Could not plot exact roots of d.\n')
+        end
+        xlabel('Real')
+        legend(gca,'show')
+        hold off
+    otherwise
+        error('error PLOT_GRAPH is either y or n')
+end
 
 
 % Display the exact, expected result for the degree of the GCD
-fprintf('Degree of GCD of exact input polynomials: %i \n',rankloss)
+fprintf('Degree of GCD of exact input polynomials: %i \n',t_exact)
 fprintf('--------------------------------------------------------------------------- \n')
-
 
 
 % Using roots stored as f and g and obtain polys in scaled bernstein basis
@@ -260,41 +217,11 @@ n = length(g_exact_bi) -1;
 t = length(d_exact_bi) - 1;
 
 % Get sets of binomial coefficients corresponding to each vector
-
-% Bi_m - Binomials corresponding to polynomial f.
-Bi_m = zeros(m+1,1);
-
-% Bi_n - Binomials corresponding to polynomial g.
-Bi_n = zeros(n+1,1);
-
-% Bi_t - Binomials corresponding to polynomial d.
-Bi_t = zeros(t+1,1);
-
-% Bi_nt - Binomails corresponding to polynomial v.
-Bi_nt = zeros(n-t+1,1);
-
-% Bi_mt - Binomials corresponding to polynomial u.
-Bi_mt = zeros(m-t+1,1);
-
-% supress warnings regarding the nchoosek
-
-% Get the binomial coefficients corresponding to the coefficients of
-% f,g,d,v,u.
-for i=1:1:m+1
-    Bi_m(i) = nchoosek(m,i-1);
-end
-for i=1:1:n+1
-    Bi_n(i) = nchoosek(n,i-1);
-end
-for i=1:1:t+1
-    Bi_t(i) = nchoosek(t,i-1);
-end
-for i=1:1:m-t+1
-    Bi_mt(i) = nchoosek(m-t,i-1);
-end
-for i=1:1:n-t+1
-    Bi_nt(i) = nchoosek(n-t,i-1);
-end
+Bi_m = GetBinomials(m);
+Bi_n = GetBinomials(n);
+Bi_t = GetBinomials(t);
+Bi_mt = GetBinomials(m-t);
+Bi_nt = GetBinomials(n-t);
 
 % Get exact coefficients of a_{i},b_{i},u_{i},v_{i} and d_{i} of
 % polynomials f, g, u, v and d in standard bernstein form.
@@ -305,115 +232,85 @@ d_exact = d_exact_bi./Bi_t;
 u_exact = u_exact_bi./Bi_mt;
 v_exact = v_exact_bi./Bi_nt;
 
-
+PrintPoly(f_exact,'f')
+PrintPoly(g_exact,'g')
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
-% fx = $\hat{a}_{i}  + delta\hat{a}_{i}  == a_{i}$
-% gx = $\hat{b}_{i}  + delta\hat{b}_{i}  == b_{i}$
-
 fx = VariableNoise(f_exact,emin,emax,seed);
 gx = VariableNoise(g_exact,emin,emax,seed);
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[f_calc,g_calc,d_calc,u_calc,v_calc] = o1(fx,gx);
-
-
-% output_format (bool)
-% The format of output 
-%   1 - output u v and d in terms of w (coefficients include theta)
-%   0 - output u v and d in terms of x
-switch output_format
-    case 0 % output in terms of fx,gx,dx 
-        f_calc = f_calc;
-        g_calc = g_calc;
-        u_calc = u_calc;
-        v_calc = v_calc;
-        d_calc = d_calc;
-        
-    case 1 % output in terms of fw,gw,dw
-        f_calc = f_calc ./ (theta.^vecm);
-        g_calc = g_calc ./ (theta.^vecn);
-        u_calc = u_calc ./ (theta.^vecmk);
-        v_calc = v_calc ./ (theta.^vecnk);
-        d_calc = d_calc ./ (theta.^vecnk);
-        
-end
-
-switch bool_bezout
-    % Obtain the gcd by bezoutian method
-    case 1
-        fprintf('Using Bezout Method')
-        o_Bezout(fx,gx)
-    case 0
-        
-end
+[~,~,d_calc,u_calc,v_calc] = o1(fx,gx);
 
 % % Normalising the exact values of the gcd, and quotient polynomials.
+
 % Normalise gcd
-d_calc = d_calc./d_calc(1);
-d_exact = d_exact./d_exact(1);
+d_calc = normalise(d_calc);
+d_exact = normalise(d_exact);
 
 % Normalise quotient polynomial u
-u_calc = u_calc./u_calc(1)';
-u_exact = u_exact./u_exact(1);
+u_calc  = normalise(u_calc);
+u_exact = normalise(u_exact);
 
 % Normalise quotient polynomial v
-v_calc = v_calc./v_calc(1)';
-v_exact = v_exact./v_exact(1);
+v_calc = normalise(v_calc);
+v_exact = normalise(v_exact);
+
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
+PrintCoefficients('u',u_exact, u_calc)
+PrintCoefficients('v',v_exact, v_calc)
+PrintCoefficients('d',d_exact, d_calc)
 
-fprintf('\nCoefficients of u \n\n');
+
+getError('u',u_calc,u_exact)
+getError('v',v_calc,v_exact)
+getError('d',d_calc,d_exact)
+
+
+% Print Errors
+fprintf('\nNormwise relative Error in Coefficients \nGiven by: Calculated - exact / exact \n\n');
+fprintf('\nNormwise Error in Coefficients  \nGiven by: Calculated - exact \n\n');
+
+end
+
+
+function [] = PrintRoots(f,f_roots)
+
+% print out the exact roots of f,g and d
+fprintf('\nRoots of %s \n',f);
+fprintf('\t Root \t \t \t \t\t \t \t   Multiplicity \n')
+fprintf('%30.15f \t \t \t %30.15f   \t \t \n',[f_roots(:,1),f_roots(:,2)]');
+fprintf('\n');
+
+end
+
+function [] = PrintCoefficients(u,u_exact,u_calc)
+
+fprintf('\nCoefficients of %s \n\n',u);
 fprintf('\t Exact \t \t \t \t\t \t \t   Computed \n')
 mat = [real(u_exact(:,1))';  real(u_calc(:,1))' ];
 fprintf('%30.15f \t \t \t %30.15f   \t \t \n', mat);
 fprintf('\n');
 
+end
 
-fprintf('\nCoefficients of v \n\n');
-fprintf('\t Exact \t \t \t \t\t \t \t   Computed \n')
-mat = [real(v_exact(:,1))';  real(v_calc(:,1))' ];
-fprintf('%30.15f \t \t \t %30.15f   \t \t \n',mat);
-fprintf('\n');
-
-
-fprintf('\nCoefficients of d \n\n');
-fprintf('\t Exact \t \t \t \t\t \t \t   Computed \n')
-mat = [real(d_exact(:,1))';  real(d_calc(:,1))' ];
-fprintf('%30.15f \t \t \t %30.15f   \t \t \n',mat);
-fprintf('\n');
-
-
+function [] = getError(u,u_calc,u_exact)
 
 % Calculate relative errors in outputs
 rel_error_uk = norm(abs(u_calc - u_exact) ./ u_exact);
-rel_error_vk = norm(abs(v_calc - v_exact) ./ v_exact);
-rel_error_dk = norm(abs(d_calc - d_exact) ./ d_exact);
 
-% Print Errors
-fprintf('\nNormwise relative Error in Coefficients \nGiven by: Calculated - exact / exact \n\n');
-fprintf('\tCalculated relative error u : %8.2e \n', rel_error_uk);
-fprintf('\tCalculated relative error v : %8.2e \n', rel_error_vk);
-fprintf('\tCalculated relative error d : %8.2e \n\n', rel_error_dk);
+fprintf('\tCalculated relative error %s : %8.2e \n ',u,rel_error_uk);
 
-% Calculate absolute errors
 error_uk = norm(abs(u_calc - u_exact) );
-error_vk = norm(abs(v_calc - v_exact) );
-error_dk = norm(abs(d_calc - d_exact) );
 
-% Print Errors
-fprintf('\nNormwise Error in Coefficients  \nGiven by: Calculated - exact \n\n');
-fprintf('\tCalculated error u : %8.2e \n', error_uk);
-fprintf('\tCalculated error v : %8.2e \n', error_vk);
-fprintf('\tCalculated error d : %8.2e \n\n', error_dk);
-
-
-
+fprintf('\tCalculated error %s : %8.2e \n', u,error_uk);
 
 end
 
+function f = normalise(f)
+ 
+f = f./f(1);
 
-
-
-
+end

@@ -1,25 +1,24 @@
 function Q = BuildQ(m,n,t)
-
 % Build the diagonal matrix Q corresponding to the binomial coefficients
 % of coprime polynomials u and v.
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                               Inputs
-
+%
 % m : Degree of polynomial f.
-
+%
 % n : Degree of polynomial g.
-
+%
 % t : Index of subresultant S_{t} to be formed.
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                               Outputs.
-
+%
 % Q : The diagonal matrix of binomial coefficients corresponding to coprime
 %       polynomials u and v.
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Build first partition of Q corresponding to the binomial coefficients of

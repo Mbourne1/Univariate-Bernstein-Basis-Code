@@ -18,4 +18,5 @@ function [] = o_roots_powerbasis(example_number)
 roots(poly([xx]))
 
 
+
 end

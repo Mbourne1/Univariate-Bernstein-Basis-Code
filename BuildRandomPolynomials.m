@@ -1,7 +1,9 @@
-function [f_roots,g_roots] = BuildRandomPolynomials3(m,n,t,intvl_low,intvl_high,seed)
+function [f_roots,g_roots] = BuildRandomPolynomials(m,n,t,intvl_low,intvl_high)
     % ignores the interval size given on input
     % does not consider close roots, which may be shared in f and g, but not
     % considered in d.
+    
+    global SEED
     
     a = intvl_low;
     b = intvl_high;
@@ -15,7 +17,7 @@ function [f_roots,g_roots] = BuildRandomPolynomials3(m,n,t,intvl_low,intvl_high,
         prob_arr(i) = i./ nchoosek(t+1,2);
     end
     prob_arr = fliplr(prob_arr);
-    rng(seed);
+    rng(SEED);
     
    
     % Get the multiplicity structure of d.
@@ -93,7 +95,7 @@ function [f_roots,g_roots] = BuildRandomPolynomials3(m,n,t,intvl_low,intvl_high,
     mult_arr_g = [mult_arr_d mult_arr_g];
     
     
-    % get a set of unique roots for the polynomials f g and d.
+    % Get a set of unique roots
     % the 1000 and 1000 contain the roots to the unit interval
     detail = 100;
     format 'long';

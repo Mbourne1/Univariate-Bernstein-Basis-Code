@@ -1,78 +1,64 @@
-function [ t ] = o_roots_bisection( example_number,e_low,e_up, seed )
+function [ t ] = o_roots_bisection(fx)
 %   ROOTS_BISECTION obtain roots in interval by bisection method, once a
 %   root is obtained with assumed multiplicity one, deconvolve and perform
 %   bisection on f2 with root removed, until no more roots are found.
 
-% bool_log
-% 1 :   Use logs
-% 0 :   Dont use logs.
-global bool_log
-bool_log = 1;
-
-% Set Deconvolution Method
-% 0 := Use standard non batch method
-% 1 := Use batch deconvolution
-global bool_deconvolve
-bool_deconvolve = 0;
-
-format long
-eps_abs = 1e-10;
-min_interval_size = 1e-10;
-% Bool whether to print messages
-bool_printMessageLog = 0;
-
-% Get the exact roots
-[f_roots_exact,~] = Root_Examples(example_number,seed);
-
-% Get polynomial coefficients in scaled bernstein basis
-f_exact_bi = B_poly(f_roots_exact);
-
-% Get degree of fx
-m = length(f_exact_bi) -1;
-
-% Get binomial coefficients corresponding to f
-Bi_n = zeros(m,1);
-for i = 0:1:m
-    Bi_n(i+1) = nchoosek(m,i);
-end
-
-% Obtain exact coefficients of polynomial f
-f_exact = f_exact_bi./Bi_n;
-
-% add noise to the coefficients
-fx = VariableNoise(f_exact,e_low,e_up,seed);
-
-% set interval
-a = -1;
-b = 1;
 
 
-%while (b - a >= min_interval_size || ( abs( BernsteinEval(fx,a) ) >= eps_abs && abs( BernsteinEval(fx,b) )  >= eps_abs ) )
-while (b - a >= min_interval_size && ( abs( BernsteinEval(fx,a) ) >= eps_abs && abs( BernsteinEval(fx,b) )  >= eps_abs ) )
+while (b - a >= min_interval_size && ( abs( Bernstein_Evaluate(fx,a) ) >= eps_abs && abs( Bernstein_Evaluate(fx,b) )  >= eps_abs ) )
     
     switch bool_printMessageLog
         case 1
             fprintf('Current Interval : %2.3f - %2.3f \n',a,b)
     end
+    
+    % Obtain the midpoint of the interval
     c = (a + b)/2;
     
-    
-    if ( abs(BernsteinEval(fx,c)) < eps_abs )
+    % check to see if the evaluation of the function f at the midpoint is 
+    % within the margins of error of zero
+    if ( abs(Bernstein_Evaluate(fx,c)) < eps_abs )
         switch bool_printMessageLog
             case 1
                 fprintf('Root at %2.8f \n',c)
         end
         break;
-    elseif ( BernsteinEval(fx,a)*BernsteinEval(fx,c) < 0 )
+    
+    % Check for change of sign in the first half of the interval    
+    elseif ( Bernstein_Evaluate(fx,a)*Bernstein_Evaluate(fx,c) < 0 )
+              
         switch bool_printMessageLog
             case 1
-                fprintf('Change of sign in first half of bisection\n')
+                fprintf('Change of sign in first half of interval\n')
         end
+        % if a change of sign exists, then root lies in the interval [a,c] and
+        % must bisect the new interval. so set upper end of interval b = c.
         b = c;
-    else
+        
+    % Check for change of sign in the second half of the interval
+    elseif ( Bernstein_Evaluate(fx,c)*Bernstein_Evaluate(fx,b) < 0)
+        switch bool_printMessageLog
+            case 1
+                fprintf('Change of sign in second half of interval\n')
+        end
+        % if change of sign exists, then root lies in the interval [c,b]
+        % and we must bisect the new interval. so set lower end of the
+        % interval a equal to c.
+        
         a = c;
+       
+    else
+        switch bool_printMessageLog
+            case 1
+            fprintf('Same sign in both halves of the interval, therefore - No roots found')
+        end
+        fprintf('\nROOTS CALCULATED BY BISECTION FUNCTION \n');
+        fprintf('No Roots Were Found\n')
+        t = [];
+    return
     end
 end
+
 
 if (b-a <= min_interval_size)
     fprintf('\nROOTS CALCULATED BY BISECTION FUNCTION \n');
@@ -99,48 +85,64 @@ for i=0:1:n
     Bi_n(i+1) = nchoosek(n,i);
 end
 
-% Build polynomial of removed root
+% Build polynomial of the removed root
 gx = gx_bi ./ Bi_n;
 
-% Perform deconvolution to obtain f2
+% Perform deconvolution to obtain f2, the remainder of the polynomial now
+% that the found root has been removed.
 deconvArray = {fx, gx};
 f2 = Deconvolve(deconvArray);
 f2 = cell2mat(f2(1));
 
+% while the degree of f2 is greater than 1
 while length(f2) ~=1
-    a = 0;
-    b = 1;
+    % Set interval lower bound
+    a = intvl_lwr_bound;
+    % Set interval upper bound
+    b = intvl_uppr_bound;
     
     
-    while (b - a >= min_interval_size && ( abs( BernsteinEval(f2,a) ) >= eps_abs && abs( BernsteinEval(f2,b) )  >= eps_abs ) )
+    while (b - a >= min_interval_size && ( abs( Bernstein_Evaluate(f2,a) ) >= eps_abs && abs( Bernstein_Evaluate(f2,b) )  >= eps_abs ) )
         switch bool_printMessageLog
             case 1
                 fprintf('Current Interval : %2.3f - %2.3f \n',a,b)
         end
+        
+        % Get the midpoint of the interval
         c = (a + b)/2;
-        if (  abs(BernsteinEval(f2,c)) < eps_abs )
+        
+        % Evaluate the function at the midpoint
+        if (  abs(Bernstein_Evaluate(f2,c)) < eps_abs )
             switch bool_printMessageLog
                 case 1
                     fprintf('Found root : %2.8f\n', c)
             end
             break;
-        elseif ( BernsteinEval(f2,a)*BernsteinEval(f2,c) < 0 )
+            
+        % Check for change of sign in first half of the interval
+        elseif ( Bernstein_Evaluate(f2,a)*Bernstein_Evaluate(f2,c) < 0 )
             switch bool_printMessageLog
                 case 1
                     
                     fprintf('Change of sign in first half of bisection\n')
             end
+            % if change of sign, then set the upper bound of the next
+            % interval b = c
             b = c;
-        elseif ( BernsteinEval(f2,b)*BernsteinEval(f2,c) < 0 )
+            
+        % Check for change of sign in the second half of the interval
+        elseif ( Bernstein_Evaluate(f2,b)*Bernstein_Evaluate(f2,c) < 0 )
             switch bool_printMessageLog
                 case 1
                     fprintf('Change of sign in the second half of the bisection\n')
             end
+            % if change of sign, then set the lower bound of the next
+            % interval a = c
             a = c;
         else
             switch bool_printMessageLog
                 case 1
-                    fprintf('Same sign in both, therefore - No roots found')
+                    fprintf('Same sign in both halves of the interval, therefore - No roots found')
             end
             c = [];
             break
@@ -183,23 +185,15 @@ end
 
 t = all_roots;
 
-fprintf('\nROOTS CALCULATED BY BISECTION FUNCTION \n');
-fprintf('\t Root \t \t \t \t\t \t \t \t \t \t \t \t Multiplicity \n')
-fprintf('%22.15f \t \t\n',real(t(:,1)));
+% Print out roots
+PrintoutRoots('BISECTION' , t)
 end
 
-function [xx] =  BernsteinEval(f,c)
-%% Evaluate function f at point c \in t
-y = c;
-m = length(f)-1;
 
-for i = 0:length(f)-1
-    
-    x(i+1) = f(i+1) .* nchoosek(m,i) .* (1-y)^(m-i) .* y^i ;
-end
 
-xx = sum(x);
 
-end
+
+
+
 
 

@@ -46,8 +46,8 @@ g = gw + tw;
 alphag = alpha*g;
 
 % Construct the matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G .
-C1 = BuildHCGPart(uw,t);
-C2 = BuildHCGPart(vw,t);
+C1 = BuildH1C1G(uw,t);
+C2 = BuildH1C1G(vw,t);
           
 % Calculate the scale factors lambda and mu.
 C1dw=C1*dw;

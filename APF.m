@@ -1,47 +1,35 @@
 function [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_ux, PostAPF_vx, PostAPF_theta] = ...
     APF(fx,gx,ux,vx,initial_alpha,initial_theta,dx,t)
-% Refine Approximate Polynomial Factorisation by newton raphson method iteration
+
+% Refine Approximate Polynomial Factorisation by
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                               Inputs
-
+%
 % fx - polynomial coefficients in bernstein basis
-
+%
 % gx - polynomial coefficients in bernstein basis
-
+%
 % ux - quotient polynomial coefficients
-
+%
 % vx - quotient polynomial coefficients
-
+%
 % alpha -
-
+%
 % theta -
-
+%
 % dx - initial approximation of GCD(fx,gx)
-
+%
 % t - Calculated degree of GCD
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                           Global Variables
 
-% bool_plotgraphs (bool)
-% 0 - Dont plot graphs
-% 1 - Plot graphs of LSE problem, alpha and theta
-global bool_plotgraphs
-
-% set limit of error in LSE problem
-global max_error
-
-
-% set maximum number of iterations for LSE problem
-global max_iterations
-
-% BuildMethod (bool)
-%   0 - Naive build method D,T,Q calculated independently
-%   1 - New build method, build elementwise
-global Bool_APFBuildMethod
+global PLOT_GRAPHS
+global MAX_ERROR_APF
+global MAX_ITERATIONS_APF
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -106,39 +94,12 @@ Partial_dw_wrt_theta     = veck.*dw./theta(ite);
 Partial_uw_wrt_theta = vecmk .*uw./theta(ite);
 Partial_vw_wrt_theta = vecnk .*vw./theta(ite);
 
-% Build H_{t}C(f,g)G_{t}
-switch Bool_APFBuildMethod
-    case 0
-        H1 = BuildH1(m);
-        H2 = BuildH1(n);
-        C1 = BuildC1Partition(uw,t);
-        C2 = BuildC1Partition(vw,t);
-        G = BuildG(t);
-        
-        HCG = blkdiag(H1,H2)*[C1;C2]*G;
-        H1C1G = H1*C1*G;
-        H2C2G = H2*C2*G;
-    case 1
-        H1C1G = BuildHCGPart(uw,t);
-        H2C2G = BuildHCGPart(vw,t);
-        HCG = [H1C1G ; H2C2G ];
-end
-
+% Get HCG
+[HCG,H1C1G,H2C2G] = BuildHCG(uw,vw,m,n,t);
 
 % Build HCG with respect to theta
-switch Bool_APFBuildMethod
-    case 0
-        C1_wrt_theta = BuildC1Partition(Partial_uw_wrt_theta,t);
-        C2_wrt_theta = BuildC1Partition(Partial_vw_wrt_theta,t);
-        
-        H1C1G_wrt_theta = H1*C1_wrt_theta*G;
-        H2C2G_wrt_theta = H2*C2_wrt_theta*G;
-        
-    case 1
-        H1C1G_wrt_theta = BuildHCGPart(Partial_uw_wrt_theta,t);
-        H2C2G_wrt_theta = BuildHCGPart(Partial_vw_wrt_theta,t);
-        
-end
+[HCG_wrt_theta,H1C1G_wrt_theta,H2C2G_wrt_theta] = ...
+    BuildHCG(Partial_uw_wrt_theta,Partial_vw_wrt_theta,m,n,t);
 
 %Build the RHS vector b = [fw,alpha.*gw]
 bk = [fw ; alpha(ite).*gw];
@@ -162,18 +123,18 @@ tw   = (q.*(theta(ite).^vecn));
 z1x = zeros(length(uw),1);
 z2x = zeros(length(vw),1);
 
-
-
 % Construct the coefficient matrix in the equation that defines
 % the constraint for the LSE problem.
-HYk         = BuildHYQ(dx,m,n,alpha(ite),theta(ite));
-
-% Update the iterative value of f and g
+HYk         = BuildHYQ(dx,m,n,theta(ite));
 
 
+% % Build the matrix C given by Hz Hp Hq Halpha Htheta1 Htheta2 
 H_z         = HYk;
+
 H_p         = (-1)*S;
+
 H_q         = -(alpha(ite))*T;
+
 H_alpha     = -(gw + tw);
 
 H_theta1    = -Partial_fw_wrt_theta+...
@@ -184,8 +145,11 @@ H_theta2    = (-(alpha(ite))*Partial_gw_wrt_theta)+...
     (H2C2G_wrt_theta * dw)+...
     (H2C2G * Partial_dw_wrt_theta);
 
-C_temp      = [H_p,             zeros(m+1,n+1), zeros(m+1,1), H_theta1;...
-               zeros(n+1,m+1),  H_q,            H_alpha,       H_theta2];
+C_temp      = ...
+    [
+    H_p,             zeros(m+1,n+1), zeros(m+1,1), H_theta1;...
+    zeros(n+1,m+1),  H_q,            H_alpha,       H_theta2...
+    ];
 
 C       = [H_z , C_temp];
 
@@ -196,7 +160,8 @@ fnew    = zeros(2*m+2*n-2*t+6,1);
 
 ek = bk;
 
-condition = norm(rk)/norm(ek);
+% Get the condition 
+condition(ite) = norm(rk)/norm(ek);
 
 startpoint = [zk;p;q;alpha;theta];
 
@@ -204,7 +169,7 @@ yy = startpoint;
 
 % Start the iterative procedure for the solution of the LSE problem.
 
-while condition > (max_error) && ite < max_iterations 
+while condition(ite) > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
     
     % Use the QR decomposition to solve the LSE problem.
     % min |y-p| subject to Cy=q
@@ -222,7 +187,7 @@ while condition > (max_error) && ite < max_iterations
     delta_qk        = y(2*m+n-2*t+4:2*m+2*n-2*t+4);
     delta_alpha     = y(end-1);
     delta_theta     = y(end);
-
+    
     
     % Update variables zk, pk, qk, beta, theta
     zk          = zk + delta_zk;
@@ -256,34 +221,11 @@ while condition > (max_error) && ite < max_iterations
     vw_wrt_theta = vecnk .* vw ./ theta(ite);
     
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G
-    switch Bool_APFBuildMethod
-        case 0
-            C1 = BuildC1Partition(uw,t);
-            C2 = BuildC1Partition(vw,t);
-            H1C1G = H1*C1*G;
-            H2C2G = H2*C2*G;
-        case 1
-            H1C1G = BuildHCGPart(uw,t);
-            H2C2G = BuildHCGPart(vw,t);
-    end
-    
-    
-    
+    [HCG,H1C1G,H2C2G] = BuildHCG(uw,vw,m,n,t);
+     
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G with respect to
     % theta
-    switch Bool_APFBuildMethod
-        case 0
-            C1_wrt_theta = BuildC1Partition(uw_wrt_theta,t);
-            C2_wrt_theta = BuildC1Partition(vw_wrt_theta,t);
-            
-            H1C1G_wrt_theta = H1*C1_wrt_theta*G;
-            H2C2G_wrt_theta = H2*C2_wrt_theta*G;
-        case 1
-            
-            H1C1G_wrt_theta = BuildHCGPart(uw_wrt_theta,t);
-            H2C2G_wrt_theta = BuildHCGPart(vw_wrt_theta,t);
-            
-    end
+    [HCG_wrt_theta,H1C1G_wrt_theta, H2C2G_wrt_theta] = BuildHCG(uw_wrt_theta,vw_wrt_theta,m,n,t);
     
     % Get perturbation vector, and seperate in to perturbations of f,
     % z1 and perturbations of g, z2
@@ -299,37 +241,13 @@ while condition > (max_error) && ite < max_iterations
     z1w_wrt_theta = vecmk .* z1w ./ theta(ite);
     
     % Build Matrices H_{1}E_{1}(z1)G and H_{2}E_{2}(z2)G
-    switch Bool_APFBuildMethod
-        case 0
-            E1 = BuildC1Partition(z1w,t);
-            E2 = BuildC1Partition(z2w,t);
-            H1E1G = H1*E1*G;
-            H2E2G = H2*E2*G;
-            
-        case 1
-            
-            H1E1G = BuildHCGPart(z1w,t);
-            H2E2G = BuildHCGPart(z2w,t);
-            
-    end
+    [HEG,H1E1G,H2E2G] = BuildHCG(z1w,z2w,m,n,t);
+    
     
     % Calculate Partial derivatives of Matrices H_{1}E_{1}(z1)G and
     % H_{2}E_{2}(z2)G with respect to theta
-    
-    switch Bool_APFBuildMethod
-        case 0
-            E1_wrt_theta = BuildC1Partition(z1w_wrt_theta,t);
-            E2_wrt_theta = BuildC1Partition(z2w_wrt_theta,t);
-            
-            H1E1G_wrt_theta = H1 * E1_wrt_theta * G;
-            H2E2G_wrt_theta = H2 * E2_wrt_theta * G;
-            
-        case 1
-            H1E1G_wrt_theta = BuildHCGPart(z1w_wrt_theta,t);
-            H2E2G_wrt_theta = BuildHCGPart(z2w_wrt_theta,t);
-    end
-    
-    
+    [HEG_wrt_theta,H1E1G_wrt_theta,H2E2G_wrt_theta] = BuildHCG(z1w_wrt_theta,z2w_wrt_theta,m,n,t);
+     
     % Obtain structured perturbations sw of fw, and tw of gw
     sw   = p.*(theta(ite).^vecm);
     tw   = q.*(theta(ite).^vecn);
@@ -345,9 +263,12 @@ while condition > (max_error) && ite < max_iterations
     % Calculate partial derivative of dw with respect to theta
     Partial_dw_wrt_theta = veck.*(dx.*(theta(ite).^(veck-1)));
     
-    % Calculate H_z
-    HYk = BuildHYQ(dx,m,n,alpha(ite),theta(ite));
+    % Build Matrix C
     
+    % Calculate H_z
+    HYk = BuildHYQ(dx,m,n,theta(ite));
+    
+    % Build H_z
     H_z = HYk;
     
     % Calculate H_p
@@ -380,16 +301,8 @@ while condition > (max_error) && ite < max_iterations
     C = [H_z , C_temp];
     
     % Calculate Matrix H(C+E)G
-    switch Bool_APFBuildMethod
-        case 0
-            H1C1E1G = H1 * (C1+E1) * G;
-            H2C2E2G = H2 * (C2+E2) * G;
-            HCEG = [H1C1E1G; H2C2E2G];
-        case 1
-            H1C1E1G = BuildHCGPart(uw+z1w,t);
-            H2C2E2G = BuildHCGPart(vw+z2w,t);
-            HCEG    = [H1C1E1G; H2C2E2G];
-    end
+    [HCEG,H1C1E1G,H2C2E2G] = BuildHCG(uw+z1w,vw+z2w,m,n,t);
+    
     % Calculate the new residual
     rk = [fw + sw ;(alpha(ite)*(gw + tw))]-((HCEG)*dw);
     
@@ -397,14 +310,11 @@ while condition > (max_error) && ite < max_iterations
     ek = [fw + sw ;(alpha(ite)*(gw + tw))];
     
     
-    % Update gnew - used in LSE Problem
-    gnew = rk;
-    
     % update vector of residual
-    residual(ite) = norm(gnew);
+    residual(ite) = norm(rk);
     
     % Update Condition scalar.
-    condition = norm(rk)/norm(ek);
+    condition(ite) = norm(rk)/norm(ek);
     
     % Update fnew
     fnew = -(yy - startpoint);
@@ -419,11 +329,11 @@ while condition > (max_error) && ite < max_iterations
     % Repeat this calculation for the Bernstein basis. Transform the
     % variables from the modified Bernstein basis to the Bernstein
     % basis.
-    fx_p = fw./(theta(ite).^vecm); 
-    sx_p = sw./(theta(ite).^vecm); 
+    fx_p = fw./(theta(ite).^vecm);
+    sx_p = sw./(theta(ite).^vecm);
     gx_p = gw./(theta(ite).^vecn);
     tx_p = tw./(theta(ite).^vecn);
-    ukx = ux + z1x;   
+    ukx = ux + z1x;
     vkx = vx + z2x;
     dkx = dw./(theta(ite).^veck);
     
@@ -434,9 +344,9 @@ while condition > (max_error) && ite < max_iterations
 end
 
 
-if ite == max_iterations 
+if ite == MAX_ITERATIONS_APF
     fprintf('APF failed to converge after %i iterations\n',ite)
-    PostAPF_dx = dx; 
+    PostAPF_dx = dx;
     PostAPF_ux = ux;
     PostAPF_vx = vx;
     PostAPF_theta = initial_theta;
@@ -444,21 +354,27 @@ if ite == max_iterations
     % Edit 20/07/2015
     PostAPF_fx = fx;
     PostAPF_gx = gx;
-    return 
+    figure()
+    hold on
+    plot(log10(condition))
+    hold off
+    return
     
 end
 
 try
-% EDIT 01/06/2015 16:34:00
-switch bool_plotgraphs
-    case 1
-% Plot the normalised residuals res_ux, res_vx, res_uw and res_vw.
-plotgraphs3(res_ux,res_vx,res_uw,res_vw);
-
-% Write out the number of iterations required and plot the values of
-% alpha, theta and the residual.
-plotgraphs4(alpha,theta,residual);
-end
+    switch PLOT_GRAPHS
+        case 'y'
+            % Plot the normalised residuals res_ux, res_vx, res_uw and res_vw.
+            plotgraphs3(res_ux,res_vx,res_uw,res_vw);
+            
+            % Write out the number of iterations required and plot the values of
+            % alpha, theta and the residual.
+            plotgraphs4(alpha,theta,residual);
+        case 'n'
+        otherwise
+            error('err')
+    end
 catch
     fprintf('Can not perform plotgraphs3 and plotgraphs4, not enough iterations performed\n')
 end
@@ -486,34 +402,37 @@ PostAPF_gx = (gw + tw) ./ (theta(ite).^vecn);
 
 
 
-switch bool_plotgraphs
-    case 1
+switch PLOT_GRAPHS
+    case 'y'
         
-        plot_residuals = 1;
-        plot_thetas = 1;
-        plot_betas = 1;
+        plot_residuals = 'y';
+        plot_thetas = 'y';
+        plot_betas = 'y';
         
         switch plot_residuals
-            case 1
-                figure()
+            case 'y'
+                figure('name','APF - Residuals')
                 title('plotting residual')
                 hold on
                 plot(1:1:length(residual),(residual));
         end
         switch plot_thetas
-            case 1
-                figure()
+            case 'y'
+                figure('name','APF - thetas')
                 title('plotting theta')
                 hold on
                 plot(1:1:length(theta),(theta));
         end
         switch plot_betas
-            case 1
-                figure()
+            case 'y'
+                figure('name','APF - alpha')
                 title('plotting beta');
                 hold on
                 plot(1:1:length(alpha),(alpha));
         end
+    case 'n'
+    otherwise
+        error('err')
 end
 
 end

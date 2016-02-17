@@ -1,15 +1,15 @@
 function Q1 = BuildQ1(n,t)
 % Build the partition of the matrix Q, corresponding to the binomial
 % coefficients of v(y). (Note this function works for both v(y) and u(y)
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                              Inputs
-
+%
 % n : degree of polynomial g(y)
-
+%
 % t : index of subresultant S_{t} to be built.
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Produce a vector of elements of Q1, then diagonalise it to form a matrix.

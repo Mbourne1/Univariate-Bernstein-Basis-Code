@@ -1,5 +1,6 @@
 function o1_trials()
-%% Function purely for producing report outputs, wherein the matlab roots function is trialled many times
+% Function purely for producing report outputs, wherein the matlab roots
+    %function is trialled many times
 
 % Set number of trials
 Num_Trials = 1000;
@@ -47,7 +48,7 @@ end
 
 
 function [roots_calc] = o_roots_matlab(ex_num,emin,emax)
-%% Get roots of Bernstein Basis Polynomial by matlab function
+% Get roots of Bernstein Basis Polynomial by matlab function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ex_num : example number
 % emin   : minimum noise/signal \epsilon_{i}
@@ -89,10 +90,14 @@ roots_calc = 1- roots_calc./(1+roots_calc);
 end
 
 function [roots_calc] = o_roots_multroot(ex_num,emin,emax)
-%% Get roots of Bernstein Basis Polynomial by mutlroot function
+% Get roots of Bernstein Basis Polynomial by mutlroot function
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 % ex_num : example number
+
 % emin   : minimum noise/signal \epsilon_{i}
+
 % emax   : maximum noise/signal \epsilon_{i}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

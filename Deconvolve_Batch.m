@@ -16,8 +16,8 @@ function hi = Deconvolve_Batch(set_g)
 
 % %                         Global Variables
 
-global max_iterations
-global max_error
+global max_iterations_deconvolutions
+global max_error_deconvolutions
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -140,7 +140,7 @@ z_ite = z_o;
 
 % Perform iteration to obtain perturbations
 
-while condition >(max_error) &&  iteration_num < max_iterations
+while condition >(max_error_deconvolutions) &&  iteration_num < max_iterations_deconvolutions
     
     % Use the QR decomposition to solve the LSE problem and then
     % update the solution.
@@ -212,8 +212,8 @@ while condition >(max_error) &&  iteration_num < max_iterations
 end
 
 % Print outputs to command line
- fprintf('Performed Deconvolutions...\n')
- fprintf('Iterations required for Batch Deconvolution %i\n', iteration_num)
+fprintf('Performed Deconvolutions...\n')
+fprintf('Iterations required for Batch Deconvolution %i\n', iteration_num)
 
 
 end
@@ -248,10 +248,10 @@ function Y1 = BuildD0Y1U1(hx,m0,m1)
 global bool_log
 
 switch bool_log
-    case 1 % use logs
+    case 'y' % use logs
         Y1 = BuildD0Y1U1_log(hx,m0,m1);
         
-    case 0 % use nchoosek
+    case 'n' % use nchoosek
         Y1 = BuildD0Y1U1_nchoosek(hx,m0,m1);
 end
 end
@@ -262,6 +262,7 @@ function Y1 = BuildD0Y1U1_nchoosek(hx,m0,m1)
 % m1 = degree of current polynomial
 
 global bool_denom_syl
+
 % Y1 = zeros(m0+1,m1+1);
 Y1 = [];
 % for each column j = 1:1:m0-m1+1
@@ -275,7 +276,7 @@ for j = 0:1:m1
 end
 
 switch bool_denom_syl
-    case 1
+    case 'y'
         Y1 = Y1 ./  nchoosek(m0,m1);
 end
 end
@@ -288,24 +289,28 @@ function Y1 = BuildD0Y1U1_log(hx,m0,m1)
 % m1 = degree of current polynomial
 
 global bool_denom_syl
+
 % Y1 = zeros(m0+1,m1+1);
+
 Y1 = [];
 % for each column i = 1:1:m0-m1+1
 for k = 0:1:m1
     % for each row j = 1:1:m1+1
     for j = k:1:k+(m0-m1)
         BinomsEval_Log = lnnchoosek(j,k) + lnnchoosek(m0-j,m1-(j-k));
-        BinomsEval_Exp = 10.^BinomsEval_Log;  
-        Y1(j+1,k+1) = hx(j-k+1) .* BinomsEval_Exp;   
+        BinomsEval_Exp = 10.^BinomsEval_Log;
+        Y1(j+1,k+1) = hx(j-k+1) .* BinomsEval_Exp;
     end
 end
 switch bool_denom_syl
-    case 1       
+    case 'y'
+        % Include the denominator
         Denom_Log = lnnchoosek(m0,m1);
         Denom_Exp = 10.^Denom_Log;
         
         Y1 = Y1 ./  Denom_Exp;
-        
+    case 'n'
+        % Exclude the denominator
 end
 
 
@@ -338,9 +343,9 @@ function opt_theta = getOptimalTheta(set_g,m)
 % Get optimal value of theta.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% %                           Inputs 
+% %                           Inputs
 
-% set_g - set of vectors 
+% set_g - set of vectors
 
 % m     - set of degrees, of each polynomial stored in the set_g array.
 
@@ -501,10 +506,12 @@ global bool_log
 
 
 switch bool_log
-    case 0 % use nchoosek
+    case 'n' 
+        % use nchoosek
         D0C1Q1 = BuildD0C1Q1_nchoosek(fx,m0,m1);
         
-    case 1 % use log
+    case 'y' 
+        % use log
         D0C1Q1 = BuildD0C1Q1_log(fx,m0,m1);
 end
 
@@ -543,7 +550,7 @@ for k = 0:1:m0-m1
     end
 end
 switch bool_denom_syl
-    case 1
+    case 'y'
         denom = nchoosek(m0,m1);
         D0C1Q1 = D0C1Q1 ./ denom ;
 end
@@ -579,7 +586,7 @@ for k = 0:1:m0-m1
 end
 
 switch bool_denom_syl
-    case 1
+    case 'y'
         Denom_Log = lnnchoosek(m0,m1);
         Denom_exp = 10.^Denom_Log;
         

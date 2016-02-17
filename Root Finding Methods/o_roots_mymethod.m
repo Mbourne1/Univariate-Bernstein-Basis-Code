@@ -1,64 +1,23 @@
-function [roots_calc] = o_roots_mymethod(ex_num,emin,emax,seed)
-% o_roots_mymethod - Obtain polynomial roots of a noisy polynomial
-% Given a set of polynomial roots, for a polynomial f, expressed in the
-% Bernstein basis. A Bernstein basis polynomial f is produced, noise added,
-% and its roots are returned, by method of finding GCDs of polynomials and
-% their derivatives.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Inputs
-
-% ex - (Int) Example Number
-
-% emin - Signal to noise ratio (minimum)
-
-% emax - Signal to noise ratio (maximum)
-
-% seed - 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                       Global Variables
-
-global output_format;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [roots_calc] = o_roots_mymethod(fx)
+% Calculate the roots of the input polynomial f(x) in Bernstein form.
+%
+% Inputs.
+%
+% fx:   Vector of polynomial coefficients in Bernstein basis, where the
+%       ith entry of fx, fx(i) is the coefficient a_{i}B^{m}_{i}, and m is the
+%       degree of fx.
+%
+% Outputs.
+%
+% roots_calc : The Calculated roots of the polynomial f(x)
 
 
-% Add necessary paths
 addpath 'Measures'
 addpath 'Examples'
 addpath 'multroot/multroot'
 
-% Get coefficients in Scaled Bernstein Basis
-[f_roots_exact,~]   = Root_Examples(ex_num,seed);
-f_exact_bi          = B_poly(f_roots_exact);
-
-% Get degree of f
-m = length(f_exact_bi) - 1;
-
-% Display the degree of the input polynomial
-disp('Degree of Input Polynomial F ');
-disp(int2str(m));
-
-% Get the Binomial coefficients corresponding to the coefficients of
-% polynomial f.
-Bi_m = zeros(m+1,1);
-for i=1:1:m+1
-    Bi_m(i) = nchoosek(m,i-1);
-end
-
-% Get coefficients in Bernstein Basis
-f_exact = f_exact_bi./Bi_m;
-
-% Add Noise to coefficients of exact polynomial f_exact, to obtain noisy
-% polynomial fx.
-fx = VariableNoise(f_exact,emin,emax,seed);
-
 % Obtain gx, the derivative of the noisy polynomial fx
-gx = Differentiate_BernsteinBasis(fx)';
-
-
-gx_exact = Differentiate_BernsteinBasis(f_exact)';
+gx = Bernstein_Differentiate(fx)';
 
 % Get gcd and quotients u and v, of fx and gx
 
@@ -70,32 +29,7 @@ fprintf('GCD Calculation Loop iteration = %i \n\n', ite_num);
 
 % Perform an intial GCD Calculation, from this we obtain new forms of f and
 % g and a calculated 'd'.
-[f,g,d, ~ ,~,alpha,theta] = o1(fx,gx);
-
-
-if output_format == 1
-    % we have output in the form fw, gw, dw
-    
-    % divide GCD by theta vector to obtain dx
-    dx = zeros(length(d)-1,1);
-    for i = 1:1:length(d)
-        dx(i) = d(i)./(theta^(i-1));
-    end
-    
-    % divide f by theta vector to obtain fx
-    fx = zeros(m+1,1);
-    for i = 1:1:length(f)
-        fx(i) = f(i)./(theta^(i-1));
-    end
-    
-elseif output_format == 0
-    % we have output in the form fx,gx,dx    
-    fx = f;
-    gx = g;
-    dx = d;
-end
-
-
+[fx,~,dx, ~ ,~,~,theta] = o1(fx,gx);
 
 % Initialise an array 'q' which stores the gcd outputs from each gcd
 % calculation
@@ -124,41 +58,17 @@ while length(q{ite_num})-1 > 0
     fx = q{ite_num};
     
     % set polynomial g to be the derivative of the GCD.
-    gx = Differentiate_BernsteinBasis(q{ite_num})';
+    gx = Bernstein_Differentiate(q{ite_num})';
     
     % get degrees m and n of polynomials f and g respectively.
     m = size(fx,1) -1;
-    n = size(gx,1) -1;
+    
     
     % if degree of f is greater than one
     if m > 1
-        fprintf('GCD Calculation Loop iteration = %i \n\n',ite_num );
-        [f,g,d, u ,v,alpha,theta] = o1(fx,gx);
-
         
-        if output_format == 1
-            % we have output in the format fw, gw and dw
-            
-            % divide GCD by theta vector
-            dx = zeros(length(d),1);
-            for i = 1:1:length(d)
-                dx(i) = d(i)./(theta^(i-1));
-            end
-            
-            % divide f by theta vector
-            fx = zeros(length(f),1);
-            for i = 1:1:length(f)
-                fx(i) = f(i)./(theta^(i-1));
-            end
-            
-        elseif output_format == 0
-            % we have output in the format fx, gx and dx
-            
-            fx = f;
-            gx = g;
-            dx = d;
-            
-        end
+        fprintf('GCD Calculation Loop iteration = %i \n\n',ite_num );
+        [fx,~,dx, ~ ,~,~,theta] = o1(fx,gx);
         
         % add the value of theta used in this GCD calculation to the theta
         % vector
@@ -181,7 +91,7 @@ while length(q{ite_num})-1 > 0
         % if m=1, then n = 0, GCD has maximum degree 0.
         fprintf('Only one subresultant exists \n')
         dx = 1;
-        theta_vec(ite_num+1) = 1;
+        %theta_vec(ite_num+1) = 1;
         degree_vec(ite_num+1) = length(dx)-1;
         q{ite_num+1} = dx;
         ite_num = ite_num+1;
@@ -193,7 +103,6 @@ end
 
 % #########################################################################
 % This section performs deconvolution by structured matrix method.
-addpath 'BernsteinMethods'
 
 % fprintf('All Polynomials from GCD Calculations')
 % for i = 1:1:length(q)
@@ -203,90 +112,134 @@ addpath 'BernsteinMethods'
 % Deconvolve the first set of polynomials.
 h1 = Deconvolve(q);
 
-% Deconvolve the second set of polynomials
-w1 = Deconvolve(h1);
-
-
-% w1 yields the simple, double, triple roots of input polynomial f.
-% w1{i} yields the roots of multiplicity i.
-
-% set the w1{max} = h1{max}
-w1{ite_num-1} = h1{ite_num-1};
-
-% get number of entries in w1
-[~,c] = size(w1);
-
-% initialise an empty set
-root_arr = [];
-
-% for each multiplicity in w1.
-for i = 1:1:c
+[~,nEntries_h] = size(h1);
+if nEntries_h == 1
     
-    % if the polynomial of said multiplicity is of length 2, degree 1, then
-    % only one root exists for this multiplicity. Add it to the list wp1.
-    if (length(w1{i}) == 2)
+    % if number of cols in h1 is only 1, then do not perform second set of
+    % deconvolutions, since only one entry in h1.
+    
+    % Initialise an empty root array
+    root_arr = [];
+    
+    % Get the polynomial a(w)
+    aw = h1{1};
+    
+    % Normalise the coefficients of a(w)
+    aw = aw./aw(1);
+    
+    % Get the degree of a(w)
+    deg_aw = length(h1{1}) - 1;
+    
+    % Get the corresponding binomial coefficients
+    bi_aw = GetBinomials(deg_aw);
         
-                
-        % get the polynomial, whose roots have multiplicty i, in bernstein 
-        % form, where coefficients are in terms of (1-y)^{m-i}y^{i}.
-        aw = w1{i};
+    % get aw including its binomial coefficients.
+    aw_binom = (aw .* bi_aw);
+    
+    % get the roots in terms of z^{i} where z^{i} =(\frac{y}{(1-y)})^{i}.
+    % Note we must flip the coefficients to conform with input format of
+    % MATLAB roots function.
+    rt_wrt_z = roots(flipud(aw_binom));
+    
+    % Get the roots in terms of y.
+    roots_wrt_y = [rt_wrt_z./(1.+rt_wrt_z) ]; %Edit 27/07
+    
+    % Initialise a vector of ones
+    one = ones(length(roots_wrt_y),1);
+    
+    % Get the roots with respect to y, and their multiplicities all set
+    % to one.
+    roots_wrt_y = [roots_wrt_y one];
         
-        % Normalise the polynomial coefficients
-        aw = aw./aw(1);
+    % Add the roots to the array of roots
+    root_arr = [root_arr ; roots_wrt_y];
+else
+    
+    % perform deconvolutions
+    
+    % Deconvolve the second set of polynomials h_{i} to obtain the set of
+    % polynomials w_{i}
+    w1 = Deconvolve(h1);
+    
+    
+    % w1 yields the simple, double, triple roots of input polynomial f.
+    % w1{i} yields the roots of multiplicity i.
+    
+    % set the w1{max} = h1{max}
+    w1{ite_num-1} = h1{ite_num-1};
+    
+    % get number of entries in w1
+    [~,nEntries_w1] = size(w1);
+    
+    % initialise an empty set
+    root_arr = [];
+    
+    % for each multiplicity in w1.
+    for i = 1:1:nEntries_w1
         
-        % Convert to power form, so that coefficients are in terms of y^{i}
-        % rather than (1-y)^{m-i}y^{i}.
-        a_pwr = [aw(1,:) ; aw(2,:)-aw(1,:)]; 
         
-        % Obtain the root in terms of y, and set multiplicity to one.
-        a_rt = [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)];
-        
-        % add the root to the [root, mult] matrix
-        root_arr = [root_arr ; a_rt];
-        
-    elseif (length(w1{i}) > 2)
-        % The given multiplicity contains more than one root, such that
-        % number of coefficients in greater than 2, use MATLAB roots
-        % function to find roots.
-        % display('Multiplicity contains more than one root. ')
-        
-        % get the polynomial a(w), whose roots have multiplicity i, in bernstein
-        % form.
-        aw = w1{i};
-        
-        % Normalise the polynomial coefficients
-        aw = aw./aw(1);
-        
-        % get the degree of a(w)
-        n = length(w1{i}) - 1;
-        
-        % get the corresponding binomial coefficients
-        bi_n = zeros(n+1,1);
-        for y = 0:1:n
-            bi_n(y+1) = nchoosek(n,y);
+        % if the polynomial of said multiplicity is of length 2, degree 1, then
+        % only one root exists for this multiplicity. Add it to the list wp1.
+        if (length(w1{i}) == 2)
+            
+            
+            % Get the polynomial a(w), whose simple roots have multiplicty 
+            % i in the polynomial f which we started with.
+            aw = w1{i};
+            
+            % Normalise the polynomial coefficients
+            aw = aw./aw(1);
+            
+            % Convert to power form, so that coefficients are in terms of y^{i}
+            % rather than (1-y)^{m-i}y^{i}.
+            a_pwr = [aw(1,:) ; aw(2,:)-aw(1,:)];
+            
+            % Obtain the root in terms of y, and set multiplicity to one.
+            a_rt = [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)];
+            
+            % Add the root to the [root, mult] matrix
+            root_arr = [root_arr ; a_rt];
+            
+        elseif (length(w1{i}) > 2)
+            % The given multiplicity contains more than one root, such that
+            % number of coefficients in greater than 2, use MATLAB roots
+            % function to find roots.
+            % display('Multiplicity contains more than one root. ')
+            
+            % get the polynomial a(w), whose roots have multiplicity i, in bernstein
+            % form.
+            aw = w1{i};
+            
+            % Normalise the polynomial coefficients
+            aw = aw./aw(1);
+            
+            % get the degree of a(w)
+            n = length(w1{i}) - 1;
+            
+            % get the corresponding binomial coefficients
+            bi_n = GetBinomials(n);
+            
+            % get aw including its binomial coefficients.
+            aw_binom = (aw .* bi_n);
+            
+            % get the roots in terms of z^{i} where z^{i} =(\frac{y}{(1-y)})^{i}.
+            rt_wrt_z = roots(flipud(aw_binom));
+            
+            % get the root in terms of y
+            roots_wrt_y = [rt_wrt_z./(1.+rt_wrt_z) ]; %Edit 27/07
+            
+            % Initialise a vector of ones
+            one = ones(length(roots_wrt_y),1);
+            
+            % get the roots with respect to y, and their multiplicities all set
+            % to one.
+            roots_wrt_y = [roots_wrt_y one];
+            
+            % add the roots to the array of roots
+            root_arr = [root_arr ; roots_wrt_y];
         end
-        
-        % get aw including its binomial coefficients.
-        aw_binom = flipud(aw .* bi_n);
-        
-        % get the roots in terms of z^{i} where z^{i} =(\frac{y}{(1-y)})^{i}.
-        rt_wrt_z = roots(aw_binom);
-        
-        % get the root in terms of y
-        roots_wrt_y = [rt_wrt_z./(1.+rt_wrt_z) ]; %Edit 27/07
-        
-        % Initialise a vector of ones
-        one = ones(length(roots_wrt_y),1);
-        
-        % get the roots with respect to y, and their multiplicities all set
-        % to one.
-        roots_wrt_y = [roots_wrt_y one];
-        
-        % add the roots to the array of roots
-        root_arr = [root_arr ; roots_wrt_y];
     end
 end
-
 
 
 % Obtaining multiplicities of the calculated roots
@@ -305,17 +258,7 @@ end
 roots_calc = [root_arr(:,1) flipud(roots_multiplicty)];
 
 %% Print the calculated roots and the corresponding multiplicities.
-fprintf('\nROOTS CALCULATED BY MY METHOD \n');
-fprintf('\t Root \t \t \t \t\t \t \t \t \t \t \t \t Multiplicity \n')
-fprintf('%22.15f + %22.15f i  \t \t %3g \n',[real(roots_calc(:,1)),imag(roots_calc(:,1)),...
-    roots_calc(:,2)]');
-fprintf('\n');
+PrintoutRoots('MY METHOD',roots_calc);
 
-
-
-
-
-
-end
 
 

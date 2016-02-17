@@ -1,40 +1,37 @@
-function [roots_Bb] = o_roots_multroot(example_number,e_low,e_up,seed)
+function [roots_Bb] = o_roots_multroot(fx)
+% Given a vector of coefficients of a polynomail in Bernstein form. Return
+% the set of roots given by zheng MultRoots() function.
+%
+% % Inputs.
+%
+%   fx : Column vector of coefficients of the polynomial f(x) in Bernstein
+%   form.
+%
+% % Outputs.
+%
+%   roots_Bb : Roots of f(x) as calculated by the zheng MultRoots function.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
 
-addpath 'Examples'
-addpath 'multroot/multroot'
+addpath 'Root Finding Methods/multroot/multroot'
 
+% Get the degree of polynomial f(x) 
+[r,~] = size(fx);
+m = r-1;
 
-% Get the exact roots
-[f_roots_exact,~] = Root_Examples(example_number,seed);
+% Build the vector of corresponding binomial coefficients
+Bi_m = GetBinomials(m);
 
-% Get polynomial coefficients in scaled bernstein basis
-f_exact_bi = B_poly(f_roots_exact);
-
-% Get degree of polynomial f
-m = length(f_exact_bi) - 1;
-
-% Get binomial coefficients corresponding to f
-Bi_m = zeros(m+1,1);
-for i = 0:1:m
-    Bi_m(i+1) = nchoosek(m,i);
-end
-
-% Get polynomial coefficients in standard bernstein basis.
-f_exact = f_exact_bi./Bi_m ;
-
-% Add variable noise to the coefficients
-fx = VariableNoise(f_exact,e_low,e_up,seed);
-
-% Get roots wrt to y
 roots_calc = multroot(fx.*Bi_m);
+    
 
 % convert roots wrt t, Bernstein basis
 roots_Bb = [1- roots_calc(:,1)./(1+roots_calc(:,1)) roots_calc(:,2)];
 
-fprintf('\nROOTS CALCULATED BY MULTROOTS FUNCTION \n');
-fprintf('\t Root \t \t \t \t\t \t \t \t \t \t \t \t Multiplicity \n')
-fprintf('%22.15f + %22.15f i  \t \t %3g \n',[real(roots_Bb(:,1)),imag(roots_Bb(:,1)),...
-    roots_Bb(:,2)]');
+% Printout roots to screen
+PrintoutRoots('MULTROOTS METHOD', roots_Bb);
+
 
 
 

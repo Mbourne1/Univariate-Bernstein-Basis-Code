@@ -2,35 +2,25 @@ function [gm]=GeometricMean(fx,n,k)
 % This function calculates the geometric mean gm of the terms that
 % contain the coefficients of the polynomial c in the kth subresultant
 % matrix S(c,d). The integer n is the degree of the polynomial d.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+%
 %                            Inputs
-
+%
 % fx    :  The coefficients of one of the Bernstein basis polynomials,
 %            f or g.
-
+%
 % n     :  The degree of the other polynomial.
-
+%
 % k     :  The order of the subresultant matrix.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 %                          Outputs
-
-
+%
 % gm :  The geometric mean of the terms in the modified Sylvester
 %            Sylvester matrix S(f,g)Q.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%
 %                       Global Variables.
 
-% BOOL_LOG - (Boolean)
-%   1 :- Perform calculations by log method
-%   0 :- Perform calculations by standard method.
 
 global bool_log
 
@@ -38,17 +28,16 @@ global bool_log
 
 % Get previous state of logs
 previous_log_state = bool_log;
+bool_log = 'y';
 
-% To avoid overflow always set BOOL_LOG to be 1.
-bool_log = 1;
 
 
 % Dependent on which method is used, 1 - use logs, 0 - use nchoosek
 
 switch bool_log
-    case 1 % Calculate GM using logs
+    case 'y' % Calculate GM using logs
         gm = GMlog(fx,n,k);       
-    case 0 % Calculate GM without logs
+    case 'n' % Calculate GM without logs
         gm = GMnchoosek(fx,n,k);
 end
 
@@ -61,23 +50,20 @@ end
 function gm = GMlog(fx,n,k)
 % Calculate the Geometric mean of the entries of the Coefficient matrix $C_{f}$
 % which may or may not contain Q. may or may not contain denominator.#
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                           Inputs.
-
-
+%
+%
 % fx :  Polynomial coefficients of fx
-
+%
 % n :   Degree of polynomial gx
-
+%
 % k :   Index of subresultants S_{k}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 %                           Outputs.
-
-
+%
+%
 % gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,7 +79,7 @@ global bool_q
 
 
 switch bool_q
-    case 1 
+    case 'y' 
         % Include Q in Sylvester Subresultant S_{k} so include Q in the 
         % calculation of the geometric mean.
         
@@ -119,17 +105,19 @@ switch bool_q
         %p2_exp = 10^p2_log;
         
         switch bool_denom_syl
-            case 1 % if denominator is included
+            case 'y' % if denominator is included
                 %p3 = nchoosek(m+n-k,n-k);
                 p3_log = lnnchoosek(m+n-k,n-k);
                 %p3_exp = 10.^p3_log;
-            case 0 % if denominator is not included
+            case 'n' % if denominator is not included
                 p3_log = 0;
+            otherwise
+                error('bool_denom_syl must be set to either (y) or (n)')
         end
 
         gm = 10.^(p1_log + p2_log - p3_log);
 
-    case 0
+    case 'n'
         % Exclude Q from Geometric mean calculations.
         % Split this calculation in to three parts, Numerator_A, the
         % coefficients of fx, Numerator_B : the binomial coefficients
@@ -182,7 +170,8 @@ switch bool_q
         
         gm = GM_Numerator./GM_Denominator;
         
-        
+    otherwise
+        error('bool_q must either be set to (y) or (n)')
         
 end
 
@@ -190,39 +179,37 @@ end
 
 
 function gm = GMnchoosek(fx,n,k)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% Get geometric mean of the entries of f(x) in the matrix DTQ using 
+% nchoosek
+%
 %                           Inputs.
-
-
+%
+%
 % fx :  Polynomial coefficients of fx
-
+%
 % n :   Degree of polynomial gx
-
+%
 % k :   Index of subresultants S_{k}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 %                           Outputs.
-
-
+%
+%
 % gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
+%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%
 %                       Global Variables.
 
 
 global bool_denom_syl
-
 global bool_q
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch bool_q
     
-    case 1 % Include Q
+    case 'y' % Include Q
         
         % Calculate the degree of the polynomial.
         m = length(fx)-1;
@@ -245,16 +232,18 @@ switch bool_q
         end
  
         switch bool_denom_syl
-            case 1 % if denominator is included
+            case 'y' 
+                % Denominator is included
                 p3 = nchoosek(m+n-k,n-k);
-            case 0 % if denominator is not included
+            case 'n' 
+                % Denominator is not included
                 p3 = 1;
         end
         
         gm = p1.*p2 ./ p3;
         
         
-    case 0 % exclude Q
+    case 'n' % exclude Q
         % Calculate the degree of the polynomial f.
         m = length(fx)-1;
         
@@ -278,6 +267,8 @@ switch bool_q
         denom = prod_denom .^(1./((m+1)*(n-k+1)));
         
         gm = num/denom;
+    otherwise
+        error('err')
 end
 end
 

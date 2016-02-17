@@ -1,161 +1,87 @@
-function [] = o_roots(ex,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_DENOM,BOOL_PREPROC,seed)
-
-
+function [] = o_roots(ex_num,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_PREPROC,seed)
+% Given an example number, and a set of input parameters, calculate the
+% roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
+% m_{i} 
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                           Inputs
-
+%
 % ex - (Int) Example Number
-
+%
 % emin - Noise/Signal maximum threshold (minimum)
-
+%
 % emax - Noise/Signal maximum threshold (maximum)
-
+%
 % BOOL_SNTLN - Assigned to global variable (see below)
-
+%
 % BOOL_APF - Assigned to global variable (see below)
-
+%
 % BOOL_DENOM - Assigned to global variable (see below)
-
-% Bool_Preproc - Assigned to global variable (see below)
-
+%
+% BOOL_PREPROC - Assigned to global variable (see below)
+%
 % seed (int) - Integer chosen to randomly generate the roots and
 % multiplicities of input polynomials f and g as well as the noise which is
 % added to their coefficients.
-
-
+%
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                    # Global Variables #
 
-% BOOL_SNTLN - (Boolean)
-%    1 :- Include Structured Perturbations in Sylvester Matrix S_{k} before
-%    calculating quotients u_{k}, v_{k} and GCD d_{k}.
-%    0 :- Don't Include Structured Perturbations.
 
-% BOOL_APF - (Boolean)
-%    1 :- Apply Structured Perturbations to the Approximate Polynomial
-%    Factorisation, before obtaining GCD d_{k}.
-%    0 :- Don't Include Structured Perturbations.
-
-% bool_denom_apf - (Boolean)
-% Given the rearrangement of the coefficient matrix in the approximate
-% polynomial factorisation [C(u);C(v)]d = [f;g]
-% The entries in each partition C(u) and C(v) have a common divisor, which
-% is removed by manipulation of the binomial coefficients.
-% NOTE - This should always be included.
-%    1 :- Include Common Denominators.
-%    0 :- Exclude Common Denominators.
-
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
-
-% BOOL_PREPROC - (Boolean) It has been shown that the inclusion of
-% preprocessors Geometric mean, scaling by alpha, change of independent
-% variable, yield improved results.
-%   1 :- Include Preprocessors.
-%   0 :- Exclude Preprocessors.
+global bool_bezout
 global bool_sntln
 global bool_apf
-global bool_denom_apf
 global bool_denom_syl
+global bool_denom_apf
 global bool_preproc
-
-bool_sntln = BOOL_SNTLN;
-bool_apf = BOOL_APF;
-bool_denom_apf = 1;
-bool_denom_syl = BOOL_DENOM;
-bool_preproc = BOOL_PREPROC;
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                            CONSTANTS
-global fignum
-fignum = 50;
-
-% bool_SNTLN_ROOTS
-% 1 :   Use Roots based SNTLN method, which has the added constraints that
-%       g is the derivative of f.
-% 0 :   Use standard SNTLN where f and g are unconstrained
-
-% bool_APF_Roots
-% 1 :   Use roots based APF method, which has added constraings.
-% 0 :   Use standard apf method where f and g are unconstrained.
-
-% bool_q - (Boolean) Consists of binomial coefficients of coprime
-% polynomials.
-% 1 :   Include the binomial coefficients from the null space in the
-%       Sylvester Matrix.
-% 0 :   Exclude the binomial coefficients from the null space in the
-%       Sylvester Matrix.
-
-% BOOL_LOG - (Boolean)
-% 1 :   Perform calculations by log method
-% 0 :   Perform calculations by standard method.
-
-% BOOL_deconvolve - (Boolean)
-% 0 - Standard deconvolution in the root finder
-% 1 - Batch deconvolution in the root finder
-
-% max_error - set the maximum error allowed in the two LSE Problems, the
-%   first of which
-%   is the SNTLN of the Sylvester matrix, the second is the approximate
-%   polynomial factorisation.
-
-% max_iterations - Set the maximum number of iterations in the two LSE
-%   problems.
-
-% bool_reordercols (bool)
-% 0 :   Leave columns of the Sylvester Matrix as standard partitions, where
-%       the first n-k+1 columns contain entries corresponding to the
-%       coefficients of f(y), and the last m-k+1 columns correspond to
-%       coefficients of g(y)
-% 1 :   Rearrange columns of the Sylvester subresultant matrices in
-%       accordance with Z Zeng - Computing Multiple Roots of inexact
-%       polynomials (page 889)
-
-% plotgraphs (bool)
-% 0 :   Don't plot graphs, just perform root finding operation.
-% 1 :   Plot Graphs associated with calculating the GCD
-
-% Bool_sylvesterBuildMethod
-% 1 :   Build based on individual elements of the Sylvester matrix, each
-%       (i,j) element is calculated independently.
-% 0 :   Use Naive method calculate D, calculate S, calculate Q, then
-%       calculate DTQ.
-
-% Bool_APFBuildMethod
-% 1 :   Build based on individual elements of the Sylvester matrix, each
-%       (i,j) element is calculated independently.
-% 0 :   Use Naive method calculate D, calculate S, calculate Q, then
-%       calculate DTQ.
-
-global bool_SNTLN_Roots
-global bool_APF_Roots
 global bool_q
 global bool_log
-global bool_deconvolve
-global max_error
-global max_iterations
-global bool_plotgraphs
+
+global PLOT_GRAPHS
+
+global MAX_ERROR_SNTLN
+global MAX_ITERATIONS_SNTLN
+
+global MAX_ERROR_APF
+global MAX_ITERATIONS_APF
+
+global SEED
+
 global bool_sylvesterBuildMethod
 global Bool_APFBuildMethod
+global max_error_deconvolutions
+global max_iterations_deconvolutions
+global problemType 
+global bool_deconvolve
 
-bool_SNTLN_Roots = 0;
-bool_APF_Roots = 0;
-bool_q = 1;
-bool_log = 1;
-bool_deconvolve = 1;
-max_error = 1e-15;
-max_iterations = 50;
-bool_plotgraphs = 0;
+bool_sntln = BOOL_SNTLN;
+bool_preproc = BOOL_PREPROC;
+bool_apf = BOOL_APF;
+bool_bezout = 1;
+bool_denom_syl = 'y';
+bool_denom_apf = 'y';
+bool_q = 'y';
+bool_log = 'y';
+PLOT_GRAPHS = 'n';
+SEED = seed;
 
-bool_sylvesterBuildMethod = 1;
-Bool_APFBuildMethod = 1;
+MAX_ERROR_SNTLN = 1e-15;
+MAX_ITERATIONS_SNTLN = 50;
+
+MAX_ERROR_APF = 1e-15;
+MAX_ITERATIONS_APF = 50;
+
+max_error_deconvolutions = 1e-10;
+max_iterations_deconvolutions = 50;
+
+bool_sylvesterBuildMethod = 'rearranged';
+Bool_APFBuildMethod = 'rearranged';
+
+problemType = 'fromRoots'; % fromRoots/fromCoefficients
+bool_deconvolve = 'batch';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % nominal value used when:
@@ -165,22 +91,28 @@ Bool_APFBuildMethod = 1;
 % small, to assume that the sylvester matrix is rank deficient)
 % then degree is one. otherwise degree is zero
 global nominal_value
-nominal_value = 100;
+nominal_value = 10;
 
 % let x be the maximum change in ratio_maxmin_rowsum vector if abs(x) <
 % nominal_value_2, if the change is minimal, then all subresultants should
 % be classed as rank deficient.
 
 global min_delta_mag_rowsum
-min_delta_mag_rowsum = 3;
+min_delta_mag_rowsum = 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% output_format (bool)
-% The format of output from file o1.m
-%   1 - output u v and d in terms of w (coefficients include theta)
-%   0 - output u v and d in terms of x
-global output_format
-output_format = 0;
+% bool_SNTLN_ROOTS
+% RootSpecificSNTLN :   Use Roots based SNTLN method, which has the added constraints that
+%                       g is the derivative of f.
+% StandardSNTLN :   Use standard SNTLN where f and g are unconstrained
+global bool_SNTLN_Roots
+bool_SNTLN_Roots = 'StandardSNTLN';
+
+% bool_APF_Roots
+% RootSpecificAPF :   Use roots based APF method, which has added constraings.
+% StandardAPF :   Use standard apf method where f and g are unconstrained.
+global bool_APF_Roots
+bool_APF_Roots = 'StandardAPF';
 
 
 % geometricMeanMethod
@@ -189,14 +121,13 @@ output_format = 0;
 % new method, described in my internal report offers speed up due to the
 % structured nature of the Sylvester matrix entries for the Sylvester
 % matrix in the Bernstein basis.
-% 0 -   use MatLab Built in method for calculating geometric means
-% 1 -   use my method of calculating geometric means#
-% 2 -   Set geometric mean equal to one, essentially eliminating the
+% 'matlab' -   use MatLab Built in method for calculating geometric means
+% 'mymethod' -   use my method of calculating geometric means#
+% 'none' -   Set geometric mean equal to one, essentially eliminating the
 %       preprocessor.
 global geometricMeanMethod
-geometricMeanMethod = 1;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+geometricMeanMethod = 'matlab';
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                           Validate Inputs.
 
@@ -213,29 +144,18 @@ end
 
 % If BOOL_Q has not been included, then the Sylvester rearrangement is not
 % allowed, and the denominator can not be removed.
-if (bool_q == 0)
-    
-    bool_denom_syl = 1;
-    bool_apf = 0; % Does not work with APF
-    bool_sntln = 0; % Does not work with SNTLN
-    fprintf('SNTLN and APF only work when including Matrix Q in sylvester matrix.\n')
-    fprintf('Denominator must be included when Q is included \n')
+switch bool_q
+    case 'n'
+        
+        bool_denom_syl = 'y';
+        bool_apf = 'n'; % Does not work with APF
+        bool_sntln = 'n'; % Does not work with SNTLN
+        fprintf('SNTLN and APF only work when including Matrix Q in sylvester matrix.\n')
+        fprintf('Denominator must be included when Q is included \n')
+        
 end
 
-fprintf('PARAMETERS:\n\n')
-fprintf('\tExample Number: %i\n',ex)
-fprintf('\tmin noise : %i \n\tmax noise : %i\n',emin,emax)
-fprintf('INPUT VARIABLES')
-fprintf('\n\tSNTLN : %i \n',...
-    bool_sntln);
-fprintf('\tAPF : %i \n ',bool_apf)
-fprintf('\tDENOM : %i \n',bool_denom_syl)
-fprintf('\tPREPROC : %i \n',bool_preproc)
-fprintf('\tLOG: %i\n',bool_log)
-fprintf('\tQ : %i\n',bool_q)
-fprintf('\tSNTLN Derivative Constraint: %i \n',bool_SNTLN_Roots)
-fprintf('')
-fprintf('--------------------------------------------------------------------------- \n')
+PrintGlobalVariables();
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -247,162 +167,129 @@ addpath 'BernsteinMethods'
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+switch problemType
+    case 'fromRoots'
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Get exact polynomial roots from the example file.
-[f_roots_exact] = Root_Examples(ex,seed);
-exact_roots = sortrows(f_roots_exact,1);
+        % Get exact polynomial roots from the example file.
+        [f_roots_exact] = Examples_Roots(ex_num);
+        exact_roots = sortrows(f_roots_exact,1);
+        
+        % Print the exact roots and multiplicities to terminal
+        fprintf('\nExact Roots of Input Polynomial \n');
+        fprintf('\t \t \t \t \t Root \t \t \t \t\t  Multiplicity \n')
+        fprintf('%30.15f %30.15f \t \t\n',[exact_roots(:,1),exact_roots(:,2)]');
+        fprintf('\n');
+        
+        f_exact_bi          = B_poly(f_roots_exact);
+        
+        % Get degree of f
+        m = length(f_exact_bi) - 1;
+        
+        % Display the degree of the input polynomial
+        disp('Degree of Input Polynomial F ');
+        disp(int2str(m));
+        
+        % Get the Binomial coefficients corresponding to the coefficients of
+        % polynomial f.
+        Bi_m = zeros(m+1,1);
+        for i=1:1:m+1
+            Bi_m(i) = nchoosek(m,i-1);
+        end
+        
+        % Get coefficients in Bernstein Basis
+        f_exact = f_exact_bi./Bi_m;
+        
+    case 'fromCoefficients'
+        switch ex_num
+            case '1'
+                f_exact = ...
+                    [
+                    -0.9865
+                    2.2398
+                    2.8950
+                    1.9092
+                    -0.1477
+                    ];
+            otherwise
+                error('Not a valid example number for the *from coefficients* examples.')
+        end
+end
 
-% Print the exact roots and multiplicities to terminal
-fprintf('\nExact Roots of Input Polynomial \n');
-fprintf('\t \t \t \t \t Root \t \t \t \t\t  Multiplicity \n')
-fprintf('%30.15f %30.15f \t \t\n',[exact_roots(:,1),exact_roots(:,2)]');
-fprintf('\n');
+%%
+% Add Noise to coefficients of exact polynomial f_exact, to obtain noisy
+% polynomial fx.
+fx = VariableNoise(f_exact,emin,emax,seed);
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
 
 % This section calculates the roots by several methods
 
 
 % Calculate roots by mymethod.
-clc_roots_mymthd = o_roots_mymethod(ex,emin,emax,seed);
+clc_roots_mymthd = o_roots_mymethod(fx);
 
 % Calculate roots by matlab 'roots' function.
-clc_roots_mtlb = o_roots_matlab(ex,emin,emax,seed);
+clc_roots_mtlb = o_roots_matlab(fx);
 
 % Calculate roots by 'multroot' function.
-clc_roots_mltrt = o_roots_multroot(ex,emin,emax,seed);
+clc_roots_mltrt = o_roots_multroot(fx);
 
 % Calculate roots by 'Interval Bisection' function
-clc_roots_intvlBsctn = o_roots_bisection(ex,emin,emax,seed);
+%clc_roots_intvlBsctn = o_roots_bisection(fx);
 
 % Calculate roots by 'Subdivisiton' Method
-clc_roots_subdivision = o_roots_subdivision(ex,emin,emax,seed);
+%clc_roots_subdivision = o_roots_subdivision(ex_num,emin,emax,seed);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% 
+%
 
 % Get vector of exact roots, and extract multiplicities.
 % eg: if root one has multiplicity 5, then the vector would be given by
-% X1 = [r1 r1 r1 r1 r1 ...]. 
-
-% Let sum_mult_exct be the sum of all multiplicities of the exact roots
-sum_mult_exct = sum(exact_roots(:,2));
-
-% Initialise a vector to store the roots where roots with high multiplicity
-% are repeated.
-nondistinctRoots_exct = zeros(sum_mult_exct,1);
-
-% Initialise a count
-count = 1;
-
-% for each exact root r_{i}
-for i = 1:1:size(exact_roots,1)
-    
-    % Get multiplicty of root i
-    m = exact_roots(i,2);
-    
-    % for j = 1,...,m
-    for j = 1:1:m
+% X1 = [r1 r1 r1 r1 r1 ...].
+switch problemType
+    case 'fromRoots'
+        % Let sum_mult_exct be the sum of all multiplicities of the exact roots
+        sum_mult_exct = sum(exact_roots(:,2));
         
-        % Add the root to a vector of nondistinct roots
-        nondistinctRoots_exct(count,1) = exact_roots(i,1);
+        % Initialise a vector to store the roots where roots with high multiplicity
+        % are repeated.
+        nondistinctRoots_exct = zeros(sum_mult_exct,1);
         
-        % Increment the counter
-        count = count + 1;
-    end
+        % Initialise a count
+        count = 1;
+        
+        % for each exact root r_{i}
+        for i = 1:1:size(exact_roots,1)
+            
+            % Get multiplicty of root i
+            m = exact_roots(i,2);
+            
+            % for j = 1,...,m
+            for j = 1:1:m
+                
+                % Add the root to a vector of nondistinct roots
+                nondistinctRoots_exct(count,1) = exact_roots(i,1);
+                
+                % Increment the counter
+                count = count + 1;
+            end
+        end
+    case 'fromCoefficients'
+    otherwise
+        error('Problem type is either fromRoots or fromCoefficients')
 end
-
 % Get vector of roots calculated by my method, and extract multiplicities.
 % eg: if r_{1} has multiplicity 5, then the vector would be given by
-% X1 = [r1 r1 r1 r1 r1 ...]. 
-
-% Let sum_rt_mult_mymthd be the sum of all of the multiplicities of all of the
-% roots obtained by my method
-sum_rt_mult_mymthd = sum(clc_roots_mymthd(:,2));
-
-% Initialise a vector to store the nondistinct roots
-nondistinctRoots_mymthd = zeros(sum_rt_mult_mymthd,1);
-
-% Initialise a count
-count = 1;
-
-% for each unique root i
-for i = 1:1:size(clc_roots_mymthd,1)
-    
-    % Get multiplicty of root i
-    m = clc_roots_mymthd(i,2);
-    
-    % for each of the m roots at r_{i}
-    for j = 1:1:m
-        
-        % Add the root to a vector of nondistinct roots
-        nondistinctRoots_mymthd(count,1) = clc_roots_mymthd(i,1);
-        
-        % Increment the counter
-        count = count + 1;
-    end
-end
+% X1 = [r1 r1 r1 r1 r1 ...].
 
 
-% Get vector of roots by matlab method
+nondistinctRoots_mymthd = GetRepeatedRoots(clc_roots_mymthd);
+nondistinctRoots_mtlb   = GetRepeatedRoots(clc_roots_mtlb);
+nondistinctRoots_mltrt  = GetRepeatedRoots(clc_roots_mltrt);
 
-% Let sum_rt_mlt_mtlb be the sum of all of the multiplicities of all of the
-% roots obtained by my matlab method
-sum_rt_mlt_mtlb = sum(clc_roots_mtlb(:,2));
 
-% Initialise a vector to store the nondistinct roots
-nondistinctRoots_mtlb = zeros(sum_rt_mlt_mtlb,1);
-
-% initialise a counter
-count = 1;
-
-% for each unique root i
-for i = 1:1:length(clc_roots_mtlb)
-    
-    % Get multiplicty of root i
-    m = clc_roots_mtlb(i,2);
-    
-    % for each of the m roots at r_{i}
-    for j = 1:1:m
-        
-        % Add the root to a vector of nondistinct roots
-        nondistinctRoots_mtlb(count,1) = clc_roots_mtlb(i,1);
-        
-        % Increment the counter
-        count = count + 1;
-    end
-end
-
-% Get the roots by MULTROOT zheng function
-
-% Let sum_root_mult_mltrt be the sum of all of the multiplicities of all of
-% the roots obtained by my multroot method
-sum_root_mult_mltrt = sum(clc_roots_mltrt(:,2));
-
-% Initialise a vector to store the nondistinct roots
-nondistinctRoots_mltrt = zeros(sum_root_mult_mltrt,1);
-
-% Initialise a count
-count = 1;
-
-% for each unique root r_{i}
-for i = 1:1:size(clc_roots_mltrt,1)
-    
-    % Get multiplicty of root r_{i}
-    m = clc_roots_mltrt(i,2);
-    
-    % for each of the m roots at r_{i}
-    for j = 1:1:m
-        
-        % Add the root to a vector of nondistinct roots
-        nondistinctRoots_mltrt(count,1) = clc_roots_mltrt(i,1);
-        
-        % Increment the counter
-        count = count + 1;
-    end
-end
 
 %
 % Get the roots by interval bisection
@@ -440,20 +327,30 @@ end
 %
 % Plot the graph real (x) imaginary (y) components of the nondistinct roots
 % obtained by the root calculating methods.
-
-figure()
-scatter(real(nondistinctRoots_exct),imag(nondistinctRoots_exct),'black*','DisplayName','Exact Roots');
-hold on;
-scatter(real(nondistinctRoots_mymthd),imag(nondistinctRoots_mymthd),'blueo','DisplayName','My Method');
-scatter(real(nondistinctRoots_mtlb),imag(nondistinctRoots_mtlb),'red','DisplayName','Matlab Roots');
-scatter(real(nondistinctRoots_mltrt),imag(nondistinctRoots_mltrt),'green*','DisplayName','MultRoots');
-xlabel('Real');
-ylabel('Imaginary');
-str = sprintf('Plot of Calculated Roots of Polynomial f(y). \n componentwise noise = %g',emin);
-title(str);
-hleg = legend();
-hold off
-
+PLOT_GRAPHS = 'y';
+switch PLOT_GRAPHS
+    case 'y'
+        figure('name','Plot Calculated Roots')
+        switch problemType
+            case 'fromRoots'
+                scatter(real(nondistinctRoots_exct),imag(nondistinctRoots_exct),'black','*','LineWidth',20,'DisplayName','Exact Roots');
+        end
+        hold on;
+    
+        scatter((real(nondistinctRoots_mymthd)),imag(nondistinctRoots_mymthd),'yellow','*','DisplayName','My Method');
+        scatter((real(nondistinctRoots_mtlb)),imag(nondistinctRoots_mtlb),'red','DisplayName','Matlab Roots');
+        scatter((real(nondistinctRoots_mltrt)),imag(nondistinctRoots_mltrt),'green','s','filled','DisplayName','MultRoots');
+        xlabel('Real');
+        ylabel('Imaginary');
+        legend(gca,'show')
+        str = sprintf('Plot of Calculated Roots of Polynomial f(y). \n componentwise noise = %g',emin);
+        title(str);
+        hold off
+    case 'n'
+        % Dont plot graph
+    otherwise
+        error('error: plot_graphs is either y or n')
+end
 
 % #########################################################################
 
@@ -470,34 +367,69 @@ hold off
 calculated_poly_mymthd = B_poly(clc_roots_mymthd);
 calculated_poly_mymthd = calculated_poly_mymthd./calculated_poly_mymthd(1) ;
 
-[f_roots_exact,~] = Root_Examples(ex,seed);
 
 f_exact_bi = B_poly(f_roots_exact);
 f_exact_bi  = f_exact_bi ./ f_exact_bi(1);
 
-err_mymthd  = (calculated_poly_mymthd - f_exact_bi) ./ f_exact_bi;
+switch 'problemType'
+    case 'fromRoots'
+        % Get error measure
+        err_mymthd  = (calculated_poly_mymthd - f_exact_bi) ./ f_exact_bi;
+        fprintf('\nObtaining polynomial coefficients from calculated roots...\n');
+        fprintf('Normalised error in coefficients\n\n')
+        
+        fprintf('My Method: %g \n\n',norm(err_mymthd))
+        
+        % Having obtained MultRoot Estimates, build the polynomial from the calculated roots.
+        
+        calculated_poly_multroot = B_poly(clc_roots_mltrt);
+        calculated_poly_multroot = calculated_poly_multroot./calculated_poly_multroot(1);
+        
+        err_mltrt = ((calculated_poly_multroot - f_exact_bi)) ./ f_exact_bi;
+        fprintf('Multroot Method: %g \n\n',norm(err_mltrt));
+        
+        % Having obtained the Matlab ROOTS, build the polynomial from the calculated roots
+        
+        calculated_poly_matlabroot = B_poly(clc_roots_mtlb);
+        calculated_poly_matlabroot = calculated_poly_matlabroot ./ calculated_poly_matlabroot(1);
+        
+        err_mtlbrt = ((calculated_poly_matlabroot) - f_exact_bi) ./ f_exact_bi;
+        fprintf('MATLAB Roots Method: %g \n\n', norm(err_mtlbrt));
+    case 'fromCoefficients'
+end
 
-fprintf('\nObtaining polynomial coefficients from calculated roots...\n');
-fprintf('Normalised error in coefficients\n\n')
 
-fprintf('My Method: %g \n\n',norm(err_mymthd))
-
-% Having obtained MultRoot Estimates, build the polynomial from the calculated roots.
-
-calculated_poly_multroot = B_poly(clc_roots_mltrt);
-calculated_poly_multroot = calculated_poly_multroot./calculated_poly_multroot(1);
-
-err_mltrt = ((calculated_poly_multroot - f_exact_bi)) ./ f_exact_bi;
-fprintf('Multroot Method: %g \n\n',norm(err_mltrt));
-
-% Having obtained the Matlab ROOTS, build the polynomial from the calculated roots
-
-calculated_poly_matlabroot = B_poly(clc_roots_mtlb);
-calculated_poly_matlabroot = calculated_poly_matlabroot ./ calculated_poly_matlabroot(1);
-
-err_mtlbrt = ((calculated_poly_matlabroot) - f_exact_bi) ./ f_exact_bi;
-fprintf('MATLAB Roots Method: %g \n\n', norm(err_mtlbrt));
 
 
 end
 
+
+function [nondistinctRoots_mymthd] = GetRepeatedRoots(clc_roots_mymthd) 
+
+% Let sum_rt_mult_mymthd be the sum of all of the multiplicities of all of the
+% roots obtained by my method
+sum_rt_mult_mymthd = sum(clc_roots_mymthd(:,2));
+
+% Initialise a vector to store the nondistinct roots
+nondistinctRoots_mymthd = zeros(sum_rt_mult_mymthd,1);
+
+% Initialise a count
+count = 1;
+
+% for each unique root i
+for i = 1:1:size(clc_roots_mymthd,1)
+    
+    % Get multiplicty of root i
+    m = clc_roots_mymthd(i,2);
+    
+    % for each of the m roots at r_{i}
+    for j = 1:1:m
+        
+        % Add the root to a vector of nondistinct roots
+        nondistinctRoots_mymthd(count,1) = clc_roots_mymthd(i,1);
+        
+        % Increment the counter
+        count = count + 1;
+    end
+end
+end
