@@ -1,4 +1,4 @@
-function [] = Plot_Bezier(cp_f_arr)
+function [] = Plot2DBezier(cp_f_arr)
 % Given a set of control points for curves {C1, C2,...} plot the curves
 % Input is an array of polynomial control points
 
@@ -8,7 +8,7 @@ figure('name','Bezier Plot')
 hold on
 
 % Get the number of sets of control points
-[r,c] = size(cp_f_arr);
+[~,c] = size(cp_f_arr);
 
 for curve_num = 1:1:c
     
@@ -22,7 +22,6 @@ for curve_num = 1:1:c
     
     pts_f = 0;
     for i = 0:1:degree_f
-        
         pts_f = pts_f + kron( nchoosek(degree_f,i).*((1-t).^(degree_f - i)) .* (t.^(i)) ,cp_f(:,i+1));
     end
 

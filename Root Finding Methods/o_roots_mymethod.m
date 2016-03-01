@@ -13,41 +13,22 @@ function [roots_calc] = o_roots_mymethod(fx)
 
 
 addpath 'Measures'
-addpath 'Examples'
-addpath 'multroot/multroot'
+addpath 'Root Finding Methods/multroot/multroot'
 
-% Obtain gx, the derivative of the noisy polynomial fx
-gx = Bernstein_Differentiate(fx)';
-
-% Get gcd and quotients u and v, of fx and gx
 
 % Initialise an iteration counter
 ite_num = 1;
 
-% Print current iteration number
-fprintf('GCD Calculation Loop iteration = %i \n\n', ite_num);
-
-% Perform an intial GCD Calculation, from this we obtain new forms of f and
-% g and a calculated 'd'.
-[fx,~,dx, ~ ,~,~,theta] = o1(fx,gx);
-
 % Initialise an array 'q' which stores the gcd outputs from each gcd
 % calculation
 q{1} = fx;
-q{2} = dx;
 
 % let degree_vector store the degrees corresponding to the array of
 % GCDs stored in q.
 degree_vec(1) = length(fx)-1;
-degree_vec(2) = length(dx)-1;
 
 % Let theta_vec store all theta values used in each iteration.
 theta_vec(1) = 1;
-theta_vec(2) = theta;
-
-% increment the iteration number
-ite_num = ite_num+1;
-
 
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
@@ -63,11 +44,14 @@ while length(q{ite_num})-1 > 0
     % get degrees m and n of polynomials f and g respectively.
     m = size(fx,1) -1;
     
+    fprintf('Begin : GCD Calculation Loop iteration = %i \n\n',ite_num );
+    fprintf('m = %i \n',m);
+    fprintf('n = %i \n\n',m-1);
     
     % if degree of f is greater than one
     if m > 1
         
-        fprintf('GCD Calculation Loop iteration = %i \n\n',ite_num );
+        
         [fx,~,dx, ~ ,~,~,theta] = o1(fx,gx);
         
         % add the value of theta used in this GCD calculation to the theta

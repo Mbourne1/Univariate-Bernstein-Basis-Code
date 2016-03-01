@@ -1,4 +1,4 @@
-function [] = o_roots(ex_num,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_PREPROC,seed)
+function [] = o_roots(ex_num,emin,emax,bool_sntln,bool_apf,bool_preproc,seed)
 % Given an example number, and a set of input parameters, calculate the
 % roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
 % m_{i} 
@@ -13,9 +13,9 @@ function [] = o_roots(ex_num,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_PREPROC,seed)
 %
 % emax - Noise/Signal maximum threshold (maximum)
 %
-% BOOL_SNTLN - Assigned to global variable (see below)
+% bool_sntln - Assigned to global variable (see below)
 %
-% BOOL_APF - Assigned to global variable (see below)
+% bool_apf - Assigned to global variable (see below)
 %
 % BOOL_DENOM - Assigned to global variable (see below)
 %
@@ -31,14 +31,14 @@ function [] = o_roots(ex_num,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_PREPROC,seed)
 %                    # Global Variables #
 
 
-global bool_bezout
-global bool_sntln
-global bool_apf
-global bool_denom_syl
-global bool_denom_apf
-global bool_preproc
-global bool_q
-global bool_log
+global BOOL_BEZOUT
+global BOOL_SNTLN
+global BOOL_APF
+global BOOL_DENOM_SYL
+global BOOL_DENOM_APF
+global BOOL_PREPROC
+global BOOL_Q
+global BOOL_LOG
 
 global PLOT_GRAPHS
 
@@ -50,35 +50,39 @@ global MAX_ITERATIONS_APF
 
 global SEED
 
-global bool_sylvesterBuildMethod
-global Bool_APFBuildMethod
-global max_error_deconvolutions
-global max_iterations_deconvolutions
+global BOOL_SYLVESTER_BUILD_METHOD
+global BOOL_APF_BUILD_METHOD
+global MAX_ERROR_DECONVOLUTIONS
+global MAX_ITERATIONS_DECONVOLUTIONS
 global problemType 
 global bool_deconvolve
 
-bool_sntln = BOOL_SNTLN;
-bool_preproc = BOOL_PREPROC;
-bool_apf = BOOL_APF;
-bool_bezout = 1;
-bool_denom_syl = 'y';
-bool_denom_apf = 'y';
-bool_q = 'y';
-bool_log = 'y';
+BOOL_SNTLN = bool_sntln;
+BOOL_PREPROC = bool_preproc;
+BOOL_APF = bool_apf;
+BOOL_BEZOUT = 1;
+BOOL_DENOM_SYL = 'y';
+BOOL_DENOM_APF = 'y';
+BOOL_Q = 'y';
+BOOL_LOG = 'y';
 PLOT_GRAPHS = 'n';
 SEED = seed;
 
+% Get global variables for SNTLN
 MAX_ERROR_SNTLN = 1e-15;
 MAX_ITERATIONS_SNTLN = 50;
 
+% Get Global variables for APF
 MAX_ERROR_APF = 1e-15;
 MAX_ITERATIONS_APF = 50;
 
-max_error_deconvolutions = 1e-10;
-max_iterations_deconvolutions = 50;
+% Get Global variables for Deconvolve
+MAX_ERROR_DECONVOLUTIONS = 1e-10;
+MAX_ITERATIONS_DECONVOLUTIONS = 50;
 
-bool_sylvesterBuildMethod = 'rearranged';
-Bool_APFBuildMethod = 'rearranged';
+
+BOOL_SYLVESTER_BUILD_METHOD = 'rearranged';
+BOOL_APF_BUILD_METHOD = 'rearranged';
 
 problemType = 'fromRoots'; % fromRoots/fromCoefficients
 bool_deconvolve = 'batch';
@@ -90,29 +94,29 @@ bool_deconvolve = 'batch';
 % if max_r./min_r > nominal_value (then minimum value is significantly
 % small, to assume that the sylvester matrix is rank deficient)
 % then degree is one. otherwise degree is zero
-global nominal_value
-nominal_value = 10;
+global NOMINAL_VALUE
+NOMINAL_VALUE = 10;
 
 % let x be the maximum change in ratio_maxmin_rowsum vector if abs(x) <
 % nominal_value_2, if the change is minimal, then all subresultants should
 % be classed as rank deficient.
 
-global min_delta_mag_rowsum
-min_delta_mag_rowsum = 2;
+global MIN_DELTA_MAG_ROW_SUMS
+MIN_DELTA_MAG_ROW_SUMS = 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % bool_SNTLN_ROOTS
 % RootSpecificSNTLN :   Use Roots based SNTLN method, which has the added constraints that
 %                       g is the derivative of f.
 % StandardSNTLN :   Use standard SNTLN where f and g are unconstrained
-global bool_SNTLN_Roots
-bool_SNTLN_Roots = 'StandardSNTLN';
+global BOOL_SNTLN_ROOTS
+BOOL_SNTLN_ROOTS = 'StandardSNTLN';
 
 % bool_APF_Roots
 % RootSpecificAPF :   Use roots based APF method, which has added constraings.
 % StandardAPF :   Use standard apf method where f and g are unconstrained.
-global bool_APF_Roots
-bool_APF_Roots = 'StandardAPF';
+global BOOL_APF_ROOTS
+BOOL_APF_ROOTS = 'StandardAPF';
 
 
 % geometricMeanMethod
@@ -125,8 +129,8 @@ bool_APF_Roots = 'StandardAPF';
 % 'mymethod' -   use my method of calculating geometric means#
 % 'none' -   Set geometric mean equal to one, essentially eliminating the
 %       preprocessor.
-global geometricMeanMethod
-geometricMeanMethod = 'matlab';
+global GEOMETRIC_MEAN_METHOD
+GEOMETRIC_MEAN_METHOD = 'matlab';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                           Validate Inputs.
@@ -144,7 +148,7 @@ end
 
 % If BOOL_Q has not been included, then the Sylvester rearrangement is not
 % allowed, and the denominator can not be removed.
-switch bool_q
+switch BOOL_Q
     case 'n'
         
         bool_denom_syl = 'y';
@@ -181,7 +185,7 @@ switch problemType
         fprintf('%30.15f %30.15f \t \t\n',[exact_roots(:,1),exact_roots(:,2)]');
         fprintf('\n');
         
-        f_exact_bi          = B_poly(f_roots_exact);
+        f_exact_bi = B_poly(f_roots_exact);
         
         % Get degree of f
         m = length(f_exact_bi) - 1;
@@ -192,10 +196,8 @@ switch problemType
         
         % Get the Binomial coefficients corresponding to the coefficients of
         % polynomial f.
-        Bi_m = zeros(m+1,1);
-        for i=1:1:m+1
-            Bi_m(i) = nchoosek(m,i-1);
-        end
+        
+        Bi_m = GetBinomials(m);
         
         % Get coefficients in Bernstein Basis
         f_exact = f_exact_bi./Bi_m;

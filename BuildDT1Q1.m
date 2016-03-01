@@ -18,20 +18,20 @@ function DT1Q1 = BuildDT1Q1(fx,theta,n,k)
 
 %                       Global Variables.
 
-global bool_q
-global bool_log
+global BOOL_Q
+global BOOL_LOG
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-switch bool_q
+switch BOOL_Q
     case 'n' 
         DT1Q1 = BuildDT1(fx,theta,n,k)
     case 'y'
         % If Q is included, use the rearrangment such that each Toeplitz
         % matrix has a common divisor in each element.
-        switch bool_log
+        switch BOOL_LOG
             case 'n'
                 % Build Toeplitz Matrix using nchoosek
                 DT1Q1 = BuildDT1Q1_Rearranged_nchoosek(fx,theta,n,k);
@@ -67,7 +67,7 @@ function DT1Q1 = BuildDT1Q1_Rearranged_log(fx,theta,n,k)
 %                       Global Variables.
 
 
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -98,7 +98,7 @@ for j=0:1:n-k
     end
 end
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y' % Include denominator
         
         % Get log of the binomial coefficient.
@@ -137,7 +137,7 @@ function T = BuildDT1Q1_Rearranged_nchoosek(fx,theta,n,k)
 %   basis reveals common denominators.
 %     1 :- Include Common Denominators in the Sylvester Matrix 0 :- Exclude
 %     Common Denominators from the Sylvester Matrix.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -160,7 +160,7 @@ for j=0:1:n-k
 end
 
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y' % Include denominator
         scalar = nchoosek(m+n-k,n-k);
         T = T./scalar;

@@ -1,4 +1,4 @@
-function [] = o_gcd(ex,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_PREPROC,seed)
+function [] = o_gcd(ex_num,emin,emax,bool_sntln,bool_apf,bool_preproc,seed)
 % Obtain the Greatest Common Divisor (GCD) of two polynomials defined in
 % the example file.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,36 +25,36 @@ function [] = o_gcd(ex,emin,emax,BOOL_SNTLN,BOOL_APF,BOOL_PREPROC,seed)
 addpath 'BernsteinMethods'
 addpath 'Bezoutian'
 
-global bool_bezout
-global bool_sntln
-global bool_apf
-global bool_denom_syl
-global bool_denom_apf
-global bool_preproc
-global bool_q
-global bool_log
+global BOOL_BEZOUT
+global BOOL_SNTLN
+global BOOL_APF
+global BOOL_DENOM_SYL
+global BOOL_DENOM_APF
+global BOOL_PREPROC
+global BOOL_Q
+global BOOL_LOG
 global PLOT_GRAPHS
 global MAX_ERROR_SNTLN
 global MAX_ITERATIONS_SNTLN
 global MAX_ERROR_APF
 global MAX_ITERATIONS_APF
-global bool_sylvesterBuildMethod
-global Bool_APFBuildMethod
-global geometricMeanMethod
+global BOOL_SYLVESTER_BUILD_METHOD
+global BOOL_APF_BUILD_METHOD
+global GEOMETRIC_MEAN_METHOD
 global SEED
 
-bool_bezout = 0;
-bool_sntln = BOOL_SNTLN;
-bool_apf = BOOL_APF;
+BOOL_BEZOUT = 0;
+BOOL_SNTLN = bool_sntln;
+BOOL_APF = bool_apf;
 
-bool_denom_syl = 'y';
-bool_denom_apf = 'y';
+BOOL_DENOM_SYL = 'y';
+BOOL_DENOM_APF = 'y';
 
-bool_preproc = BOOL_PREPROC;
-bool_q = 'y';
-bool_log = 'n';
+BOOL_PREPROC = bool_preproc;
+BOOL_Q = 'y';
+BOOL_LOG = 'y';
 
-PLOT_GRAPHS = 'n';
+PLOT_GRAPHS = 'y';
 
 MAX_ITERATIONS_SNTLN = 50;
 MAX_ITERATIONS_APF = 50;
@@ -64,9 +64,9 @@ MAX_ERROR_SNTLN = 1e-10;
 
 SEED = seed;
 
-bool_sylvesterBuildMethod = 'standard';
-Bool_APFBuildMethod = 'standard';
-geometricMeanMethod = 'matlab';
+BOOL_SYLVESTER_BUILD_METHOD = 'rearranged';
+BOOL_APF_BUILD_METHOD = 'standard';
+GEOMETRIC_MEAN_METHOD = 'matlab';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % nominal value used when:
@@ -75,15 +75,15 @@ geometricMeanMethod = 'matlab';
 % if max_r./min_r > nominal_value (then minimum value is significantly
 % small, to assume that the sylvester matrix is rank deficient)
 % then degree is one. otherwise degree is zero
-global nominal_value
-nominal_value = 10;
+global NOMINAL_VALUE
+NOMINAL_VALUE = 10;
 
 % let x be the maximum change in ratio_maxmin_rowsum vector if abs(x) <
 % nominal_value_2, if the change is minimal, then all subresultants should
 % be classed as rank deficient.
 
-global min_delta_mag_rowsum
-min_delta_mag_rowsum = 2;
+global MIN_DELTA_MAG_ROW_SUMS
+MIN_DELTA_MAG_ROW_SUMS = 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % output_format (bool)
@@ -98,14 +98,14 @@ output_format = 'dx';
 % RootSpecificSNTLN :   Use Roots based SNTLN method, which has the added constraints that
 %                       g is the derivative of f.
 % StandardSNTLN :   Use standard SNTLN where f and g are unconstrained
-global bool_SNTLN_Roots
-bool_SNTLN_Roots = 'StandardSNTLN';
+global BOOL_SNTLN_ROOTS
+BOOL_SNTLN_ROOTS = 'StandardSNTLN';
 
 % bool_APF_Roots
 % RootSpecificAPF :   Use roots based APF method, which has added constraings.
 % StandardAPF :   Use standard apf method where f and g are unconstrained.
-global bool_APF_Roots
-bool_APF_Roots = 'StandardAPF';
+global BOOL_APF_ROOTS
+BOOL_APF_ROOTS = 'StandardAPF';
 %%
 
 
@@ -127,22 +127,16 @@ end
 % applicable, and the common denominators can not be removed.
 % Simplest method, no structure added.
 % Override users input options if incompatable.
-if (bool_q == 0)
-    bool_denom_syl = 1;
-    bool_apf = 0; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
-    bool_sntln = 0; % Does not work with code block SNTLN (Addition of structured perturbations code doesnt exist for exclusion of Q from coefficient matrix).
+if (BOOL_Q == 0)
+    BOOL_DENOM_SYL = 1;
+    BOOL_APF = 0; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
+    BOOL_SNTLN = 0; % Does not work with code block SNTLN (Addition of structured perturbations code doesnt exist for exclusion of Q from coefficient matrix).
     fprintf('\nSNTLN and APF only work when including Matrix Q in sylvester matrix.\n')
     fprintf('Denominator must be included when excluding matrix Q \n');
 end
 
 %% Print the parameters.
-fprintf('--------------------------------------------------------------------------- \n')
-fprintf('PARAMETERS:\n')
-fprintf('\n')
-fprintf('\tExample Number: %i \n',ex);
-fprintf('\tmin noise : %i \n\tmax noise : %i',emin,emax)
-fprintf('\n\tSNTLN : %i \n\tAPF : %i \n\tDENOM : %i \n\tPREPROC : %i \n\tLOG: %i\n\tQ : %i\n',bool_sntln,bool_apf,bool_denom_syl,bool_preproc,bool_log,bool_q);
-fprintf('--------------------------------------------------------------------------- \n')
+PrintGlobalVariables
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % o - gcd - Calculate GCD of two Arbitrary polynomials
@@ -152,11 +146,9 @@ fprintf('-----------------------------------------------------------------------
 
 % Add neccesary paths.
 addpath 'Measures'
-addpath 'Examples'
-
 
 % Get roots from example file
-[f_roots, g_roots,d_roots,t_exact,u_roots,v_roots] = Examples_GCD(ex);
+[f_roots, g_roots,d_roots,t_exact,u_roots,v_roots] = Examples_GCD(ex_num);
 
 PrintRoots('f',f_roots)
 PrintRoots('g',g_roots)

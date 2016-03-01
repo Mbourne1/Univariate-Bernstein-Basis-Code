@@ -22,19 +22,19 @@ function [gm]=GeometricMean(fx,n,k)
 %                       Global Variables.
 
 
-global bool_log
+global BOOL_LOG
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%S
 
 % Get previous state of logs
-previous_log_state = bool_log;
-bool_log = 'y';
+previous_log_state = BOOL_LOG;
+BOOL_LOG = 'n';
 
 
 
 % Dependent on which method is used, 1 - use logs, 0 - use nchoosek
 
-switch bool_log
+switch BOOL_LOG
     case 'y' % Calculate GM using logs
         gm = GMlog(fx,n,k);       
     case 'n' % Calculate GM without logs
@@ -42,7 +42,7 @@ switch bool_log
 end
 
 % reset log method
-bool_log = previous_log_state;
+BOOL_LOG = previous_log_state;
 
 end
 
@@ -71,14 +71,14 @@ function gm = GMlog(fx,n,k)
 %                       Global Variables.
 
 
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
-global bool_q
+global BOOL_Q
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-switch bool_q
+switch BOOL_Q
     case 'y' 
         % Include Q in Sylvester Subresultant S_{k} so include Q in the 
         % calculation of the geometric mean.
@@ -104,7 +104,7 @@ switch bool_q
         p2_log = (2./((n-k+1)*(m+1)))* (p2_log);
         %p2_exp = 10^p2_log;
         
-        switch bool_denom_syl
+        switch BOOL_DENOM_SYL
             case 'y' % if denominator is included
                 %p3 = nchoosek(m+n-k,n-k);
                 p3_log = lnnchoosek(m+n-k,n-k);
@@ -112,7 +112,7 @@ switch bool_q
             case 'n' % if denominator is not included
                 p3_log = 0;
             otherwise
-                error('bool_denom_syl must be set to either (y) or (n)')
+                error('BOOL_DENOM_SYL must be set to either (y) or (n)')
         end
 
         gm = 10.^(p1_log + p2_log - p3_log);
@@ -171,7 +171,7 @@ switch bool_q
         gm = GM_Numerator./GM_Denominator;
         
     otherwise
-        error('bool_q must either be set to (y) or (n)')
+        error('BOOL_Q must either be set to (y) or (n)')
         
 end
 
@@ -202,12 +202,12 @@ function gm = GMnchoosek(fx,n,k)
 %                       Global Variables.
 
 
-global bool_denom_syl
-global bool_q
+global BOOL_DENOM_SYL
+global BOOL_Q
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-switch bool_q
+switch BOOL_Q
     
     case 'y' % Include Q
         
@@ -216,10 +216,11 @@ switch bool_q
         
         p2 = 1;
         
-        p1 = 1;
-        for i = 0:1:m
-            p1 = p1 .* (fx(i+1)^(1./(m+1)));
-        end
+        
+        p1 = prod(fx.^(1/(m+1)));
+        
+        %f_mod = fx.*GetBinomials(m)
+        %myprod = prod(f_mod)
         
         
         % since the product of the binomial coefficient A in the numerator
@@ -231,7 +232,7 @@ switch bool_q
             end
         end
  
-        switch bool_denom_syl
+        switch BOOL_DENOM_SYL
             case 'y' 
                 % Denominator is included
                 p3 = nchoosek(m+n-k,n-k);
@@ -247,12 +248,9 @@ switch bool_q
         % Calculate the degree of the polynomial f.
         m = length(fx)-1;
         
-        % Initialise the product of the numerator at 1
-        prod_num = 1;
+        % Get the product of the numerators       
+        prod_numerator = prod(fx.*GetBinomials(m))
         
-        for i=0:1:m
-            prod_num = prod_num .* fx(i+1) .* nchoosek(m,i);
-        end
         
         % Initialise the product of the denominator at 1.
         prod_denom =1 ;
@@ -263,7 +261,7 @@ switch bool_q
             end
         end
         
-        num =prod_num .^(1./(m+1));
+        num =prod_numerator .^(1./(m+1));
         denom = prod_denom .^(1./((m+1)*(n-k+1)));
         
         gm = num/denom;

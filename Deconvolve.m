@@ -23,9 +23,9 @@ function hi = Deconvolve(set_g)
 % Set Deconvolution Method
 % 0 := Use standard non batch method
 % 1 := Use batch deconvolution
-global bool_deconvolve
+global BOOL_DECONVOLVE
 
-switch bool_deconvolve
+switch BOOL_DECONVOLVE
     case 'single'
         % Deconvolve independent method
         hi = Deconvolve_Independent(set_g);
@@ -33,7 +33,7 @@ switch bool_deconvolve
         % Deconvolve Batch Method
         hi = Deconvolve_Batch(set_g);
     otherwise
-        error('bool_deconvolve must be either single or batch')
+        error('BOOL_DECONVOLVE must be either single or batch')
 end
 
 
@@ -103,7 +103,7 @@ end
 
 function D0C1Q1 = BuildD0C1Q1_nchoosek(f1,m0)
 % Build a partition D_{i-1}C_{i}Q_{i} of the DCQ matrix
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 m1 = length(f1)-1;
 
@@ -124,10 +124,13 @@ for j = 0:1:m0-m1
 end
 
 % % If including the denominator
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y'
         % Included denominator in sylvester matrix
         denom = nchoosek(m0,m1);
         D0C1Q1 = D0C1Q1 ./ denom ;
+    case 'n'
+    otherwise
+        error('err')
 end
 end

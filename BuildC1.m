@@ -1,24 +1,21 @@
 function C1 = BuildC1(uw,t)
 % Used in APF, build the matrix C1_{t}(u) or C1_{t}(v)
 %
-%                           Inputs
+%   Inputs
 %
 %
 %   uw :    Polynomial u(w) 
 %
 %   t :     Degree of the gcd
 %
-%
-%                           Outputs
-%
-%
-% C1 :  The Toeplitz structured matrix containing coefficients of
-%       polynomial u in with its binomial coefficients included.
+%   Outputs
 %
 %
+%   C1 :    The Toeplitz structured matrix containing coefficients of
+%           polynomial u in with its binomial coefficients included.
 
-% Get degree of polynomial u
-[r,c] = size(uw);
+% Get degree of polynomial u(w)
+[r,~] = size(uw);
 m_t = r -1;
 
 % Initialise the matrix

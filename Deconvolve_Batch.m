@@ -16,8 +16,8 @@ function hi = Deconvolve_Batch(set_g)
 
 % %                         Global Variables
 
-global max_iterations_deconvolutions
-global max_error_deconvolutions
+global MAX_ITERATIONS_DECONVOLUTIONS
+global MAX_ERROR_DECONVOLUTIONS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -140,7 +140,8 @@ z_ite = z_o;
 
 % Perform iteration to obtain perturbations
 
-while condition >(max_error_deconvolutions) &&  iteration_num < max_iterations_deconvolutions
+while condition > MAX_ERROR_DECONVOLUTIONS  && ...
+        iteration_num < MAX_ITERATIONS_DECONVOLUTIONS
     
     % Use the QR decomposition to solve the LSE problem and then
     % update the solution.
@@ -239,15 +240,15 @@ xx = zeros(num_Rows,cols);
 Y = blkdiag( y{1:length(y)});
 Y = [xx Y];
 
-Y_new = [Y];
+Y_new = Y;
 
 
 end
 
 function Y1 = BuildD0Y1U1(hx,m0,m1)
-global bool_log
+global BOOL_LOG
 
-switch bool_log
+switch BOOL_LOG
     case 'y' % use logs
         Y1 = BuildD0Y1U1_log(hx,m0,m1);
         
@@ -261,7 +262,7 @@ function Y1 = BuildD0Y1U1_nchoosek(hx,m0,m1)
 % m0 = degree of previous polynomial
 % m1 = degree of current polynomial
 
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 % Y1 = zeros(m0+1,m1+1);
 Y1 = [];
@@ -275,9 +276,12 @@ for j = 0:1:m1
     end
 end
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y'
         Y1 = Y1 ./  nchoosek(m0,m1);
+    case 'n'
+    otherwise
+        error('err')
 end
 end
 
@@ -288,7 +292,7 @@ function Y1 = BuildD0Y1U1_log(hx,m0,m1)
 % m0 = degree of previous polynomial
 % m1 = degree of current polynomial
 
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 % Y1 = zeros(m0+1,m1+1);
 
@@ -302,7 +306,7 @@ for k = 0:1:m1
         Y1(j+1,k+1) = hx(j-k+1) .* BinomsEval_Exp;
     end
 end
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y'
         % Include the denominator
         Denom_Log = lnnchoosek(m0,m1);
@@ -311,6 +315,8 @@ switch bool_denom_syl
         Y1 = Y1 ./  Denom_Exp;
     case 'n'
         % Exclude the denominator
+    otherwise
+        error('err')
 end
 
 
@@ -502,10 +508,10 @@ function D0C1Q1 = BuildD0C1Q1(fx,m0,m1)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialise global variables.
-global bool_log
+global BOOL_LOG
 
 
-switch bool_log
+switch BOOL_LOG
     case 'n' 
         % use nchoosek
         D0C1Q1 = BuildD0C1Q1_nchoosek(fx,m0,m1);
@@ -513,6 +519,8 @@ switch bool_log
     case 'y' 
         % use log
         D0C1Q1 = BuildD0C1Q1_log(fx,m0,m1);
+    otherwise 
+        error('err')
 end
 
 end
@@ -532,7 +540,7 @@ function D0C1Q1 = BuildD0C1Q1_nchoosek(fx,m0,m1)
 % m1 -
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 % Define n1 the degree of h1
 n1 = m0-m1;
@@ -549,10 +557,13 @@ for k = 0:1:m0-m1
             nchoosek(j,k) .* nchoosek(m0-j,m1-(j-k)) ;
     end
 end
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y'
         denom = nchoosek(m0,m1);
         D0C1Q1 = D0C1Q1 ./ denom ;
+    case 'n'
+    otherwise
+        error('err')
 end
 end
 
@@ -566,7 +577,7 @@ function D0C1Q1 = BuildD0C1Q1_log(fx,m0,m1)
 % m1 - Degree of f_{i}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 % Defind n1 the degree of h
 n1 = m0-m1;
@@ -585,12 +596,15 @@ for k = 0:1:m0-m1
     end
 end
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y'
         Denom_Log = lnnchoosek(m0,m1);
         Denom_exp = 10.^Denom_Log;
         
         D0C1Q1 = D0C1Q1./ Denom_exp;
+    case 'n'
+    otherwise
+        error('err')
 end
 end
 

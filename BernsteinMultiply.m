@@ -1,4 +1,4 @@
-function [px] = Bernstein_Multiply(fx,gx)
+function [px] = BernsteinMultiply(fx,gx)
 % Given the Coefficients of two polynomials f(x) and g(x) in vector form, 
 % output the coefficients of the product p(x).
 %

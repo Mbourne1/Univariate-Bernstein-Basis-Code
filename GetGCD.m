@@ -18,9 +18,9 @@ function [dx] = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta)
 
 %                           Global Variables
 
-global bool_log
+global BOOL_LOG
 
-global Bool_APFBuildMethod
+global BOOL_APF_BUILD_METHOD
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,9 +45,9 @@ bk = [fw_n ; alpha .* gw_n];
 
 % Build the coefficient vector HCG
 
-switch Bool_APFBuildMethod
+switch BOOL_APF_BUILD_METHOD
     case 'rearranged' % use rearranged method with common denominator
-        switch bool_log
+        switch BOOL_LOG
             case 'y' % use logs
                 C1 =  BuildC1_log(uw,m,t);
                 C2 =  BuildC1_log(vw,n,t);
@@ -55,6 +55,8 @@ switch Bool_APFBuildMethod
             case 'n' % use nchoosek
                 C1 =  BuildC1_nchoosek(uw,m,t);
                 C2 =  BuildC1_nchoosek(vw,n,t);
+            otherwise
+                error('err')
         end
         HCG = [C1 ; C2];
     case 'standard' % use premade matrix method
@@ -108,7 +110,7 @@ function [C] = BuildC1_log(uw,m,t)
 %   t : degree of gcd
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global bool_denom_apf
+global BOOL_DENOM_APF
 
 % Initialise Toeplitz Matrix.
 C = zeros(m+1,t+1);
@@ -132,7 +134,7 @@ for j= 0:1:t
 end
 
 
-switch bool_denom_apf
+switch BOOL_DENOM_APF
     case 'y' 
         % Denominator included
                 
@@ -151,7 +153,7 @@ end
 
 
 function [C] = BuildC1_nchoosek(uw,m,t)
-global bool_denom_apf
+global BOOL_DENOM_APF
 
 C = zeros(m+1,t+1);
 
@@ -161,7 +163,7 @@ for j= 0:1:t
     end
 end
 
-switch bool_denom_apf
+switch BOOL_DENOM_APF
     case 'y'
         % Include the denominator
         C = C./nchoosek(m,t);

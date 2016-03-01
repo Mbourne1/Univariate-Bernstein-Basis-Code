@@ -1,4 +1,4 @@
-function [implic_matrix,symbolic_expression] = Implicitize_Bezier_Sylvester(CP)
+function [implic_matrix,symbolic_expression] = ImplicitizeBezierBySylvester(CP)
 % Given a set of Bezier control points for the Bezier curve. Implicitize 
 % the Curve. This code corresponds to the implicitization notes in
 % Sederberg CAGD notes Section 16.6.

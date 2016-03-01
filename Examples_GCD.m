@@ -22,7 +22,7 @@ global SEED
 
 switch n
     
-    case 0
+    case '0'
         roots_fx = [
             0.10    30
             0.56    4
@@ -39,7 +39,7 @@ switch n
 
         
         
-    case 1
+    case '1'
         roots_fx = [
             0.2 2
             0.5 1
@@ -55,7 +55,7 @@ switch n
             ];
 
         
-    case 2
+    case '2'
         roots_fx = [
             0.2 1
             0.4 1
@@ -66,7 +66,7 @@ switch n
         roots_gx = [0.2 1
             0.3 1];
                
-    case 3
+    case '3'
         roots_fx = [
             0.56 20
             0.75 3
@@ -82,7 +82,7 @@ switch n
             0.20    3
             ];
      
-    case 4
+    case '4'
         
         roots_fx = [0.1    20
             0.5    2];
@@ -90,7 +90,7 @@ switch n
         roots_gx = [0.1    20
             0.9    1];
         
-    case 5
+    case '5'
         
         roots_fx = [0.1    2
             0.3     2
@@ -101,7 +101,7 @@ switch n
         % From Winkler Paper - Methods for the computation of the degree of an
         % approximate greatest common divisor of two inexact bernstein basis
         % polynomials.
-    case 6
+    case '6'
         roots_fx = [
             0.10    3
             0.56    4
@@ -122,7 +122,7 @@ switch n
             1.20    3
             ];
               
-    case 7
+    case '7'
         roots_fx = [
             0.23   4
             0.43   3
@@ -138,7 +138,7 @@ switch n
             1.20   5
             ];
          
-    case 8
+    case '8'
         roots_fx = [0.1  5
             0.56 4
             0.75 3
@@ -153,7 +153,7 @@ switch n
             1.20 3];
 
     % Example 6.2
-    case 9
+    case '9'
         roots_fx = [
             0.14    3
             0.56    3
@@ -171,7 +171,7 @@ switch n
             -3.61   7
             ];
 
-    case 10
+    case '10'
         roots_fx = [
             0.14    3
             0.56    3

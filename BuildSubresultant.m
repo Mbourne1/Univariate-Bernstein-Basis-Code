@@ -20,8 +20,8 @@ function [S] = BuildSubresultant(fx,gx,k,alpha,theta)
 
 %                       Global Variables.
 
-global bool_q
-global bool_sylvesterBuildMethod
+global BOOL_Q
+global BOOL_SYLVESTER_BUILD_METHOD
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -35,7 +35,7 @@ n = r - 1;
 
 
 
-switch bool_sylvesterBuildMethod
+switch BOOL_SYLVESTER_BUILD_METHOD
     case 'rearranged' % Build based on generating individual elements
         
         % Build First Partition   
@@ -54,7 +54,7 @@ switch bool_sylvesterBuildMethod
         T = BuildT(fx,gx,alpha,theta,k);
         Q = BuildQ(m,n,k);
 
-        switch bool_q
+        switch BOOL_Q
             case 'y' % Include Q
                 S = D*T*Q;
             case 'n' % Exclude Q

@@ -24,14 +24,14 @@ function [f_output,g_output,d_output, u_output, v_output,alpha_opt,theta_opt] = 
 %%
 %                       GLOBAL VARIABLES
 
-global bool_apf
-global bool_q
-global bool_sntln
-global bool_preproc
-global bool_denom_syl
-global bool_SNTLN_Roots
-global bool_APF_Roots
-global plot_graphs;
+global BOOL_APF
+global BOOL_Q
+global BOOL_SNTLN
+global BOOL_PREPROC
+global BOOL_DENOM_SYL
+global BOOL_SNTLN_ROOTS
+global BOOL_APF_ROOTS
+global PLOT_GRAPHS;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -46,6 +46,8 @@ n = length(gx) - 1;
 % Method 1 - 'From Scratch' Build each subresultant from scratch
 [t_byGetDegree, subres_unproc1, subres_preproc1, alphas_opt1, thetas_opt1, gms_fx1, gms_gx1] = ...
     GetDegree(fx,gx);
+
+
 
 % %% Get Degree of GCD by second method
 % % Method 2 - 'Build Up using S_{k} = A_{k}S_{k-1}B{k}' Build each
@@ -63,17 +65,18 @@ n = length(gx) - 1;
 %         error('bool_q must be set to either (y) or (n)')
 % end
 %
-% if t_byGetDegreeNew == 0
-%     fprintf('f(x) and g(x) appear to be coprime \n')
-%     f_output = fx;
-%     g_output = gx;
-%     d_output = 1;
-%     u_output = fx;
-%     v_output = gx;
-%     alpha_opt = 1;
-%     theta_opt = 1;
-%     return
-% end
+if t_byGetDegree == 0
+    fprintf('\n f(x) and g(x) appear to be coprime \n')
+    f_output = fx;
+    g_output = gx;
+    d_output = 1;
+    u_output = fx;
+    v_output = gx;
+    alpha_opt = 1;
+    theta_opt = 1;
+    
+    return
+end
 
 
 % Method 2 returns good results for obtaining the degree, but not good
@@ -133,7 +136,7 @@ end
 
 % Normalise fx and gx by Geometric mean to obtain fx_n and gx_n Normalise
 % by geometric mean obtained from subresultant S_{t}
-switch bool_preproc
+switch BOOL_PREPROC
     case 'n' % Exclude preprocessors
         fx_normalised = fx;
         gx_normalised = gx;
@@ -168,13 +171,13 @@ St_preproc = BuildSubresultant(fx_normalised,gx_normalised,1,alpha_opt,theta_opt
 % SNTLN SHOULD NOT BE USED WITH (METHOD 2 - 'BUILD UP'). SNTLN uses build
 % from scratch method.
 
-switch bool_sntln
+switch BOOL_SNTLN
     case 'y'
         % Obtain refined values of fx and gx, alpha, theta, and vector x
         % consisting of coefficients of u and v
         
         
-        switch bool_SNTLN_Roots
+        switch BOOL_SNTLN_ROOTS
             case 'StandardSNTLN' % use standard SNTLN
                 [fx_n,gx_n,alpha_opt,theta_opt,X] = ...
                     SNTLN(fx_normalised,gx_normalised,alpha_opt,theta_opt,t,opt_col);
@@ -213,7 +216,7 @@ St_low_rank = BuildSubresultant(fx_n,gx_n,1,alpha_opt,theta_opt);
 %% Get the coefficients of the GCD
 
 % Obtain AGCD - Approximate Greatest Common Divisor
-switch bool_q
+switch BOOL_Q
     case 'n'
         % Q is excluded, uw and vw are in form u_{i} \theta \binom
         
@@ -223,7 +226,7 @@ switch bool_q
         dx = GetGCD(ux,vx,fx_n,gx_n,t,alpha_opt,theta_opt);
     case 'y'
         % Q is included in sylvester matrix,
-        switch bool_denom_syl
+        switch BOOL_DENOM_SYL
             case 'y' % denominator included
                 dx = GetGCD(ux,vx,fx_n,gx_n,t,alpha_opt,theta_opt);
             case 'n' % denominator excluded
@@ -231,10 +234,12 @@ switch bool_q
             otherwise
                 error('err')
         end
+    otherwise
+        error('Bool_Q is either y or n')
 end
 
 
-switch bool_q
+switch BOOL_Q
     case 'n'
         % Case n - Q is excluded from sylvester matrix. uv and vw
         % therefore include binomial coefficients which must be removed to
@@ -250,10 +255,10 @@ end
 %%
 % Apply/Don't Apply structured perturbations to Approximate Polynomial
 % Factorisation such that approximation becomes equality.
-switch bool_apf
+switch BOOL_APF
     case 'y'
         % Apply structured perturbations to APF
-        switch bool_APF_Roots
+        switch BOOL_APF_ROOTS
             case 'RootSpecificAPF'
                 % Use root method which has added constraints.
                 
@@ -346,13 +351,13 @@ R3_RowNorm = sqrt(sum(R1.^2,2))./norm(R1);
 
 
 % Plot the Singular Values of the Sylvester matrix
-switch plot_graphs
-    case 1
+switch PLOT_GRAPHS
+    case 'y'
         figure('name','Singaular values of Sylvester Matrix');
         plot(1:1:length(svd_unproc),log10(svd_unproc),'red-s','DisplayName','Before Preprocessing')
         hold on
         plot(1:1:length(svd_preproc),log10(svd_preproc),'blue-s','DisplayName','After Preprocessing')
-        if (bool_sntln == 1)
+        if (BOOL_SNTLN == 1)
             plot(1:1:length(svd_low_rank),log10(svd_low_rank),'green-s','DisplayName','With Structured Perturbations')
         end
         legend(gca,'show');
@@ -360,6 +365,9 @@ switch plot_graphs
         title('Ordered Singular Values of The Sylvester Matrix S{(f,g)}')
         ylabel('log_{10} Minimal Singular Values ')
         hold off
+    case 'n'
+    otherwise
+        error('err')
 end
 
 

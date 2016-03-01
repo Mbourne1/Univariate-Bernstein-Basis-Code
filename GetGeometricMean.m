@@ -1,16 +1,19 @@
 function [lambda, mu] = GetGeometricMean(fx,gx,k)
 % Calculate Geometric means of input polynomials f(x,y) and g(x,y)
 
+global GEOMETRIC_MEAN_METHOD
+
+
 % Get degree of polynomial f(x)
-[r,c] = size(fx);
+[r,~] = size(fx);
 m = r-1;
+
 % Get degree of polynomial g(x)
-[r,c] = size(gx);
+[r,~] = size(gx);
 n = r-1;
 
-global geometricMeanMethod
 
-switch geometricMeanMethod
+switch GEOMETRIC_MEAN_METHOD
     case 'matlab'
         
         C_f_unproc = BuildT1(fx,1,n,k);

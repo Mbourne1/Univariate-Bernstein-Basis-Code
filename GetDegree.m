@@ -31,13 +31,18 @@ function [deg_calc,out_subresultants_unprocessed,out_subresultants_preprocessed,
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global bool_preproc
-global plot_graphs
-global nominal_value
-global min_delta_mag_rowsum
+global BOOL_PREPROC
+global PLOT_GRAPHS
+global NOMINAL_VALUE
+global MIN_DELTA_MAG_ROW_SUMS
+
+if isempty(BOOL_PREPROC) || isempty(PLOT_GRAPHS) ...
+        isempty(NOMINAL_VALUE) || isempty(MIN_DELTA_MAG_ROW_SUMS)
+    error('err')
+end
 
 
-switch plot_graphs
+switch PLOT_GRAPHS
     case 'y'
         PlotNormalisedDiagonals = 1;
         PlotNormalisedRowSums = 1;
@@ -68,6 +73,9 @@ m = r - 1;
 [r,~] = size(gx);
 n = r - 1;
 
+fprintf('Begin : Get Degree m = % i , n = % i \n\n' ,m,n)
+
+
 % get minimum degree of f(x) and g(x)
 min_mn = min(m,n);
 
@@ -92,6 +100,8 @@ minResSVD_vec            =   zeros(min_mn,1);
 % triangular matrix R1_{k} from the QR decomposition of S_{k} for
 % k=1,...,min(m,n)
 ratio_maxmin_diag_vec    =   zeros(min_mn,1);
+
+vMinimumSingularValue = zeros(min_mn,1);
 
 % Initialise a vector to store max row sum / min row sum of the rows of
 % R1_{k} from the QR decomposition of S_{k} for k=1,...,min(m,n)
@@ -119,7 +129,7 @@ for k = 1:1:min_mn
     C_f_unproc = BuildT1(fx,1,n,k);
     C_g_unproc = BuildT1(gx,1,m,k);
     
-    switch bool_preproc
+    switch BOOL_PREPROC
         case 'y' % Include Preprocessors
             
             % Reason for performing BuildToeplitz before taking geometric
@@ -175,6 +185,9 @@ for k = 1:1:min_mn
     
     % Add Sk to the array of preprocessed Sk
     Sylvester_array_preprocessed{k} = Sk;
+    
+    % Using
+    vMinimumSingularValue(k) = min(svd(Sk));
     
     % Using QR Decomposition of the sylvester matrix
     [~,R] = qr(Sk);
@@ -283,7 +296,7 @@ delta_mag_maxmin_diag = abs(diff(log10(ratio_maxmin_diag_vec)));
 % Get the second largest value
 [second_lrgs_delta_mag_maxmin_diag] = max(delta_mag_maxmin_diag(delta_mag_maxmin_diag<max(delta_mag_maxmin_diag)));
 
-switch plot_graphs
+switch PLOT_GRAPHS
     case 'y'
         % Plot for report
         figure('name','Get Degree - Maxmin - Rowsums')
@@ -292,6 +305,12 @@ switch plot_graphs
         xlabel('k : index of subresultant S')
         ylabel('log_{10} ratio max:min row sum r_{i} in R1')
         title('Plotting max:min row sum of the rows r_{i} of R1 from the QR decomposition of each subresultants S_{k}')
+        hold off
+        
+        % Plot
+        figure('name','Get Degree - Minimum Singular Values')
+        hold on
+        plot(log10(vMinimumSingularValue),'-s')
         hold off
         
         % Plot for report
@@ -307,15 +326,16 @@ switch plot_graphs
         error('error:')
 end
 
-% Check to see if only one subresultant exists, ie if m or n is equal
-% to one
 if min_mn == 1
-    fprintf('############## Exception ###################################\n\n')
-    fprintf('min(m,n) = 1 \n')
+    
+    % if the minimum degree is one, only one subresultant exists.
+    
     fprintf('Only One Sylvester Subresultant Exists \n')
+    fprintf('min(m,n) = 1 \n')
     fprintf('Degree of GCD is either one or zero \n')
     
-    figure(997)
+    % Plot the Diagonals of the Matrix R from the QR decomposition of S_{1}
+    figure('name','GetDegree - Diagonals of R')
     hold on
     plot(log10(diag(R1)),'-s')
     xlabel('i: index of the ith diagonal')
@@ -330,7 +350,7 @@ if min_mn == 1
     max_delta_log_diags_R1 = max(delta_log_diags_R1);
     
     % Plot a graph of all the Row norms for the Subresultant S_{1}
-    figure(998)
+    figure('name','GetDegree - Row Norms of R')
     hold on
     plot(log10(R1_RowNorm),'-s')
     title('Norms of the rows of the R matrix from the QR decompositino of Subresultant S_{1}')
@@ -344,17 +364,13 @@ if min_mn == 1
     max_delta_log_rowsum_R1 = max(delta_log_rowsum_R1);
     
     fprintf('Max change in row sums for each r_{i} is given by : %i \n', max_delta_log_rowsum_R1)
-    fprintf('Current Nominal Value : %i \n',nominal_value)
-    
-    
-    
-    fprintf('############## Exception ###################################\n')
+    fprintf('Current Nominal Value : %i \n',NOMINAL_VALUE)
     
     
     % if max/min is greater than nominal value, then we suppose that the
     % subresultant S_{1} is rank deficient, so degree of GCD is one.
     
-    if max_delta_log_rowsum_R1 > nominal_value
+    if max_delta_log_rowsum_R1 > NOMINAL_VALUE
         % The maximum change in row sum (delta) is significant
         % Subresultant is rank deficient
         % Set degree of GCD = 1.
@@ -372,6 +388,7 @@ if min_mn == 1
         fprintf('Degree By "From Scratch" Method.\n\n')
         fprintf('Calculated Degree of AGCD: %i \n', deg_calc)
         fprintf('--------------------------------------------------------------------------- \n')
+        fprintf('End : Get Degree\n')
         return
         
         
@@ -394,27 +411,27 @@ if min_mn == 1
         fprintf('Degree By "From Scratch" Method.\n\n')
         fprintf('Calculated Degree of AGCD: %i \n', deg_calc)
         fprintf('--------------------------------------------------------------------------- \n')
-        
+        fprintf('End : Get Degree\n')
         return
     end
     
     
     % Set a condition for which we consider the maximum change in row sums to
     % significant or insignificant.
-elseif abs(max_delta_mag_rowsum) < min_delta_mag_rowsum
+elseif abs(max_delta_mag_rowsum) < MIN_DELTA_MAG_ROW_SUMS
     
     
     % Check to see if all subresultants are rank deficient in which case
     % the degree of the GCD is min(m,n)
     
     fprintf('\n')
-    fprintf('############## Exception ###################################\n')
+    
     fprintf('All subresultants appear to be either rank defficient or of full rank \n')
     fprintf('Degree of GCD is either equal to min(m,n) or zero \n')
     fprintf('\n')
     fprintf('Delta : %i \n', abs(delta_mag_rowsum));
-    fprintf('nominal value (min_delta_mag_rowsum : %i \n',min_delta_mag_rowsum);
-    fprintf('############## Exception ###################################\n')
+    fprintf('nominal value (min_delta_mag_rowsum : %i \n',MIN_DELTA_MAG_ROW_SUMS);
+    
     
     
     
@@ -434,6 +451,7 @@ elseif abs(max_delta_mag_rowsum) < min_delta_mag_rowsum
         fprintf('Degree By "From Scratch" Method.\n\n')
         fprintf('Calculated Degree of AGCD: %i \n', deg_calc)
         fprintf('--------------------------------------------------------------------------- \n')
+        fprintf('End : Get Degree\n')
         return;
     else
         % all subresultants are rank deficient
@@ -445,6 +463,7 @@ elseif abs(max_delta_mag_rowsum) < min_delta_mag_rowsum
     fprintf('Degree By "From Scratch" Method.\n\n')
     fprintf('Calculated Degree of AGCD: %i \n', deg_calc)
     fprintf('--------------------------------------------------------------------------- \n')
+    
 else
     
     
@@ -475,7 +494,7 @@ else
     fprintf('--------------------------------------------------------------------------- \n')
     fprintf('Calculated Degree of AGCD by Standard Method: %i \n', deg_calc)
     fprintf('--------------------------------------------------------------------------- \n')
-    
+    fprintf('End : Get Degree\n')
     
     
     
