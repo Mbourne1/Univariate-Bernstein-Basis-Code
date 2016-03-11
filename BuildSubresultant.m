@@ -1,4 +1,4 @@
-function [S] = BuildSubresultant(fx,gx,k,alpha,theta)
+function [S] = BuildSubresultant(fw,gw,k,alpha)
 % This function calculates the kth subresultant matrix S_{k}, in the 
 % Bernstein Basis.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,37 +21,35 @@ function [S] = BuildSubresultant(fx,gx,k,alpha,theta)
 %                       Global Variables.
 
 global BOOL_Q
-global BOOL_SYLVESTER_BUILD_METHOD
+global SYLVESTER_BUILD_METHOD
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% Get the degree of the polynomial f. 
-[r,~] = size(fx);
+% Get the degree of the polynomial f(x)
+[r,~] = size(fw);
 m = r - 1;
 
 % Get the degree of the polynomial g.
-[r,~] = size(gx);
+[r,~] = size(gw);
 n = r - 1;
 
-
-
-switch BOOL_SYLVESTER_BUILD_METHOD
-    case 'rearranged' % Build based on generating individual elements
+switch SYLVESTER_BUILD_METHOD
+    case 'Rearranged' % Build based on generating individual elements
         
         % Build First Partition   
-        A = BuildDT1Q1(fx,theta,n,k);
-        
+        D1T1Q = BuildDT1Q1(fw,n,k);
+
         % Build Second Partition
-        B = BuildDT1Q1(gx,theta,m,k);
+        D2T2Q = BuildDT1Q1(gw,m,k);
         
         % Build Sylvester Matrix by concatenation of matrices A and B.
-        S = [A alpha.*B];
+        S = [D1T1Q alpha.*D2T2Q];
         
         
-    case 'standard' % Build based on multiplying by precalculated matrices .
+    case 'Standard' % Build based on multiplying by precalculated matrices .
         
         D = BuildD(m,n,k);
-        T = BuildT(fx,gx,alpha,theta,k);
+        T = BuildT(fw,gw,alpha,k);
         Q = BuildQ(m,n,k);
 
         switch BOOL_Q

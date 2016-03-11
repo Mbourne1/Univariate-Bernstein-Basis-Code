@@ -1,19 +1,18 @@
 function hi = Deconvolve_Batch(set_g)
 %  Performs a series of d deconvolutions over a set of polynomials,
 % where each polynomial g_{i} appears in two deconvolutions.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% %                             Input:
-
+%
+%
+% Input:
+%
 % set_g - set of input polynomials g(y) to be deconvolved. Each g_{i} has a
 % different number of elements, so set_g is a cell array.
-
-% %                             Output:
-
+%
+% Output:
+%
 % h_{i} = g_{i-1}/g_{i}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 % %                         Global Variables
 
 global MAX_ITERATIONS_DECONVOLUTIONS
@@ -138,6 +137,14 @@ h_ite = h_o;
 
 z_ite = z_o;
 
+start_point = ...
+    [
+    h_o;
+    z_o;
+    ];
+
+yy = start_point;
+
 % Perform iteration to obtain perturbations
 
 while condition > MAX_ERROR_DECONVOLUTIONS  && ...
@@ -148,6 +155,8 @@ while condition > MAX_ERROR_DECONVOLUTIONS  && ...
     % min |Fy-s| subject to Gy=t
     cond(G);
     y =LSE(F,s,G,t);
+    
+    yy = yy + y
     
     % Output y gives delta h and delta z
     delta_h = y(1:N);
@@ -174,7 +183,7 @@ while condition > MAX_ERROR_DECONVOLUTIONS  && ...
     Pz = P*z_ite;
     
     %Increment s in LSE Problem
-    s = [-(h_ite-h_o); -z_ite];
+    s = -(yy-start_point);
     
     % Copy vector h_ite
     hh = h_ite;

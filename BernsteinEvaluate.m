@@ -1,5 +1,11 @@
 function [ft] = BernsteinEvaluate(f,t)
-% Given the function f(t), evaluate at a point t.
+% Given the function f(t), evaluate f(t) a point t.
+%
+%   Input.
+%   
+%   f   :   Coefficients of polynomial f(t) in Bernstein form.
+%
+%   t   :   Point at which to evaluate f(t)
 
 [r,~] = size(f);
 m = r-1;

@@ -1,4 +1,4 @@
-function DTQ = BuildDTQ_ElementWise(fx,gx,alpha, theta, t)
+function DTQ = BuildDTQ_ElementWise(fw,gw,alpha,t)
 % Build the Matrix D_{k}T_{k}(f,\alpha g)Q
 %
 %                           Inputs
@@ -18,27 +18,27 @@ function DTQ = BuildDTQ_ElementWise(fx,gx,alpha, theta, t)
 % BOOL_LOG - (Boolean)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
-global bool_log
+global BOOL_LOG
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get degree of polynomial f
-m = length(fx) -1;
+m = length(fw) -1;
 
 % Get degree of polynomial g
-n = length(gx) -1;
+n = length(gw) -1;
 
-switch bool_log
+switch BOOL_LOG
     case 'y' 
         % Use log method
-        DT1Q1 = BuildDT1Q1_log(fx,theta,n,t);
-        DT2Q2 = BuildDT1Q1_log(gx,theta,m,t);
+        DT1Q1 = BuildDT1Q1_log(fw,n-t);
+        DT2Q2 = BuildDT1Q1_log(gw,m-t);
         
     case 'n' 
         % Use nchoosek method
         warning('off','all');
-        DT1Q1 = BuildDT1Q1_nchoosek(fx,theta,n,t);
-        DT2Q2 = BuildDT1Q1_nchoosek(gx,theta,m,t);
+        DT1Q1 = BuildDT1Q1_nchoosek(fw,n-t);
+        DT2Q2 = BuildDT1Q1_nchoosek(gw,m-t);
         warning('on','all');
     otherwise
         error('bool_log must be either y or n')
@@ -49,7 +49,7 @@ DTQ = [DT1Q1 alpha.*DT2Q2];
 
 end
 
-function DT1Q1 = BuildDT1Q1_nchoosek(f,theta,n,t)
+function DT1Q1 = BuildDT1Q1_nchoosek(fw,n_t)
 % Build DTQ partition by, using matlabs nchoosek function.
 %
 %                       Inputs
@@ -69,34 +69,34 @@ function DT1Q1 = BuildDT1Q1_nchoosek(f,theta,n,t)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % Get Degree of input polynomial
-m = length(f)-1;
+m = length(fw)-1;
 
 % Initialise the partition of DTQ \in\mathbb{R}^{(m+n-t+1)\times(n-t+1)}.
-DT1Q1 = zeros(m+n-t+1,n-t+1);
+DT1Q1 = zeros(m+n_t+1,n_t+1);
 
-fw = fx .* theta.^(0:1:m);
+%fw = fx .* theta.^(0:1:m);
 
 % for each column k in the partition of DTQ.
-for j = 0:1:n-t
+for j = 0:1:n_t
     % for each coefficient in the polynomial f
     for i = j:1:m+j
         DT1Q1(i+1,j+1) = ...
-            fw .*...
-            nchoosek(m+n-t-i,m-(i-j)) .* ...
+            fw(i-j+1) .*...
+            nchoosek(m+n_t-i,m-(i-j)) .* ...
             nchoosek(i,j);
     end
 end
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y' 
         % Common Denominator is included in the coefficient matrix.
-        DT1Q1 = DT1Q1 ./ nchoosek(m+n-t,n-t);
+        DT1Q1 = DT1Q1 ./ nchoosek(m+n_t,n_t);
     case 'n' 
         % Common Denominator is excluded in the coefficient matrix
     otherwise
@@ -125,7 +125,7 @@ function DT1Q1 = BuildDT1Q1_log(f,theta, n,t)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -149,12 +149,12 @@ for j = 0:1:n-t
         Numerator_eval_exp = 10.^Numerator_eval_log;
         
         % Enter the coefficient in the Sylvester matrix.
-        DT1Q1(i+1,j+1) = f(i-j+1) .* theta^(i-j) .* Numerator_eval_exp;
+        DT1Q1(i+1,j+1) = fw(i-j+1) .* Numerator_eval_exp;
         
     end
 end
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y' % If denominator is included in the coefficient matrix.
         
         % Evaluate the binomial coefficient in the denominator in terms of

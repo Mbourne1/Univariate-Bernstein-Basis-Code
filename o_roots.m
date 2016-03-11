@@ -1,9 +1,7 @@
-function [] = o_roots(ex_num,emin,emax,bool_sntln,bool_apf,bool_preproc,seed)
+function [] = o_roots(ex_num,emin,emax,low_rank_approx_method,apf_method,bool_preproc)
 % Given an example number, and a set of input parameters, calculate the
 % roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
-% m_{i} 
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% m_{i}. 
 %
 %                           Inputs
 %
@@ -13,124 +11,30 @@ function [] = o_roots(ex_num,emin,emax,bool_sntln,bool_apf,bool_preproc,seed)
 %
 % emax - Noise/Signal maximum threshold (maximum)
 %
-% bool_sntln - Assigned to global variable (see below)
+% low_rank_approx_method - Assigned to global variable (see below)
 %
-% bool_apf - Assigned to global variable (see below)
+% apf_method - {'None', 'Standard APF', 'Root Specific APF'}
 %
-% BOOL_DENOM - Assigned to global variable (see below)
-%
-% BOOL_PREPROC - Assigned to global variable (see below)
-%
-% seed (int) - Integer chosen to randomly generate the roots and
-% multiplicities of input polynomials f and g as well as the noise which is
-% added to their coefficients.
+% bool_preproc - Assigned to global variable (see below)
 %
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%                    # Global Variables #
+SetGlobalVariables()
 
-
-global BOOL_BEZOUT
-global BOOL_SNTLN
-global BOOL_APF
-global BOOL_DENOM_SYL
-global BOOL_DENOM_APF
-global BOOL_PREPROC
-global BOOL_Q
-global BOOL_LOG
-
-global PLOT_GRAPHS
-
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
-
-global MAX_ERROR_APF
-global MAX_ITERATIONS_APF
-
-global SEED
-
-global BOOL_SYLVESTER_BUILD_METHOD
-global BOOL_APF_BUILD_METHOD
+% Intialise the global variables
 global MAX_ERROR_DECONVOLUTIONS
 global MAX_ITERATIONS_DECONVOLUTIONS
-global problemType 
-global bool_deconvolve
-
-BOOL_SNTLN = bool_sntln;
-BOOL_PREPROC = bool_preproc;
-BOOL_APF = bool_apf;
-BOOL_BEZOUT = 1;
-BOOL_DENOM_SYL = 'y';
-BOOL_DENOM_APF = 'y';
-BOOL_Q = 'y';
-BOOL_LOG = 'y';
-PLOT_GRAPHS = 'n';
-SEED = seed;
-
-% Get global variables for SNTLN
-MAX_ERROR_SNTLN = 1e-15;
-MAX_ITERATIONS_SNTLN = 50;
-
-% Get Global variables for APF
-MAX_ERROR_APF = 1e-15;
-MAX_ITERATIONS_APF = 50;
+global BOOL_DECONVOLVE
 
 % Get Global variables for Deconvolve
 MAX_ERROR_DECONVOLUTIONS = 1e-10;
 MAX_ITERATIONS_DECONVOLUTIONS = 50;
+BOOL_DECONVOLVE = 'batch';
 
-
-BOOL_SYLVESTER_BUILD_METHOD = 'rearranged';
-BOOL_APF_BUILD_METHOD = 'rearranged';
-
+global problemType 
 problemType = 'fromRoots'; % fromRoots/fromCoefficients
-bool_deconvolve = 'batch';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% nominal value used when:
-% Only one sylvester subresultant exists, ie k = 1 and min(m,n) = 1. where
-% m and n are the degrees of input polynomials f and g.
-% if max_r./min_r > nominal_value (then minimum value is significantly
-% small, to assume that the sylvester matrix is rank deficient)
-% then degree is one. otherwise degree is zero
-global NOMINAL_VALUE
-NOMINAL_VALUE = 10;
-
-% let x be the maximum change in ratio_maxmin_rowsum vector if abs(x) <
-% nominal_value_2, if the change is minimal, then all subresultants should
-% be classed as rank deficient.
-
-global MIN_DELTA_MAG_ROW_SUMS
-MIN_DELTA_MAG_ROW_SUMS = 2;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% bool_SNTLN_ROOTS
-% RootSpecificSNTLN :   Use Roots based SNTLN method, which has the added constraints that
-%                       g is the derivative of f.
-% StandardSNTLN :   Use standard SNTLN where f and g are unconstrained
-global BOOL_SNTLN_ROOTS
-BOOL_SNTLN_ROOTS = 'StandardSNTLN';
-
-% bool_APF_Roots
-% RootSpecificAPF :   Use roots based APF method, which has added constraings.
-% StandardAPF :   Use standard apf method where f and g are unconstrained.
-global BOOL_APF_ROOTS
-BOOL_APF_ROOTS = 'StandardAPF';
 
 
-% geometricMeanMethod
-% used when calculating geometric means of the entries of a Sylvester
-% matrix, a standard method would consider each entry in the matrix, but a
-% new method, described in my internal report offers speed up due to the
-% structured nature of the Sylvester matrix entries for the Sylvester
-% matrix in the Bernstein basis.
-% 'matlab' -   use MatLab Built in method for calculating geometric means
-% 'mymethod' -   use my method of calculating geometric means#
-% 'none' -   Set geometric mean equal to one, essentially eliminating the
-%       preprocessor.
-global GEOMETRIC_MEAN_METHOD
-GEOMETRIC_MEAN_METHOD = 'matlab';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                           Validate Inputs.
@@ -151,9 +55,9 @@ end
 switch BOOL_Q
     case 'n'
         
-        bool_denom_syl = 'y';
-        bool_apf = 'n'; % Does not work with APF
-        bool_sntln = 'n'; % Does not work with SNTLN
+        BOOL_DENOM_SYL = 'y';
+        BOOL_APF = 'n'; % Does not work with APF
+        BOOL_SNTLN = 'n'; % Does not work with SNTLN
         fprintf('SNTLN and APF only work when including Matrix Q in sylvester matrix.\n')
         fprintf('Denominator must be included when Q is included \n')
         
@@ -221,7 +125,7 @@ end
 %%
 % Add Noise to coefficients of exact polynomial f_exact, to obtain noisy
 % polynomial fx.
-fx = VariableNoise(f_exact,emin,emax,seed);
+fx = VariableNoise(f_exact,emin,emax,SEED);
 
 %%
 

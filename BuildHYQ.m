@@ -38,13 +38,13 @@ function HYQ = BuildHYQ1(dx,m,n,theta)
 % BOOL_LOG - (Boolean)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
-global bool_log
+global BOOL_LOG
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-switch bool_log
+switch BOOL_LOG
     case 'n' % Use Nchoosek
         A = BuildHYPartition_nchoosek(dx,m,theta);
         B = BuildHYPartition_nchoosek(dx,n,theta);
@@ -80,7 +80,7 @@ function A = BuildHYPartition_nchoosek(dx,m,theta)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global bool_denom_apf
+global BOOL_DENOM_APF
 
 t = length(dx)-1;
 A = zeros(m+1,m-t+1);
@@ -100,7 +100,7 @@ for j = 0:1:(m-t)
     end
 end
 
-switch bool_denom_apf
+switch BOOL_DENOM_APF
     case 'y'
         % include the denominator
         A = A./nchoosek(m,t);
@@ -139,7 +139,7 @@ function A = BuildHYPartition_log(dx,m,theta)
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
 
-global bool_denom_apf
+global BOOL_DENOM_APF
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -167,7 +167,7 @@ for j = 0:1:(m-t)
 end
 
 
-switch bool_denom_apf
+switch BOOL_DENOM_APF
     case 'y'
         Denom_eval_log = lnnchoosek(m,t);
         Denom_eval_exp = 10.^Denom_eval_log;

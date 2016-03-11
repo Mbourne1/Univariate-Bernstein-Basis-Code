@@ -82,11 +82,11 @@ function G = LeftDG_Build(m,n,t,mincol,theta)
 % BOOL_LOG - (Boolean)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
-global bool_log
+global BOOL_LOG
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-switch bool_log
+switch BOOL_LOG
     case 'y' % use log
         G = LeftDG_Build_log(m,n,t,mincol,theta);
     case 'n' % use nchoosek
@@ -119,11 +119,11 @@ function G = RightDG_Build(n,m,t,mincol,theta)
 % BOOL_LOG - (Boolean)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
-global bool_log
+global BOOL_LOG
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-switch bool_log
+switch BOOL_LOG
     case 'y' % use logs
         G = RightDG_Build_log(n,m,t,mincol,theta);
     case 'n' % use nchoosek
@@ -160,7 +160,7 @@ function [G] = LeftDG_Build_nchoosek(m,n,t,num_mincolumn,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -182,7 +182,7 @@ end
 G = diag(G);
 
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y' 
         % Included denominator in coefficient matrix.
         G = G./ nchoosek(m+n-t,n-t);
@@ -219,7 +219,7 @@ function [G] = LeftDG_Build_log(m,n,t,num_mincolumn,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -246,7 +246,7 @@ end
 % Create diagonal matrix G from values in vector G.
 G = diag(G);
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y' 
         % Included denominator in coefficient matrix.
         
@@ -295,7 +295,7 @@ function [G] = RightDG_Build_nchoosek(n,m,t,num_mincolumn,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -313,7 +313,7 @@ end
 % Create diagonal matrix G from vector G.
 G = diag(G);
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y' 
         % Denominator is included in coefficient matrix.
         G = G./ nchoosek(m+n-t,m-t);
@@ -356,7 +356,7 @@ function [G] = RightDG_Build_log(n,m,t,num_mincolumn,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -380,7 +380,7 @@ end
 % Create diagonal matrix G from vector G.
 G = diag(G);
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y'
         % Include the denominator
         

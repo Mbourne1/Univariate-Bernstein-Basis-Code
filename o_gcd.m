@@ -1,7 +1,7 @@
-function [] = o_gcd(ex_num,emin,emax,bool_sntln,bool_apf,bool_preproc,seed)
-% Obtain the Greatest Common Divisor (GCD) of two polynomials defined in
-% the example file.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [] = o_gcd(ex_num,emin,emax,low_rank_approx_method,apf_method,bool_preproc)
+% Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
+% g(x) as defined in the example file.
+%
 %
 %   Inputs.
 %
@@ -11,103 +11,17 @@ function [] = o_gcd(ex_num,emin,emax,bool_sntln,bool_apf,bool_preproc,seed)
 %
 % emax: Signal to noise ratio (maximum)
 %
-% BOOL_SNTLN
+% low_rank_approx_method : 
 %
-% BOOL_APF
-%
-% BOOL_DENOM
+% apf_method :
 %
 % BOOL_PREPROC
 %
-% seed
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 addpath 'BernsteinMethods'
 addpath 'Bezoutian'
 
-global BOOL_BEZOUT
-global BOOL_SNTLN
-global BOOL_APF
-global BOOL_DENOM_SYL
-global BOOL_DENOM_APF
-global BOOL_PREPROC
-global BOOL_Q
-global BOOL_LOG
-global PLOT_GRAPHS
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
-global MAX_ERROR_APF
-global MAX_ITERATIONS_APF
-global BOOL_SYLVESTER_BUILD_METHOD
-global BOOL_APF_BUILD_METHOD
-global GEOMETRIC_MEAN_METHOD
-global SEED
-
-BOOL_BEZOUT = 0;
-BOOL_SNTLN = bool_sntln;
-BOOL_APF = bool_apf;
-
-BOOL_DENOM_SYL = 'y';
-BOOL_DENOM_APF = 'y';
-
-BOOL_PREPROC = bool_preproc;
-BOOL_Q = 'y';
-BOOL_LOG = 'y';
-
-PLOT_GRAPHS = 'y';
-
-MAX_ITERATIONS_SNTLN = 50;
-MAX_ITERATIONS_APF = 50;
-
-MAX_ERROR_APF = 1e-10;
-MAX_ERROR_SNTLN = 1e-10;
-
-SEED = seed;
-
-BOOL_SYLVESTER_BUILD_METHOD = 'rearranged';
-BOOL_APF_BUILD_METHOD = 'standard';
-GEOMETRIC_MEAN_METHOD = 'matlab';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% nominal value used when:
-% Only one sylvester subresultant exists, ie k = 1 and min(m,n) = 1. where
-% m and n are the degrees of input polynomials f and g.
-% if max_r./min_r > nominal_value (then minimum value is significantly
-% small, to assume that the sylvester matrix is rank deficient)
-% then degree is one. otherwise degree is zero
-global NOMINAL_VALUE
-NOMINAL_VALUE = 10;
-
-% let x be the maximum change in ratio_maxmin_rowsum vector if abs(x) <
-% nominal_value_2, if the change is minimal, then all subresultants should
-% be classed as rank deficient.
-
-global MIN_DELTA_MAG_ROW_SUMS
-MIN_DELTA_MAG_ROW_SUMS = 2;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% output_format (bool)
-% the format of output from file o1.m
-%   1 - output u v and d in terms of w (coefficients include theta)
-%   0 - output u v and d in terms of x
-global output_format
-output_format = 'dx';
-
-%%
-% bool_SNTLN_ROOTS
-% RootSpecificSNTLN :   Use Roots based SNTLN method, which has the added constraints that
-%                       g is the derivative of f.
-% StandardSNTLN :   Use standard SNTLN where f and g are unconstrained
-global BOOL_SNTLN_ROOTS
-BOOL_SNTLN_ROOTS = 'StandardSNTLN';
-
-% bool_APF_Roots
-% RootSpecificAPF :   Use roots based APF method, which has added constraings.
-% StandardAPF :   Use standard apf method where f and g are unconstrained.
-global BOOL_APF_ROOTS
-BOOL_APF_ROOTS = 'StandardAPF';
-%%
-
+SetGlobalVariables()
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -154,32 +68,7 @@ PrintRoots('f',f_roots)
 PrintRoots('g',g_roots)
 PrintRoots('d',d_roots)
 
-% given the roots of f and g, plot them on a line
-switch PLOT_GRAPHS
-    case 'n'
-        % Dont plot graphs
-    case 'y'
-        figure('name','Exact roots of f(x), g(x) and d(x)')
-        hold on
-        title('Roots of f and g on the real interval')
-        scatter(f_roots(:,1),ones(size(f_roots(:,1))),'s','DisplayName','Roots of f(x)')
-        try
-            scatter(g_roots(:,1),ones(size(g_roots(:,1))),'x','DisplayName','Roots of g(x)')
-        catch
-            fprintf('could not plot exact roots of g\n')
-        end
-        try
-            scatter(d_roots(:,1),ones(size(d_roots(:,1))),'o','DisplayName','Roots of d(x)')
-        catch
-            fprintf('Could not plot exact roots of d.\n')
-        end
-        xlabel('Real')
-        legend(gca,'show')
-        hold off
-    otherwise
-        error('error PLOT_GRAPH is either y or n')
-end
-
+PlotRoots
 
 % Display the exact, expected result for the degree of the GCD
 fprintf('Degree of GCD of exact input polynomials: %i \n',t_exact)
@@ -199,14 +88,14 @@ d_exact_bi = B_poly(d_roots);
 u_exact_bi = B_poly(u_roots);
 v_exact_bi = B_poly(v_roots);
 
-% Get degree of polynomials f.
-m = length(f_exact_bi) -1;
+% Get degree of polynomials f(x).
+m = size(f_exact_bi,1) -1;
 
-% Get degree of polynomials g.
-n = length(g_exact_bi) -1;
+% Get degree of polynomials g(x).
+n = size(g_exact_bi,1) -1;
 
-% Get degree of exact GCD
-t = length(d_exact_bi) - 1;
+% Get degree of exact GCD d(x).
+t = size(d_exact_bi,1) - 1;
 
 % Get sets of binomial coefficients corresponding to each vector
 Bi_m = GetBinomials(m);
@@ -224,46 +113,23 @@ d_exact = d_exact_bi./Bi_t;
 u_exact = u_exact_bi./Bi_mt;
 v_exact = v_exact_bi./Bi_nt;
 
-PrintPoly(f_exact,'f')
-PrintPoly(g_exact,'g')
+% Print the coefficients of f(x) and g(x)
+PrintCoefficients_Bivariate_Bernstein(f_exact,'f')
+PrintCoefficients_Bivariate_Bernstein(g_exact,'g')
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
-fx = VariableNoise(f_exact,emin,emax,seed);
-gx = VariableNoise(g_exact,emin,emax,seed);
+fx = VariableNoise(f_exact,emin,emax,SEED);
+gx = VariableNoise(g_exact,emin,emax,SEED);
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
 [~,~,d_calc,u_calc,v_calc] = o1(fx,gx);
 
-% % Normalising the exact values of the gcd, and quotient polynomials.
-
-% Normalise gcd
-d_calc = normalise(d_calc);
-d_exact = normalise(d_exact);
-
-% Normalise quotient polynomial u
-u_calc  = normalise(u_calc);
-u_exact = normalise(u_exact);
-
-% Normalise quotient polynomial v
-v_calc = normalise(v_calc);
-v_exact = normalise(v_exact);
-
-
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
-PrintCoefficients('u',u_exact, u_calc)
-PrintCoefficients('v',v_exact, v_calc)
-PrintCoefficients('d',d_exact, d_calc)
+PrintCoefficients('u',u_exact, u_calc);
+PrintCoefficients('v',v_exact, v_calc);
+PrintCoefficients('d',d_exact, d_calc);
 
-
-getError('u',u_calc,u_exact)
-getError('v',v_calc,v_exact)
-getError('d',d_calc,d_exact)
-
-
-% Print Errors
-fprintf('\nNormwise relative Error in Coefficients \nGiven by: Calculated - exact / exact \n\n');
-fprintf('\nNormwise Error in Coefficients  \nGiven by: Calculated - exact \n\n');
 
 end
 
@@ -278,17 +144,22 @@ fprintf('\n');
 
 end
 
-function [] = PrintCoefficients(u,u_exact,u_calc)
+function [] = PrintCoefficients(name,u_exact,u_calc)
 
-fprintf('\nCoefficients of %s \n\n',u);
+% Normalise quotient polynomial u
+u_calc  = normalise(u_calc);
+u_exact = normalise(u_exact);
+
+fprintf('\nCoefficients of %s \n\n',name);
 fprintf('\t Exact \t \t \t \t\t \t \t   Computed \n')
 mat = [real(u_exact(:,1))';  real(u_calc(:,1))' ];
 fprintf('%30.15f \t \t \t %30.15f   \t \t \n', mat);
 fprintf('\n');
+GetError(name,u_calc,u_exact);
 
 end
 
-function [] = getError(u,u_calc,u_exact)
+function [] = GetError(u,u_calc,u_exact)
 
 % Calculate relative errors in outputs
 rel_error_uk = norm(abs(u_calc - u_exact) ./ u_exact);

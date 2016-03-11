@@ -1,4 +1,4 @@
-function DT1Q1 = BuildDT1Q1(fx,theta,n,k)
+function DT1Q1 = BuildDT1Q1(fw,n,k)
 % Build Toeplitz matrix for Sylvester Matrix Partitions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -27,17 +27,17 @@ global BOOL_LOG
 
 switch BOOL_Q
     case 'n' 
-        DT1Q1 = BuildDT1(fx,theta,n,k)
+        DT1Q1 = BuildDT1(fw,n,k)
     case 'y'
         % If Q is included, use the rearrangment such that each Toeplitz
         % matrix has a common divisor in each element.
         switch BOOL_LOG
             case 'n'
                 % Build Toeplitz Matrix using nchoosek
-                DT1Q1 = BuildDT1Q1_Rearranged_nchoosek(fx,theta,n,k);
+                DT1Q1 = BuildDT1Q1_Rearranged_nchoosek(fw,n,k);
             case 'y'
                 % Build Toeplitz Matrix using log version of nchoosek.
-                DT1Q1 = BuildDT1Q1_Rearranged_log(fx,theta,n,k);
+                DT1Q1 = BuildDT1Q1_Rearranged_log(fw,n,k);
             otherwise
                 error('error : bool_log must be either (y) or (n)')
         end
@@ -49,7 +49,7 @@ end
 end
 
 
-function DT1Q1 = BuildDT1Q1_Rearranged_log(fx,theta,n,k)
+function DT1Q1 = BuildDT1Q1_Rearranged_log(fw,n,k)
 % Build Toeplitz matrix D^{-1}T(f,g)Q
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -72,8 +72,9 @@ global BOOL_DENOM_SYL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% Get degree of polynomial f
-m = length(fx)-1;
+% Get degree of polynomial f(w)
+[nRows,~] = size(fw);
+m = nRows-1;
 
 % Build an empty matrix
 DT1Q1 = zeros(m+n-k+1,n-k+1);
@@ -93,7 +94,7 @@ for j=0:1:n-k
         
         % Multiply binomial evaluation by coefficient f{i-j} from
         % polynomial f.
-        DT1Q1(i+1,j+1) =  fx(i-j+1) .*theta^(i-j) .* Numerator_exp  ;
+        DT1Q1(i+1,j+1) =  fw(i-j+1).* Numerator_exp  ;
         
     end
 end
@@ -115,7 +116,7 @@ switch BOOL_DENOM_SYL
 end
 end
 
-function T = BuildDT1Q1_Rearranged_nchoosek(fx,theta,n,k)
+function T = BuildDT1Q1_Rearranged_nchoosek(fw,n,k)
 % Build Toeplitz matrix D^{-1}T(f,g)Q
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -142,7 +143,7 @@ global BOOL_DENOM_SYL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get degree of polynomial f
-m = length(fx)-1;
+m = length(fw)-1;
 
 % Build an empty matrix
 T = zeros(m+n-k+1,n-k+1);
@@ -152,8 +153,7 @@ for j=0:1:n-k
     % for each row from i = j,...
     for i = j:1:(j+m)
         T(i+1,j+1) = ...
-            fx(i-j+1) ...
-            .* theta^(i-j) ...
+            fw(i-j+1) ...
             .* nchoosek(i,j) ...
             .* nchoosek(m+n-k-i,n-k-j);
     end

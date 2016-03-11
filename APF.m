@@ -48,10 +48,10 @@ theta(ite) = initial_theta;
 alpha(ite) = initial_alpha;
 
 % Get degree of polynomial f
-m = length(fx) - 1;
+m = size(fx,1) - 1;
 
 % Get degree of polynomial g
-n = length(gx) - 1;
+n = size(gx,1) - 1;
 
 % Initialise some useful vectors
 vecm    = (0:1:m)';
@@ -105,18 +105,17 @@ Partial_vw_wrt_theta = vecnk .*vw./theta(ite);
 bk = [fw ; alpha(ite).*gw];
 
 % Get initial residual
-rk = bk-((HCG)*dw);
+g = bk-((HCG)*dw);
 
 % Set some initial values
-gnew            = rk;
-residual(ite)   = norm(gnew);
+residual(ite)   = norm(g);
 p               = zeros(m+1,1);
 q               = zeros(n+1,1);
 
 % Values of LHS Perturbations
 % Obtain structured perturbations sw of fw, and tw of gw
 sw   = p.*(theta(ite).^vecm);
-tw   = (q.*(theta(ite).^vecn));
+tw   = q.*(theta(ite).^vecn);
 
 
 % Set initial values for the iterative process
@@ -161,7 +160,7 @@ fnew    = zeros(2*m+2*n-2*t+6,1);
 ek = bk;
 
 % Get the condition 
-condition(ite) = norm(rk)/norm(ek);
+condition(ite) = norm(g)/norm(ek);
 
 startpoint = [zk;p;q;alpha;theta];
 
@@ -173,7 +172,7 @@ while condition(ite) > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
     
     % Use the QR decomposition to solve the LSE problem.
     % min |y-p| subject to Cy=q
-    y = LSE(E,fnew,C,gnew);
+    y = LSE(E,fnew,C,g);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -304,17 +303,17 @@ while condition(ite) > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
     [HCEG,H1C1E1G,H2C2E2G] = BuildHCG(uw+z1w,vw+z2w,m,n,t);
     
     % Calculate the new residual
-    rk = [fw + sw ;(alpha(ite)*(gw + tw))]-((HCEG)*dw);
+    g = [fw + sw ;(alpha(ite)*(gw + tw))]-((HCEG)*dw);
     
     % Calculate the new right hand vector.
     ek = [fw + sw ;(alpha(ite)*(gw + tw))];
     
     
     % update vector of residual
-    residual(ite) = norm(rk);
+    residual(ite) = norm(g);
     
     % Update Condition scalar.
-    condition(ite) = norm(rk)/norm(ek);
+    condition(ite) = norm(g)/norm(ek);
     
     % Update fnew
     fnew = -(yy - startpoint);

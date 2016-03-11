@@ -222,7 +222,7 @@ switch n
         t = 5;
         m = 10;
         n = 7;
-        [roots_fx,roots_gx] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high,SEED)
+        [roots_fx,roots_gx] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high)
         
     case 'custom'
         intvl_low = -1;
@@ -241,7 +241,7 @@ switch n
 %         t = 5;
 %         m = 10;
 %         n = 7;
-        [roots_fx,roots_gx] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high,SEED)
+        [roots_fx,roots_gx] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high)
         
         
     otherwise

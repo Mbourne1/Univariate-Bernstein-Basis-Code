@@ -16,8 +16,8 @@ n = r-1;
 switch GEOMETRIC_MEAN_METHOD
     case 'matlab'
         
-        C_f_unproc = BuildT1(fx,1,n,k);
-        C_g_unproc = BuildT1(gx,1,m,k);
+        C_f_unproc = BuildT1(fx,n-k);
+        C_g_unproc = BuildT1(gx,m-k);
         
         % Use Matlab method for calculating GM
         lambda = geomean(abs(C_f_unproc(C_f_unproc~=0)));

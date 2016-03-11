@@ -1,9 +1,15 @@
 function [c] = DegreeElevate_Univariate(ft,r)
-% Function performs degree elevation on polynomial f(x).
-% Let fx be the coefficients of polynomial f(x) of degree m. 
-% r = Number of degree elevations such that the output polynomial is of
-% degree m + r.
+% Function performs degree elevation of a polynomial f(x) in the Bernstein
+% basis.
+%
+%   Input.
+%
+%   fx  :   The coefficients of polynomial f(x) of degree m. 
+%
+%   r   :   Number of degree elevations such that the output polynomial is 
+%           of degree m + r.
 
+% Get degree of polynomial f
 m = length(ft) -1;
 
 % for each c(i) in the vector
@@ -12,7 +18,9 @@ c = zeros(m+r+1,1);
 for k = 0:1:m+r
    temp_sum = 0;
    for j = max(0,k-r):1:min(m,k)
-       temp_sum = temp_sum + (ft(j+1) * nchoosek(m,j) * nchoosek(r,k-j)) ./ nchoosek(m+r,k) ;
+       temp_sum = temp_sum + ...
+           (ft(j+1) * nchoosek(m,j) * nchoosek(r,k-j)) ...
+           ./ nchoosek(m+r,k) ;
    end
    c(k+1) = temp_sum;
 end

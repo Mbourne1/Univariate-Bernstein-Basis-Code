@@ -1,10 +1,10 @@
 function [HCG, H1C1G, H2C2G] = BuildHCG(uw,vw,m,n,t)
 
-global Bool_APFBuildMethod
+global APF_BUILD_METHOD
 
 % Build H_{t}C(f,g)G_{t}
-switch Bool_APFBuildMethod
-    case 'standard'
+switch APF_BUILD_METHOD
+    case 'Standard'
         H1 = BuildH1(m);
         H2 = BuildH1(n);
         C1 = BuildC1(uw,t);
@@ -15,13 +15,13 @@ switch Bool_APFBuildMethod
         H1C1G = H1*C1*G;
         H2C2G = H2*C2*G;
         
-    case 'rearranged'
+    case 'Rearranged'
         H1C1G = BuildH1C1G(uw,t);
         H2C2G = BuildH1C1G(vw,t);
         HCG = [H1C1G ; H2C2G ];
         
     otherwise
-        error('error : Build method is either (standard) or (rearranged)');
+        error('error : Build method is either (Standard) or (Rearranged)');
 end
 
 

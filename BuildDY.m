@@ -37,12 +37,12 @@ function DY = BuildDY(m,n,t,opt_col,x,alpha,theta)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
 
-global bool_log
+global BOOL_LOG
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-switch bool_log
+switch BOOL_LOG
     case 'n' % Use nchoosek method
         
         DY = BuildDY_nchoosek(m,n,t,opt_col,x,alpha,theta);
@@ -87,7 +87,7 @@ function DY = BuildDY_nchoosek(m,n,t,mincol,x_ls_wrt_w,alpha,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -143,7 +143,7 @@ for j=0:1:n
 end
 
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y'
         %Include the denominator
         Y1 = Y1./nchoosek(m+n-t,n-t);
@@ -189,7 +189,7 @@ function Y = BuildDY_log(m,n,t,mincol,x,alpha,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -252,7 +252,7 @@ end
 
 
 
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 'y' 
         % Include the denominator in the coefficient matrix.
         

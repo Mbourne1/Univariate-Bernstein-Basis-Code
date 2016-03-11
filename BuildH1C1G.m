@@ -12,13 +12,13 @@ function H1C1G = BuildH1C1G(uw,t)
 
 %                       Global Variables
 
-global bool_log
+global BOOL_LOG
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-switch bool_log
+switch BOOL_LOG
     case 'y' 
         % Use logs
         H1C1G = BuildH1C1G_log(uw,t);
@@ -31,10 +31,10 @@ end
 
 function H1C1G = BuildH1C1G_nchoosek(uw,t)
 % Build Partition of the HCG matrix using nchoosek
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 %                       Inputs.
+%
 %
 % uw :  Coefficients of polynomial u in scaled bernstein basis, to be put
 %       into matrix form.
@@ -42,17 +42,10 @@ function H1C1G = BuildH1C1G_nchoosek(uw,t)
 % t  :- Degree of GCD
 %
 %
-%
-%%
-%                           Global Variables
 
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
-global bool_denom_apf
-%%
+
+global BOOL_DENOM_APF
+%
 
 % Get degree of polynomial u(w)
 m_minus_t = length(uw)-1;
@@ -74,10 +67,15 @@ for j = 0:1:t
     end
 end
 
-switch bool_denom_apf
+switch BOOL_DENOM_APF
     case 'y' 
         % Include Common Denominator in the matrix
         H1C1G  = H1C1G ./ nchoosek(m,t);
+    case 'n'
+    
+    otherwise 
+        error('err')
+        
 end
 end
 
@@ -95,7 +93,7 @@ function H1C1G = BuildH1C1G_log(uw,t)
 %%
 %                           Global Variables.
 
-global bool_denom_apf
+global BOOL_DENOM_APF
 
 %%
 
@@ -123,7 +121,7 @@ for j = 0:1:t
 end
 
 % If include common denominator of the partition of HCG
-switch bool_denom_apf
+switch BOOL_DENOM_APF
     case 'y' % Include the common denominator
         
         Denom_Eval_log = lnnchoosek(m,t);
