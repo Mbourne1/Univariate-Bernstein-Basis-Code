@@ -67,22 +67,8 @@ end
 RHS_f = real(BuildRHSF(fw));
 DCQ = BuildDCQ(fw,m);
 
-
-% set bk the right hand side vector to be equal to RHS_f.
-bk = RHS_f;
-
-[~,n2] = size(DCQ);
-[Q1,R] = qr(DCQ);
-
-R1 = R(1:n2,:);
-cd = Q1'*bk;
-c = cd(1:n2,:);
-x_ls = R1\c;
-
-%r = norm(RHS_f-A*x_ls)
-h_o = x_ls;
-vec_h = h_o;
-
+% Solve h_{0}
+h_o = SolveAx_b(DCQ,RHS_f);
 
 % Seperate solution vector h, into component parts h_{1},h_{2},...h_{d},
 % each of degree n_{i}
@@ -156,7 +142,7 @@ while condition > MAX_ERROR_DECONVOLUTIONS  && ...
     cond(G);
     y =LSE(F,s,G,t);
     
-    yy = yy + y
+    yy = yy + y;
     
     % Output y gives delta h and delta z
     delta_h = y(1:N);

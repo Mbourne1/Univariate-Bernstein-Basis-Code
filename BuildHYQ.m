@@ -1,5 +1,5 @@
 function HYQ = BuildHYQ(dx,m,n,theta)
-
+% Build the matrix HYQ such that H*Y(dx)*Q * [u;v] = [f;g]
 
     HYQ_v1 = BuildHYQ1(dx,m,n,theta);
     HYQ_v2 = BuildHYQ2(dx,m,n,theta);
@@ -105,7 +105,7 @@ switch BOOL_DENOM_APF
         % include the denominator
         A = A./nchoosek(m,t);
     case 'n'
-        A = A;
+        % Do nothing
     otherwise 
         error(err)
 end

@@ -1,4 +1,4 @@
-function [] = o_gcd(ex_num,emin,emax,low_rank_approx_method,apf_method,bool_preproc)
+function [] = o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
 % g(x) as defined in the example file.
 %
@@ -11,18 +11,19 @@ function [] = o_gcd(ex_num,emin,emax,low_rank_approx_method,apf_method,bool_prep
 %
 % emax: Signal to noise ratio (maximum)
 %
-% low_rank_approx_method : 
+% bool_preproc : 'y' or 'n' if preprocessing is performed
+%
+% low_rank_approx_method : 'Standard STLN' 'Standard SNTLN'
 %
 % apf_method :
 %
-% BOOL_PREPROC
 %
 
 addpath 'BernsteinMethods'
 addpath 'Bezoutian'
 
-SetGlobalVariables()
-
+SetGlobalVariables(bool_preproc,low_rank_approx_method,apf_method)
+global SEED
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                Consistency of input parameters.
@@ -31,28 +32,14 @@ SetGlobalVariables()
 % If not, rearrange min and max.
 if emin > emax
     fprintf('minimum noise greater than maximum noise \n swapping values...\n')
-    emin_wrong = emin;
-    emax_wrong = emax;
-    emin = emax_wrong;
-    emax = emin_wrong;
+    swap(emin,emax);
 end
 
-% If BOOL_Q has not been included, then the Sylvester rearrangement is not
-% applicable, and the common denominators can not be removed.
-% Simplest method, no structure added.
-% Override users input options if incompatable.
-if (BOOL_Q == 0)
-    BOOL_DENOM_SYL = 1;
-    BOOL_APF = 0; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
-    BOOL_SNTLN = 0; % Does not work with code block SNTLN (Addition of structured perturbations code doesnt exist for exclusion of Q from coefficient matrix).
-    fprintf('\nSNTLN and APF only work when including Matrix Q in sylvester matrix.\n')
-    fprintf('Denominator must be included when excluding matrix Q \n');
-end
 
-%% Print the parameters.
-PrintGlobalVariables
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Print the parameters.
+PrintGlobalVariables()
+
 % o - gcd - Calculate GCD of two Arbitrary polynomials
 % Given two sets of polynomial roots, form polynomials f and g, expressed
 % in the Bernstein Basis. Add noise, and calculate the GCD of the two
@@ -68,7 +55,8 @@ PrintRoots('f',f_roots)
 PrintRoots('g',g_roots)
 PrintRoots('d',d_roots)
 
-PlotRoots
+% Plot the roots of f(x), g(x) and d(x)
+PlotRoots()
 
 % Display the exact, expected result for the degree of the GCD
 fprintf('Degree of GCD of exact input polynomials: %i \n',t_exact)
@@ -89,10 +77,10 @@ u_exact_bi = B_poly(u_roots);
 v_exact_bi = B_poly(v_roots);
 
 % Get degree of polynomials f(x).
-m = size(f_exact_bi,1) -1;
+m = size(f_exact_bi,1) - 1;
 
 % Get degree of polynomials g(x).
-n = size(g_exact_bi,1) -1;
+n = size(g_exact_bi,1) - 1;
 
 % Get degree of exact GCD d(x).
 t = size(d_exact_bi,1) - 1;

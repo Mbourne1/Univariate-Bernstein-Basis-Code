@@ -1,16 +1,27 @@
-function [c] = DegreeElevate(fx,r)
-% Function performs degree elevation on polynomial f(x).
-% Let fx be the coefficients of polynomial f(x) of degree m. 
-% r = Number of degree elevations such that the output polynomial is of
-% degree m + r.
+function [c] = Bernstein_DegreeElevate(fx,r)
+% Function performs degree elevation on polynomial f(x) r times.
+%
+% Inputs.
+%
+% fx : The coefficients of polynomial f(x).
+%
+% r  : Number of degree elevations such that the output polynomial is of
+%      degree m + r.
 
-n = length(fx) -1;
+% Get the degree of polynomial f(x)
+m = size(fx,1) - 1;
 
-% for each c(i) in the vector
-for k = 0:1:n+r
+c = zeros(m+r+1,1)
+
+% Each coefficient c(k+1)
+for k = 0:1:m+r
+   % Initialise temporary sum.
    temp_sum = 0;
-   for j = max(0,k-r):1:min(n,k)
-       temp_sum = temp_sum + (fx(j+1) * nchoosek(n,j) * nchoosek(r,k-j)) ./ nchoosek(n+r,k) ;
+   for j = max(0,k-r):1:min(m,k)
+       temp_sum = temp_sum + (fx(j+1) * nchoosek(m,j) * nchoosek(r,k-j)) ./ nchoosek(m+r,k) ;
    end
    c(k+1) = temp_sum;
+end
+
+
 end

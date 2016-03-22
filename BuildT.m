@@ -21,10 +21,10 @@ function T = BuildT(fw,gw,alpha,t)
 
 %%
 % Get degree of polynomail f
-m = length(fw) - 1;
+m = size(fw,1) - 1;
 
 % Get degree of polynomial g.
-n = length(gw) - 1;
+n = size(gw,1) - 1;
 
 % Build Toeplitz matrix of f, the first partiton.
 T1 = BuildT1(fw,n-t);

@@ -1,17 +1,25 @@
-function [] = DegreeElevateMatrixMethod(fx,r)
+function [c] = Bernstein_DegreeElevate_MatrixMethod(fx,r)
 % Given the coefficients of the polynomial f(x) in Bernstein basis, and 
-% the number of degree elevations r. Perform r fold degree elevation.
+% the number of degree elevations r. Perform r fold degree elevation, by
+% matrix multiplictation. 
+%
+% Inputs.
+%
+% fx : coefficients of polynomial f(x)
+%
+% r :  number of degree elevations so that output polynomial is of degree 
+%      m+r
 
-% let m be the degree of polynomial f
-m = length(fx)-1;
 
-for i = 0:1:m+r
-    D(i+1) = nchoosek(m+r,i)
-end
+% Get the degree of polynomial f(x).
+m = size(fx,1) - 1;
 
-D = diag(1./D);
+% Get diagonal matrix D^{-1}.
+D = diag(1./GetBinomials(m+r));
 
-E = zeros(m+r+1,m+1)
+% Initialise matrix E
+E = zeros(m+r+1,m+1);
+
 % For each column of the matrix E
 for j = 0:1:m
     % for each row of the matrix E
@@ -20,6 +28,7 @@ for j = 0:1:m
     end
 end
 
-f = fx';
+% Get the coefficients of the degree elevated polynomial.
+c = D*E*fx;
 
-D*E*f
+end

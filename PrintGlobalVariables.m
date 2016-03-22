@@ -1,3 +1,10 @@
+global LOW_RANK_APPROXIMATION_METHOD
+global APF_METHOD
+global BOOL_DENOM_SYL
+global BOOL_PREPROC
+global BOOL_LOG
+global BOOL_Q
+
 fprintf('PARAMETERS:\n\n')
 fprintf('\tExample Number: %i \n',ex_num)
 fprintf('\tmin noise : %2.4e \n\tmax noise : %2.4e \n',emin,emax)

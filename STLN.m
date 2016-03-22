@@ -1,16 +1,15 @@
 function [fx,gx] = STLN(fx,gx,t,colIndex)
 % Perform STLN with no preprocessors
 
-global MAX_ERROR_SNTLN 
+global MAX_ERROR_SNTLN
 global MAX_ITERATIONS_SNTLN
+global PLOT_GRAPHS
 
 % Get degree of polynomial f(x)
-[nRows_f,~] = size(fx);
-m = nRows_f - 1;
+m = size(fx,1) - 1;
 
-% Get the derivative of f(x)
-[nRows_g,~] = size(gx);
-n = nRows_g - 1;
+% Get the degree of polynomial g(x)
+n = size(gx,1) - 1;
 
 % Initialise the vector of perturbations zf(x)
 zf = zeros(m+1,1);
@@ -18,21 +17,14 @@ zf = zeros(m+1,1);
 % Initialise the vector of perturbations zg(x)
 zg = zeros(n+1,1);
 
+% Initialise the vector of perturbations z.
 z = [zf ; zg];
 
-% Build the t'th subresultant
-D = BuildD(m,n,t);
-T1 = BuildC1(fx,n-t);
-T2 = BuildC1(gx,m-t);
-Q = BuildQ(m,n,t);
-
-DTQ = D* [T1 T2] * Q;
+% Build the t'th subresultant S_{t}(f,g)
+DTQ = BuildDTQ(fx,gx,1,t);
 
 % Build the matrix E_{t}(z)
-B1 = BuildC1(zf,n-t);
-B2 = BuildC1(zg,m-t);
-DBQ = D*[B1 B2]*Q;
-
+DBQ = BuildDTQ(zf,zg,1,t);
 
 % Get the index of the optimal colummn for removal
 %[~,colIndex] = GetMinDistance(St);
@@ -55,33 +47,29 @@ ht = DBQ(:,colIndex);
 % Build Pt
 Pt = BuildPt(colIndex,m,n,t);
 
-%test1 = ct;
-%test2 = Pt*[fx;gx];
-
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
 x_ls = SolveAx_b(At+Bt,ct+ht);
 
-rk = (ct + ht) - (At+Bt)*x_ls;
+% Get residual vector
+res_vec = (ct + ht) - (At+Bt)*x_ls;
 
-% Build the matrix D which accounts for repetitions of z_{i} in B_{k}
-%D = blkdiag(eye(n-t+1),eye(m-t+1));
+% Get the vector x with a zero included in the x_ls solution.
+x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
 
 % Build the matrix Y_{t}
-x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
 Yt = BuildYt(x,m,n,t);
 
-%test1 = Yt*[fx;gx] ;
-%test2 = At*x_ls;
+% Build the Matrx C for LSE problem
 
 H_z = Yt - Pt;
 H_x = At + Bt;
 
 C = [H_z H_x];
 
+% Build the identity matrix E.
 E = eye(2*m+2*n-2*t+3);
-
 %E = blkdiag(eye(m+n+2),zeros(m+n-2*t+1,m+n-2*t+1))
-%
+
 
 % Define the starting vector for the iterations for the LSE problem.
 start_point     =   ...
@@ -91,25 +79,25 @@ start_point     =   ...
     ];
 
 % Set the initial value of vector p to be zero
-p = zeros(2*m+2*n-2*t+3,1);
-%p = start_point
+f = zeros(2*m+2*n-2*t+3,1);
 
-
-yy              =   start_point;
+% Initialise yy the vector of accumulated perturbations.
+yy = start_point;
 
 % Initialise the iteration counter
 ite = 1;
 
 % Set the termination criterion.
-condition(ite) = norm(rk);
+condition(ite) = norm(res_vec)./norm(ct);
 
 
 while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
-
+    
+    % increment iteration number
     ite = ite + 1;
     
     % Get small changes in vector y
-    y_lse = LSE(E,p,C,rk);
+    y_lse = LSE(E,f,C,res_vec);
     
     % add small changes to cummulative changes
     yy = yy + y_lse;
@@ -125,13 +113,9 @@ while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
     % Split z into z_f and z_g
     zf = z(1:m+1);
     zg = z(m+2:end);
-
-    % Build the matrix E = DBQ
-    E1 = BuildC1(zf,n-t);
-    E2 = BuildC1(zg,m-t);
     
-    % Build the Matrix E = DBQ
-    DBQ = D*[E1 E2]*Q;
+    % Build the matrix E = DBQ
+    DBQ = BuildDTQ(zf,zg,1,t);
     
     % Build the matrix Bt = DBQ with opt column removed.
     Bt = DBQ;
@@ -147,7 +131,7 @@ while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
     Yt = BuildYt(x,m,n,t);
     
     % Get updated residual vector
-    rk = (ct+ht) - ((At+Bt)*x_ls);
+    res_vec = (ct+ht) - ((At+Bt)*x_ls);
     
     % Update the matrix C
     H_z = Yt - Pt;
@@ -155,10 +139,10 @@ while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
     C = [H_z H_x];
     
     % Update fnew - used in LSE Problem.
-    p = -(yy-start_point);
+    f = -(yy-start_point);
     
     % Update the termination criterion.
-    condition(ite) = norm(rk) ;
+    condition(ite) = norm(res_vec) ./ norm(ct+ht) ;
     
 end
 
@@ -166,11 +150,16 @@ end
 fx = fx + zf;
 gx = gx + zg;
 
-
-figure('name','STLN - Residuals')
-hold on
-plot(log10(condition),'-s');
-hold off
+switch PLOT_GRAPHS
+    case 'y'
+        figure('name','STLN - Residuals')
+        hold on
+        plot(log10(condition),'-s');
+        hold off
+    case 'n'
+    otherwise
+        error('err')
+end
 
 fprintf('Required number of iterations : %i \n',ite)
 
@@ -184,6 +173,7 @@ if idx_Col <= n-t+1
     % First Partition
     j = idx_Col;
     
+    % Get binomials corresponding to f(x)
     bi_m = GetBinomials(m);
     
     bi_denom = zeros(m+1,1);
@@ -196,9 +186,9 @@ if idx_Col <= n-t+1
     
     Pt = ...
         [
-            zeros(j-1,m+1)      zeros(j-1,n+1);
-            diag(G)        zeros(m+1,n+1);
-            zeros(n-t-j+1,m+1)  zeros(n-t-j+1,n+1);
+        zeros(j-1,m+1)      zeros(j-1,n+1);
+        diag(G)        zeros(m+1,n+1);
+        zeros(n-t-j+1,m+1)  zeros(n-t-j+1,n+1);
         ];
 else
     % Second Partition
@@ -216,9 +206,9 @@ else
     
     Pt = ...
         [
-            zeros(j-1,m+1)      zeros(j-1,n+1);
-            zeros(n+1,m+1)      diag(G) ;
-            zeros(m-t-j+1,m+1)  zeros(m-t-j+1,n+1);
+        zeros(j-1,m+1)      zeros(j-1,n+1);
+        zeros(n+1,m+1)      diag(G) ;
+        zeros(m-t-j+1,m+1)  zeros(m-t-j+1,n+1);
         ];
     
 end
@@ -236,9 +226,6 @@ bi_m = GetBinomials(m);
 bi_n = GetBinomials(n);
 
 D = BuildD(m,n,t);
-
-bi_nt = GetBinomials(n-t);
-bi_mt = GetBinomials(m-t);
 
 Y1 = BuildC1(xa,m);
 Y2 = BuildC1(xb,n);

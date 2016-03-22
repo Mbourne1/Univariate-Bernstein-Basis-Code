@@ -18,23 +18,9 @@ function [fx_Pwr] = BernsteinToPower(fx_Brn)
 %
 %
 
-% Get the dimensions of the input polynomial
-[r,c] = size(fx_Brn);
+% Get the degree of input polynomial f(x) in Bernstein basis.
+m = size(fx_Brn,1) - 1;
 
-% if more columns than rows, then we have a row vector rather than a column
-% vector
-if (c > r) 
-    fx_Brn = fx_Brn' ;
-    prob_type = 'row_vector';
-else 
-    prob_type = 'col_vector';
-end
-
-% Get the dimesions of the input polynomial
-[r,~] = size(fx_Brn);
-
-% Get the degree of polynomial f
-m = r - 1;
 
 % Build the conversion Matrix
 mat = zeros(m+1,m+1);

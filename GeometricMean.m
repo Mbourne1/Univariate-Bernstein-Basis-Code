@@ -61,7 +61,7 @@ function gm = GMlog(fx,n,k)
 % k :   Index of subresultants S_{k}
 %
 %
-%                           Outputs.
+% Outputs.
 %
 %
 % gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
@@ -84,10 +84,10 @@ switch BOOL_Q
         % calculation of the geometric mean.
         
         % Calculate the degree of the polynomial.
-        m = length(fx)-1;
+        m = size(fx,1)-1;
         
         % Calculate the absolute value of the coefficients in c.
-        fx=abs(fx);
+        fx = abs(fx);
         
         % Calculate part 1 of the geometric mean, the coefficient part.
         p1_log = (1/(m+1)).*log10(sum(fx));
@@ -212,7 +212,7 @@ switch BOOL_Q
     case 'y' % Include Q
         
         % Calculate the degree of the polynomial.
-        m = length(fx)-1;
+        m = length(fx) - 1;
         
         p2 = 1;
         

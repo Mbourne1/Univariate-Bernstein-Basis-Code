@@ -1,5 +1,6 @@
 function C = BuildC(u,v,t)
-% Build the Matric C
+% Build the Matric C, which is used in APF format of the GCD problem.
+% C(u,v) * [f;g] = d.
 %
 % Inputs.
 %
@@ -15,6 +16,6 @@ C1 = BuildC1(u,t);
 % Build partition of C corresponding to polynomial v(x)
 C2 = BuildC1(v,t);
 
-% Form C
+% Build C
 C = [C1 ; C2];
 end

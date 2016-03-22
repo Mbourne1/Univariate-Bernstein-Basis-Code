@@ -25,7 +25,7 @@ q{1} = fx;
 
 % let degree_vector store the degrees corresponding to the array of
 % GCDs stored in q.
-degree_vec(1) = length(fx)-1;
+degree_vec(1) = size(fx,1)-1;
 
 % Let theta_vec store all theta values used in each iteration.
 theta_vec(1) = 1;
@@ -39,7 +39,7 @@ while length(q{ite_num})-1 > 0
     fx = q{ite_num};
     
     % set polynomial g to be the derivative of the GCD.
-    gx = Bernstein_Differentiate(q{ite_num})';
+    gx = Bernstein_Differentiate(q{ite_num});
     
     % get degrees m and n of polynomials f and g respectively.
     m = size(fx,1) -1;

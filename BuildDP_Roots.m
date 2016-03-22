@@ -1,26 +1,25 @@
 
 function [P] = BuildDP_Roots(m,n,alpha,theta,q,t,ratio)
 % See [Report - SNTLN - Roots - Derivation of the first rearrangement]
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 %                       Inputs
-
+%
 % m :   Degree of polynomial f
-
+%
 % n :   Degree of polynomial g
-
+%
 % alpha :   Optimal value of alpha
-
+%
 % theta :   Optimal value of theta
-
+%
 % q :   Index of optimal column
-
+%
 % t :   Degree of GCD and index of subresultant S_{t}
-
+%
 % ratio :   Ratio of geometric means \frac{\lamdba}{\mu}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
 
 % where q is the index of the column removed from the Sylvester matrix. q =
 % 1,...,m+n-2t+2
@@ -42,22 +41,23 @@ end
 
 function [P] = buildP_LHS_Roots(m,n,theta,q,t)
 % See [Report - SNTLN - Roots - Derivation of the first rearrangement]
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
+%
 %                       Inputs
-
+%
 % m :   Degree of polynomial f
-
+%
 % n :   Degree of polynomial g
-
+%
 % theta :   Optimal value of theta
-
+%
 % q :   Index of optimal column
-
+%
 % t :   Degree of GCD and index of subresultant S_{t}
+%
+%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 qhat = q-1;
 
 Z1 = zeros(qhat,m+1);

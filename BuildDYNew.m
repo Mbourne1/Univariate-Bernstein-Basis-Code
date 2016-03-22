@@ -1,5 +1,3 @@
-% This is just a test file
-
 function Y = BuildDYNew(m,n,t,mincol,x_ls_wrt_w,alpha,theta)
 
 xa = x_ls_wrt_w(1:mincol-1) ;

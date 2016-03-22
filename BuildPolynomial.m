@@ -10,6 +10,7 @@ function [f_roots,g_roots] = BuildPolynomial(m,intvl_low,intvl_high,seed)
     
     
     format long
+    
     % Get the multiplicity structure of the roots of the polynomial f
     % t. t = t1 + t2 + ... + t_{r}
     % We want more lower multiplicity roots. so skew this way.

@@ -3,24 +3,21 @@ function H = BuildH(m,n)
 % diagonal form. H1 and H2. Where H1 consists of binomial coefficients
 % corresponding to polynomial f, and H2 consists of binomials corresponding
 % to polynomial g. such that H^-1 C(u);C(v) G d = [f;g]
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                          Inputs
-
-
+%
+%
 % m :   Degree of input polynomial f
-
+%
 % n :   Degree of input polynomial g
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Outputs
-
-
+%
+%
+% Outputs.
+%
 % H :   H^{-1} = [H1, 0 ; 0, H2]
-%       where H1 = diag[1/nchoosek(m,1) ... 1/nchoosek(m,m)]
-%             H2 = diag[1/nchoosek(n,1) ... 1/nchoosek(n,n)]
+% where:
+% H1 = diag[1/nchoosek(m,1) ... 1/nchoosek(m,m)]
+% H2 = diag[1/nchoosek(n,1) ... 1/nchoosek(n,n)]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

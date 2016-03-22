@@ -1,11 +1,11 @@
 function H1 = BuildH1(m)
+% Build the matrix H1, used in BuildH().
+% 
+% Inputs
+%
+% m : Degree of polynomial.
+%
 
-% Initialize a zero vector
-H1 = zeros(m+1,1);
-for i = 0:1:m
-    H1(i+1) = nchoosek(m,i);
-end
-
-H1 = diag(1./H1);
+H = diag(1./GetBinomials(m));
 
 end

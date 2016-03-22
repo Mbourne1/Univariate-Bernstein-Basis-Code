@@ -1,34 +1,24 @@
 function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
-    SNTLN_Roots( fx_n,gx_n,initial_alpha,initial_theta,t,min_col,gm_fx,gm_gx)
+    SNTLN_Roots(fx_n, gx_n, initial_alpha, initial_theta, t, opt_col, gm_fx, gm_gx)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             Inputs.
-
-% fx_n - Coefficients of polynomial f, in standard bernstein basis. where
-% fx is noisy,  and has been normalised by geometric mean
-
-% gx_n - Coefficients of polynomial g, in standard bernstein basis. where
-% gx is noisy, and has been normalised by geometric mean
-
-% t  - Degree of AGCD.
-
-% col - Optimal column for removal from the sylvester matrix, such that col
-% is the column which is most likely a linear combination of the others.
-
-% alpha - Initial value of alpha
-
-% theta - Initial value of theta
-
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
-
-% BOOL_LOG - (Boolean)
-%   1 :- Perform calculations by log method
-%   0 :- Perform calculations by standard method.
-
+%
+% fx_n : Coefficients of polynomial f, in standard bernstein basis. where
+%        fx is noisy,  and has been normalised by geometric mean
+%
+% gx_n : Coefficients of polynomial g, in standard bernstein basis. where
+%        gx is noisy, and has been normalised by geometric mean
+%
+% t  : Degree of AGCD.
+%
+% opt_col : Optimal column for removal from the sylvester matrix, such that col
+%           is the column which is most likely a linear combination of the others.
+%
+% alpha : Initial value of alpha
+%
+% theta : Initial value of theta
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                           Outputs.
@@ -50,19 +40,8 @@ function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
 %                       Global Inputs
 % These values should only be reset in the head function o_roots
 
-
 global max_error
-
 global max_iterations
-
-% Set the Method used to build matrices such as DTQ
-% 0 - Conventional method D*T*Q
-% 1 - My Method loops and simplification of elements.
-global bool_sylvesterBuildMethod
-
-% bool_plotgraphs (boolean)
-% 1 - Plot graphs for computations of calculating gcd
-% 0 - Avoid plotting graphs (Speed up)
 global bool_plotgraphs
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,15 +52,17 @@ ratio = gm_fx./gm_gx;
 % Set the initial iterations number
 ite = 1;
 
-% Set initial values of alpha and theta
-theta(ite) = initial_theta;
+% Set initial values of alpha
 alpha(ite) = initial_alpha;
 
+% Set initial values of theta
+theta(ite) = initial_theta;
+
 % Get degree of polynomials f.
-m = length(fx_n)-1;
+m = size(fx_n,1) - 1;
 
 % Get degree of polynomial g.
-n = length(gx_n)-1;
+n = size(gx_n,1) - 1;
 
 % Generate some useful vectors
 vecm = (0:1:m)';
@@ -93,10 +74,10 @@ I = eye(m+n-2*t+2,m+n-2*t+2);
 % Form matrix M from the identity matrix such that S(f,g)*M gives A_{t},
 % the sylvester matrix with the optimal column removed.
 M = I;
-M(:,min_col) = [];
+M(:,opt_col) = [];
 
 % Form vector e such that S(f,g)*e gives the column c_{t}
-e = I(:,min_col);
+e = I(:,opt_col);
 
 
 % Edit - Replace the gx which has been input, obtain g(x) as derivative of
@@ -114,20 +95,7 @@ fw = fx_n.*(theta(ite).^vecm);
 gw = gx_new.*(theta(ite).^vecn);
 
 % Form the Coefficient Matrix DTQ such that DTQ * x = [col]
-switch bool_sylvesterBuildMethod
-    case 'standard'
-        % Build Matrices D,T and Q.
-        D = BuildD(m,n,t);
-        T = BuildT(fx_n,gx_n,alpha(ite),theta(ite),t);
-        Q = BuildQ(m,n,t);
-        DTQ = D*T*Q;
-        
-    case 'rearranged'
-        DTQ = BuildDTQ(fx_n,gx_n,alpha(ite),theta(ite),t);
-        
-end
-
-
+DTQ = BuildDTQ(fx_n,gx_n,alpha(ite),theta(ite),t);
 
 % Calculate the partial derivatives of fw and gw with respect to alpha
 Partial_fw_wrt_alpha            = zeros(1,m+1);
@@ -138,28 +106,10 @@ Partial_fw_wrt_theta    = vecm.*(fw./theta(ite));
 Partial_gw_wrt_theta    = vecn.*(gw./theta(ite));
 
 % Calculate derivative of D_{k}T(f,g)Q_{k} with respect to alpha
-switch bool_sylvesterBuildMethod
-    case 'standard'
-        T_alpha = BuildT(Partial_fw_wrt_alpha,Partial_alpha_gw_wrt_alpha,1,1,t);
-        DTQ_alpha = D*T_alpha*Q;
-        
-    case 'rearranged'
-        DTQ_alpha = BuildDTQ(Partial_fw_wrt_alpha, ...
-            Partial_alpha_gw_wrt_alpha,1,1,t);
-end
+DTQ_alpha = BuildDTQ(Partial_fw_wrt_alpha,Partial_alpha_gw_wrt_alpha,1,t);
 
 % Calculate the derivative of D_{k}TQ_{k} with respect to theta
-
-switch bool_sylvesterBuildMethod
-    case 'standard'
-        Partial_DTQ_wrt_theta = D*...
-            BuildT(Partial_fw_wrt_theta,alpha(ite).*Partial_gw_wrt_theta,1,1,t)...
-            *Q;
-    case 'rearranged'
-        Partial_DTQ_wrt_theta   = BuildDTQ(Partial_fw_wrt_theta, ...
-            alpha(ite).*Partial_gw_wrt_theta,1,1,t);
-end
-
+BuildDTQ(Partial_fw_wrt_theta,Partial_gw_wrt_theta,alpha(ite),t);
 
 % Initialise the vector z of structured perturbations
 % if we are working with strictly the roots problem, the number of entries
@@ -188,35 +138,25 @@ Partial_h_wrt_theta     = Partial_DNQ_wrt_theta*e;
 
 %Calculate the matrix P. such that Pf = ck
 
-DP  = BuildDP_Roots(m,n,alpha(ite),theta(ite),min_col,t,ratio);
+DP  = BuildDP_Roots(m,n,alpha(ite),theta(ite),opt_col,t,ratio);
 
 
-ck = (DTQ)*e;
+ct = (DTQ)*e;
 
 % Calculate the remaining columns of the matrix.
-Ak = (DTQ)*M;
+At = (DTQ)*M;
 
 % Calculate the derivatives wrt alpha and theta of the removed column.
-Partial_ck_wrt_alpha     = DTQ_alpha*e;
-Partial_ck_wrt_theta     = Partial_DTQ_wrt_theta*e;
+Partial_ct_wrt_alpha     = DTQ_alpha*e;
+Partial_ct_wrt_theta     = Partial_DTQ_wrt_theta*e;
 
 % Calculate the initial estimate of x - the vector whcih contains the
 % coefficients of the quotient polynomials u and v.
-[~,n2] = size(Ak);
-
-[Q2,R] = qr(Ak);
-
-R1 = R(1:n2,:);
-
-cd = Q2'*ck;
-
-c1 = cd(1:n2,:);
-
-x_ls = R1\c1;
+x_ls = SolveAx_b(At,ct)
 
 
 % DY0 =   BuildDY(m,n,t,min_col,x_ls,alpha(ite),theta(ite));
-DY  =   BuildDY_Roots(m,n,t,min_col,x_ls,alpha(ite),theta(ite),ratio);
+DY  =   BuildDY_Roots(m,n,t,opt_col,x_ls,alpha(ite),theta(ite),ratio);
 
 format long
 % test that the two methods of building DY correlate
@@ -228,7 +168,7 @@ format long
 
 
 % Calculate the initial residual r = ck - (Ak*x)
-res_vec = ck - (DTQ*M*x_ls);
+res_vec = ct - (DTQ*M*x_ls);
 
 % Set the initial value of vector p to be zero
 
@@ -238,43 +178,26 @@ p = zeros(2*m+n-2*t+4,1);
 E = eye(2*m+2*n-2*t+5);
 
 % Create the matrix D(T+N)Q
-switch bool_sylvesterBuildMethod
-    case 'standard'
-        DTNQ = D*BuildT(fx_n,gx_n,alpha(ite),theta(ite),t)*Q;
-    case 'rearranged'
-        DTNQ = BuildDTQ(fx_n,gx_n,alpha(ite),theta(ite),t);
-end
+DTNQ = BuildDTQ(fw,gw,alpha(ite),t)
 
 % Create The matrix D(T+N)Q with respect to alpha
-switch bool_sylvesterBuildMethod
-    case 'standard'
-        DTNQ_wrt_alpha = D*BuildT(Partial_fw_wrt_alpha, ...
-            Partial_alpha_gw_wrt_alpha,1,1,t)*Q;
-    case 'rearranged'
-        DTNQ_wrt_alpha = BuildDTQ(Partial_fw_wrt_alpha, ...
-            Partial_alpha_gw_wrt_alpha,1,1,t);
-end
-
+DTNQ_wrt_alpha = BuildDTQ(Partial_fw_wrt_alpha, Partial_alpha_gw_wrt_alpha,1,t);
 
 % Create The matrix D(T+N)Q with respect to theta
-switch bool_sylvesterBuildMethod
-    case 'standard'
-        DTNQ_wrt_theta = D*BuildT(Partial_fw_wrt_theta, ...
-            alpha(ite).*Partial_gw_wrt_theta,1,1,t)*Q;
-    case 'rearranged'
-        DTNQ_wrt_theta = BuildDTQ(Partial_fw_wrt_theta, ...
-            alpha(ite).*Partial_gw_wrt_theta,1,1,t);
-end
-
+DTNQ_wrt_theta = BuildDTQ(Partial_fw_wrt_theta, Partial_gw_wrt_theta,alpha(ite),t);
+        
 
 % Create the matrix C for input into iteration
 
-H_z     = GetH_z(min_col,n,t,DY,DP);
+H_z     = GetH_z(opt_col,n,t,DY,DP);
+
 H_x     = DTNQ*M;
+
 H_beta  = DTNQ_wrt_alpha*M*x_ls - ...
-    (Partial_ck_wrt_alpha + Partial_h_wrt_alpha);
+    (Partial_ct_wrt_alpha + Partial_h_wrt_alpha);
+
 H_omega = DTNQ_wrt_theta*M*x_ls - ...
-    (Partial_ck_wrt_theta + Partial_h_wrt_theta);
+    (Partial_ct_wrt_theta + Partial_h_wrt_theta);
 
 C       = [H_z H_x H_beta H_omega];
 
@@ -292,7 +215,7 @@ yy      =   start_point;
 % Set the termination criterion to a large value. It will be
 % over written later.
 
-condition(ite) = norm(res_vec)/norm(ck);
+condition(ite) = norm(res_vec)/norm(ct);
 
 xk = x_ls;
 
@@ -330,15 +253,10 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     gw = gx_new.*(theta(ite).^vecn);
     
     % Construct the subresultant matrix of DTQ.
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            DTQ = D*BuildT(fx_n,gx_new,alpha(ite),theta(ite),t)*Q;
-        case 'rearranged'
-            DTQ = BuildDTQ(fx_n,gx_new,alpha(ite),theta(ite),t);
-    end
+    DTQ = BuildDTQ(fw,gw,alpha(ite),t);
     
     % Calculate the partial derivatives of fw and gw with respect to alpha
-    Partial_fw_wrt_alpha    = zeros(1,m+1);
+    Partial_fw_wrt_alpha    = zeros(m+1,1);
     Partial_gw_wrt_alpha    = gw;
     
     % Calculate the partial derivatives of fw and gw with respect to theta
@@ -346,31 +264,17 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     Partial_gw_wrt_theta    = vecn.*gw./theta(ite);
     
     % Calculate the Partial derivative of DTQ with respect to alpha.
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            Partial_DTQ_wrt_alpha = D*BuildT(Partial_fw_wrt_alpha,...
-                Partial_gw_wrt_alpha,1,1,t)*Q;
-        case 'rearranged'
-            Partial_DTQ_wrt_alpha = BuildDTQ(Partial_fw_wrt_alpha,...
-                Partial_gw_wrt_alpha,1,1,t);
-    end
-    
+    Partial_DTQ_wrt_alpha = BuildDTQ(Partial_fw_wrt_alpha, Partial_gw_wrt_alpha,1,t);
+                
     % Calculate the partial derivative of DTQ with respect to theta.
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            Partial_DTQ_wrt_theta = D*BuildT(Partial_fw_wrt_theta,...
-                alpha(ite).*Partial_gw_wrt_theta,1,1,t)*Q;
-        case 'rearranged'
-            Partial_DTQ_wrt_theta   = BuildDTQ(Partial_fw_wrt_theta,...
-                alpha(ite).*Partial_gw_wrt_theta,1,1,t);
-    end
-    
+    Partial_DTQ_wrt_theta = BuildDTQ(Partial_fw_wrt_theta, Partial_gw_wrt_theta,alpha(ite),t);
+        
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
-    ck = DTQ*e;
+    ct = DTQ*e;
     
     % Calculate the derivatives of c_{k} with respect to \alpha and \theta
-    Partial_ck_wrt_alpha     = Partial_DTQ_wrt_alpha*e;
-    Partial_ck_wrt_theta     = Partial_DTQ_wrt_theta*e;
+    Partial_ct_wrt_alpha     = Partial_DTQ_wrt_alpha*e;
+    Partial_ct_wrt_theta     = Partial_DTQ_wrt_theta*e;
     
     % Create the vector of structured perturbations zf and zg applied
     % to F and G.
@@ -382,15 +286,13 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     for i = 1:1:length(z_fx)-1
         z_gx(i) = m.*ratio.*(z_fx(i+1) - z_fx(i))  ;
     end
-    
-    
-    
+
     % Calculate the subresultant matrix of the structured perturbations.
     z_fw     = z_fx.*(theta(ite).^vecm);
     z_gw     = z_gx.*(theta(ite).^vecn);
     
     % Calculate the derivatives of z_fw and z_gw with repect to alpha.
-    Partial_zfw_wrt_alpha    = zeros(1,m+1);
+    Partial_zfw_wrt_alpha    = zeros(m+1,1);
     Partial_zgw_wrt_alpha    = z_gw;
     
     % Calculate the derivatives of z_fw and z_gw with respect to theta.
@@ -399,33 +301,14 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     
     % Build the Coefficient Matrix DNQ, of structured perturbations, with
     % same structure as DTQ.
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            DNQ = D*BuildT(z_fx,z_gx,alpha(ite),theta(ite),t)*Q;
-        case 'rearranged'
-            DNQ = BuildDTQ(z_fx,z_gx,alpha(ite),theta(ite),t);
-    end
+    DNQ = BuildDTQ(z_fw,z_gw,alpha(ite),t);
     
     % Calculate the derivatives of DNQ with respect to alpha
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            Partial_DNQ_wrt_alpha = D*BuildT(Partial_zfw_wrt_alpha,...
-                Partial_zgw_wrt_alpha,1,1,t)*Q;
-        case 'rearranged'
-            Partial_DNQ_wrt_alpha = BuildDTQ(Partial_zfw_wrt_alpha,...
-                Partial_zgw_wrt_alpha,1,1,t);
-    end
-    
+    Partial_DNQ_wrt_alpha = BuildDTQ(Partial_zfw_wrt_alpha, Partial_zgw_wrt_alpha,1,t);
+       
     % Calculate the derivatives of DNQ with respect to theta
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            Partial_DNQ_wrt_theta = D*BuildT(Partial_zfw_wrt_theta,...
-                alpha(ite).*Partial_zgw_wrt_theta,1,1,t)*Q;
-        case 'rearranged'
-            Partial_DNQ_wrt_theta   = BuildDTQ(Partial_zfw_wrt_theta,...
-                alpha(ite).*Partial_zgw_wrt_theta,1,1,t);
-            
-    end
+    Partial_DNQ_wrt_theta   = BuildDTQ(Partial_zfw_wrt_theta, Partial_zgw_wrt_theta,alpha(ite),t);
+    
     % Calculate the column of DNQ that is moved to the right hand side, which
     % has the same structure as c_{k} the column of S_{k} moved to the RHS
     h = DNQ*e;
@@ -437,61 +320,25 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     h_theta = Partial_DNQ_wrt_theta*e;
     
     % Build the matrix D_{k}(T+N)Q_{k}
-    
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            DTNQ = D*BuildT(fx_n + z_fx , gx_new + z_gx,alpha(ite),theta(ite),t)*Q;
-        case 'rearranged'
-            DTNQ = BuildDTQ(fx_n + z_fx , gw + z_gx,alpha(ite),theta(ite),t);
-    end
-    
+    DTNQ = BuildDTQ(fw_n + z_fw , gw + z_gw,alpha(ite),t);
+        
     % Calculate the paritial derivative of D_{k}(T+N)Q_{k} with respect to
     % alpha
-    
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            DTNQ_alpha = D*BuildT(Partial_fw_wrt_alpha + Partial_zfw_wrt_alpha,...
-                Partial_gw_wrt_alpha + Partial_zgw_wrt_alpha,1,1,t) * Q;
-        case 'rearranged'
-            DTNQ_alpha = BuildDTQ(Partial_fw_wrt_alpha + Partial_zfw_wrt_alpha,...
-                Partial_gw_wrt_alpha + Partial_zgw_wrt_alpha,1,1,t);
-    end
-    
+    DTNQ_alpha = BuildDTQ(Partial_fw_wrt_alpha + Partial_zfw_wrt_alpha, Partial_gw_wrt_alpha + Partial_zgw_wrt_alpha,1,t);
+        
     % Calculate the paritial derivative of D_{k}(T+N)Q_{k} with respect to
     % theta
     
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            DTNQ_theta = D*BuildT(Partial_fw_wrt_theta + Partial_zfw_wrt_theta,...
-                alpha(ite).*(Partial_gw_wrt_theta + Partial_zgw_wrt_theta),1,1,t)*Q;
-        case 'rearranged'
-            DTNQ_theta = BuildDTQ(Partial_fw_wrt_theta + Partial_zfw_wrt_theta,...
-                alpha(ite).*(Partial_gw_wrt_theta + Partial_zgw_wrt_theta),1,1,t);
-    end
-    
-    
+    DTNQ_theta = BuildDTQ(Partial_fw_wrt_theta + Partial_zfw_wrt_theta, Partial_gw_wrt_theta + Partial_zgw_wrt_theta,alpha(ite),t);
+            
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
-    
-    DY = BuildDY_Roots(m,n,t,min_col,x_ls,alpha(ite),theta(ite),ratio);
-    
+    DY = BuildDY_Roots(m,n,t,opt_col,x_ls,alpha(ite),theta(ite),ratio);
     
     % Calculate the matrix DP where P is the matrix such that c = P[f;g]
-    % Test the two methods of calculating DP
+    DP  = BuildDP_Roots(m,n,alpha(ite),theta(ite),opt_col,t,ratio);
     
-    DP  = BuildDP_Roots(m,n,alpha(ite),theta(ite),min_col,t,ratio);
-    
-    
-    
-    % Calculate the residual q and vector p.
-    
-    switch bool_sylvesterBuildMethod
-        case 'standard'
-            rk = (ck+h) - D*BuildT(fx_n + z_fx, gx_new + z_gx, alpha(ite), theta(ite),t)*Q*M*xk ;
-        case 'rearranged'
-            rk = (ck+h) - BuildDTQ(fx_n + z_fx, gx_new + z_gx, alpha(ite), theta(ite),t)*M*xk ;
-    end
-    
-    
+    % Calculate the residual vector
+    res_vec = (ct + h) - DTNQ*Q*M*xk;
     
     % Create matrix E.
     E = eye(2*m+2*n-2*t+5);
@@ -499,24 +346,21 @@ while condition(ite) >(max_error) &&  ite < max_iterations
     % Create the matrix C. This is made up of four submatrices, HZ, Hx,
     % H_alpha and H_theta.
     
-    Hz      = GetH_z(min_col,n,t,DY,DP);
+    Hz      = GetH_z(opt_col,n,t,DY,DP);
     
     Hx      = DTNQ*M;
     
-    H_alpha = DTNQ_alpha*M*xk - (Partial_ck_wrt_alpha+ h_alpha);
+    H_alpha = DTNQ_alpha*M*xk - (Partial_ct_wrt_alpha+ h_alpha);
     
-    H_theta = DTNQ_theta*M*xk - (Partial_ck_wrt_theta+ h_theta);
+    H_theta = DTNQ_theta*M*xk - (Partial_ct_wrt_theta+ h_theta);
     
     C = [Hz,Hx,H_alpha,H_theta];  % the matrix C
     
     % Calculate the new right hand vector
-    ek = ck + h;
-    
-    % update gnew - used in LSE Problem.
-    res_vec = rk;
-    
+    ek = ct + h;
+        
     % Calculate the normalised residual of the solution.
-    condition(ite) = norm(rk) / norm(ek);
+    condition(ite) = norm(res_vec) / norm(ek);
     
     % Update fnew - used in LSE Problem.
     p = -(yy-start_point);

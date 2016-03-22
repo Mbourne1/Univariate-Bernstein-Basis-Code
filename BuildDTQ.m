@@ -1,13 +1,23 @@
 function [DTQ] = BuildDTQ(fw,gw,alpha,t)
+% Build the matrix DTQ 
+%
+% fw : Coefficients of polynomial f(\omega,\theta)
+%
+% gw : Coefficients of polynomial g(\omega,\theta)
+%
+% alpha : 
+%
+% t : Degree of GCD d(x).
 
+% Global Variables.
 global SYLVESTER_BUILD_METHOD
 
-[r,~] = size(fw);
-m = r - 1;
+% Get degree of polynomial f(w)
+m = size(fw,1) - 1;
 
-[r,~] = size(gw);
-n = r - 1;
-
+% Get degree of polynomial g(w)
+n = size(gw,1) - 1;
+ 
 
 switch SYLVESTER_BUILD_METHOD
     case 'Standard'

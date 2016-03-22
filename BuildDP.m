@@ -1,9 +1,8 @@
-
 function [P] = BuildDP(m,n,theta,mincol,t)
-% Build the matrix DP.
+% Build the matrix DP. Used in SNTLN.
 %
 %
-%                              Inputs
+% Inputs
 %
 % m :   Degree of polynomial f
 %
@@ -37,7 +36,7 @@ if mincol <= (n-t+1) % the optimal column is from poly f
         G   p3;...
         p5  p6];
     
-else  %  the optimal column is from poly g
+else  %  the optimal column is from the second partiton of the Sylvester matrix poly g
     
     r_aboveG = mincol-n+t-2;
     r_belowG = m+n-2*t-mincol+2;
@@ -130,7 +129,7 @@ switch BOOL_LOG
         warning('off','all');
         G = RightDG_Build_nchoosek(n,m,t,mincol,theta);
         warning('on','all');
-    otherwise 
+    otherwise
         error('bool_log must be either y or n')
 end
 end
@@ -183,12 +182,12 @@ G = diag(G);
 
 
 switch BOOL_DENOM_SYL
-    case 'y' 
+    case 'y'
         % Included denominator in coefficient matrix.
         G = G./ nchoosek(m+n-t,n-t);
     case 'n'
         % Exclude
-    otherwise 
+    otherwise
         error('bool_denom_syl must be either y or n')
 end
 
@@ -247,7 +246,7 @@ end
 G = diag(G);
 
 switch BOOL_DENOM_SYL
-    case 'y' 
+    case 'y'
         % Included denominator in coefficient matrix.
         
         % Evaluate binomial coefficient in denominator in logs
@@ -314,7 +313,7 @@ end
 G = diag(G);
 
 switch BOOL_DENOM_SYL
-    case 'y' 
+    case 'y'
         % Denominator is included in coefficient matrix.
         G = G./ nchoosek(m+n-t,m-t);
     case 'n'

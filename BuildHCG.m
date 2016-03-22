@@ -1,10 +1,12 @@
 function [HCG, H1C1G, H2C2G] = BuildHCG(uw,vw,m,n,t)
+% Build the matrix HCG, such that H*C(u,v)*G * d = [f;g]
 
 global APF_BUILD_METHOD
 
 % Build H_{t}C(f,g)G_{t}
 switch APF_BUILD_METHOD
     case 'Standard'
+        
         H1 = BuildH1(m);
         H2 = BuildH1(n);
         C1 = BuildC1(uw,t);

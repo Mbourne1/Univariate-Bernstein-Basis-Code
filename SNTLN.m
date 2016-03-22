@@ -55,10 +55,10 @@ theta(ite) = initial_theta;
 alpha(ite) = initial_alpha;
 
 % Get degree of polynomials f.
-m = length(fx_n)-1;
+m = size(fx_n,1) - 1;
 
 % Get degree of polynomial g.
-n = length(gx_n)-1;
+n = size(gx_n,1) - 1;
 
 % Generate some useful vectors
 vecm = (0:1:m)';
@@ -101,11 +101,10 @@ Partial_DTQ_wrt_alpha = BuildDTQ(Partial_fw_wrt_alpha,Partial_alpha_gw_wrt_alpha
 % Calculate the derivative of D_{k}TQ_{k} with respect to theta
 Partial_DTQ_wrt_theta = BuildDTQ(Partial_fw_wrt_theta,alpha(ite).*Partial_gw_wrt_theta,1,t);
 
-
 % Initialise the vector z of structured perturbations
 % if we are working with strictly the roots problem, the number of entries
 % in z can be reduced.
-zk = zeros(m+n+2,1);
+zt = zeros(m+n+2,1);
 
 % Initilaise the derivative of D_{k}NQ_{k} wrt alpha.
 Partial_DNQ_wrt_alpha   = zeros(m+n-t+1,m+n-(2*t)+2);
@@ -115,31 +114,31 @@ Partial_DNQ_wrt_theta   = zeros(m+n-t+1,m+n-(2*t)+2);
 
 % Calculate the derivatives wrt alpha and theta of the column of DNQ
 % that is moved to the right hand side.
-Partial_h_wrt_alpha     = Partial_DNQ_wrt_alpha*e;
-Partial_h_wrt_theta     = Partial_DNQ_wrt_theta*e;
+Partial_ht_wrt_alpha     = Partial_DNQ_wrt_alpha*e;
+Partial_ht_wrt_theta     = Partial_DNQ_wrt_theta*e;
 
 %Calculate the matrix P.
 DP = BuildDP(m,n,theta(ite),opt_col,t);
 
 % Calculate the column of DTQ that is moved to the right hand side.
-ck = (DTQ)*e;
+ct = (DTQ)*e;
 
 % Calculate the remaining columns of the matrix.
-Ak = (DTQ)*M;
+At = (DTQ)*M;
 
 % Calculate the derivatives wrt alpha and theta of the removed column.
-Partial_ck_wrt_alpha     = Partial_DTQ_wrt_alpha*e;
-Partial_ck_wrt_theta     = Partial_DTQ_wrt_theta*e;
+Partial_ct_wrt_alpha     = Partial_DTQ_wrt_alpha*e;
+Partial_ct_wrt_theta     = Partial_DTQ_wrt_theta*e;
 
 % Calculate the initial estimate of x - the vector whcih contains the
 % coefficients of the quotient polynomials u and v.
-x_ls = SolveAx_b(Ak,ck)
+x_ls = SolveAx_b(At,ct)
 
 % Build Matrix Y
 DY = BuildDY(m,n,t,opt_col,x_ls,alpha(ite),theta(ite));
 
 % Calculate the initial residual r = ck - (Ak*x)
-res_vec = ck - (DTQ*M*x_ls);
+res_vec = ct - (DTQ*M*x_ls);
 
 % Set the initial value of vector p to be zero
 p = zeros(2*m+2*n-2*t+5,1);
@@ -164,17 +163,17 @@ H_z     = GetH_z(opt_col,n,t,DY,DP,alpha(ite));
 H_x     = DTNQ*M;
 
 H_alpha  = DTNQ_wrt_alpha*M*x_ls - ...
-    (Partial_ck_wrt_alpha + Partial_h_wrt_alpha);
+    (Partial_ct_wrt_alpha + Partial_ht_wrt_alpha);
 
 H_theta = DTNQ_wrt_theta*M*x_ls - ...
-    (Partial_ck_wrt_theta + Partial_h_wrt_theta);
+    (Partial_ct_wrt_theta + Partial_ht_wrt_theta);
 
 C       = [H_z H_x H_alpha H_theta];
 
 % Define the starting vector for the iterations for the LSE problem.
 start_point     =   ...
     [...
-        zk;...
+        zt;...
         x_ls;...
         alpha(ite);...
         theta(ite)
@@ -184,14 +183,7 @@ yy              =   start_point;
 
 % Set the termination criterion to a large value. It will be
 % over written later.
-
-condition(ite) = norm(res_vec)/norm(ck);
-
-
-residual(1) = norm(res_vec);
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+condition(ite) = norm(res_vec)/norm(ct);
 
 while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
    
@@ -207,16 +199,16 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     yy = yy + y;
     
     % obtain the small changes
-    delta_zk        = y(1:m+n+2,1);
-    delta_xk        = y((m+n+3):(2*m+2*n-2*t+3),1);
+    delta_zt        = y(1:m+n+2,1);
+    delta_xt        = y((m+n+3):(2*m+2*n-2*t+3),1);
     delta_alpha     = y(2*m+2*n-2*t+4);
     delta_theta     = y(2*m+2*n-2*t+5);
     
     % Update variables z_{k}, x_{k}, where z_{k} are perturbations in the
     % coefficients of f and g. x_{k} is the solution vector, containing
     % coefficients u and v.
-    zk = zk + delta_zk;
-    x_ls = x_ls + delta_xk;
+    zt   = zt   + delta_zt;
+    x_ls = x_ls + delta_xt;
     
     % Update alpha and theta
     alpha(ite) = alpha(ite-1) + delta_alpha;
@@ -245,16 +237,16 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
                 Partial_gw_wrt_theta,alpha(ite),t);
         
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
-    ck = DTQ*e;
+    ct = DTQ*e;
     
     % Calculate the derivatives of c_{k} with respect to \alpha and \theta
-    Partial_ck_wrt_alpha     = Partial_DTQ_wrt_alpha*e;
-    Partial_ck_wrt_theta     = Partial_DTQ_wrt_theta*e;
+    Partial_ct_wrt_alpha     = Partial_DTQ_wrt_alpha*e;
+    Partial_ct_wrt_theta     = Partial_DTQ_wrt_theta*e;
     
     % Create the vector of structured perturbations zf(x) and zg(x) applied
     % to F and G.
-    z_fx      = zk(1:m+1);
-    z_gx      = zk(m+2:end);
+    z_fx      = zt(1:m+1);
+    z_gx      = zt(m+2:end);
     
     % Get zf(w) and zg(w)
     z_fw     = z_fx.*(theta(ite).^vecm);
@@ -282,19 +274,19 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
                 Partial_zgw_wrt_theta,alpha(ite),t);
     
     % Calculate the column of DNQ that is moved to the right hand side, which
-    % has the same structure as c_{k} the column of S_{k} moved to the RHS
-    h = DNQ*e;
+    % has the same structure as c_{t} the column of S_{t} moved to the RHS
+    ht = DNQ*e;
     
-    % Calculate the derivative of h with respect to alpha
-    h_alpha = Partial_DNQ_wrt_alpha*e;
+    % Calculate the derivative of h_{t} with respect to alpha
+    ht_alpha = Partial_DNQ_wrt_alpha*e;
     
-    % Calculate the derivative of h with respect to theta
-    h_theta = Partial_DNQ_wrt_theta*e;
+    % Calculate the derivative of h_{t} with respect to theta
+    ht_theta = Partial_DNQ_wrt_theta*e;
     
-    % Build the matrix D_{k}(T+N)Q_{k}
+    % Build the matrix D_{t}(T+N)Q_{t}
     DTNQ = BuildDTQ(fw + z_fw, gw + z_gw ,alpha(ite),t);
     
-    % Calculate the paritial derivative of D_{k}(T+N)Q_{k} with respect to
+    % Calculate the paritial derivative of D_{t}(T+N)Q_{t} with respect to
     % alpha
     DTNQ_alpha = BuildDTQ(Partial_fw_wrt_alpha + Partial_zfw_wrt_alpha,...
                 Partial_gw_wrt_alpha + Partial_zgw_wrt_alpha,1,t);
@@ -311,12 +303,7 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     DP = BuildDP(m,n,theta(ite),opt_col,t);
     
     % Calculate the residual q and vector p.
-    rk = (ck+h) - (DTNQ * M * x_ls);
-        
-    residual(ite) = norm(rk);
-    
-    % Create matrix E.
-    E = eye(2*m+2*n-2*t+5);
+    res_vec = (ct+ht) - (DTNQ * M * x_ls);
     
     % Create the matrix C. This is made up of four submatrices, HZ, Hx,
     % H_alpha and H_theta.
@@ -325,20 +312,14 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     Hx      = DTNQ*M;
     
-    H_alpha = DTNQ_alpha*M*x_ls - (Partial_ck_wrt_alpha + h_alpha);
+    H_alpha = DTNQ_alpha*M*x_ls - (Partial_ct_wrt_alpha + ht_alpha);
     
-    H_theta = DTNQ_theta*M*x_ls - (Partial_ck_wrt_theta + h_theta);
+    H_theta = DTNQ_theta*M*x_ls - (Partial_ct_wrt_theta + ht_theta);
     
     C = [Hz,Hx,H_alpha,H_theta];  % the matrix C
-    
-    % Calculate the new right hand vector
-    ek = ck + h;
-    
-    % update gnew - used in LSE Problem.
-    res_vec = rk;
-    
+       
     % Calculate the normalised residual of the solution.
-    condition(ite) = norm(rk) ;
+    condition(ite) = norm(res_vec)./ norm(ct + ht) ;
     
     % Update fnew - used in LSE Problem.
     p = -(yy-start_point);
@@ -346,6 +327,7 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
 
     
 end
+
 switch PLOT_GRAPHS
     case 'y'
         figure('name','SNTLN - Residuals')
@@ -353,7 +335,7 @@ switch PLOT_GRAPHS
         title('residuals in SNTLN without constraints')
         xlabel('iterations')
         ylabel('residuals')
-        plot(log10(residual),'-s')
+        plot(log10(condition),'-s')
         hold off
     case 'n'
     otherwise
@@ -372,9 +354,9 @@ end
 
 % Once iterations are complete, assign fx output, gx output, solution X
 % output, alpha output and theta output.
-fx_output = fx_n + zk(1:m+1);
+fx_output = fx_n + zt(1:m+1);
 
-gx_output = gx_n + zk(m+2:end);
+gx_output = gx_n + zt(m+2:end);
 
 X_output  = x_ls;
 
@@ -389,49 +371,6 @@ fprintf('-----------------------------------------------------------------------
 fprintf('Iterations over Sylvester Matrix : %i \n', ite);
 fprintf('--------------------------------------------------------------------------- \n')
 
-switch PLOT_GRAPHS
-    case 'y'
-        
-        plot_residuals = 1;
-        plot_thetas = 1;
-        plot_betas = 1;
-        
-        switch plot_residuals
-            case 1
-                figure('name','SNTLN - Residuals')
-                title('Residual at each Iteration of SNTLN')
-                hold on
-                plot(1:1:length(condition),log10(condition));
-                xlabel('Iteration Number')
-        end
-        switch plot_thetas
-            case 1
-                figure('name','SNTLN - thetas')
-                title('Theta at each Iteration of SNTLN')
-                hold on
-                plot(1:1:length(theta),log10(theta));
-                xlabel('Iteration Number')
-        end
-        switch plot_betas
-            case 1
-                figure('name','SNTLN alphas')
-                title('Alpha at each iteration of SNTLN');
-                hold on
-                plot(1:1:length(alpha),log10(alpha));
-        end
-        
-        % EDIT 01/06/2015 16:44
-        % Plot the normalised residuals res_ux, res_vx, res_uw and res_vw.
-        %plotgraphs3(res_ux,res_vx,res_uw,res_vw);
-
-        % Write out the number of iterations required and plot the values of
-        % alpha, theta and the residual.
-        %plotgraphs4(alpha,theta,residual);
-        % END EDIT 01/06/2015 16:44
-    case 'n'
-    otherwise 
-        error('error: plot graphs is either (y) or (n)')
-end
 end
 
 

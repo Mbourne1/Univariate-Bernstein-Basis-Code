@@ -45,15 +45,12 @@ end
 
 
 % Get degree m of polynomial f(x)
-[r,~] = size(fx);
-m = r - 1;
+m = size(fx,1) - 1;
 
 % Get degree n of polynomial g(x)
-[r,~] = size(gx);
-n = r - 1;
+n = size(gx,1) - 1;
 
 fprintf('Begin : Get Degree m = % i , n = % i \n\n' ,m,n)
-
 
 % get minimum degree of f(x) and g(x)
 min_mn = min(m,n);
@@ -226,6 +223,7 @@ vDelta_MaxMin_Diag_R = abs(diff(log10(vRatio_MaxMin_Diagonals_R)));
 % Get the maximum change in diag ratio and its index
 [max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = max(vDelta_MaxMin_Diag_R);
 
+% If only one subresultant exists, get GCD by alternative method
 if min(m,n) == 1
     t = Get_Rank_One_Subresultant(Sk);
     

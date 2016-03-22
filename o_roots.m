@@ -1,4 +1,4 @@
-function [] = o_roots(ex_num,emin,emax,low_rank_approx_method,apf_method,bool_preproc)
+function [] = o_roots(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
 % Given an example number, and a set of input parameters, calculate the
 % roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
 % m_{i}. 
@@ -19,7 +19,9 @@ function [] = o_roots(ex_num,emin,emax,low_rank_approx_method,apf_method,bool_pr
 %
 %
 
-SetGlobalVariables()
+SetGlobalVariables(bool_preproc,low_rank_approx_method,apf_method)
+global SEED
+
 
 % Intialise the global variables
 global MAX_ERROR_DECONVOLUTIONS
@@ -29,7 +31,7 @@ global BOOL_DECONVOLVE
 % Get Global variables for Deconvolve
 MAX_ERROR_DECONVOLUTIONS = 1e-10;
 MAX_ITERATIONS_DECONVOLUTIONS = 50;
-BOOL_DECONVOLVE = 'batch';
+BOOL_DECONVOLVE = 'single';
 
 global problemType 
 problemType = 'fromRoots'; % fromRoots/fromCoefficients
@@ -50,18 +52,7 @@ if emin > emax
     emax = emin_wrong;
 end
 
-% If BOOL_Q has not been included, then the Sylvester rearrangement is not
-% allowed, and the denominator can not be removed.
-switch BOOL_Q
-    case 'n'
-        
-        BOOL_DENOM_SYL = 'y';
-        BOOL_APF = 'n'; % Does not work with APF
-        BOOL_SNTLN = 'n'; % Does not work with SNTLN
-        fprintf('SNTLN and APF only work when including Matrix Q in sylvester matrix.\n')
-        fprintf('Denominator must be included when Q is included \n')
-        
-end
+
 
 PrintGlobalVariables();
 

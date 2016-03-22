@@ -1,22 +1,15 @@
-
 function H1C1G = BuildH1C1G(uw,t)
 % Build the matrix H1C1G
 %
-%                           Inputs.
+% Inputs.
 %
-% uw - input polynomial
+% uw : input polynomial
 %
-% t - degree of GCD.
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% t : degree of GCD.
 
-%                       Global Variables
 
+% Global Variables
 global BOOL_LOG
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
 switch BOOL_LOG
     case 'y' 
@@ -25,6 +18,8 @@ switch BOOL_LOG
     case 'n' 
         % Use nchoosek
         H1C1G = BuildH1C1G_nchoosek(uw,t);
+    otherwise
+        error('err')
 end
 
 end
@@ -33,7 +28,7 @@ function H1C1G = BuildH1C1G_nchoosek(uw,t)
 % Build Partition of the HCG matrix using nchoosek
 %
 %
-%                       Inputs.
+% Inputs.
 %
 %
 % uw :  Coefficients of polynomial u in scaled bernstein basis, to be put
@@ -48,7 +43,7 @@ global BOOL_DENOM_APF
 %
 
 % Get degree of polynomial u(w)
-m_minus_t = length(uw)-1;
+m_minus_t = size(uw,1) - 1;
 
 % Get degree of polynomial f(w)
 m = m_minus_t + t;
@@ -72,7 +67,7 @@ switch BOOL_DENOM_APF
         % Include Common Denominator in the matrix
         H1C1G  = H1C1G ./ nchoosek(m,t);
     case 'n'
-    
+        % do nothing
     otherwise 
         error('err')
         

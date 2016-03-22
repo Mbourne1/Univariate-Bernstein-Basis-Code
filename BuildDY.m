@@ -3,39 +3,34 @@ function DY = BuildDY(m,n,t,opt_col,x,alpha,theta)
 
 % Construct Matrix DY, such that E_{k}(z)x = D^{-1}Y_{k}(x)z, where E_{k}(z) is a 
 % matrix of structured perturbations applied to S_{k}, where S_{k} = DTQ.
-% Similarly Y_{k} can be used in the following
-%   S_{k}x = Y_{k}[f;g]
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                           Inputs
-
+%
 % m - Degree of polynomial f
-
+%
 % n - Degree of polynomial g
-
+%
 % t - Degree of GCD
-
+%
 % opt_col - the optimal column (also referred to as ck) for removal from 
 % the Sylvester matrix such that the residual obtained is minimal. 
 % Ak x = ck.
-
+%
 % x - the Approximate solution, which consists of coefficients of the
 % coprime polynomials u and v.
-
+%
 % alpha - the calculated optimal value of alpha
-
+%
 % theta - the calculated optimal value of theta
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                            Global Variables
 
 
-% bool_log - (Boolean)
-%   1 :- Perform calculations by log method
-%   0 :- Perform calculations by standard method.
+% BOOL_LOG - (Boolean)
+%   'y' :- Perform calculations by log method
+%   'n' :- Perform calculations by standard method.
 
 global BOOL_LOG
 
@@ -50,6 +45,8 @@ switch BOOL_LOG
     case 'y' % Use Logs method
         
         DY = BuildDY_log(m,n,t,opt_col,x,alpha,theta);
+    otherwise 
+        error('err')
 end
 end
 
@@ -152,6 +149,8 @@ switch BOOL_DENOM_SYL
         % Exclude the denominator
         
         Y2 = alpha.*Y2;
+    otherwise 
+        error('err')
 end
 
 
@@ -281,6 +280,8 @@ switch BOOL_DENOM_SYL
     case 'n' 
         % Exclude the denominator from the Sylvester Matrix
         Y2 = alpha.*Y2;
+    otherwise 
+        error('err')
         
 end
 

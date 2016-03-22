@@ -35,7 +35,7 @@ function [DT1] = BuildDT1_nchoosek(fw,n,k)
 
 
 % Get Degree of polynomial f
-m = length(fx)-1;
+m = size(fx,1)-1;
 
 % Buid an empty matrix
 DT1 = zeros(m+n-k+1,n-k+1);

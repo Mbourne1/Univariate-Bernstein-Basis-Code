@@ -1,3 +1,4 @@
+global PLOT_GRAPHS
 
 % given the roots of f and g, plot them on a line
 switch PLOT_GRAPHS

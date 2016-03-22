@@ -15,9 +15,6 @@ hold off
 
 
 % Plot Graph of ratio of max : min row sum in R1 from the QR decompositions.
-
-
-% Plot Graph of ratio of max : min row sum in R1 from the QR decompositions.
 figure('name','GetDegree - MaxMin - Row Norms')
 x = 1:min_mn;
 plot(x,log10(vRatio_MaxMin_RowNorm_R),'red-s');

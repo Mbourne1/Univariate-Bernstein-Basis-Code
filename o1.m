@@ -12,20 +12,27 @@ function [fx,gx,dx, ux, vx,alpha,theta] = ...
 % emax - Signal to noise ratio (maximum)
 %
 %
-%                           Outputs:
+% Outputs:
 %
-% gcd_output -
+% fx : 
 %
-% u_output -
+% gx :
 %
-% v_output -
+% dx :
 %
+% ux :
+%
+% vx :
+% 
+% alpha :
+% 
+% theta :
 
-%%
+
+%
 %                       GLOBAL VARIABLES
 
 global LOW_RANK_APPROXIMATION_METHOD
-global BOOL_PREPROC
 global APF_METHOD
 global PLOT_GRAPHS
 
@@ -73,19 +80,9 @@ end
 % Normalise f(x) and g(x) by Geometric mean to obtain fx_n and gx_n.
 % Normalise by geometric mean obtained by entries of f(x) and g(x) in the
 % subresultant S_{t}
+fx_n = fx./gm_fx;
+gx_n = gx./gm_gx;
 
-switch BOOL_PREPROC
-    case 'n' % Exclude preprocessors
-        fx_n = fx;
-        gx_n = gx;
-        alpha = 1;
-        theta = 1;
-    case 'y' % include preprocessors
-        fx_n = fx./gm_fx;
-        gx_n = gx./gm_gx;
-    otherwise
-        error('bool_preproc must be either y or n')
-end
 
 % Get the Sylvester subresultant of unprocessed f(x) and g(x)
 St_unproc = BuildSubresultant(fx,gx,1,1);

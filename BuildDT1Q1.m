@@ -1,33 +1,28 @@
 function DT1Q1 = BuildDT1Q1(fw,n,k)
 % Build Toeplitz matrix for Sylvester Matrix Partitions
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%                           Inputs.
 %
+% Inputs.
 %
 % fx    :  Coefficients of polynomial f given in Bernstein basis n  : degree
-%       of polynomial g k  : the index of the subresultant being built
+%          of polynomial g k  : the index of the subresultant being built
 %
-% theta :   Optimal value of theta
+% theta :  Optimal value of theta
 %
-% n     :   Degree of polynomial g(x)
+% n     :  Degree of polynomial g(x)
 %
-% k     :   Index of subresultants S_{k}
+% k     :  Index of subresultants S_{k}
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
-%                       Global Variables.
-
+% Global Variables.
 global BOOL_Q
 global BOOL_LOG
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 
 switch BOOL_Q
     case 'n' 
-        DT1Q1 = BuildDT1(fw,n,k)
+        DT1Q1 = BuildDT1(fw,n,k);
     case 'y'
         % If Q is included, use the rearrangment such that each Toeplitz
         % matrix has a common divisor in each element.

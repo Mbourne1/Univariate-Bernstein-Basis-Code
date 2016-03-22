@@ -3,7 +3,7 @@ function T1 = BuildT1(fw,n_t)
 % T1 \in \mathbb{R}^{(m+n-k+1)\times(n-k+1)}
 %
 %
-%                           Inputs.
+% Inputs.
 %
 %
 % fx : coefficients of polynomial f
@@ -11,13 +11,11 @@ function T1 = BuildT1(fw,n_t)
 % n : degree of polynomial g
 %
 % t :  index of subresultant S_{t} to be formed. (Also degree of GCD)
-%
-%
-%%
 
-% Get degree of polynomail f
-[nRows,~] = size(fw);
-m = nRows-1;
+
+
+% Get degree of polynomail f(\omega,\theta)
+m = size(fw,1) - 1;
 
 % Initialise empty matrix T1, for storing Toeplitz T_{k}(f)
 T1 = zeros(m+n_t+1,n_t+1);

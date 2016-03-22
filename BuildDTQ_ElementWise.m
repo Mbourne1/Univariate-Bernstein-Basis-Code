@@ -4,14 +4,14 @@ function DTQ = BuildDTQ_ElementWise(fw,gw,alpha,t)
 %                           Inputs
 %
 %
-% f : Coefficients of polynomial f(x).
+% f : Coefficients of polynomial f(\omega,\theta).
 %
-% g : Coefficients of polynomial g(x).
+% g : Coefficients of polynomial g(\omega,\theta).
 %
 % t : Degree of GCD d(x)
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 %                       Global Variables
 
@@ -23,10 +23,10 @@ global BOOL_LOG
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get degree of polynomial f
-m = length(fw) -1;
+m = size(fw,1) - 1;
 
 % Get degree of polynomial g
-n = length(gw) -1;
+n = size(gw,1) - 1;
 
 switch BOOL_LOG
     case 'y' 
@@ -55,16 +55,16 @@ function DT1Q1 = BuildDT1Q1_nchoosek(fw,n_t)
 %                       Inputs
 %
 %
-% f : - Coefficients of polynomial f(x)
+% f : Coefficients of polynomial f(\omega,\theta)
 %
-% n :- degree of other polynomial.
+% n : Degree of other polynomial g(\omega,\theta).
 %
-% t :- Degree of GCD.
+% t : Degree of GCD.
 
 %%
 %                   Global Variables
 
-% bool_denom_syl - (Boolean) Given the rearrangement of the Sylvester matrix in
+% BOOL_DENOM_SYL - (Boolean) Given the rearrangement of the Sylvester matrix in
 % the Bernstein basis, each partition of each subresultant has a common
 % divisor to its elements.
 %    1 :- Include Common Denominator.
@@ -75,7 +75,7 @@ global BOOL_DENOM_SYL
 
 
 % Get Degree of input polynomial
-m = length(fw)-1;
+m = size(fw,1) - 1;
 
 % Initialise the partition of DTQ \in\mathbb{R}^{(m+n-t+1)\times(n-t+1)}.
 DT1Q1 = zeros(m+n_t+1,n_t+1);

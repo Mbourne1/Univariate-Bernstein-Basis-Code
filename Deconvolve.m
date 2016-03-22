@@ -1,28 +1,26 @@
 function hi = Deconvolve(set_g)
 % Performs a series of d deconvolutions over a set of polynomials,
 % where each polynomial g_{i} appears in two deconvolutions.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                               Inputs
-
-
+%
+%
+% Inputs
+%
+%
 % set_g :   set of input polynomials g(y) to be deconvolved. Each g_{i} has a
 %           different number of elements, so set_g is a cell array.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                               Outputs
-
-
+%
+% Outputs
+%
+%
 % h_{i} = g_{i-1}/g_{i}
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
 % Set Deconvolution Method
-% 0 := Use standard non batch method
-% 1 := Use batch deconvolution
+%   single := Use standard non batch method
+%   batch  := Use batch deconvolution
 global BOOL_DECONVOLVE
 
 switch BOOL_DECONVOLVE
@@ -44,15 +42,13 @@ end
 function hi = Deconvolve_Independent(set_g)
 % Perform a series of deconvolutions independently, and output the
 % solutions as an array of vectors.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                          Inputs
-
-
+%
+%
 % set_g : the array of polynomials on which deconvolution is performed.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
 
 
 % for each item in set g starting at
@@ -75,10 +71,10 @@ function h1 = Deconvolve_Independent_Subfunction(f0,f1)
 % h1 : output polynomial = f0/f1.
 
 % Obtain degree of polynomial f0
-m0 = length(f0)-1;
+m0 = size(f0,1)-1;
 
 % Obtain degree of polynomial f1
-m1 = length(f1)-1;
+m1 = size(f1,1)-1;
 
 % Set right hand side vector
 RHS_f = f0;
@@ -87,28 +83,19 @@ bk = RHS_f;
 % Build Left hand side matrix.
 DCQ = BuildD0C1Q1_nchoosek(f1,m0);
 
+h1 = SolveAx_b(DCQ,bk);
 
-% Perform QR decomposition to obtain appoximation x_ls 
-[~,n2] = size(DCQ);
-[Q1,R] = qr(DCQ);
-
-R1 = R(1:n2,:);
-cd = Q1'*bk;
-c = cd(1:n2,:);
-x_ls = R1\c;
-
-% set h1 to the least squares solution.
-h1 = x_ls;
 end
 
 function D0C1Q1 = BuildD0C1Q1_nchoosek(f1,m0)
 % Build a partition D_{i-1}C_{i}Q_{i} of the DCQ matrix
 global BOOL_DENOM_SYL
 
-m1 = length(f1)-1;
+% Get the degree of polynomial f1.
+m1 = size(f1,1) - 1;
 
-% Define n1 the degree of h1
-n1 = m0-m1;
+% Define n1 the degree of h1 to be found.
+n1 = m0 - m1;
 
 % Preassign space for partition D_{0}C_{1}Q_{1}
 D0C1Q1 = zeros(m0+1,n1+1);
