@@ -22,22 +22,6 @@ global SEED
 
 switch n
     
-    case '0'
-        roots_fx = [
-            0.10    30
-            0.56    4
-            0.40    4
-            0.79    3
-            0.69    2
-            ];
-        
-        roots_gx = [
-            0.10    40
-            0.56    4
-            0.69    2
-            ];
-
-        
         
     case '1'
         roots_fx = [
@@ -214,7 +198,7 @@ switch n
         roots_gx = [
             ];
         
-    case '999'
+    case '13'
         
         intvl_low = -1;
         intvl_high = 1;
@@ -224,7 +208,7 @@ switch n
         n = 7;
         [roots_fx,roots_gx] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high)
         
-    case 'custom'
+    case 'Custom'
         intvl_low = -1;
         intvl_high = 1;
         

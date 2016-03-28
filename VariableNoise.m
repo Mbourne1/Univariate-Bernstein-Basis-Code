@@ -1,41 +1,41 @@
 
-function [f_noisy,noisevector]=VariableNoise(f,el,eu,seed)
+function [f_noisy,noisevector]=VariableNoise(f,el,eu)
 % This function adds noise in the componentwise sense to the coefficients
 % of the Bernstein basis polynomial.
 % The upper threshold \epsilon is a random variable between two values
 % \epsilon_{max} and \epsilon_{min}.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Inputs:
-
-
+%
+%
+% Inputs:
+%
+%
 % f :- exact coefficients of polynomial f, in the Bernstein basis.
-
+%
 % el:- Lower threshold of the epsilon value (Noise/Signal)
 
 % eu:- Upper threshold of the epsilon value (Noise/Signal)
-
+%
 % r :- Random Variable in interval [-1,+1]
-
+%
 % v :- Random Variable in interval [0,1]
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                          Outputs:
-
-
+%
+%
+% Outputs:
+%
+%
 % f_noisy :- the noisy coefficients of perturbed polynomial f.
-
+%
 % noisevector:- vector of the noise added to f_exact.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+global SEED
+
 % Get degree of input polynomial f.
-m = length(f) - 1  ;
+m = GetDegree(f);
 
 % Set Seed for random number generator.
-rng(seed)
+rng(SEED)
 
 % Generate random variables r_{i}
 r = (2*rand(m+1,1))-ones(m+1,1);

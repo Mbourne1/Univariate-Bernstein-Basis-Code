@@ -6,6 +6,6 @@ function H1 = BuildH1(m)
 % m : Degree of polynomial.
 %
 
-H = diag(1./GetBinomials(m));
+H1 = diag(1./GetBinomials(m));
 
 end

@@ -4,29 +4,25 @@ function [fx,gx,dx, ux, vx,alpha,theta] = ...
 %
 %                             Inputs:
 %
+% fx : Coefficients of the polynomial f(x)
 %
-% ex - (Int) Example Number
-%
-% emin - Signal to noise ratio (minimum)
-%
-% emax - Signal to noise ratio (maximum)
-%
+% gx : Coefficients of the polynomial g(x)
 %
 % Outputs:
 %
-% fx : 
+% fx : f(x) + \delta f(x)
 %
-% gx :
+% gx : g(x) + \delta g(x
 %
-% dx :
+% dx : The GCD of f(x) + \delta f(x) and g(x) + \delta g(x)
 %
-% ux :
+% ux : Coefficients of polynomial u(x) where u(x) = f(x)/d(x)
 %
-% vx :
+% vx : Coefficeints of polynomial v(x) where v(x) = g(x)/d(x)
 % 
-% alpha :
+% alpha : Optimal \alpha
 % 
-% theta :
+% theta : Optimal \theta
 
 
 %
@@ -39,20 +35,20 @@ global PLOT_GRAPHS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get the degree m of polynomial f
-m = size(fx,1) - 1;
+m = GetDegree(fx) ;
 
 % Get the degree n of polynomial g
-n = size(gx,1) - 1;
+n = GetDegree(gx) ;
 
 % Get degree of GCD by first method
 
 % Method 1 - 'From Scratch' Build each subresultant from scratch
-[t_byGetDegree, subres_unproc1, subres_preproc1, vAlphas, vThetas, vGM_fx, vGM_gx] = ...
-    GetDegree(fx,gx);
+[t, alpha, theta, gm_fx, gm_gx] = ...
+    GetGCD_Degree(fx,gx);
 
-fprintf('GCD Degree : %i \n ',t_byGetDegree);
+fprintf('GCD Degree : %i \n ',t);
 
-if t_byGetDegree == 0
+if t == 0
     % If the two polynomials f(x) and g(x) are coprime, set GCD to be 1,
     fprintf('\n f(x) and g(x) are coprime \n')
     dx = 1;
@@ -62,15 +58,6 @@ if t_byGetDegree == 0
     theta = 1;
     return
 end
-
-
-t = t_byGetDegree;
-subresultant_unproc     = cell2mat(subres_unproc1(t));
-subresultant_preproc    = cell2mat(subres_preproc1(t));
-alpha                   = vAlphas(t);
-theta                   = vThetas(t);
-gm_fx                   = vGM_fx(t);
-gm_gx                   = vGM_gx(t);
 
 % If finding the GCD fails, set the degree of the GCD to be 1.
 if isempty(t)
@@ -83,42 +70,44 @@ end
 fx_n = fx./gm_fx;
 gx_n = gx./gm_gx;
 
-
 % Get the Sylvester subresultant of unprocessed f(x) and g(x)
-St_unproc = BuildSubresultant(fx,gx,1,1);
+St_unproc = BuildSubresultant(fx,gx,t);
 
 % Get Subresultant of preprocessed f(\theta,\omega) and g(\theta, \omega)
 fw = fx_n.*(theta.^(0:1:m)');
 gw = gx_n.*(theta.^(0:1:n)');
 
-St_preproc = BuildSubresultant(fw,gw,1,alpha);
+St_preproc = BuildSubresultant(fw,alpha.*gw,t);
 
 %%
 % Get the optimal column of the sylvester matrix to be removed. Where
 % removal of the optimal column gives the minmal residual in (Ak x = ck)
-[opt_col] = GetOptimalColumn(subresultant_preproc);
+[opt_col] = GetOptimalColumn(St_preproc);
 
 %% Perform SNTLN
 % Apply / Don't Apply structured perturbations.
 
 switch LOW_RANK_APPROXIMATION_METHOD
-    case 'Standard STLN' % Structured Total Least Norm
+    case 'Standard STLN' 
         
-        % Perform STLN on f(w) and g(w)
+        % Performe structured Total Least Norm
         [fw,a_gw] = STLN(fw,alpha.*gw,t,opt_col);
         
         % Get f(x) and g(x) from low rank approximation.
-        fx_n = fw ./ theta.^(0:1:m)';
+        fx_n = GetWithoutThetas(fw,theta);
+                
         gw = a_gw ./ alpha;
-        gx_n = gw ./ theta.^(0:1:n)';
+        gx_n = GetWithoutThetas(gw,theta);
         
         
     case 'Standard SNTLN' % Structured Non-Linear Total Least Norm
-        
+
+        % Perform Structured non-linear total least norm
         [fx_n,gx_n,alpha,theta,~] = SNTLN(fx_n,gx_n,alpha,theta,t,opt_col);
         
         
     case 'Root Specific SNTLN'
+        
         [fx_n,gx_n,alpha,theta,~] = ...
             SNTLN_Roots(fx_n,gx_n,alpha,theta,t,opt_col,gm_fx,gm_gx);
         
@@ -136,10 +125,10 @@ end
 % Build Sylvester Matrix for normalised, refined coefficients, used in
 % comparing singular values.
 
-fw = fx_n .* (theta.^(0:1:m)');
-gw = gx_n .* (theta.^(0:1:n)');
+fw = GetWithThetas(fx,theta);
+gw = GetWithThetas(gx,theta);
 
-St_low_rank = BuildSubresultant(fw,gw,1,alpha);
+St_low_rank = BuildSubresultant(fw,alpha.*gw,t);
 
 %% Get the coefficients of the GCD
 dx = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta);
@@ -182,6 +171,7 @@ switch APF_METHOD
         fx = PostAPF_fx;
         gx = PostAPF_gx;
     case 'None'
+        % Do Nothing
     otherwise
         error('err')
 end

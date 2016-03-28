@@ -6,10 +6,10 @@ global MAX_ITERATIONS_SNTLN
 global PLOT_GRAPHS
 
 % Get degree of polynomial f(x)
-m = size(fx,1) - 1;
+m = GetDegree(fx);
 
 % Get the degree of polynomial g(x)
-n = size(gx,1) - 1;
+n = GetDegree(gx);
 
 % Initialise the vector of perturbations zf(x)
 zf = zeros(m+1,1);
@@ -21,10 +21,10 @@ zg = zeros(n+1,1);
 z = [zf ; zg];
 
 % Build the t'th subresultant S_{t}(f,g)
-DTQ = BuildDTQ(fx,gx,1,t);
+DTQ = BuildDTQ(fx,gx,t);
 
 % Build the matrix E_{t}(z)
-DBQ = BuildDTQ(zf,zg,1,t);
+DBQ = BuildDTQ(zf,zg,t);
 
 % Get the index of the optimal colummn for removal
 %[~,colIndex] = GetMinDistance(St);
@@ -115,7 +115,7 @@ while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
     zg = z(m+2:end);
     
     % Build the matrix E = DBQ
-    DBQ = BuildDTQ(zf,zg,1,t);
+    DBQ = BuildDTQ(zf,zg,t);
     
     % Build the matrix Bt = DBQ with opt column removed.
     Bt = DBQ;
@@ -225,10 +225,10 @@ xb = x(n-t+2:end);
 bi_m = GetBinomials(m);
 bi_n = GetBinomials(n);
 
-D = BuildD(m,n,t);
+D = BuildD(m,n-t);
 
-Y1 = BuildC1(xa,m);
-Y2 = BuildC1(xb,n);
+Y1 = BuildT1(xa,m);
+Y2 = BuildT1(xb,n);
 
 Yt = D*[Y1 Y2]*blkdiag(diag(bi_m),diag(bi_n));
 

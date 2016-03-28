@@ -1,4 +1,4 @@
-function T = BuildT(fw,gw,alpha,t)
+function T = BuildT(fx,gx,t)
 %  Build the Toeplitz matrix T = [T1 T2], consisting of coefficients of 
 % f(x) and g(x).
 %
@@ -21,17 +21,17 @@ function T = BuildT(fw,gw,alpha,t)
 
 %%
 % Get degree of polynomail f
-m = size(fw,1) - 1;
+m = GetDegree(fx);
 
 % Get degree of polynomial g.
-n = size(gw,1) - 1;
+n = GetDegree(gx);
 
 % Build Toeplitz matrix of f, the first partiton.
-T1 = BuildT1(fw,n-t);
+T1 = BuildT1(fx,n-t);
 
 % Build Toeplitz matrix of g, the second partition.
-T2 = BuildT1(gw,m-t);
+T2 = BuildT1(gx,m-t);
 
 % Concatenate the partitions.
-T = [T1 alpha.*T2];
+T = [T1 T2];
 end

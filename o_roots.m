@@ -20,18 +20,6 @@ function [] = o_roots(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_m
 %
 
 SetGlobalVariables(bool_preproc,low_rank_approx_method,apf_method)
-global SEED
-
-
-% Intialise the global variables
-global MAX_ERROR_DECONVOLUTIONS
-global MAX_ITERATIONS_DECONVOLUTIONS
-global BOOL_DECONVOLVE
-
-% Get Global variables for Deconvolve
-MAX_ERROR_DECONVOLUTIONS = 1e-10;
-MAX_ITERATIONS_DECONVOLUTIONS = 50;
-BOOL_DECONVOLVE = 'single';
 
 global problemType 
 problemType = 'fromRoots'; % fromRoots/fromCoefficients
@@ -80,22 +68,16 @@ switch problemType
         fprintf('%30.15f %30.15f \t \t\n',[exact_roots(:,1),exact_roots(:,2)]');
         fprintf('\n');
         
-        f_exact_bi = B_poly(f_roots_exact);
+        f_bi = B_poly(f_roots_exact);
+        f_exact = GetWithoutBinomials(f_bi); 
         
         % Get degree of f
-        m = length(f_exact_bi) - 1;
+        m = length(f_bi) - 1;
         
         % Display the degree of the input polynomial
         disp('Degree of Input Polynomial F ');
         disp(int2str(m));
         
-        % Get the Binomial coefficients corresponding to the coefficients of
-        % polynomial f.
-        
-        Bi_m = GetBinomials(m);
-        
-        % Get coefficients in Bernstein Basis
-        f_exact = f_exact_bi./Bi_m;
         
     case 'fromCoefficients'
         switch ex_num
@@ -116,7 +98,7 @@ end
 %%
 % Add Noise to coefficients of exact polynomial f_exact, to obtain noisy
 % polynomial fx.
-fx = VariableNoise(f_exact,emin,emax,SEED);
+fx = VariableNoise(f_exact,emin,emax);
 
 %%
 
@@ -265,13 +247,13 @@ calculated_poly_mymthd = B_poly(clc_roots_mymthd);
 calculated_poly_mymthd = calculated_poly_mymthd./calculated_poly_mymthd(1) ;
 
 
-f_exact_bi = B_poly(f_roots_exact);
-f_exact_bi  = f_exact_bi ./ f_exact_bi(1);
+f_bi = B_poly(f_roots_exact);
+f_bi  = f_bi ./ f_bi(1);
 
 switch 'problemType'
     case 'fromRoots'
         % Get error measure
-        err_mymthd  = (calculated_poly_mymthd - f_exact_bi) ./ f_exact_bi;
+        err_mymthd  = (calculated_poly_mymthd - f_bi) ./ f_bi;
         fprintf('\nObtaining polynomial coefficients from calculated roots...\n');
         fprintf('Normalised error in coefficients\n\n')
         
@@ -282,7 +264,7 @@ switch 'problemType'
         calculated_poly_multroot = B_poly(clc_roots_mltrt);
         calculated_poly_multroot = calculated_poly_multroot./calculated_poly_multroot(1);
         
-        err_mltrt = ((calculated_poly_multroot - f_exact_bi)) ./ f_exact_bi;
+        err_mltrt = ((calculated_poly_multroot - f_bi)) ./ f_bi;
         fprintf('Multroot Method: %g \n\n',norm(err_mltrt));
         
         % Having obtained the Matlab ROOTS, build the polynomial from the calculated roots
@@ -290,7 +272,7 @@ switch 'problemType'
         calculated_poly_matlabroot = B_poly(clc_roots_mtlb);
         calculated_poly_matlabroot = calculated_poly_matlabroot ./ calculated_poly_matlabroot(1);
         
-        err_mtlbrt = ((calculated_poly_matlabroot) - f_exact_bi) ./ f_exact_bi;
+        err_mtlbrt = ((calculated_poly_matlabroot) - f_bi) ./ f_bi;
         fprintf('MATLAB Roots Method: %g \n\n', norm(err_mtlbrt));
     case 'fromCoefficients'
 end

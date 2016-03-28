@@ -16,19 +16,19 @@ function [dx] = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta)
 %
 
 % Get degree of polynomials f(x)
-m = size(fx_n,1) - 1;
+m = GetDegree(fx_n);
 
 % Get degree of polynomial g(x)
-n = size(gx_n,1) - 1;
+n = GetDegree(gx_n);
 
 
 % Get fw and gw
-fw_n = fx_n .* theta.^(0:1:m)';
-gw_n = gx_n .* theta.^(0:1:n)';
+fw_n = GetWithThetas(fx_n,theta);
+gw_n = GetWithThetas(gx_n,theta);
 
 % Get uw and vw
-uw = ux .* theta.^(0:1:m-t)';
-vw = vx .* theta.^(0:1:n-t)';
+uw = GetWithThetas(ux,theta);
+vw = GetWithThetas(vx,theta);
 
 % Build solution vector bk = [f;g]
 bk = [fw_n ; alpha .* gw_n];
@@ -39,7 +39,7 @@ HCG = BuildHCG(uw,vw,m,n,t);
 % Get the vector d(w), which is the solution of a problem of the form Ax=b
 dw = SolveAx_b(HCG,bk);
 
-dx = dw./(theta.^(0:1:t)');
+dx = GetWithoutThetas(dw,theta);
 
 
 end

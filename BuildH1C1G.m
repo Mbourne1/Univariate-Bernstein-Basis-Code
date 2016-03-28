@@ -1,4 +1,43 @@
-function H1C1G = BuildH1C1G(uw,t)
+function H1C1G =  BuildH1C1G(uw,t)
+% BuildH1C1G(uw,t)
+%
+% Build the matrix HCG
+%
+% Inputs.
+%
+%
+% uw : input polynomial
+%
+% t : degree of GCD.
+
+global APF_BUILD_METHOD
+
+switch APF_BUILD_METHOD
+    case 'Standard'
+        
+        m_t = GetDegree(uw);
+        m = m_t + t;
+        
+        % Build the matrix H
+        H1 = BuildH1(m);
+        
+        % Build the matrix C1
+        C1 = BuildT1(uw,t);
+        
+        % Build the matrix G
+        G  = BuildG(t);
+        
+        % Build the matrix H*C*G
+        H1C1G = H1*C1*G;
+    case 'Rearranged'
+        H1C1G = BuildH1C1G_Rearranged(uw,t);
+       
+end
+
+
+end
+
+function H1C1G = BuildH1C1G_Rearranged(uw,t)
 % Build the matrix H1C1G
 %
 % Inputs.

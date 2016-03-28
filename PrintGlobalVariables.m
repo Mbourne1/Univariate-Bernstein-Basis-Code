@@ -6,7 +6,6 @@ global BOOL_LOG
 global BOOL_Q
 
 fprintf('PARAMETERS:\n\n')
-fprintf('\tExample Number: %i \n',ex_num)
 fprintf('\tmin noise : %2.4e \n\tmax noise : %2.4e \n',emin,emax)
 fprintf('INPUT VARIABLES')
 fprintf('\n\tLow Rank Approximation Method : %s \n',...

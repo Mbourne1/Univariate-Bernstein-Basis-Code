@@ -34,7 +34,7 @@ global BOOL_DENOM_APF
 BOOL_DENOM_APF = 'y';
 
 global APF_BUILD_METHOD
-APF_BUILD_METHOD = 'Rearranged';
+APF_BUILD_METHOD = 'Standard';
 
 
 %% Preprocessing
@@ -72,7 +72,7 @@ global LOW_RANK_APPROXIMATION_METHOD
 LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 
 global MAX_ERROR_SNTLN
-MAX_ERROR_SNTLN = 1e-14;
+MAX_ERROR_SNTLN = 1e-15;
 
 global MAX_ITERATIONS_SNTLN
 MAX_ITERATIONS_SNTLN = 50;
@@ -110,4 +110,15 @@ if (BOOL_Q == 'n')
     APF_METHOD = 'None'; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
     BOOL_DENOM_SYL = 'y';
 end
+
+%%
+% Intialise the global variables
+global MAX_ERROR_DECONVOLUTIONS
+global MAX_ITERATIONS_DECONVOLUTIONS
+global BOOL_DECONVOLVE
+
+% Get Global variables for Deconvolve
+MAX_ERROR_DECONVOLUTIONS = 1e-10;
+MAX_ITERATIONS_DECONVOLUTIONS = 50;
+BOOL_DECONVOLVE = 'Single';
 

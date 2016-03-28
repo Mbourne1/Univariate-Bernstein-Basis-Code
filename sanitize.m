@@ -1,6 +1,6 @@
 function vec = sanitize(vec)
 
-
+% Get number of entries in the vector
 nEntries = length(vec);
 
 

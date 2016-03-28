@@ -4,20 +4,15 @@ function [ux,vx] = GetQuotients(fx_n,gx_n,t,alpha,theta)
 
 global BOOL_Q
 
-% Get degrees of input polynomial f(x)
-[r,~] = size(fx_n);
-m = r-1;
-
 % Get degree of input polynomial g(x)
-[r,~] = size(gx_n);
-n = r-1;
+n = GetDegree(gx_n);
 
 % Get the polynomails f(\omega,\theta) and g(\omega,\theta)
-fw = fx_n .* (theta.^(0:1:m)');
-gw = gx_n .* (theta.^(0:1:n)');
+fw = GetWithThetas(fx_n,theta);
+gw = GetWithThetas(gx_n,theta);
 
 % Build the t^th subresultant
-St = BuildSubresultant(fw,gw,t,alpha);
+St = BuildSubresultant(fw,alpha.*gw,t);
 
 % Get the optimal column for removal
 [opt_col] = GetOptimalColumn(St);
@@ -25,23 +20,25 @@ St = BuildSubresultant(fw,gw,t,alpha);
 % Remove optimal column
 At = St;
 At(:,opt_col) = [];
+
+% Get the optimal column c_{t} removed from S_{k}
 ct = St(:,opt_col);
 
-x_ls = SolveAx_b(At,ct)
-
-
 % Obtain the solution vector x = [-v;u]
+x_ls = SolveAx_b(At,ct);
+
+% Insert a zero into the position corresponding to the index of the optimal
+% column so that S(f,g)*vec_x = 0.
 vec_x =[
     x_ls(1:(opt_col)-1);
     -1;
     x_ls(opt_col:end);
     ]  ;
 
-
 % Obtain values for quotient polynomials u and v. still expressed in the
 % scaled bernstein basis, including theta.
-vw      =   vec_x(1:n-t+1);
-uw      =   -vec_x(n-t+2:end);
+vw = vec_x(1:n-t+1);
+uw = -vec_x(n-t+2:end);
 
 % If Q is not included in Sylvester matrix, then binomials are included in
 % x. Remove binomials
@@ -49,20 +46,16 @@ uw      =   -vec_x(n-t+2:end);
 switch BOOL_Q
     case 'y'
     case 'n'
-        Bi_mt = GetBinomials(m-t);
-        Bi_nt = GetBinomials(n-t);
+        % Remove binomials from the coefficients.
+        vw = GetWithoutBinomials(vw);
+        uw = GetWithoutBinomials(uw);
         
-        vw = vw./ Bi_nt;
-        uw = uw./ Bi_mt;
     otherwise 
         error('err')
 end
 
 % Divide v(w) and u(w) to obtain u(x) and v(x)
-theta_nt = theta.^(0:1:n-t);
-theta_mt = theta.^(0:1:m-t);
-
-vx = vw./theta_nt';
-ux = uw./theta_mt';
+vx = GetWithoutThetas(vw,theta);
+ux = GetWithoutThetas(uw,theta);
 
 end

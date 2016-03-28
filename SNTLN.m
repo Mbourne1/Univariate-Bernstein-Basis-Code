@@ -1,5 +1,5 @@
 function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
-    SNTLN( fx_n,gx_n,initial_alpha,initial_theta,t,opt_col)
+    SNTLN( fx_n,gx_n,i_alpha,i_th,t,opt_col)
 % Given the polynomials f(x) and g(x) (normalised by geometric mean),
 % obtain the low rank approximation of the Syvlester matrix S(f,g) and the
 % minimal perturbations such that S(f+\delta f, g+\delta g)x = 0.
@@ -11,9 +11,9 @@ function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
 %
 % gx_n :    Coefficients of polynomial g, in standard bernstein basis.
 %
-% initial_alpha :   Initial value of alpha
+% i_alpha :   Initial value of alpha
 %
-% initial_theta :   Initial value of theta
+% i_th :   Initial value of theta
 %
 % t :   Degree of AGCD.
 %
@@ -51,18 +51,14 @@ global PLOT_GRAPHS
 ite = 1;
 
 % Set initial values of alpha and theta
-theta(ite) = initial_theta;
-alpha(ite) = initial_alpha;
+th(ite) = i_th;
+alpha(ite) = i_alpha;
 
 % Get degree of polynomials f.
-m = size(fx_n,1) - 1;
+m = GetDegree(fx_n);
 
 % Get degree of polynomial g.
-n = size(gx_n,1) - 1;
-
-% Generate some useful vectors
-vecm = (0:1:m)';
-vecn = (0:1:n)';
+n = GetDegree(gx_n);
 
 % Create the identity matrix I, the matrix M formed from I by removing the
 % column equivalent to the optimal column for removal from the Sylvester 
@@ -80,26 +76,25 @@ e = I(:,opt_col);
 
 % Obtain polynomials in Modified Bernstein Basis, using initial values of
 % alpha and theta.
-fw = fx_n .* (theta(ite).^vecm);
-gw = gx_n .* (theta(ite).^vecn);
-
+fw = GetWithThetas(fx_n,th(ite));
+gw = GetWithThetas(gx_n,th(ite));
 
 % Form the Coefficient Matrix DTQ such that DTQ * x = [col]
-DTQ = BuildDTQ(fw,gw,alpha,t);
+DTQ = BuildDTQ(fw,alpha.*gw,t);
 
 % Calculate the partial derivatives of fw and gw with respect to alpha
-Partial_fw_wrt_alpha            = zeros(m+1,1);
-Partial_alpha_gw_wrt_alpha      = gw;
+fw_wrt_alpha                    = zeros(m+1,1);
+alpha_gw_wrt_alpha      = gw;
 
 % Calculate the partial derivatives of fw and gw with respect to theta
-Partial_fw_wrt_theta    = vecm.*fw./theta(ite);
-Partial_gw_wrt_theta    = vecn.*gw./theta(ite);
+fw_wrt_theta    = Differentiate_wrt_theta(fw,th(ite));
+gw_wrt_theta    = Differentiate_wrt_theta(gw,th(ite));
 
 % Calculate derivative of D_{k}T(f,g)Q_{k} with respect to alpha
-Partial_DTQ_wrt_alpha = BuildDTQ(Partial_fw_wrt_alpha,Partial_alpha_gw_wrt_alpha,1,t);
+DTQ_wrt_alpha = BuildDTQ(fw_wrt_alpha,alpha_gw_wrt_alpha,t);
 
 % Calculate the derivative of D_{k}TQ_{k} with respect to theta
-Partial_DTQ_wrt_theta = BuildDTQ(Partial_fw_wrt_theta,alpha(ite).*Partial_gw_wrt_theta,1,t);
+DTQ_wrt_theta = BuildDTQ(fw_wrt_theta,alpha(ite).*gw_wrt_theta,t);
 
 % Initialise the vector z of structured perturbations
 % if we are working with strictly the roots problem, the number of entries
@@ -107,18 +102,18 @@ Partial_DTQ_wrt_theta = BuildDTQ(Partial_fw_wrt_theta,alpha(ite).*Partial_gw_wrt
 zt = zeros(m+n+2,1);
 
 % Initilaise the derivative of D_{k}NQ_{k} wrt alpha.
-Partial_DNQ_wrt_alpha   = zeros(m+n-t+1,m+n-(2*t)+2);
+DNQ_wrt_alpha   = zeros(m+n-t+1,m+n-(2*t)+2);
 
 % Initilaise the derivative of D_{k}NQ_{k} wrt theta.
-Partial_DNQ_wrt_theta   = zeros(m+n-t+1,m+n-(2*t)+2);
+DNQ_wrt_theta   = zeros(m+n-t+1,m+n-(2*t)+2);
 
 % Calculate the derivatives wrt alpha and theta of the column of DNQ
 % that is moved to the right hand side.
-Partial_ht_wrt_alpha     = Partial_DNQ_wrt_alpha*e;
-Partial_ht_wrt_theta     = Partial_DNQ_wrt_theta*e;
+ht_wrt_alpha     = DNQ_wrt_alpha*e;
+ht_wrt_theta     = DNQ_wrt_theta*e;
 
 %Calculate the matrix P.
-DP = BuildDP(m,n,theta(ite),opt_col,t);
+DP = BuildDP(m,n,th(ite),opt_col,t);
 
 % Calculate the column of DTQ that is moved to the right hand side.
 ct = (DTQ)*e;
@@ -127,34 +122,32 @@ ct = (DTQ)*e;
 At = (DTQ)*M;
 
 % Calculate the derivatives wrt alpha and theta of the removed column.
-Partial_ct_wrt_alpha     = Partial_DTQ_wrt_alpha*e;
-Partial_ct_wrt_theta     = Partial_DTQ_wrt_theta*e;
+ct_wrt_alpha     = DTQ_wrt_alpha*e;
+ct_wrt_theta     = DTQ_wrt_theta*e;
 
 % Calculate the initial estimate of x - the vector whcih contains the
 % coefficients of the quotient polynomials u and v.
-x_ls = SolveAx_b(At,ct)
+x_ls = SolveAx_b(At,ct);
 
 % Build Matrix Y
-DY = BuildDY(m,n,t,opt_col,x_ls,alpha(ite),theta(ite));
+DY = BuildDY(m,n,t,opt_col,x_ls,alpha(ite),th(ite));
 
 % Calculate the initial residual r = ck - (Ak*x)
 res_vec = ct - (DTQ*M*x_ls);
 
-% Set the initial value of vector p to be zero
-p = zeros(2*m+2*n-2*t+5,1);
 
 % Set the intial value of E to the identity matrix
 E = eye(2*m+2*n-2*t+5);
 
 % Create the matrix D(T+N)Q
 
-DTNQ = BuildDTQ(fw,gw,alpha(ite),t);
+DTNQ = BuildDTQ(fw,alpha(ite).*gw,t);
 
 % Create The matrix D(T+N)Q with respect to alpha
-DTNQ_wrt_alpha = BuildDTQ(Partial_fw_wrt_alpha, Partial_alpha_gw_wrt_alpha,1,t);
+DTNQ_wrt_alpha = BuildDTQ(fw_wrt_alpha, alpha_gw_wrt_alpha,t);
 
 % Create The matrix D(T+N)Q with respect to theta
-DTNQ_wrt_theta = BuildDTQ(Partial_fw_wrt_theta, Partial_gw_wrt_theta,alpha(ite),t);
+DTNQ_wrt_theta = BuildDTQ(fw_wrt_theta, alpha(ite).*gw_wrt_theta,t);
 
 % Create the matrix C for input into iteration
 
@@ -163,10 +156,10 @@ H_z     = GetH_z(opt_col,n,t,DY,DP,alpha(ite));
 H_x     = DTNQ*M;
 
 H_alpha  = DTNQ_wrt_alpha*M*x_ls - ...
-    (Partial_ct_wrt_alpha + Partial_ht_wrt_alpha);
+    (ct_wrt_alpha + ht_wrt_alpha);
 
 H_theta = DTNQ_wrt_theta*M*x_ls - ...
-    (Partial_ct_wrt_theta + Partial_ht_wrt_theta);
+    (ct_wrt_theta + ht_wrt_theta);
 
 C       = [H_z H_x H_alpha H_theta];
 
@@ -176,10 +169,14 @@ start_point     =   ...
         zt;...
         x_ls;...
         alpha(ite);...
-        theta(ite)
+        th(ite)
     ];
 
 yy              =   start_point;
+
+% Set the initial value of vector p to be zero
+p = zeros(2*m+2*n-2*t+5,1);
+
 
 % Set the termination criterion to a large value. It will be
 % over written later.
@@ -212,36 +209,36 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     % Update alpha and theta
     alpha(ite) = alpha(ite-1) + delta_alpha;
-    theta(ite) = theta(ite-1) + delta_theta;
+    th(ite) = th(ite-1) + delta_theta;
     
     % Obtain polynomials in modified bersntein basis a_{i}\theta^{i}
-    fw = fx_n.*(theta(ite).^vecm);
-    gw = gx_n.*(theta(ite).^vecn);
+    fw = GetWithThetas(fx_n,th(ite));
+    gw = GetWithThetas(gx_n,th(ite));
     
     % Construct the subresultant matrix of DTQ.
-    DTQ = BuildDTQ(fw,gw,alpha(ite),t);
+    DTQ = BuildDTQ(fw,alpha(ite).*gw,t);
         
     % Calculate the partial derivatives of fw and gw with respect to alpha
-    Partial_fw_wrt_alpha    = zeros(m+1,1);
-    Partial_gw_wrt_alpha    = gw;
+    fw_wrt_alpha    = zeros(m+1,1);
+    gw_wrt_alpha    = gw;
     
     % Calculate the partial derivatives of fw and gw with respect to theta
-    Partial_fw_wrt_theta    = vecm.*fw./theta(ite);
-    Partial_gw_wrt_theta    = vecn.*gw./theta(ite);
+    fw_wrt_theta    = Differentiate_wrt_theta(fw,th(ite));
+    gw_wrt_theta    = Differentiate_wrt_theta(gw,th(ite));
     
     % Calculate the Partial derivative of DTQ with respect to alpha.
-    Partial_DTQ_wrt_alpha = BuildDTQ(Partial_fw_wrt_alpha, Partial_gw_wrt_alpha,1,t);
+    DTQ_wrt_alpha = BuildDTQ(fw_wrt_alpha, gw_wrt_alpha,t);
         
     % Calculate the partial derivative of DTQ with respect to theta.
-    Partial_DTQ_wrt_theta = BuildDTQ(Partial_fw_wrt_theta,...
-                Partial_gw_wrt_theta,alpha(ite),t);
+    DTQ_wrt_theta = BuildDTQ(fw_wrt_theta,...
+                alpha(ite).*gw_wrt_theta,t);
         
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
     ct = DTQ*e;
     
     % Calculate the derivatives of c_{k} with respect to \alpha and \theta
-    Partial_ct_wrt_alpha     = Partial_DTQ_wrt_alpha*e;
-    Partial_ct_wrt_theta     = Partial_DTQ_wrt_theta*e;
+    ct_wrt_alpha     = DTQ_wrt_alpha*e;
+    ct_wrt_theta     = DTQ_wrt_theta*e;
     
     % Create the vector of structured perturbations zf(x) and zg(x) applied
     % to F and G.
@@ -249,58 +246,58 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     z_gx      = zt(m+2:end);
     
     % Get zf(w) and zg(w)
-    z_fw     = z_fx.*(theta(ite).^vecm);
-    z_gw     = z_gx.*(theta(ite).^vecn);
+    z_fw = GetWithThetas(z_fx,th(ite));
+    z_gw = GetWithThetas(z_gx,th(ite));
     
     % Calculate the derivatives of z_fw and z_gw with repect to alpha.
-    Partial_zfw_wrt_alpha    = zeros(m+1,1);
-    Partial_zgw_wrt_alpha    = z_gw;
+    zfw_wrt_alpha    = zeros(m+1,1);
+    zgw_wrt_alpha    = z_gw;
     
     % Calculate the derivatives of z_fw and z_gw with respect to theta.
-    Partial_zfw_wrt_theta    = vecm.*(z_fw./theta(ite));
-    Partial_zgw_wrt_theta    = vecn.*(z_gw./theta(ite));
+    zfw_wrt_theta    = Differentiate_wrt_theta(z_fw,th(ite));
+    zgw_wrt_theta    = Differentiate_wrt_theta(z_gw,th(ite));
     
     % Build the Coefficient Matrix DNQ, of structured perturbations, with
     % same structure as DTQ.
-    DNQ = BuildDTQ(z_fw,z_gw,alpha(ite),t);
+    DNQ = BuildDTQ(z_fw,alpha(ite).*z_gw,t);
     
     % Calculate the derivatives of DNQ with respect to alpha
-    Partial_DNQ_wrt_alpha = BuildDTQ(Partial_zfw_wrt_alpha,...
-                Partial_zgw_wrt_alpha,1,t);
+    DNQ_wrt_alpha = BuildDTQ(zfw_wrt_alpha,...
+                zgw_wrt_alpha,t);
     
     
     % Calculate the derivatives of DNQ with respect to theta
-    Partial_DNQ_wrt_theta = BuildDTQ(Partial_zfw_wrt_theta,...
-                Partial_zgw_wrt_theta,alpha(ite),t);
+    DNQ_wrt_theta = BuildDTQ(zfw_wrt_theta,...
+                alpha(ite).*zgw_wrt_theta,t);
     
     % Calculate the column of DNQ that is moved to the right hand side, which
     % has the same structure as c_{t} the column of S_{t} moved to the RHS
     ht = DNQ*e;
     
     % Calculate the derivative of h_{t} with respect to alpha
-    ht_alpha = Partial_DNQ_wrt_alpha*e;
+    ht_alpha = DNQ_wrt_alpha*e;
     
     % Calculate the derivative of h_{t} with respect to theta
-    ht_theta = Partial_DNQ_wrt_theta*e;
+    ht_theta = DNQ_wrt_theta*e;
     
     % Build the matrix D_{t}(T+N)Q_{t}
-    DTNQ = BuildDTQ(fw + z_fw, gw + z_gw ,alpha(ite),t);
+    DTNQ = BuildDTQ(fw + z_fw, alpha(ite).*(gw + z_gw),t);
     
     % Calculate the paritial derivative of D_{t}(T+N)Q_{t} with respect to
     % alpha
-    DTNQ_alpha = BuildDTQ(Partial_fw_wrt_alpha + Partial_zfw_wrt_alpha,...
-                Partial_gw_wrt_alpha + Partial_zgw_wrt_alpha,1,t);
+    DTNQ_alpha = BuildDTQ(fw_wrt_alpha + zfw_wrt_alpha,...
+                gw_wrt_alpha + zgw_wrt_alpha,t);
         
     % Calculate the paritial derivative of D_{k}(T+N)Q_{k} with respect to
     % theta
-    DTNQ_theta = BuildDTQ(Partial_fw_wrt_theta + Partial_zfw_wrt_theta,...
-                (Partial_gw_wrt_theta + Partial_zgw_wrt_theta),alpha(ite),t);
+    DTNQ_theta = BuildDTQ(fw_wrt_theta + zfw_wrt_theta,...
+                    alpha(ite).*(gw_wrt_theta + zgw_wrt_theta),t);
         
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
-    DY = BuildDY(m,n,t,opt_col,x_ls,alpha(ite),theta(ite));
+    DY = BuildDY(m,n,t,opt_col,x_ls,alpha(ite),th(ite));
     
     % Calculate the matrix DP where P is the matrix such that c = P[f;g]
-    DP = BuildDP(m,n,theta(ite),opt_col,t);
+    DP = BuildDP(m,n,th(ite),opt_col,t);
     
     % Calculate the residual q and vector p.
     res_vec = (ct+ht) - (DTNQ * M * x_ls);
@@ -312,9 +309,9 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
     Hx      = DTNQ*M;
     
-    H_alpha = DTNQ_alpha*M*x_ls - (Partial_ct_wrt_alpha + ht_alpha);
+    H_alpha = DTNQ_alpha*M*x_ls - (ct_wrt_alpha + ht_alpha);
     
-    H_theta = DTNQ_theta*M*x_ls - (Partial_ct_wrt_theta + ht_theta);
+    H_theta = DTNQ_theta*M*x_ls - (ct_wrt_theta + ht_theta);
     
     C = [Hz,Hx,H_alpha,H_theta];  % the matrix C
        
@@ -346,23 +343,23 @@ if condition(ite) > condition(1)
     fprintf('SNTLN Failed to converge, default to input values\n')
     fx_output = fx_n;
     gx_output = gx_n;
-    alpha_output = initial_alpha;
-    theta_output = initial_theta;
+    alpha_output = i_alpha;
+    theta_output = i_th;
     X_output = x_ls;
     return;
 end
 
 % Once iterations are complete, assign fx output, gx output, solution X
 % output, alpha output and theta output.
-fx_output = fx_n + zt(1:m+1);
+fx_output = fx_n + z_fx;
 
-gx_output = gx_n + zt(m+2:end);
+gx_output = gx_n + z_gx;
 
 X_output  = x_ls;
 
 alpha_output = alpha(ite);
 
-theta_output = theta(ite);
+theta_output = th(ite);
 
 
 

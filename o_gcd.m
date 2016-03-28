@@ -1,4 +1,6 @@
 function [] = o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
+% o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
+%
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
 % g(x) as defined in the example file.
 %
@@ -16,23 +18,19 @@ function [] = o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_met
 % low_rank_approx_method : 'Standard STLN' 'Standard SNTLN'
 %
 % apf_method :
-%
-%
 
-addpath 'BernsteinMethods'
+
 addpath 'Bezoutian'
 
 SetGlobalVariables(bool_preproc,low_rank_approx_method,apf_method)
-global SEED
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                Consistency of input parameters.
 
 % Check that max and min signal to noise ratio are the correct way around.
 % If not, rearrange min and max.
 if emin > emax
     fprintf('minimum noise greater than maximum noise \n swapping values...\n')
-    swap(emin,emax);
+    [emin,emax] = swap(emin,emax);
 end
 
 
@@ -77,13 +75,13 @@ u_exact_bi = B_poly(u_roots);
 v_exact_bi = B_poly(v_roots);
 
 % Get degree of polynomials f(x).
-m = size(f_exact_bi,1) - 1;
+m = GetDegree(f_exact_bi);
 
 % Get degree of polynomials g(x).
-n = size(g_exact_bi,1) - 1;
+n = GetDegree(g_exact_bi);
 
 % Get degree of exact GCD d(x).
-t = size(d_exact_bi,1) - 1;
+t = GetDegree(d_exact_bi);
 
 % Get sets of binomial coefficients corresponding to each vector
 Bi_m = GetBinomials(m);
@@ -106,8 +104,8 @@ PrintCoefficients_Bivariate_Bernstein(f_exact,'f')
 PrintCoefficients_Bivariate_Bernstein(g_exact,'g')
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
-fx = VariableNoise(f_exact,emin,emax,SEED);
-gx = VariableNoise(g_exact,emin,emax,SEED);
+fx = VariableNoise(f_exact,emin,emax);
+gx = VariableNoise(g_exact,emin,emax);
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
 [~,~,d_calc,u_calc,v_calc] = o1(fx,gx);

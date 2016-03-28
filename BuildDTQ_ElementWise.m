@@ -1,4 +1,4 @@
-function DTQ = BuildDTQ_ElementWise(fw,gw,alpha,t)
+function DTQ = BuildDTQ_ElementWise(fx,gx,t)
 % Build the Matrix D_{k}T_{k}(f,\alpha g)Q
 %
 %                           Inputs
@@ -23,39 +23,41 @@ global BOOL_LOG
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get degree of polynomial f
-m = size(fw,1) - 1;
+m = GetDegree(fx);
 
 % Get degree of polynomial g
-n = size(gw,1) - 1;
+n = GetDegree(gx);
 
 switch BOOL_LOG
     case 'y' 
         % Use log method
-        DT1Q1 = BuildDT1Q1_log(fw,n-t);
-        DT2Q2 = BuildDT1Q1_log(gw,m-t);
+        DT1Q1 = BuildDT1Q1_log(fx,n-t);
+        DT2Q2 = BuildDT1Q1_log(gx,m-t);
         
     case 'n' 
         % Use nchoosek method
         warning('off','all');
-        DT1Q1 = BuildDT1Q1_nchoosek(fw,n-t);
-        DT2Q2 = BuildDT1Q1_nchoosek(gw,m-t);
+        DT1Q1 = BuildDT1Q1_nchoosek(fx,n-t);
+        DT2Q2 = BuildDT1Q1_nchoosek(gx,m-t);
         warning('on','all');
     otherwise
         error('bool_log must be either y or n')
 end
 
 
-DTQ = [DT1Q1 alpha.*DT2Q2];
+DTQ = [DT1Q1 DT2Q2];
 
 end
 
-function DT1Q1 = BuildDT1Q1_nchoosek(fw,n_t)
+function DT1Q1 = BuildDT1Q1_nchoosek(fx,n_t)
 % Build DTQ partition by, using matlabs nchoosek function.
 %
 %                       Inputs
 %
 %
-% f : Coefficients of polynomial f(\omega,\theta)
+% fx : Coefficients of the polynomial f(x)
+%
+% n_t : Degree of polynomial v(x,y) = n - t
 %
 % n : Degree of other polynomial g(\omega,\theta).
 %
@@ -75,7 +77,7 @@ global BOOL_DENOM_SYL
 
 
 % Get Degree of input polynomial
-m = size(fw,1) - 1;
+m = GetDegree(fx);
 
 % Initialise the partition of DTQ \in\mathbb{R}^{(m+n-t+1)\times(n-t+1)}.
 DT1Q1 = zeros(m+n_t+1,n_t+1);
@@ -87,7 +89,7 @@ for j = 0:1:n_t
     % for each coefficient in the polynomial f
     for i = j:1:m+j
         DT1Q1(i+1,j+1) = ...
-            fw(i-j+1) .*...
+            fx(i-j+1) .*...
             nchoosek(m+n_t-i,m-(i-j)) .* ...
             nchoosek(i,j);
     end
@@ -104,19 +106,19 @@ switch BOOL_DENOM_SYL
 end
 end
 
-function DT1Q1 = BuildDT1Q1_log(f,theta, n,t)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+function DT1Q1 = BuildDT1Q1_log(f,n_t)
+%
+%
 %                        Inputs
-
+%
 % f : - Coefficients of polynomial f(\omega,\theta).
-
+%
 % n :- degree of other polynomial.
-
+%
 % t :- Degree of GCD.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
 
 %                      Global Variables
 
@@ -130,10 +132,10 @@ global BOOL_DENOM_SYL
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get degree of polynomial f.
-m = length(f)-1;
+m = GetDegree(f);
 
 % Initialise the partition of DTQ \in\mathbb{R}^{(m+n-t+1)\times(n-t+1)}.
-DT1Q1 = zeros(m+n-t+1,n-t+1);
+DT1Q1 = zeros(m+n_t+1,n_t+1);
 
 % for each column in partition of DTQ
 for j = 0:1:n-t
@@ -142,7 +144,7 @@ for j = 0:1:n-t
         
         % Evaluate binomial coefficients in the numerator in terms of logs
         Numerator_eval_log = ...
-            lnnchoosek(m+n-t-i,m-(i-j)) +...
+            lnnchoosek(m+n_t-i,m-(i-j)) +...
             lnnchoosek(i,j);
         
         % Convert to normal numeric form

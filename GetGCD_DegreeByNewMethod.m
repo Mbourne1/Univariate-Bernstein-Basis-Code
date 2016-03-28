@@ -1,15 +1,16 @@
 function [deg_calc,out_subresultants_unprocessed,out_subresultants_preprocessed,out_alphas,out_thetas,out_gm_fxs,out_gm_gxs] = ...
-    GetDegreeByNewMethod(fx,gx)
+    GetGCD_DegreeByNewMethod(fx,gx)
 % Get degree of the AGCD of input polynomials f(x) and g(x)
 %
-%                           Inputs.
+% Inputs.
 %
-% fx : coefficients of polynomial f, expressed in Bernstein Basis gx :
-% coefficients of polynomail g, expressed in Bernstein Basis
+% fx : Coefficients of polynomial f(x)
 %
-%                           Outputs.
+% gx : Coefficients of polynomial g(x)
 %
-% degree_calc - The calculated degree by various methods
+% Outputs.
+%
+% deg_calc - The calculated degree by various methods
 %
 % out_subresultants_unprocessed - All unprocesed subresultants S_{k} for k
 % = 1,...,min(m,n)
@@ -27,8 +28,9 @@ function [deg_calc,out_subresultants_unprocessed,out_subresultants_preprocessed,
 %
 % out_gm_gxs : All calculated geometric means of each C_{k}(g)
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
+% Global Variables
 global bool_preproc
 global plot_graphs
 global geometricMeanMethod
@@ -55,13 +57,13 @@ switch plot_graphs
         PlotResiduals = 0;
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %
 
 % Get degree m of polynomial f
-m = length(fx)-1;
+m = GetDegree(fx);
 
 % Get degree n of polynomial g
-n = length(gx)-1;
+n = GetDegree(gx);
 
 % get minimum degree of f and g
 min_mn = min(m,n);
@@ -114,8 +116,8 @@ for k = 1:1:min_mn
             % if the first subresultant, then build from scratch
             if (k==1)
                 % Include Preprocessor.
-                C_f_unproc = BuildDT1Q1(fx,1,n,k);
-                C_g_unproc = BuildDT1Q1(gx,1,m,k);
+                C_f_unproc = BuildDT1Q1(fx,n-k);
+                C_g_unproc = BuildDT1Q1(gx,m-k);
                 
                 % Get Geometric means.
                 [lambda,mu] = GetGeometricMean(fx,gx,k);
@@ -217,16 +219,17 @@ for k = 1:1:min_mn
     %
     % Calculate the coefficients of the modified Bernstein basis
     % polynomials F2 and G2. Multiply G2 by alpha.
-    fw_n =  fx_n*(theta_vec(k).^(0:1:m)) ;%\bar{f}(\theta,\omega)
-    gw_n =  gx_n*(theta_vec(k).^(0:1:n)) ;%\bar{g}(\theta,\omega)
+    
+    fw_n = GetWithThetas(fx_n,theta_vec(k));
+    gw_n = GetWithThetas(gx_n,theta_vec(k));
     
     % Construct the kth subresultant matrix for the optimal values of alpha
     % and theta.
     
     if (k==1)
         % first subresultant must be constructed in the conventional sense.
-        Cf{k} = BuildDT1Q1(fx_n,theta_vec(k),n,k);
-        Cg{k} = BuildDT1Q1(gx_n,theta_vec(k),m,k);
+        Cf{k} = BuildDT1Q1(fw_n,n-k);
+        Cg{k} = BuildDT1Q1(gw_n,m-k);
         
         % Build subresultant
         Sk = [Cf{k} alpha_vec(k).*Cg{k}]   ;

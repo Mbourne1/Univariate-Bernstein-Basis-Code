@@ -97,20 +97,20 @@ end
 
 function G = RightDG_Build(n,m,t,mincol,theta)
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
 %                               Inputs.
-
+%
 % m - Degree of polynomial f
-
+%
 % n - Degree of polynomial g
-
+%
 % t - Degree of GCD
-
+%
 % mincol -
-
+%
 % theta -
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                           Global Variables.

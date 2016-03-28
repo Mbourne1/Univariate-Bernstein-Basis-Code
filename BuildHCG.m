@@ -1,5 +1,16 @@
 function [HCG, H1C1G, H2C2G] = BuildHCG(uw,vw,m,n,t)
 % Build the matrix HCG, such that H*C(u,v)*G * d = [f;g]
+%
+% uw : Matrix of coefficients of the polynomial u(w,w) 
+%
+% vw : Matrix of coefficients of the polynomial v(w,w)
+%
+% m : Degree of polynomial f(x,y)
+%
+% n : Degree of polynomial g(x,y)
+%
+% t : Degree of GCD d(x,y)
+
 
 global APF_BUILD_METHOD
 
@@ -9,8 +20,10 @@ switch APF_BUILD_METHOD
         
         H1 = BuildH1(m);
         H2 = BuildH1(n);
-        C1 = BuildC1(uw,t);
-        C2 = BuildC1(vw,t);
+        
+        C1 = BuildT1(uw,t);
+        C2 = BuildT1(vw,t);
+        
         G = BuildG(t);
         
         HCG = blkdiag(H1,H2)*[C1;C2]*G;

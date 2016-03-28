@@ -11,14 +11,14 @@ function gx = Bernstein_Differentiate(fx)
 % gx : Deriveative of polynomial f(x).
 
 % Get degree of polynomial f(x)
-m = size(fx,1) - 1;
+m = GetDegree(fx);
 
 % Initialise the vector of the derivative of f
 gx = zeros(m,1);
 
 %Loop through all coefficients of g(x)
-for i = 1:1:m
-    gx(i+1) = m * (fx(i+1)-fx(i));
+for i = 0:1:m-1
+    gx(i+1) = m * (fx(i+1+1)-fx(i+1));
 end
 
 

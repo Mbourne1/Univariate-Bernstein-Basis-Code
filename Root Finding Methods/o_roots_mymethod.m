@@ -42,7 +42,7 @@ while length(q{ite_num})-1 > 0
     gx = Bernstein_Differentiate(q{ite_num});
     
     % get degrees m and n of polynomials f and g respectively.
-    m = size(fx,1) -1;
+    m = GetDegree(fx);
     
     fprintf('Begin : GCD Calculation Loop iteration = %i \n\n',ite_num );
     fprintf('m = %i \n',m);

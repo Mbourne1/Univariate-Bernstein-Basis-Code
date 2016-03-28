@@ -24,14 +24,14 @@ function hi = Deconvolve(set_g)
 global BOOL_DECONVOLVE
 
 switch BOOL_DECONVOLVE
-    case 'single'
+    case 'Single'
         % Deconvolve independent method
         hi = Deconvolve_Independent(set_g);
-    case 'batch'
+    case 'Batch'
         % Deconvolve Batch Method
         hi = Deconvolve_Batch(set_g);
     otherwise
-        error('BOOL_DECONVOLVE must be either single or batch')
+        error('BOOL_DECONVOLVE must be either (Single) or (Batch)')
 end
 
 

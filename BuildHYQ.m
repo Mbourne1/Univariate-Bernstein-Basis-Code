@@ -61,28 +61,22 @@ HYQ = blkdiag(A,B);
 end
 
 function A = BuildHYPartition_nchoosek(dx,m,theta)
+% 
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %                       Inputs.
-
+%
 % dw -
-
+%
 % m
-
+%
 % theta -
-
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
+%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 global BOOL_DENOM_APF
 
-t = length(dx)-1;
+t = GetDegree(dx);
 A = zeros(m+1,m-t+1);
 
 % for each column j
@@ -112,40 +106,28 @@ end
 end
 
 function A = BuildHYPartition_log(dx,m,theta)
+% Build a partition of H*Y
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Inputs
-
+% Inputs
+%
+%
 % dw -
-
-% m
-
-% theta -
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+% m : degree of polynomial f(x)
+%
+% theta :
+%
+%
 %                         Outputs
-
+%
 % A : Matrix forming a partition of HY
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                   Global Variables
-
-% bool_denom_apf - (Boolean) Given the rearrangement of the Sylvester 
-% matrix in the Bernstein basis, each partition of each subresultant has a 
-% common divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
+%
+%
 
 global BOOL_DENOM_APF
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 % Get degree of polynomial dw
-t = length(dx)-1;
+t = GetDegree(dx);
 
 % Initialise an empty matrix
 A = zeros(m+1,m-t+1);
@@ -183,9 +165,23 @@ end
 
 
 function HYQ = BuildHYQ2(dx,m,n,theta)
+% Build HYQ2(dx,m,n,theta)
+%
+% Build the matrix 
+%
+% Inputs.
+%
+% dx : 
+% 
+% m : 
+%
+% n :
+% 
+% theta :
+
 
 % Get the degree of the gcd
-t = length(dx)-1;
+t = GetDegree(dx);
 
 % Build Diagonal Matrix H
 H = BuildH(m,n);

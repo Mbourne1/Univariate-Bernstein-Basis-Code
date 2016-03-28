@@ -15,8 +15,7 @@ function C1 = BuildC1(uw,t)
 %           polynomial u in with its binomial coefficients included.
 
 % Get degree of polynomial u(w)
-[r,~] = size(uw);
-m_t = r -1;
+[m_t] = GetDegree(uw);
 
 % Initialise the matrix
 C1 = zeros(m_t+t,t);

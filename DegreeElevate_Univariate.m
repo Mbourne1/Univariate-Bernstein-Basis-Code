@@ -10,7 +10,7 @@ function [c] = DegreeElevate_Univariate(ft,r)
 %           of degree m + r.
 
 % Get degree of polynomial f
-m = length(ft) -1;
+m = GetDegree(ft);
 
 % for each c(i) in the vector
 c = zeros(m+r+1,1);

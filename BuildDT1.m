@@ -1,13 +1,13 @@
-function DT1 = BuildDT1(fw,n,k)
+function DT1 = BuildDT1(fw,n_k)
 
 
 switch bool_log
     case 'n'
         % Build Toeplitz Matrix using nchoosek
-        DT1 = BuildDT1_nchoosek(fw,n,k);
+        DT1 = BuildDT1_nchoosek(fw,n_k);
     case 'y'
         % Build Toeplitz Matrix using log version of nchoosek.
-        DT1 = BuildDT1_log(fw,n,k);
+        DT1 = BuildDT1_log(fw,n_k);
     otherwise
         error('error : bool_log must be either (y) or (n)')
 end
@@ -15,7 +15,7 @@ end
 end
 
 
-function [DT1] = BuildDT1_nchoosek(fw,n,k)
+function [DT1] = BuildDT1_nchoosek(fw,n_k)
 % Build Toeplitz matrix of D{-1}T(f,g), this is used when we consider
 % without Q.
 %
@@ -35,7 +35,7 @@ function [DT1] = BuildDT1_nchoosek(fw,n,k)
 
 
 % Get Degree of polynomial f
-m = size(fx,1)-1;
+m = GetDegree(fx);
 
 % Buid an empty matrix
 DT1 = zeros(m+n-k+1,n-k+1);
@@ -44,11 +44,11 @@ DT1 = zeros(m+n-k+1,n-k+1);
 fw_bi = fw .* GetBinomials(m);
 
 % for each column j
-for j = 0:1:n-k
+for j = 0:1:n_k
     %for each row i
     for i = j:1:(j+m)
         DT1(i+1,j+1) = ...
-            fw_bi ./ nchoosek(m+n-k,i);
+            fw_bi ./ nchoosek(m+n_k,i);
     end
 end
 
@@ -60,7 +60,7 @@ end
 
 
 
-function T = BuildDT1_log(fw,n,k)
+function T = BuildDT1_log(fw,n_k)
 % Build Toeplitz matrix of D^{-1}T(f,g) using logs.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,13 +78,13 @@ function T = BuildDT1_log(fw,n,k)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get Degree of polynomial f
-m = length(fx) - 1;
+m = GetDegree(fx);
 
 % Build an empty matrix
 T = zeros(m+n-k+1,n-k+1);
 
 % for each column j
-for j = 0:1:n-k
+for j = 0:1:n_k
     %for each row i
     for i = j:1:(j+m)
         

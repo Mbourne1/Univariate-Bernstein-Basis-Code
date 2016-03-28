@@ -11,8 +11,8 @@ u_roots = [];
 
 % Catch the case that the degree of the GCD is zero, and therefore the quotient
 % polynomial u(x) is equal to f(x)
-[r,~] = size(d_roots);
-if r == 0
+[nRoots_d,~] = size(d_roots);
+if nRoots_d == 0 % If d has no roots, then d is scalar and u(x) = f(x)
     u_roots = f_roots;
     return
 end
