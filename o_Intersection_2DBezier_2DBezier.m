@@ -45,7 +45,7 @@ CP_g = Examples_2DBezier_ControlPoints(ex_num_g);
 array_cp{1} = CP_f;
 array_cp{2} = CP_g;
 
-Plot2DBezier(array_cp);
+Plot2DBeziers(array_cp);
 
 
 %% Implicitize the Bezier Control Points of g

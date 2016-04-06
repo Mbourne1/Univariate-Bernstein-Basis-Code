@@ -9,9 +9,9 @@ function [c] = Bernstein_DegreeElevate(fx,r)
 %      degree m + r.
 
 % Get the degree of polynomial f(x)
-m = size(fx,1) - 1;
+m = GetDegree(fx);
 
-c = zeros(m+r+1,1)
+c = zeros(m+r+1,1);
 
 % Each coefficient c(k+1)
 for k = 0:1:m+r

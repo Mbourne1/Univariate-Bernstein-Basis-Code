@@ -86,11 +86,11 @@ global BOOL_DENOM_SYL
 m = GetDegree(fx);
 
 % Build an empty matrix
-DT1Q1 = zeros(m+n-k+1,n-k+1);
+DT1Q1 = zeros(m+n_k+1,n_k+1);
 
 
 % for each column
-for j=0:1:n-k
+for j=0:1:n_k
     % for each entry in the vector f.
     for i = j:1:j+m
         

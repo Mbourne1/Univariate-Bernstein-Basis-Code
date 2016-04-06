@@ -5,7 +5,7 @@ function [] = o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_met
 % g(x) as defined in the example file.
 %
 %
-%   Inputs.
+% Inputs.
 %
 % ex:   Example Number
 %
@@ -74,30 +74,14 @@ d_exact_bi = B_poly(d_roots);
 u_exact_bi = B_poly(u_roots);
 v_exact_bi = B_poly(v_roots);
 
-% Get degree of polynomials f(x).
-m = GetDegree(f_exact_bi);
-
-% Get degree of polynomials g(x).
-n = GetDegree(g_exact_bi);
-
-% Get degree of exact GCD d(x).
-t = GetDegree(d_exact_bi);
-
-% Get sets of binomial coefficients corresponding to each vector
-Bi_m = GetBinomials(m);
-Bi_n = GetBinomials(n);
-Bi_t = GetBinomials(t);
-Bi_mt = GetBinomials(m-t);
-Bi_nt = GetBinomials(n-t);
 
 % Get exact coefficients of a_{i},b_{i},u_{i},v_{i} and d_{i} of
 % polynomials f, g, u, v and d in standard bernstein form.
-
-f_exact = f_exact_bi./Bi_m;
-g_exact = g_exact_bi./Bi_n;
-d_exact = d_exact_bi./Bi_t;
-u_exact = u_exact_bi./Bi_mt;
-v_exact = v_exact_bi./Bi_nt;
+f_exact = GetWithoutBinomials(f_exact_bi);
+g_exact = GetWithoutBinomials(g_exact_bi);
+d_exact = GetWithoutBinomials(d_exact_bi);
+u_exact = GetWithoutBinomials(u_exact_bi);
+v_exact = GetWithoutBinomials(v_exact_bi);
 
 % Print the coefficients of f(x) and g(x)
 PrintCoefficients_Bivariate_Bernstein(f_exact,'f')
@@ -108,13 +92,17 @@ fx = VariableNoise(f_exact,emin,emax);
 gx = VariableNoise(g_exact,emin,emax);
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~,~,d_calc,u_calc,v_calc] = o1(fx,gx);
+[~,~,dx_calc,ux_calc,vx_calc] = o1(fx,gx);
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
-PrintCoefficients('u',u_exact, u_calc);
-PrintCoefficients('v',v_exact, v_calc);
-PrintCoefficients('d',d_exact, d_calc);
+PrintCoefficients('u',u_exact, ux_calc);
+PrintCoefficients('v',v_exact, vx_calc);
+PrintCoefficients('d',d_exact, dx_calc);
+
+error_dx = GetError('d',d_exact,dx_calc);
+
+PrintToFile(GetDegree(fx),GetDegree(gx),GetDegree(dx_calc),error_dx)
 
 
 end
@@ -145,16 +133,20 @@ GetError(name,u_calc,u_exact);
 
 end
 
-function [] = GetError(u,u_calc,u_exact)
+function [error] = GetError(name,f_calc,f_exact)
+% Get distance between f(x) and the calulated f(x)
+
+f_calc  = normalise(f_calc);
+f_exact = normalise(f_exact);
 
 % Calculate relative errors in outputs
-rel_error_uk = norm(abs(u_calc - u_exact) ./ u_exact);
+rel_error_f = norm(abs(f_calc - f_exact) ./ f_exact);
 
-fprintf('\tCalculated relative error %s : %8.2e \n ',u,rel_error_uk);
+fprintf('\tCalculated relative error %s : %8.2e \n ',name,rel_error_f);
 
-error_uk = norm(abs(u_calc - u_exact) );
+error = norm(abs(f_calc - f_exact) );
 
-fprintf('\tCalculated error %s : %8.2e \n', u,error_uk);
+fprintf('\tCalculated error %s : %8.2e \n', name,error);
 
 end
 
@@ -163,3 +155,32 @@ function f = normalise(f)
 f = f./f(1);
 
 end
+
+
+function []= PrintToFile(m,n,t,error_dx)
+
+global NOISE
+global BOOL_PREPROC
+global LOW_RANK_APPROXIMATION_METHOD
+global APF_METHOD
+
+fullFileName = 'o_gcd_results.txt';
+
+
+if exist('o_gcd_results.txt', 'file')
+    fileID = fopen('o_gcd_results.txt','a');
+    fprintf(fileID,'%5d \t %5d \t %5d \t %s \t %s \t %s \t %s \t %s \n',...
+        m,n,t,error_dx,BOOL_PREPROC, NOISE, LOW_RANK_APPROXIMATION_METHOD,APF_METHOD);
+    fclose(fileID);
+else
+  % File does not exist.
+  warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
+  uiwait(msgbox(warningMessage));
+end
+
+
+
+
+end
+
+

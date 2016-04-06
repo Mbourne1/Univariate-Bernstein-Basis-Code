@@ -74,11 +74,10 @@ gx_n = gx./gm_gx;
 St_unproc = BuildSubresultant(fx,gx,t);
 
 % Get Subresultant of preprocessed f(\theta,\omega) and g(\theta, \omega)
-fw = fx_n.*(theta.^(0:1:m)');
-gw = gx_n.*(theta.^(0:1:n)');
+fw = GetWithThetas(fx_n,theta);
+gw = GetWithThetas(gx_n,theta);
 
 St_preproc = BuildSubresultant(fw,alpha.*gw,t);
-
 %%
 % Get the optimal column of the sylvester matrix to be removed. Where
 % removal of the optimal column gives the minmal residual in (Ak x = ck)

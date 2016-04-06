@@ -18,7 +18,7 @@ function Pk = GetControlPoints(a,b,f)
 
 %%
 % Get degree of polynomial f
-m = length(f)-1;
+m = GetDegree(f);
 
 % Initialise the matrix of control points.
 % Number of control points = number of coefficients
@@ -28,7 +28,7 @@ Pk = [m+1,2];
 
 % for each control point, assign value.
 for i = 0:1:m
-    Pk(i,:) = [a+(i/m).*(b-a)    f(i+1)];
+    Pk(i+1,:) = [a+(i/m).*(b-a)    f(i+1)];
 end
 
 

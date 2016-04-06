@@ -21,17 +21,16 @@ m = GetDegree(fx_n);
 % Get degree of polynomial g(x)
 n = GetDegree(gx_n);
 
-
 % Get fw and gw
-fw_n = GetWithThetas(fx_n,theta);
-gw_n = GetWithThetas(gx_n,theta);
+fw = GetWithThetas(fx_n,theta);
+gw = GetWithThetas(gx_n,theta);
 
 % Get uw and vw
 uw = GetWithThetas(ux,theta);
 vw = GetWithThetas(vx,theta);
 
 % Build solution vector bk = [f;g]
-bk = [fw_n ; alpha .* gw_n];
+bk = [fw ; alpha .* gw];
 
 % Build the coefficient vector HCG
 HCG = BuildHCG(uw,vw,m,n,t);

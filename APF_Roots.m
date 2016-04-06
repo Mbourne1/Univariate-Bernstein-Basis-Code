@@ -182,8 +182,8 @@ while condition > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
     z1w = GetWithThetas(z1x,th(ite));
     
     % obtain partial derivatives of z1 and z2 with respect to theta
-    z1w_wrt_theta = vecmk .* (z1w ./ th(ite));
-    
+    z1w_wrt_theta = Differentiate_wrt_theta(z1w,th(ite));
+        
     % Build the matrix H1*E1*G
     H1E1G = BuildH1C1G(z1w,t);
     

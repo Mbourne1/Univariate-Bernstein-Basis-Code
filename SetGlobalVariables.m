@@ -48,7 +48,7 @@ GEOMETRIC_MEAN_METHOD = 'matlab';
 %% Numerical Considerations
 
 global BOOL_LOG
-BOOL_LOG = 'n';
+BOOL_LOG = 'y';
 
 %% Noise 
 

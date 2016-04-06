@@ -111,25 +111,14 @@ function DT1Q1 = BuildDT1Q1_log(f,n_t)
 %
 %                        Inputs
 %
-% f : - Coefficients of polynomial f(\omega,\theta).
+% f   : Coefficients of polynomial f(\omega,\theta).
 %
-% n :- degree of other polynomial.
-%
-% t :- Degree of GCD.
-%
+% n_t : Degree of polynomial v(x,y).
 %
 %
 
-%                      Global Variables
-
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
+% Global Variables
 global BOOL_DENOM_SYL
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get degree of polynomial f.
 m = GetDegree(f);
@@ -138,7 +127,7 @@ m = GetDegree(f);
 DT1Q1 = zeros(m+n_t+1,n_t+1);
 
 % for each column in partition of DTQ
-for j = 0:1:n-t
+for j = 0:1:n_t
     % for each coefficient f_{i-j} in the polynomial f
     for i = j:1:m+j
         
@@ -151,7 +140,7 @@ for j = 0:1:n-t
         Numerator_eval_exp = 10.^Numerator_eval_log;
         
         % Enter the coefficient in the Sylvester matrix.
-        DT1Q1(i+1,j+1) = fw(i-j+1) .* Numerator_eval_exp;
+        DT1Q1(i+1,j+1) = f(i-j+1) .* Numerator_eval_exp;
         
     end
 end
@@ -161,7 +150,7 @@ switch BOOL_DENOM_SYL
         
         % Evaluate the binomial coefficient in the denominator in terms of
         % logs
-        Denom_eval_log = lnnchoosek(m+n-t,n-t);
+        Denom_eval_log = lnnchoosek(m+n_t,n_t);
         
         % Convert to normal numeric form
         Denom_eval_exp = 10.^Denom_eval_log;

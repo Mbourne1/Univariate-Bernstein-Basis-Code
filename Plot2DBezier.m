@@ -1,4 +1,4 @@
-function [] = Plot2DBezier(cp_f_arr)
+function [] = Plot2DBeziers(cp_f_arr)
 % Given a set of control points for curves {C1, C2,...} plot the curves
 % Input is an array of polynomial control points
 

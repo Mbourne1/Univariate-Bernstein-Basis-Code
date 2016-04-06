@@ -45,7 +45,6 @@ global MAX_ERROR_SNTLN
 global MAX_ITERATIONS_SNTLN
 global PLOT_GRAPHS
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Set the initial iterations number
 ite = 1;
@@ -83,7 +82,7 @@ gw = GetWithThetas(gx_n,th(ite));
 DTQ = BuildDTQ(fw,alpha.*gw,t);
 
 % Calculate the partial derivatives of fw and gw with respect to alpha
-fw_wrt_alpha                    = zeros(m+1,1);
+fw_wrt_alpha            = zeros(m+1,1);
 alpha_gw_wrt_alpha      = gw;
 
 % Calculate the partial derivatives of fw and gw with respect to theta

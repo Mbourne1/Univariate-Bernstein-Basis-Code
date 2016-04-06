@@ -23,13 +23,13 @@ function [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_ux, PostAPF_vx, PostAPF_th
 %
 %
 
-%                           Global Variables
+% Global Variables
 
 global PLOT_GRAPHS
 global MAX_ERROR_APF
 global MAX_ITERATIONS_APF
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % Initialise iteration index
 ite = 1;

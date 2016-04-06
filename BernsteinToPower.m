@@ -38,9 +38,5 @@ end
 mat = pinv(mat');
 fx_Pwr =  mat * fx_Brn  ;
 
-% If we started with a row vector
-if strcmp(prob_type,'row_vector')
-    % transpose so that output bernstein coefficients are also a row
-    % vector.
-    fx_Pwr = fx_Pwr';
+
 end

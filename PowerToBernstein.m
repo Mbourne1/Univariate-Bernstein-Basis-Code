@@ -2,18 +2,29 @@ function [C] = PowerToBernstein(fx)
 % given a set of coefficients in the power basis, convert to bernstein
 % basis
 % Algorithms for Polynomials in Bernstein Form
+%
+% Inputs.
+%
+% fx : Vector of coefficients of polynomial f(x) in the power basis.
+%
+% Outputs.
+%
+% c : Vector of coefficients of polynomail f(x) in the Bernstein basis. 
 
 
-% let n be the degree of polynomial fx
-n = length(fx)-1;
+% Get the degree of f(x)
+m = GetDegree(fx);
 
+C = zeros(m+1,1);
 
-for j = 0:1:n
+for j = 0:1:m
     temp_sum = 0;
     for k = 0:1:j
         temp_sum = temp_sum + ...
             (...
-                nchoosek(j,k) ./ nchoosek(n,k) .* fx(k+1)...
+                nchoosek(j,k)...
+                ./ nchoosek(m,k) ...
+                .* fx(k+1)...
             );
     end
     C(j+1) = temp_sum;

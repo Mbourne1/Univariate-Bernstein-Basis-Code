@@ -206,7 +206,7 @@ switch n
         t = 5;
         m = 10;
         n = 7;
-        [roots_fx,roots_gx] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high)
+        [roots_fx,roots_gx] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high);
         
     case 'Custom'
         intvl_low = -1;
@@ -232,9 +232,9 @@ switch n
         error('error: Example Number not valid')
         
 end
-roots_dx = getDivisor(roots_fx,roots_gx)
-roots_ux = getQuotient(roots_fx,roots_dx);
-roots_vx = getQuotient(roots_gx,roots_dx);
+roots_dx = GetGCDRoots(roots_fx,roots_gx)
+roots_ux = GetQuotientRoots(roots_fx,roots_dx);
+roots_vx = GetQuotientRoots(roots_gx,roots_dx);
 
 m = sum(roots_fx(:,2));
 n = sum(roots_gx(:,2));

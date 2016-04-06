@@ -1,75 +1,53 @@
-function [ t ] = o_roots_subdivision( example_number,e_low,e_up,seed )
-%   ROOTS_BISECTION Summary of this function goes here
-%   Detailed explanation goes here
+function [ root_mult_array ] = o_roots_subdivision(fx)
+% Given the coefficients of the polynomial in Bernstein form, compute the
+% roots using the subdivision method by Schneider in Graphics Gems.
+%
+% Inputs.
+%
+% fx : Coefficients of polynomial f(x)
+%
+% Outputs.
+%
+% t : Roots
 
-addpath 'Examples'
+% Global variables
+global MAXDEPTH
+MAXDEPTH = 10;
 
-% Bool whether to print messages
-global bool_printMessageLog_subdivision
-bool_printMessageLog_subdivision = 0;
+global EPSILON
+EPSILON = 1e-12;
 
-% Bool whether to plot control points and curve f at each iteration.
-BOOL_PLOT_CP = 0;
+% Initialise iteration number 
+ite_num = 1;
 
-% Get the exact roots
-[f_roots_exact,~] = Root_Examples(example_number,seed);
-
-% Get polynomial coefficients in scaled bernstein basis
-f_exact_bi = B_poly(f_roots_exact);
-
-% Get degree of polynomial f
-m = length(f_exact_bi) - 1;
-
-W_DEGREE = m;
-
-% Get binomial coefficients corresponding to f
-Bi_m = zeros(m+1,1);
-for i = 0:1:m
-    Bi_m(i+1) = nchoosek(m,i);
-end
-
-% Obtain exact coefficients of polynomial f
-f_exact = f_exact_bi./Bi_m;
-
-% add noise to the coefficients
-fx = VariableNoise(f_exact,e_low,e_up,seed);
+% Get degree of polynomial f(x)
+m = GetDegree(fx);
 
 % Get the set of control points of the curve
 a = 0;
 b = 1;
-Pk = [];
+
+% Initialise a matrix of control points, where each row contains the (x,y)
+% pair.
+Pk = zeros(m+1,2);
+
+% Get the control points
 for i = 0:1:m
-    Pk = [Pk ; a + (i/m).*(b-a)     fx(i+1)];
+    % Get the x ordinate
+    x_ord = a + (i/m).*(b-a);
+    Pk(i+1,:) = [x_ord fx(i+1)];
 end
 
 % Plot the coefficients and the control points of the curve
+figure_name = sprintf('%s : Bernstein Polynomial Curve %i',mfilename,ite_num);
+plot_fx(fx,a,b,figure_name);
 
-
-
-switch BOOL_PLOT_CP
-    case 1
-        a = 0;
-        b = 1;
-        i = 0;
-        inc = 0.01;
-        x = a:inc:b;
-        f = zeros(1,length(x));
-        for c = a:inc:b
-            i = i+1;
-            f(i) = BernsteinEval(fx,c);
-        end
-        figure()
-        plot(x,f,'-');
-        hold on
-        scatter(Pk(:,1),Pk(:,2));
-        hold off
-        
-end
-
-% set the degree of polynomial f
+% Set the degree of polynomial f
 degree = m;
 
-% set the intial depth to 1
+W_DEGREE = m;
+
+% Set the intial depth to 1
 ini_depth = 1;
 
 % Set the number of found roots
@@ -81,173 +59,121 @@ reached_depth = 1;
 % Obtain the roots using the bisection method.
 [t,~,reached_depth] = FindRoots(Pk,degree,ini_depth,W_DEGREE,root_count,reached_depth);
 
-switch bool_printMessageLog_subdivision
-    case 1
-        fprintf('final depth =%i\n', reached_depth)
-end
+root_mult_array = [];
 
 if isempty(t)
     fprintf('\nROOTS CALCULATED BY SUBDIVISION FUNCTION \n');
     fprintf('No Roots were Found\n')
-    return  
+    return
 end
 
-% Given the set of calculated simple roots
-% produce a polynomial in the bernstein form of these roots
-
+% %
+% Given the set of calculated simple roots produce a polynomial in the 
+% bernstein form.
 roots = [real(t(:,1)), ones(length(t),1)];
 
 % Get coefficients of polynomial r1 in the scaled bernstein form
 r1_bi = B_poly(roots);
 
-% set m to be the degree of r1.
-m = length(r1_bi)-1;
-
-% Get the binomial coefficients corresponding to polynomial r1
-Bi_m = zeros(m+1,1);
-for i = 0:1:m
-    Bi_m(i+1) = nchoosek(m,i);
-end
-
 % Divide by binomial coefficients to obtain r1 in standard bernstein basis.
-r1x = r1_bi./Bi_m;
+r1_x = GetWithoutBinomials(r1_bi);
 
-% Obtain f2 = f1/r1
-deconvArray = {fx, r1x};
-f2 = Deconvolve(deconvArray);
-f2 = cell2mat(f2(1));
+% Obtain the polynomial f_{2}, given by the removal of the calculated roots
+% from f_{1}.
+f2 = Bernstein_Deconvolve(fx,r1_x);
 
-
-while length(f2) > 1
+% While f_{2} is not a scalar.
+while GetDegree(f2) >= 1
     
-    % Get degree of polynomial f
-    m_ite = length(f2)-1;
+    % Increment iteration number
+    ite_num = ite_num + 1;
     
-    % Get control points of polynomial f2
-    Pk = [];
-    for i = 0:1:m_ite
-        Pk = [Pk ; a + (i/m_ite).*(b-a)     f2(i+1)];
-    end
+    % Get degree of polynomial f2
+    m_ite = GetDegree(f2);
     
-    switch BOOL_PLOT_CP
-        case 1
-            % Plot polynomial f2 and its control points.
-            i = 0;
-            inc = 0.01;
-            a = 0;
-            b = 1;
-            x = a:inc:b;
-            f = zeros(1,length(x));
-            for c = a:inc:b
-                i = i+1;
-                f(i) = BernsteinEval(f2,c);
-            end
-            figure()
-            plot(x,f,'-');
-            hold on
-            scatter(Pk(:,1),Pk(:,2));
-            hold off
-    end
+    % Get the control points of f2
+    Pk = GetControlPoints(a,b,f2);
+    
+    % Plot f2
+    figure_name = sprintf('%s : Bernstein Polynomial Curve %i',mfilename,ite_num);
+    plot_fx(f2,a,b,figure_name);
     
     % Get roots of polynomial f2
-    [t_new,~,reached_depth] = FindRoots(Pk,length(Pk)-1,1,m_ite,1,1);
+    [t_new,~,reached_depth] = FindRoots(Pk,m_ite,1,m_ite,1,1);
     
     % add the found roots to a list of roots
-    t = [t; t_new];
+    root_mult_array = [root_mult_array; t_new ones(length(t_new))];
     
-    % Build Polynomial from newly obtained roots
-    try
-        roots = [real(t_new(:,1)), ones(length(t_new),1)];
-    catch
-        break  ;
+    % if no new roots are found, end this while loop
+    [nEntries_t,~] = size(t_new);
+    if (nEntries_t == 0)
+        break;
     end
     
+    % Build Polynomial from newly obtained roots
+    roots = [real(t_new(:,1)), ones(length(t_new),1)];
+
     % Get polynomial coefficients of r1 in scaled bernstien basis
     r1_bi = B_poly(roots);
     
-    % Get degree of r1
-    m_new = length(r1_bi)-1;
-    
-    % Get corresponding binomial coefficients to the polynomial r1
-    Bi_m_new = zeros(m_new+1,1);
-    for i = 0:1:m_new
-        Bi_m_new(i+1) = nchoosek(m_new,i);
-    end
-    
     % Get r1 in standard bernstein basis.
-    r1x = r1_bi./Bi_m_new;
-    
-    % put fx and r1x into an array
-    deconvArray = {f2, r1x};
+    r1_x = GetWithoutBinomials(r1_bi);
     
     % Perform deconvolution and obtain remaining part of original input
     % polynomial. Update f2 to be the result of the deconvolution.
-    f2 = Deconvolve(deconvArray);
-    f2 = cell2mat(f2(1));
+    f2 = Bernstein_Deconvolve(f2,r1_x);
+    
     
 end
 
-fprintf('\nROOTS CALCULATED BY SUBDIVISION FUNCTION \n');
-fprintf('\t Root \t \t \t \t\t \t \t \t \t \t \t \t Multiplicity \n')
-fprintf('%22.15f \t \t\n',real(t(:,1)));
+PrintoutRoots('SUBDIVISION' , root_mult_array);
+
 end
 
 function [roots,root_count,reached_depth] = FindRoots(CP,degree,curr_depth,W_DEGREE,root_count,reached_depth)
-
-% %                 Inputs
-
+%
+% Inputs
+%
 % CP - the set of control points [x,y]
-
+%
 % degree - degree of the polynomial
-
+%
 % curr_depth - current depth of iteration
-
+%
 % W_Degree - Degree of control points
-
+%
 % root count - Number of roots obtained to this depth.
-
+%
 % reached depth - maximum reached depth
-
+%
 % bool_printMessageLog - Print Messages.
-
+%
 % t -
+%
 
-% %                 Global Variables
 
-global bool_printMessageLog_subdivision
-
+% If the current depth is greater than reached depth so far, increment by 1
 if curr_depth > reached_depth
     reached_depth = curr_depth;
 end
 
-MAXDEPTH = 50;
+global MAXDEPTH
+
+% Initialise empty set of roots
 roots = [];
 
-switch bool_printMessageLog_subdivision
-    case 1
-        fprintf('Current Depth: %i \n' , curr_depth)
-        fprintf('Current Interval: %2.3f - %2.3f \n',CP(1,1), CP(end,1))
-end
-
-switch bool_printMessageLog_subdivision
-    case 1
-        fprintf('Get Number of crossings between control polygon and the t axis\n')
-        fprintf('Crossings: %i \n',CrossingCount(CP));
-end
+% Get number of crossings of control polygon and x axis.
+nCrossings = CrossingCount(CP);
 
 % get the number of crossings of the control polygon.
-switch(CrossingCount(CP))
-    case 0
-        % No solutions in the interval
-        switch bool_printMessageLog_subdivision
-            case 1
-                fprintf('No solutions exist in this interval check next interval\n')
-        end
+switch(nCrossings)
+    case 0 % No solutions in the interval
+        
         
     case 1
         % If number of crossings is 1, then there is a unique solution in
         % the interval
-        if (curr_depth >= MAXDEPTH)
+        if (curr_depth >= MAXDEPTH) % Current depth is equal to or greater than the maximum depth
             
             % Calculate an approximate intercept, in the middle of the
             % interval.
@@ -259,12 +185,7 @@ switch(CrossingCount(CP))
             % Increment the root count.
             root_count = root_count + length(t_new);
             
-            % Print message to screen
-            switch bool_printMessageLog_subdivision
-                case 1
-                    fprintf('Found Root :  %f \n',roots)
-            end
-            
+           
             
         elseif (ControlPolygonFlatEnough(CP,degree))
             % if the control polygon is considered flat enough, that the
@@ -279,41 +200,26 @@ switch(CrossingCount(CP))
             
             % Increment the root count
             root_count = root_count + length(t_new);
-            
-            % Print message to screen
-            switch bool_printMessageLog_subdivision
-                case 1
-                    fprintf('Found Root %f \n',roots)
-            end
-            
+
             
         else
-            % If the control polygon isnt flat enough. subdivide the
+            % If the control polygon isn't flat enough. subdivide the
             % control polygon and look at the left and right control
             % polygons individually.
             
             % Get start point
             a = CP(1,1);
+            
             % Get end point
             b = CP(degree+1,1);
+            
             % Get midpoint
             c = a + ((b-a) /2);
             
-            % Print message to screen
-            switch bool_printMessageLog_subdivision
-                case 1
-                    fprintf('Subdivision Required \n');
-            end
-            
             % Get a set of control points for the left and right halves of
             % the interval.
-            [Left_Control_Points,Right_Control_Points] = Bezier(CP,degree,c);
+            [Left_Control_Points,Right_Control_Points] = BezierSubdivide(CP,degree,c);
             
-            % Print message to screen
-            switch bool_printMessageLog_subdivision
-                case 1
-                    fprintf('Look in left interval. \n')
-            end
             
             % Perform find roots on the left partition, while incrementing
             % the current depth by one.
@@ -326,13 +232,6 @@ switch(CrossingCount(CP))
             % Increment the root count.
             root_count = root_count + length(t_left);
             
-            
-            switch bool_printMessageLog_subdivision
-                case 1
-                    fprintf('Look in right interval. \n')
-                    %fprintf('Control Points Right at depth %i \n',depth);
-                    %Right_Control_Points;
-            end
             
             % Perform findRoots() on the right set of control points
             [t_right,~,reached_depth] = FindRoots(Right_Control_Points,degree,curr_depth+1,W_DEGREE,root_count,reached_depth);
@@ -350,30 +249,33 @@ switch(CrossingCount(CP))
         % If the number of crossings is not 0 or 1, then num > 1.
         % The interval contains more than one root.
         
-        % Print message to screen
-        switch bool_printMessageLog_subdivision
-            case 1
-                fprintf('Many crossings exist in this interval. Subdivide interval..\n')
-        end
+        if (curr_depth >= MAXDEPTH) % Current depth is equal to or greater than the maximum depth
+            
+            % Calculate an approximate intercept, in the middle of the
+            % interval.
+            t_new = (CP(1,1) + CP(W_DEGREE+1,1)) ./2;
+            
+            % Add the approximate root to the set of roots
+            roots = [roots;t_new];
+            
+            % Increment the root count.
+            root_count = root_count + length(t_new);
+        else
         
         % Get Start Point
         a = CP(1,1);
+        
         % Get End Point
         b = CP(degree+1,1);
+        
         % Get Midpoint
         c = a + ((b-a) /2);
         
         % Get a set of control points for the left and right halves of
         % the interval.
-        [Left_Control_Points,Right_Control_Points] = Bezier(CP,degree,c);
+        [Left_Control_Points,Right_Control_Points] = BezierSubdivide(CP,degree,c);
         
-        
-        % Print message to screen
-        switch bool_printMessageLog_subdivision
-            case 1
-                fprintf('Check left interval.');
-        end
-        
+
         % Perform find roots on the left partition, while incrementing
         % the current depth by one.
         [t_left,~,reached_depth]  = FindRoots(Left_Control_Points,degree,curr_depth+1,W_DEGREE,root_count,reached_depth);
@@ -384,13 +286,7 @@ switch(CrossingCount(CP))
         
         % Increment root count.
         root_count = root_count + length(t_left);
-        
-        % Print message to screen
-        switch bool_printMessageLog_subdivision
-            case 1
-                fprintf('Check right interval.')
-        end
-        
+
         % Perform findRoots() on the right set of control points
         [t_right,~,reached_depth] = FindRoots(Right_Control_Points,degree,curr_depth+1,W_DEGREE,root_count,reached_depth);
         
@@ -399,7 +295,7 @@ switch(CrossingCount(CP))
         
         % Increment root count.
         root_count = root_count + length(t_right);
-        
+        end
 end
 
 
@@ -408,22 +304,20 @@ end
 function intercept = ComputeXIntercept(CP,degree)
 % Calculate the intercept of the X axis of the line between the first and
 % last control point.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                       Inputs.
-
+%
+% Inputs.
+%
 % CP :  Set of control points [x,y]
-
+%
 % degree :  Degree of control points.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
+%
 %                       Outputs
-
+%
 % intercept :   Intercept of the x axis between C(0,0) and C(n,n)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
 
 % set first control point to be (x0,y0)
 x_0 = CP(1,1);
@@ -449,22 +343,15 @@ end
 
 function n_crossings = CrossingCount(CP)
 % Get number of crossings between a given control polygon and the X axis.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                           Inputs
-
-
+%
 % CP :  Control Points [x,y]
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Outputs.
-
-
+%
+% Outputs.
+%
 % n_crossings : Number of crossings
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 
 % Initialise old sign to be the value of y for the first control point.
@@ -497,31 +384,27 @@ end
 end
 
 
-function [new_left_pk, new_right_pk] = Bezier(Pk,degree,c)
-% given a set of control points, subdivide such that two new sets of
+function [new_left_pk, new_right_pk] = BezierSubdivide(Pk,degree,c)
+% Given a set of control points, subdivide such that two new sets of
 % control points are obtained.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Inputs.
-
-
+%
+% Inputs.
+%
+%
 % Pk :  Set of original control points.
-
+%
 % degree :  degree of control points
-
+%
 % c :    point of subdivision.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Outputs.
-
-
+%
+%
+% Outputs.
+%
+%
 % new_left_pk : - The set of control points on the left of c.
-
+%
 % new_right_pk : - The set of control points on the right of c.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 
 % obtain each set of control points
@@ -561,6 +444,7 @@ function [Pk_1] = deCasteljau(c, Pk_0)
 
 % get first control poitn
 a = Pk_0(1,1);
+
 % get last control point
 b = Pk_0(end,1);
 
@@ -586,32 +470,24 @@ end
 function val = ControlPolygonFlatEnough(CP,degree)
 % Given a control polygon, return a boolean as to whether it is flat enough
 % to be considered a straight line.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% %                         Inputs
-
-
+%
+% Inputs
+%
+%
 % CP :  Set of control points which form the control polygon [x,y]
-
+%
 % degree :  Degree of control polygon
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% %                         Outputs
-
-
+%
+% Outputs
+%
+%
 % val - (Boolean)
 %   1 : Control polygon is flat enough to be considered a line
 %   0 : Control polygon is not flat enough.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% CONTROLPOLYGONFLATENOUGH - Decide whether the control polygon is flat
-% enough.
+global EPSILON
 
-
-EPSILON = 1e-15;
 
 % derive implicit equation fo line connect first and last point
 a = CP(1,1) - CP(degree,1);
@@ -683,39 +559,6 @@ else
 end
 end
 
-
-function [y] =  BernsteinEval(f,c)
-% Given a function f, evaluate it at point c.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Inputs.
-
-
-% f :   Polynomial coefficients f
-
-% c :   Point on t axis.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Outputs.
-
-% xx :  The value f(t) = y, for input parameter t.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-t = c;
-m = length(f)-1;
-
-for i = 0:length(f)-1
-    
-    x(i+1) = f(i+1) .* nchoosek(m,i) .* (1-t)^(m-i) .* t^i ;
-end
-
-y = sum(x);
-
-end
 
 
 

@@ -11,15 +11,15 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 %                       Outputs.
 %
-% t : Degree of GCD of f(x) and g(x) 
+% t : Degree of GCD of f(x) and g(x)
 %
 % alpha : optimal value of alpha
 %
 % theta : optimal value of theta
-% 
-% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
 
+% Get global variables
 global BOOL_PREPROC
 global PLOT_GRAPHS
 global THRESHOLD
@@ -29,8 +29,6 @@ if isempty(BOOL_PREPROC) || isempty(PLOT_GRAPHS) ...
         isempty(THRESHOLD) || isempty(MIN_DELTA_MAG_ROW_SUMS)
     error('err')
 end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % Get degree m of polynomial f(x)
@@ -116,7 +114,7 @@ for k = 1:1:min_mn
     % Get maximum and minimum row diagonals of R1
     vMax_Diag_R1(k) = max(diag(R1));
     vMin_Diag_R1(k) = min(diag(R1));
-       
+    
     % Get maximum and minimum row norms of rows of R1.
     vMax_R1_RowNorm(k) = max(vR1_RowNorms);
     vMin_R1_RowNorm(k) = min(vR1_RowNorms);
@@ -137,16 +135,14 @@ vRatio_MaxMin_RowNorm_R = sanitize(vRatio_MaxMin_RowNorm_R);
 vRatio_MaxMin_Diagonals_R = vMax_Diag_R1 ./ vMin_Diag_R1;
 vRatio_MaxMin_Diagonals_R = sanitize(vRatio_MaxMin_Diagonals_R);
 
-
-
-%% Analyse Max:Min Row Norms for each subresultant
+% % Analyse Max:Min Row Norms for each subresultant
 % Get the change in the ratios from one subresultant to the next.
 vDelta_MaxMin_RowNorm_R = abs(diff(log10(vRatio_MaxMin_RowNorm_R)));
 
 % Get the maximum change in rowsum ratio and its index
 [max_Delta_MaxMin_RowSum_R,indexMaxChange_RowNorm] = max(vDelta_MaxMin_RowNorm_R);
 
-%% Anaysis of Max:Min Diagonal entries of each subresultant
+% % Anaysis of Max:Min Diagonal entries of each subresultant
 
 % Get the change in the ratios of diagonal elements from one subresultant
 % to the next.
@@ -155,7 +151,7 @@ vDelta_MaxMin_Diag_R = abs(diff(log10(vRatio_MaxMin_Diagonals_R)));
 % Get the maximum change in diag ratio and its index
 [max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = max(vDelta_MaxMin_Diag_R);
 
-%% Analysis of Minimum Singular values
+% % Analysis of Minimum Singular values
 
 %%
 
@@ -181,7 +177,6 @@ if abs(max_Delta_MaxMin_Diag_R) < THRESHOLD
         
         %all subresultants are full rank
         t = 0;
-  
         alpha = 0;
         theta = 0;
         GM_fx = 0;
@@ -193,7 +188,7 @@ if abs(max_Delta_MaxMin_Diag_R) < THRESHOLD
         fprintf('All subresultants are Singular \n')
         t = min(m,n);
     end
-
+    
 else % The degree of the GCD is somewhere between 1 and min(m,n)
     
     % Get degree of GCD by ration of max:min row norms
@@ -221,50 +216,54 @@ end
 
 switch PLOT_GRAPHS
     case 'y'
-% Plot Graph of ratio of max : min element of the diagonal elements of R1 from the QR decompositions.
-figure('name','GetDegree - MaxMin - Row Diags')
-x = 1:min_mn;
-plot(x,log10(vRatio_MaxMin_Diagonals_R),'red-s');
-hold on
-axis([1,min_mn,0,inf])
-legend('Max:Min diag element of subresultant S_{k}');
-title('Max:Min diagonal elements of R1 from the QR decomposition of S_{k} (Original)');
-ylabel('log_{10} max:min diag element')
-hold off
-
-
-% Plot Graph of ratio of max : min row sum in R1 from the QR decompositions.
-figure('name','GetDegree - MaxMin - Row Norms')
-x = 1:min_mn;
-plot(x,log10(vRatio_MaxMin_RowNorm_R),'red-s');
-hold on
-axis([1,min_mn,0,inf])
-legend('Max:Min Row Norms of Rows in R1 from the QR decomposition of S_{k}');
-title('Max:Min Row Norms of Rows in R1 from the QR Decomposition of S_{k} (Original)');
-hold off
-
-
-% Plot graph of norms of each row (N) from the qr decompostion of each S_{k}
-
-figure('name','GetDegree - RowNorm')
-plot(Data_RowNorm(:,1),(log10(Data_RowNorm(:,2))),'*')
-axis([0.9,min_mn,-inf,+inf])
-xlabel('k')
-ylabel('Normalised Row Sums of R1 in S_{k}')
-title(['Normalised Row Sums of R1 fom the QR decomposition of each subresultant S_{k} \newline '...
-    'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
-hold off
-
-
-figure('name','GetDegree - DiagNorm')
-plot(Data_DiagNorm(:,1),(log10(Data_DiagNorm(:,2))),'*')
-axis([0.9,min_mn,-inf,+inf])
-xlabel('k')
-ylabel('Normalised Diagonals of R1 in S_{k}')
-title(['Normalised Diagonals in R1 matrix from the QR decomposition of each subresultant S_{k} \newline '...
-    'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
-hold off
-
+        % Plot Graph of ratio of max : min element of the diagonal elements of R1 from the QR decompositions.
+        figure_name = sprintf('%s : Max:min Row Diagonals',mfilename);
+        figure('name',figure_name)
+        x = 1:min_mn;
+        plot(x,log10(vRatio_MaxMin_Diagonals_R),'red-s');
+        hold on
+        axis([1,min_mn,0,inf])
+        legend('Max:Min diag element of subresultant S_{k}');
+        title('Max:Min diagonal elements of R1 from the QR decomposition of S_{k} (Original)');
+        ylabel('log_{10} max:min diag element')
+        hold off
+        
+        
+        % Plot Graph of ratio of max : min row sum in R1 from the QR decompositions.
+        figure_name = sprintf('%s : Max:min Row Norms',mfilename);
+        figure('name',figure_name)
+        x = 1:min_mn;
+        plot(x,log10(vRatio_MaxMin_RowNorm_R),'red-s');
+        hold on
+        axis([1,min_mn,0,inf])
+        legend('Max:Min Row Norms of Rows in R1 from the QR decomposition of S_{k}');
+        title('Max:Min Row Norms of Rows in R1 from the QR Decomposition of S_{k} (Original)');
+        hold off
+        
+        
+        % Plot graph of norms of each row (N) from the qr decompostion of each S_{k}
+        figure_name = sprintf('%s : RowNorm',mfilename);
+        figure('name',figure_name)
+        plot(Data_RowNorm(:,1),(log10(Data_RowNorm(:,2))),'*')
+        axis([0.9,min_mn,-inf,+inf])
+        xlabel('k')
+        ylabel('Normalised Row Sums of R1 in S_{k}')
+        title(['Normalised Row Sums of R1 fom the QR decomposition of each subresultant S_{k} \newline '...
+            'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
+        hold off
+        
+        
+        % %
+        figure_name = sprintf('%s : RowNorm',mfilename);
+        figure('name',figure_name)
+        plot(Data_DiagNorm(:,1),(log10(Data_DiagNorm(:,2))),'*')
+        axis([0.9,min_mn,-inf,+inf])
+        xlabel('k')
+        ylabel('Normalised Diagonals of R1 in S_{k}')
+        title(['Normalised Diagonals in R1 matrix from the QR decomposition of each subresultant S_{k} \newline '...
+            'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
+        hold off
+        
     case 'n'
         % Do Nothing
     otherwise
@@ -291,7 +290,7 @@ function data = AddToResults(data,vector,k)
 % came from the k-th subresultant, and an index 1:1:nEntries.
 
 
-% Get Number of entries in vector 
+% Get Number of entries in vector
 nEntries = size(vector,1);
 
 % Get a vector of k
