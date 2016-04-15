@@ -5,3 +5,9 @@
     6 	     4 	     2 	 2.794808e-11 	 y      1.000000e-10 	 Standard STLN 	None 
     6 	     4 	     2 	 1.264879e-10 	 n      1.000000e-10 	 Standard STLN 	None 
     6 	     4 	     2 	 1.273523e-10 	 n      1.000000e-10 	 None           None 
+    4 	     2 	     1 	 8.255627e-10 	 y 	 1.000000e-10 	 None 	 None 
+    4 	     2 	     1 	 8.255627e-10 	 y 	 1.000000e-10 	 None 	 None 
+   29 	    36 	    26 	 8.469729e-09 	 y 	 1.000000e-10 	 None 	 None 
+    4 	     2 	     1 	 8.255627e-10 	 y 	 1.000000e-10 	 None 	 None 
+   10 	     8 	     5 	 9.851533e-13 	 y 	  	 None 	 None 
+   20 	    15 	     7 	 3.809304e-10 	 y 	  	 None 	 None 

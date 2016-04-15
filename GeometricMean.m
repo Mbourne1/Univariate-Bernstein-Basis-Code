@@ -28,7 +28,7 @@ global BOOL_LOG
 
 % Get previous state of logs
 previous_log_state = BOOL_LOG;
-BOOL_LOG = 'n';
+BOOL_LOG = 'y';
 
 
 
@@ -47,7 +47,7 @@ BOOL_LOG = previous_log_state;
 end
 
 
-function gm = GMlog(fx,n,k)
+function gm = GMlog(fx,n_k)
 % Calculate the Geometric mean of the entries of the Coefficient matrix $C_{f}$
 % which may or may not contain Q. may or may not contain denominator.#
 %
@@ -80,42 +80,63 @@ global BOOL_Q
 
 switch BOOL_Q
     case 'y' 
-        % Include Q in Sylvester Subresultant S_{k} so include Q in the 
-        % calculation of the geometric mean.
+        % Compute Geometric Mean of D^{-1}T(f,g)Q, which contains three
+        % binomial coefficients
+        
+        % Let.
+        %
+        % p1 : Product of a_{i}
+        %
+        % p2 : Product of nchoosek(i,j)
+        %
+        % p3 : product of nchoosek(m+n-k-(i+j),m-i)
+        %
+        % p4 : product of nchoosek(m+n-k,m)
+        
+        % !! Note that p2 = p3
         
         % Calculate the degree of the polynomial.
-        m = size(fx,1)-1;
+        m = GetDegree(fx);
         
         % Calculate the absolute value of the coefficients in c.
         fx = abs(fx);
         
         % Calculate part 1 of the geometric mean, the coefficient part.
         p1_log = (1/(m+1)).*log10(sum(fx));
-        %p1_exp = 10^p1_log;
+                
+                
+%         % Calculate part 2 of the geometric mean.
+%         p2_log = 0;
+%         for j = 0:1:n_k
+%             for i = 0:1:m
+%                 p2_log = p2_log + lnnchoosek(i+j,j);
+%             end
+%         end
+%         
+%         p2_log = (1./((n_k+1)*(m+1)))* (p2_log);
         
         % Calculate part 2 of the geometric mean.
-        p2_log = 0;
-        for j = 0:1:n-k
+        p3_log = 0;
+        for j = 0:1:n_k
             for i = 0:1:m
-                p2_log = p2_log + lnnchoosek(i+j,j);
+                p3_log = p3_log + lnnchoosek(m+n-k-(i+j),m-i);
             end
         end
         
-        p2_log = (2./((n-k+1)*(m+1)))* (p2_log);
-        %p2_exp = 10^p2_log;
+        p3_log = (1./((n_k+1)*(m+1)))* (p3_log);
+        
+        
         
         switch BOOL_DENOM_SYL
             case 'y' % if denominator is included
-                %p3 = nchoosek(m+n-k,n-k);
-                p3_log = lnnchoosek(m+n-k,n-k);
-                %p3_exp = 10.^p3_log;
+                p4_log = lnnchoosek(m+n_k,m);
             case 'n' % if denominator is not included
-                p3_log = 0;
+                p4_log = 0;
             otherwise
                 error('BOOL_DENOM_SYL must be set to either (y) or (n)')
         end
 
-        gm = 10.^(p1_log + p2_log - p3_log);
+        gm = 10.^(p1_log + p3_log + p3_log - p4_log);
 
     case 'n'
         % Exclude Q from Geometric mean calculations.
@@ -133,10 +154,10 @@ switch BOOL_Q
         %
         
         % Calculate the degree of the polynomial.
-        m = length(fx)-1;
+        m = GetDegree(fx);
         
         % Calculate the absolute value of the coefficients in c.
-        fx=abs(fx);
+        fx = abs(fx);
         
         % First Dealing with the numerators
         
@@ -212,17 +233,11 @@ switch BOOL_Q
     case 'y' % Include Q
         
         % Calculate the degree of the polynomial.
-        m = length(fx) - 1;
-        
+        m = GetDegree(fx);
         p2 = 1;
         
-        
         p1 = prod(fx.^(1/(m+1)));
-        
-        %f_mod = fx.*GetBinomials(m)
-        %myprod = prod(f_mod)
-        
-        
+               
         % since the product of the binomial coefficient A in the numerator
         % is equal to the product of the binomial coefficient B in the
         % numerator, only calulate this once.
@@ -245,11 +260,12 @@ switch BOOL_Q
         
         
     case 'n' % exclude Q
+        
         % Calculate the degree of the polynomial f.
-        m = length(fx)-1;
+        m = GetDegree(fx);
         
         % Get the product of the numerators       
-        prod_numerator = prod(fx.*GetBinomials(m))
+        prod_numerator = prod(fx.*GetBinomials(m));
         
         
         % Initialise the product of the denominator at 1.

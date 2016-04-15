@@ -46,6 +46,10 @@ n = GetDegree(gx) ;
 [t, alpha, theta, gm_fx, gm_gx] = ...
     GetGCD_Degree(fx,gx);
 
+[t, alpha, theta, gm_fx, gm_gx] = ...
+    GetGCD_DegreeByNewMethod(fx,gx);
+
+
 fprintf('GCD Degree : %i \n ',t);
 
 if t == 0

@@ -1,9 +1,11 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
     GetGCD_Degree(fx,gx)
+% GetGCD_Degree(fx,gx)
+%
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
 %
 %
-%                       Inputs.
+% Inputs.
 %
 % fx : coefficients of polynomial f, expressed in Bernstein Basis
 %
@@ -53,8 +55,8 @@ vGM_gx    =   zeros(min_mn,1);
 
 vMax_Diag_R1 = zeros(min_mn,1);
 vMin_Diag_R1 = zeros(min_mn,1);
-vMax_R1_RowNorm = zeros(min_mn,1);
-vMin_R1_RowNorm = zeros(min_mn,1);
+vMaxRowNormR1 = zeros(min_mn,1);
+vMinRowNormR1 = zeros(min_mn,1);
 
 % Initialise a vector to store minimal residuals obtained by QR
 % decomposition of each subresultant S_{k} for k=1,...,min(m,n)
@@ -103,21 +105,22 @@ for k = 1:1:min_mn
     vR1_RowNorms = sqrt(sum(R1.^2,2))./norm(R1);
     
     % Get Norms of diagonal eleements of R1
-    vR1_DiagNorm = diag(R1)./norm(diag(R1));
+    vDiagsR1 = diag(R1);
+    vDiagsR1_norm = vDiagsR1 ./ norm(vDiagsR1);
     
     % Insert Row Norm data into a matrix
     Data_RowNorm = AddToResults(Data_RowNorm,vR1_RowNorms,k);
     
     % Insert diagonals data into a matrix
-    Data_DiagNorm = AddToResults(Data_DiagNorm,vR1_DiagNorm,k);
+    Data_DiagNorm = AddToResults(Data_DiagNorm,vDiagsR1_norm,k);
     
     % Get maximum and minimum row diagonals of R1
-    vMax_Diag_R1(k) = max(diag(R1));
-    vMin_Diag_R1(k) = min(diag(R1));
+    vMax_Diag_R1(k) = max(vDiagsR1);
+    vMin_Diag_R1(k) = min(vDiagsR1);
     
     % Get maximum and minimum row norms of rows of R1.
-    vMax_R1_RowNorm(k) = max(vR1_RowNorms);
-    vMin_R1_RowNorm(k) = min(vR1_RowNorms);
+    vMaxRowNormR1(k) = max(vR1_RowNorms);
+    vMinRowNormR1(k) = min(vR1_RowNorms);
     
     % Get the minimal residuals for each subresultant S_{k}.
     vMinimumResidual(k) = GetMinimalDistance(Sk);
@@ -128,7 +131,7 @@ end
 % End of Loop
 
 % Get ratio of max:min Row Norms of R1
-vRatio_MaxMin_RowNorm_R = vMax_R1_RowNorm./ vMin_R1_RowNorm;
+vRatio_MaxMin_RowNorm_R = vMaxRowNormR1./ vMinRowNormR1;
 vRatio_MaxMin_RowNorm_R = sanitize(vRatio_MaxMin_RowNorm_R);
 
 % Get ratio of max:min diagonals of R1

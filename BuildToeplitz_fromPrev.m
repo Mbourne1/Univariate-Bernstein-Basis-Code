@@ -4,10 +4,9 @@ function C1a = BuildToeplitz_fromPrev(m,n,k,C_0a)
 % subresultant S_{k} to be built. C_0a : the preceeding Partition, from
 % which C1a will be built. BOOL_DENOM : BOOL_LOG : Unused.
 
-global bool_denom_syl
+global BOOL_DENOM_SYL
 
 
-warning('off')
 % Where C_0 is the previous Cauchy Matrix,
 knew = k+1;
 % Build Matrix A
@@ -23,7 +22,7 @@ Ba = [...
 C1a = A * C_0a * Ba;
 
 %
-switch bool_denom_syl
+switch BOOL_DENOM_SYL
     case 1
         % if Denominator is included in building toeplitz, then update
         % denominator for next S_k

@@ -56,8 +56,9 @@ G_sam = zeros(1,cols_g);
 
 % Consider initially the polynomial F. For each coefficient, select
 % the largest and smallest elements that contain it.
-for k1=1:1:m+1  % loop for all the coefficients of F
-    
+
+% For each coefficient
+for k1=1:1:m+1  
    % F_sam = zeros(1,cols_f);
     
     %   Put all the elements in the (k1-1)th leading diagonal, that is, the
@@ -73,6 +74,8 @@ for k1=1:1:m+1  % loop for all the coefficients of F
 end
 
 % Repeat this procedure for the coefficients b(i) of G.
+
+
 for k1=1:1:n+1
     
     for k2=cols_f+1:1:cols_f+cols_g
