@@ -40,7 +40,7 @@ end
 
 % Plot the coefficients and the control points of the curve
 figure_name = sprintf('%s : Bernstein Polynomial Curve %i',mfilename,ite_num);
-plot_fx(fx,a,b,figure_name);
+Plot_fx(fx,a,b,figure_name);
 
 % Set the degree of polynomial f
 degree = m;
@@ -96,7 +96,7 @@ while GetDegree(f2) >= 1
     
     % Plot f2
     figure_name = sprintf('%s : Bernstein Polynomial Curve %i',mfilename,ite_num);
-    plot_fx(f2,a,b,figure_name);
+    Plot_fx(f2,a,b,figure_name);
     
     % Get roots of polynomial f2
     [t_new,~,reached_depth] = FindRoots(Pk,m_ite,1,m_ite,1,1);

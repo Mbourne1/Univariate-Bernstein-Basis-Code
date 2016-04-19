@@ -30,7 +30,7 @@ ite_num = 1;
 root_mult_array = [];
 
 figure_name = sprintf('%s : Bernstein Polynomial Curve %i',mfilename,ite_num);
-plot_fx(fx,a,b,figure_name);
+Plot_fx(fx,a,b,figure_name);
 
 while (b - a >= min_interval_size)
     %&&...
@@ -92,7 +92,7 @@ while GetDegree(f2) >=1
     
     % Get the control points of f2
     figure_name = sprintf('%s : Bernstein Polynomial Curve - %i',mfilename,ite_num);
-    plot_fx(f2,0,1,figure_name);
+    Plot_fx(f2,0,1,figure_name);
     
     % Set interval lower bound
     a = interval_lowerbound;

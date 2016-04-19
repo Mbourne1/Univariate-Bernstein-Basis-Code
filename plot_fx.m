@@ -1,6 +1,7 @@
+function [] = Plot_fx(fx,a,b,figure_name)
+% Plot the Bernstein polynomial f(x) and its control points defined over
+% the interval [a,b]
 
-function [] = plot_fx(fx,a,b,figure_name)
-% Plot the polynomial f(x) and its control points
 
 global PLOT_GRAPHS
 switch PLOT_GRAPHS

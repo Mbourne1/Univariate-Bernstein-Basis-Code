@@ -88,7 +88,6 @@ for k = 1:1:min_mn
     % mean by my new method
     if k>1
         GM = GetGeometricMeanFromPrevious(fx , vGM_fx(k-1) , m , n-k);
-        display(GM);
     end
     
     % Divide f(x) and g(x) by geometric means

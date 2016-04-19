@@ -89,7 +89,8 @@ while GetDegree(fx) >= 1
             
             % for each line of the convex hull, check if it intersects
             % Plot the control points
-            Plot_fx(CP,k)
+            figure_name = sprintf('%s : Plotting f(x)',mfilename);
+            Plot_fx(CP,0,1,'')
             
             % Get the first point at which the convex hull crosses the x axis.
             x_intercept_old = x_intercept_new;
