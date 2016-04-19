@@ -87,10 +87,13 @@ for k = 1:1:min_mn
     % Given the previous geometric mean of f(x) calculate the new geometric
     % mean by my new method
     if k>1
+        previous_GM = ;
         GM = GetGeometricMeanFromPrevious(fx , vGM_fx(k-1) , m , n-k);
         display(GM);
     end
     
+     
+     
     % Divide f(x) and g(x) by geometric means
     fx_n = fx./vGM_fx(k);
     gx_n = gx./vGM_gx(k);

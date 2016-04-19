@@ -14,3 +14,7 @@
     5 	     4 	     2 	 5.375023e-13 	 y 	  	 None 	 None 
     5 	     4 	     2 	 5.375023e-13 	 y 	  	 None 	 None 
     4 	     4 	     2 	 1.776357e-15 	 y 	  	 None 	 None 
+   10 	     7 	     5 	 1.093614e-13 	 y 	  	 None 	 None 
+   20 	    15 	    10 	 7.891614e-02 	 y 	  	 None 	 None 
+   20 	    15 	    10 	 6.922899e+00 	 y 	  	 None 	 None 
+   20 	    15 	    10 	 6.988048e+00 	 y 	  	 Standard STLN 	 None 
