@@ -83,7 +83,36 @@ for k = 1:1:min_mn
     
     [vGM_fx(k), vGM_gx(k),vAlpha(k),vTheta(k)] = Preprocess(fx,gx,k);
     
-    
+    % 18/04/2016
+    % Given the previous geometric mean of f(x) calculate the new geometric
+    % mean by my new method
+%      if k > 1
+% 
+%         
+%         Part_a = ...
+%             (...
+%                 (m+n-k+1) ./ (n-k+1) ...
+%             )...
+%             .^( (n-k+2) ./ (n-k+1) );
+% 
+%         previous_gm = vGM_fx(k-1);
+%         
+%         Part_b = ...
+%             previous_gm .^((n-k+2)./(n-k+1));
+% 
+%         
+%         temp_prod = 1;
+%         for i = 0:1:m
+%             temp_prod = temp_prod ...
+%                 .* nchoosek(m+n-k,m) ./ ( (abs(fx(i+1))) .* nchoosek(n-k+1+i,i) .* nchoosek(m+n-k+1-i,m-i));
+%         end
+%         Part_c = temp_prod;
+%         Part_c = Part_c .^ (1./ ((n-k+1) *(m+1)));
+% 
+%         GM_test = Part_a * Part_b * Part_c;
+%      end
+     
+     
     % Divide f(x) and g(x) by geometric means
     fx_n = fx./vGM_fx(k);
     gx_n = gx./vGM_gx(k);

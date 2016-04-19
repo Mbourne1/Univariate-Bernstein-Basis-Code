@@ -22,7 +22,7 @@ BOOL_DENOM_SYL = 'y';
 global SYLVESTER_BUILD_METHOD
 % Standard D*T*Q
 % Rearranged : Remove common denominator
-SYLVESTER_BUILD_METHOD = 'Rearranged';
+SYLVESTER_BUILD_METHOD = 'Standard';
 
 
 %% Structuring the matrix [C(f) | C(g)]

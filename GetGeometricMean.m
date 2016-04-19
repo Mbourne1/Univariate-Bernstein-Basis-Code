@@ -5,19 +5,17 @@ global GEOMETRIC_MEAN_METHOD
 
 
 % Get degree of polynomial f(x)
-[r,~] = size(fx);
-m = r-1;
+m = GetDegree(fx);
 
 % Get degree of polynomial g(x)
-[r,~] = size(gx);
-n = r-1;
+n = GetDegree(gx);
 
 
 switch GEOMETRIC_MEAN_METHOD
     case 'matlab'
         
-        C_f_unproc = BuildT1(fx,n-k);
-        C_g_unproc = BuildT1(gx,m-k);
+        C_f_unproc = BuildDT1Q1(fx,n-k);
+        C_g_unproc = BuildDT1Q1(gx,m-k);
         
         % Use Matlab method for calculating GM
         lambda = geomean(abs(C_f_unproc(C_f_unproc~=0)));

@@ -35,8 +35,8 @@ switch BOOL_PREPROC
     case 'y'
         
         % Get Unprocessed partitions (Including Geometric Mean)
-        C_f_unproc = BuildT1(fx,n-k);
-        C_g_unproc = BuildT1(gx,m-k);
+        C_f_unproc = BuildDT1Q1(fx,n-k);
+        C_g_unproc = BuildDT1Q1(gx,m-k);
         
         % Reason for performing BuildToeplitz before taking geometric
         % mean is that the MATLAB function geomean requires the

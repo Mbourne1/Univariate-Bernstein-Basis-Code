@@ -3,7 +3,7 @@ function [gm]=GeometricMean(fx,n,k)
 % contain the coefficients of the polynomial c in the kth subresultant
 % matrix S(c,d). The integer n is the degree of the polynomial d.
 %
-%                            Inputs
+% Inputs
 %
 % fx    :  The coefficients of one of the Bernstein basis polynomials,
 %            f or g.
@@ -13,12 +13,12 @@ function [gm]=GeometricMean(fx,n,k)
 % k     :  The order of the subresultant matrix.
 %
 %
-%                          Outputs
+% Outputs
 %
 % gm :  The geometric mean of the terms in the modified Sylvester
 %            Sylvester matrix S(f,g)Q.
 
-%%
+%
 %                       Global Variables.
 
 
@@ -28,17 +28,16 @@ global BOOL_LOG
 
 % Get previous state of logs
 previous_log_state = BOOL_LOG;
-BOOL_LOG = 'y';
-
-
+%BOOL_LOG = 'y';
 
 % Dependent on which method is used, 1 - use logs, 0 - use nchoosek
 
 switch BOOL_LOG
     case 'y' % Calculate GM using logs
-        gm = GMlog(fx,n,k);       
+        gm = GMlog(fx,n-k);       
+        
     case 'n' % Calculate GM without logs
-        gm = GMnchoosek(fx,n,k);
+        gm = GMnchoosek(fx,n-k);
 end
 
 % reset log method
@@ -51,8 +50,7 @@ function gm = GMlog(fx,n_k)
 % Calculate the Geometric mean of the entries of the Coefficient matrix $C_{f}$
 % which may or may not contain Q. may or may not contain denominator.#
 %
-%                           Inputs.
-%
+% Inputs.
 %
 % fx :  Polynomial coefficients of fx
 %
@@ -60,22 +58,15 @@ function gm = GMlog(fx,n_k)
 %
 % k :   Index of subresultants S_{k}
 %
-%
 % Outputs.
-%
 %
 % gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                       Global Variables.
-
+% Global Variables.
 
 global BOOL_DENOM_SYL
-
 global BOOL_Q
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 switch BOOL_Q
@@ -102,24 +93,26 @@ switch BOOL_Q
         fx = abs(fx);
         
         % Calculate part 1 of the geometric mean, the coefficient part.
-        p1_log = (1/(m+1)).*log10(sum(fx));
+        % p1_log = (1/(m+1)).*log10(sum(abs(fx)));
                 
+        p1_log = (1/(m+1)).*sum(log10(abs(fx)));
+        
                 
 %         % Calculate part 2 of the geometric mean.
-%         p2_log = 0;
-%         for j = 0:1:n_k
-%             for i = 0:1:m
-%                 p2_log = p2_log + lnnchoosek(i+j,j);
-%             end
-%         end
-%         
-%         p2_log = (1./((n_k+1)*(m+1)))* (p2_log);
+        p2_log = 0;
+        for j = 0:1:n_k
+            for i = 0:1:m
+                p2_log = p2_log + lnnchoosek(i+j,j);
+            end
+        end
+        
+        p2_log = (1./((n_k+1)*(m+1)))  * (p2_log);
         
         % Calculate part 2 of the geometric mean.
         p3_log = 0;
         for j = 0:1:n_k
             for i = 0:1:m
-                p3_log = p3_log + lnnchoosek(m+n-k-(i+j),m-i);
+                p3_log = p3_log + lnnchoosek(m+n_k-(i+j),m-i);
             end
         end
         
@@ -199,11 +192,11 @@ end
 end
 
 
-function gm = GMnchoosek(fx,n,k)
+function gm = GMnchoosek(fx,n_k)
 % Get geometric mean of the entries of f(x) in the matrix DTQ using 
 % nchoosek
 %
-%                           Inputs.
+% Inputs.
 %
 %
 % fx :  Polynomial coefficients of fx
@@ -213,50 +206,57 @@ function gm = GMnchoosek(fx,n,k)
 % k :   Index of subresultants S_{k}
 %
 %
-%                           Outputs.
+% Outputs.
 %
 %
 % gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
 %
 
-%%
 %                       Global Variables.
-
-
 global BOOL_DENOM_SYL
 global BOOL_Q
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 switch BOOL_Q
     
     case 'y' % Include Q
         
+        % Split geometric mean into four parts
+        
         % Calculate the degree of the polynomial.
         m = GetDegree(fx);
         p2 = 1;
         
-        p1 = prod(fx.^(1/(m+1)));
-               
+        % Get geometric mean of a_{i}
+        % \prod_{i=0}^{m} a_{i} .^(1/m+1)
+        % p1 = prod(abs(fx)).^(1./(m+1)) % without using geomean
+        
+        p1 = geomean(abs(fx));      
+        
+        
+        
         % since the product of the binomial coefficient A in the numerator
         % is equal to the product of the binomial coefficient B in the
         % numerator, only calulate this once.
-        for j = 0:1:n-k
+        temp_prod = 1;
+        for j = 0:1:n_k
             for i = 0:1:m
-                p2 = p2 .* (nchoosek(i+j,j)^(2./((n-k+1)*(m+1))));
+                temp_prod = temp_prod .* nchoosek(i+j,j);
             end
         end
- 
+        p2 = temp_prod.^(1./((m+1)*(n_k+1)));
+        
         switch BOOL_DENOM_SYL
             case 'y' 
                 % Denominator is included
-                p3 = nchoosek(m+n-k,n-k);
+                p3 = nchoosek(m+n_k,n_k);
             case 'n' 
                 % Denominator is not included
                 p3 = 1;
         end
         
-        gm = p1.*p2 ./ p3;
+        gm = (p1.*p2.*p2) ./ p3;
         
         
     case 'n' % exclude Q
@@ -272,13 +272,13 @@ switch BOOL_Q
         prod_denom =1 ;
         
         for i = 0:1:m
-            for j = 0:1:n-k        
-                prod_denom = prod_denom * nchoosek(m+n-k,i+j);
+            for j = 0:1:n_k        
+                prod_denom = prod_denom * nchoosek(m+n_k,i+j);
             end
         end
         
         num =prod_numerator .^(1./(m+1));
-        denom = prod_denom .^(1./((m+1)*(n-k+1)));
+        denom = prod_denom .^(1./((m+1)*(n_k+1)));
         
         gm = num/denom;
     otherwise

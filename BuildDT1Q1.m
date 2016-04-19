@@ -21,11 +21,16 @@ global SYLVESTER_BUILD_METHOD
 switch SYLVESTER_BUILD_METHOD
     case 'Standard'
         
+        % Get the degree of polynomial f(x)
         m = GetDegree(fx);
         
-        % Build matrices D,T and Q.
+        % Build matrices D^{-1}
         D = BuildD(m,n_k);
+        
+        % Build the matrix T1
         T1 = BuildT1(fx,n_k);
+        
+        % Build the matrix Q1
         Q1 = BuildQ1(n_k);
         DT1Q1 = D*T1*Q1;
         
@@ -63,7 +68,7 @@ end
 function DT1Q1 = BuildDT1Q1_Rearranged_log(fx,n_k)
 % Build Toeplitz matrix D^{-1}T(f,g)Q
 %
-%                           Inputs.
+% Inputs.
 %
 %
 % fx :  Coefficients of polynomial f(x) in bernstein basis.

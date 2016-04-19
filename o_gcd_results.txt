@@ -11,3 +11,6 @@
     4 	     2 	     1 	 8.255627e-10 	 y 	 1.000000e-10 	 None 	 None 
    10 	     8 	     5 	 9.851533e-13 	 y 	  	 None 	 None 
    20 	    15 	     7 	 3.809304e-10 	 y 	  	 None 	 None 
+    5 	     4 	     2 	 5.375023e-13 	 y 	  	 None 	 None 
+    5 	     4 	     2 	 5.375023e-13 	 y 	  	 None 	 None 
+    4 	     4 	     2 	 1.776357e-15 	 y 	  	 None 	 None 
