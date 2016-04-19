@@ -1,21 +1,23 @@
 function [] = o_roots(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
+% o_roots(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
+%
 % Given an example number, and a set of input parameters, calculate the
 % roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
 % m_{i}. 
 %
 %                           Inputs
 %
-% ex - (Int) Example Number
+% ex_num : (string) Example Number
 %
-% emin - Noise/Signal maximum threshold (minimum)
+% emin : (float) Noise/Signal maximum threshold (minimum)
 %
-% emax - Noise/Signal maximum threshold (maximum)
+% emax : (float) Noise/Signal maximum threshold (maximum)
 %
-% low_rank_approx_method - Assigned to global variable (see below)
+% bool_preproc : (string) {'y,'n''}
 %
-% apf_method - {'None', 'Standard APF', 'Root Specific APF'}
+% low_rank_approx_method : (string) {'None','Standard STLN', 'Standard SNTLN'}
 %
-% bool_preproc - Assigned to global variable (see below)
+% apf_method ('string') {'None', 'Standard APF', 'Root Specific APF'}
 %
 
 SetGlobalVariables(bool_preproc,low_rank_approx_method,apf_method)
