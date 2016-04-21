@@ -35,7 +35,7 @@ global ymax
 
 
 % max error
-epsilon = 1e-5;
+epsilon = 1e-6;
 
 % Set iteration number to one
 outer_loop_ite = 1;
@@ -89,8 +89,8 @@ while GetDegree(fx) >= 1
             
             % for each line of the convex hull, check if it intersects
             % Plot the control points
-            figure_name = sprintf('%s : Plotting f(x)',mfilename);
-            Plot_fx(CP,0,1,'')
+            %figure_name = sprintf('%s : Plotting f(x)',mfilename);
+            %Plot_fx(CP,0,1,'')
             
             % Get the first point at which the convex hull crosses the x axis.
             x_intercept_old = x_intercept_new;

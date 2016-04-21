@@ -22,15 +22,9 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 
 % Get global variables
-global BOOL_PREPROC
+
 global PLOT_GRAPHS
 global THRESHOLD
-global MIN_DELTA_MAG_ROW_SUMS
-
-if isempty(BOOL_PREPROC) || isempty(PLOT_GRAPHS) ...
-        isempty(THRESHOLD) || isempty(MIN_DELTA_MAG_ROW_SUMS)
-    error('err')
-end
 
 
 % Get degree m of polynomial f(x)

@@ -45,10 +45,7 @@ end
 PrintGlobalVariables();
 
 % Add subdirectories
-
-addpath 'Examples'
 addpath 'Root Finding Methods'
-addpath 'BernsteinMethods'
 
 
 switch problemType

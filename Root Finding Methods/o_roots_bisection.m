@@ -21,8 +21,15 @@ b = interval_upperbound;
 a = interval_lowerbound;
 
 % Set some variables
-min_interval_size = 0.001;
-eps_abs = 1e-10;
+
+
+% min_interval_size : The minimum size of an interval before we approximate
+% the root as its midpoint.
+min_interval_size = 0.0001;
+
+% eps_abs : when evaluating the curve at a point c, if f(c) is within
+% eps_abs of zero, then c is considered to be a root of f.
+eps_abs = 1e-12;
 
 % Plot f(x)
 ite_num = 1;
