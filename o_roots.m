@@ -1,5 +1,5 @@
-function [] = o_roots(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
-% o_roots(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
+function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+% o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Given an example number, and a set of input parameters, calculate the
 % roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
@@ -13,14 +13,17 @@ function [] = o_roots(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_m
 %
 % emax : (float) Noise/Signal maximum threshold (maximum)
 %
-% bool_preproc : (string) {'y,'n''}
+% mean_method : (string) method used to compute the mean of entries in C_{n-k}(f)
+%               and C_{m-k}(g)
+%
+% bool_alpha_theta : (string) {'y,'n''}
 %
 % low_rank_approx_method : (string) {'None','Standard STLN', 'Standard SNTLN'}
 %
 % apf_method ('string') {'None', 'Standard APF', 'Root Specific APF'}
 %
 
-SetGlobalVariables(bool_preproc,low_rank_approx_method,apf_method)
+SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 
 global problemType 
 problemType = 'fromRoots'; % fromRoots/fromCoefficients

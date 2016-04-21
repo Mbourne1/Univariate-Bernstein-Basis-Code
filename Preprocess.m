@@ -42,15 +42,7 @@ gx_n = gx./ mu;
 
 switch BOOL_ALPHA_THETA
     case 'y'
-        
-        % Get Unprocessed partitions (Including Geometric Mean)
-        C_f_unproc = BuildDT1Q1(fx,n-k);
-        C_g_unproc = BuildDT1Q1(gx,m-k);
-        
-       
-        
-       
-        
+  
         % For each coefficient ai of F, obtain the max and min such that F_max =
         % [max a0, max a1,...] and similarly for F_min, G_max, G_min
         
@@ -58,10 +50,10 @@ switch BOOL_ALPHA_THETA
         [v_G_max,v_G_min] = GetMaxMin(gx_n,m-k);
         
         
-        f_max = max(v_F_max)
-        f_min = min(v_F_min)
-        g_max = max(v_G_max)
-        g_min = min(v_G_min)
+        f_max = max(v_F_max);
+        f_min = min(v_F_min);
+        g_max = max(v_G_max);
+        g_min = min(v_G_min);
         
         
         PrintToFile(f_max,f_min,g_max,g_min,m,n,k, 'without thetas',1,1)
@@ -82,10 +74,10 @@ switch BOOL_ALPHA_THETA
         [v_F_max,v_F_min] = GetMaxMin(fw,n-k);
         [v_G_max,v_G_min] = GetMaxMin(alpha.*gw,m-k);
         
-        f_max = max(v_F_max)
-        f_min = min(v_F_min)
-        g_max = max(v_G_max)
-        g_min = min(v_G_min)
+        f_max = max(v_F_max);
+        f_min = min(v_F_min);
+        g_max = max(v_G_max);
+        g_min = min(v_G_min);
         
         PrintToFile(f_max,f_min,g_max,g_min,m,n,k,'With Thetas',alpha,theta)
         
