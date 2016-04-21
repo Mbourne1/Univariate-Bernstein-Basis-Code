@@ -35,11 +35,8 @@ switch BOOL_LOG
         DT2Q2 = BuildDT1Q1_log(gx,m-t);
         
     case 'n' 
-        % Use nchoosek method
-        warning('off','all');
         DT1Q1 = BuildDT1Q1_nchoosek(fx,n-t);
         DT2Q2 = BuildDT1Q1_nchoosek(gx,m-t);
-        warning('on','all');
     otherwise
         error('bool_log must be either y or n')
 end
@@ -52,7 +49,7 @@ end
 function DT1Q1 = BuildDT1Q1_nchoosek(fx,n_t)
 % Build DTQ partition by, using matlabs nchoosek function.
 %
-%                       Inputs
+% Inputs
 %
 %
 % fx : Coefficients of the polynomial f(x)
@@ -63,8 +60,8 @@ function DT1Q1 = BuildDT1Q1_nchoosek(fx,n_t)
 %
 % t : Degree of GCD.
 
-%%
-%                   Global Variables
+%
+% Global Variables
 
 % BOOL_DENOM_SYL - (Boolean) Given the rearrangement of the Sylvester matrix in
 % the Bernstein basis, each partition of each subresultant has a common

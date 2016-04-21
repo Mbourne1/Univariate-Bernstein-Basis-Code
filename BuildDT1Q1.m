@@ -34,6 +34,8 @@ switch SYLVESTER_BUILD_METHOD
         Q1 = BuildQ1(n_k);
         DT1Q1 = D*T1*Q1;
         
+        
+        
     case 'Rearranged'
         DT1Q1 = BuildDT1Q1_Rearranged(fx,n_k);
     otherwise
@@ -52,6 +54,7 @@ function DT1Q1 = BuildDT1Q1_Rearranged(fx,n_k)
 global BOOL_LOG
 % If Q is included, use the rearrangment such that each Toeplitz
 % matrix has a common divisor in each element.
+
 switch BOOL_LOG
     case 'n'
         % Build Toeplitz Matrix using nchoosek

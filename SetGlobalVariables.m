@@ -1,4 +1,4 @@
-function [] = SetGlobalVariables(bool_preproc,low_rank_approx_method, apf_method)
+function [] = SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method, apf_method)
 % Set the global variables
 %
 % Inputs.
@@ -39,11 +39,12 @@ APF_BUILD_METHOD = 'Standard';
 
 %% Preprocessing
 
-global BOOL_PREPROC
-BOOL_PREPROC = bool_preproc;
+global BOOL_ALPHA_THETA
+BOOL_ALPHA_THETA = bool_alpha_theta;
 
-global GEOMETRIC_MEAN_METHOD
-GEOMETRIC_MEAN_METHOD = 'matlab';
+
+global MEAN_METHOD
+MEAN_METHOD = mean_method;
 
 %% Numerical Considerations
 

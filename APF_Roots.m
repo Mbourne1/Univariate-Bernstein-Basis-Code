@@ -45,7 +45,6 @@ m = GetDegree(fx);
 
 % Initialise some useful vectors
 vecm  = (0:1:m)';
-vecmk = (0:1:m-t)';
 
 % Convert f and g to modified bernstein basis, excluding binomial
 % coefficient
@@ -192,7 +191,7 @@ while condition > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
     H1E1G_wrt_theta = BuildH1C1G(z1w_wrt_theta,t);
     
     % Obtain structured perturbations sw of fw, and tw of gw
-    sw   = GetWithThetas(p,th(ite);
+    sw   = GetWithThetas(p,th(ite));
     
     % Calculate partial derivatives of sw and tw with respect to theta
     s_wrt_theta = Differentiate_wrt_theta(sw,th(ite));

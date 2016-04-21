@@ -1,5 +1,7 @@
 function [C] = PowerToBernstein(fx)
-% given a set of coefficients in the power basis, convert to bernstein
+% PowerToBernstein(fx)
+%
+% Given a column vector of coefficients in the power basis, convert to bernstein
 % basis
 % Algorithms for Polynomials in Bernstein Form
 %
@@ -28,4 +30,7 @@ for j = 0:1:m
             );
     end
     C(j+1) = temp_sum;
+end
+
+
 end

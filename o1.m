@@ -37,9 +37,6 @@ global PLOT_GRAPHS
 % Get the degree m of polynomial f
 m = GetDegree(fx) ;
 
-% Get the degree n of polynomial g
-n = GetDegree(gx) ;
-
 % Get degree of GCD by first method
 
 % Method 1 - 'From Scratch' Build each subresultant from scratch
@@ -87,92 +84,68 @@ St_preproc = BuildSubresultant(fw,alpha.*gw,t);
 % removal of the optimal column gives the minmal residual in (Ak x = ck)
 [opt_col] = GetOptimalColumn(St_preproc);
 
-%% Perform SNTLN
+% %
+% % Perform SNTLN
 % Apply / Don't Apply structured perturbations.
+[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta);
 
-switch LOW_RANK_APPROXIMATION_METHOD
-    case 'Standard STLN' 
-        
-        % Performe structured Total Least Norm
-        [fw,a_gw] = STLN(fw,alpha.*gw,t,opt_col);
-        
-        % Get f(x) and g(x) from low rank approximation.
-        fx_n = GetWithoutThetas(fw,theta);
-                
-        gw = a_gw ./ alpha;
-        gx_n = GetWithoutThetas(gw,theta);
-        
-        
-    case 'Standard SNTLN' % Structured Non-Linear Total Least Norm
-
-        % Perform Structured non-linear total least norm
-        [fx_n,gx_n,alpha,theta,~] = SNTLN(fx_n,gx_n,alpha,theta,t,opt_col);
-        
-        
-    case 'Root Specific SNTLN'
-        
-        [fx_n,gx_n,alpha,theta,~] = ...
-            SNTLN_Roots(fx_n,gx_n,alpha,theta,t,opt_col,gm_fx,gm_gx);
-        
-    case 'None'
-        
-    otherwise
-        error('Global variable LOW_RANK_APPROXIMATION_METHOD must be valid')
-end
 
 % Get quotient polynomials u(x) and v(x)
 [ux,vx] = GetQuotients(fx_n,gx_n,t,alpha,theta);
 
-
-%%
+% %
+% %
 % Build Sylvester Matrix for normalised, refined coefficients, used in
 % comparing singular values.
 
-fw = GetWithThetas(fx,theta);
-gw = GetWithThetas(gx,theta);
+fw = GetWithThetas(fx_n,theta);
+gw = GetWithThetas(gx_n,theta);
 
 St_low_rank = BuildSubresultant(fw,alpha.*gw,t);
 
-%% Get the coefficients of the GCD
+% % Get the coefficients of the GCD
 dx = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta);
 
 
-%%
+
+% %
 % Apply/Don't Apply structured perturbations to Approximate Polynomial
 % Factorisation such that approximation becomes equality.
 switch APF_METHOD
     case 'Root Specific APF'
         % Use root method which has added constraints.
         
-        [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_theta] = ...
+        [APF_fx, APF_gx, APF_dx, APF_uk, APF_vk, APF_theta] = ...
             APF_Roots(fx_n,ux,vx,theta,dx,t);
         
         % Build Post APF_gx
-        PostAPF_gx = zeros(m,1);
+        APF_gx = zeros(m,1);
+        
         for i = 0:1:m-1
-            PostAPF_gx(i+1) = m.*(gm_fx./ gm_gx) .* (PostAPF_fx(i+2) - PostAPF_fx(i+1));
+            APF_gx(i+1) = m.*(gm_fx./ gm_gx) .* (APF_fx(i+2) - APF_fx(i+1));
         end
+        
         % update ux,vx,dx values
-        dx = PostAPF_dx;
-        vx = PostAPF_vk;
-        ux = PostAPF_uk;
+        dx = APF_dx;
+        vx = APF_vk;
+        ux = APF_uk;
         
         % Edit 20/07/2015
-        fx = PostAPF_fx;
-        gx = PostAPF_gx;
+        fx = APF_fx;
+        gx = APF_gx;
         
     case 'Standard APF'
-        [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_theta] = ...
+        [APF_fx, APF_gx, APF_dx, APF_uk, APF_vk, APF_theta] = ...
             APF(fx_n,gx_n,ux,vx,alpha,theta,dx,t);
         
         % update ux,vx,dx values
-        dx = PostAPF_dx;
-        vx = PostAPF_vk;
-        ux = PostAPF_uk;
+        dx = APF_dx;
+        vx = APF_vk;
+        ux = APF_uk;
         
         % Edit 20/07/2015
-        fx = PostAPF_fx;
-        gx = PostAPF_gx;
+        fx = APF_fx;
+        gx = APF_gx;
     case 'None'
         % Do Nothing
     otherwise
@@ -184,7 +157,7 @@ end
 
 
 
-%%
+% %
 % Assesment of the Sylvester Matrix before processing, post processing, and
 % post SNTLN. Before Preprocessing
 

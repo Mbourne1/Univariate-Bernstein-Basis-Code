@@ -18,3 +18,28 @@
    20 	    15 	    10 	 7.891614e-02 	 y 	  	 None 	 None 
    20 	    15 	    10 	 6.922899e+00 	 y 	  	 None 	 None 
    20 	    15 	    10 	 6.988048e+00 	 y 	  	 Standard STLN 	 None 
+    6 	     4 	     2 	 3.605099e-10 	 y 	  	 None 	 None 
+    6 	     4 	     2 	 3.089013e-10 	 y 	  	 None 	 None 
+    4 	     2 	     1 	 8.319274e-10 	 y 	  	 None 	 None 
+    4 	     2 	     1 	 8.319327e-10 	 y 	  	 None 	 None 
+   10 	     7 	     5 	 6.985339e-09 	 y 	  	 None 	 None 
+   10 	     7 	     5 	 7.021420e-09 	 y 	  	 None 	 None 
+   10 	     7 	     5 	 7.021420e-09 	 y 	  	 None 	 None 
+   10 	     7 	     5 	 7.021388e-09 	 y 	  	 None 	 None 
+   10 	     8 	     5 	 5.358363e-09 	 y 	  	 None 	 None 
+   10 	     8 	     5 	 5.358363e-09 	 y 	  	 None 	 None 
+   10 	     7 	     5 	 7.021388e-09 	 y 	  	 None 	 None 
+   10 	     8 	     5 	 5.358363e-09 	 y 	  	 None 	 None 
+   10 	     8 	     5 	 5.358363e-09 	 y 	  	 None 	 None 
+   29 	    36 	    26 	 2.591040e-07 	 y 	  	 None 	 None 
+   29 	    36 	    26 	 2.591040e-07 	 y 	  	 None 	 None 
+   29 	    36 	    26 	 2.591041e-07 	 y 	  	 None 	 None 
+   22 	    21 	    20 	 2.788955e+11 	 y 	  	 None 	 None 
+   22 	    21 	    20 	 2.788955e+11 	 y 	  	 None 	 None 
+   22 	    21 	    20 	 2.788955e+11 	 y 	  	 None 	 None 
+   22 	    21 	    20 	 2.788955e+11 	 y 	  	 None 	 None 
+   22 	    21 	    20 	 9.837867e+10 	 y 	  	 None 	 None 
+   21 	    22 	    12 	 1.342978e-07 	 y 	  	 None 	 None 
+   21 	    22 	    12 	 1.342978e-07 	 y 	  	 None 	 None 
+   21 	    22 	    12 	 1.342976e-07 	 y 	  	 None 	 None 
+   21 	    22 	    12 	 1.342978e-07 	 y 	  	 None 	 None 

@@ -31,7 +31,7 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 
 % Global Variables
-global BOOL_PREPROC
+global BOOL_ALPHA_THETA
 global PLOT_GRAPHS
 global GEOMETRIC_MEAN_METHOD
 global THRESHOLD
@@ -79,80 +79,24 @@ Data_DiagNorm = [];
 % For each subresultant $$S_{k}$$
 for k = 1:1:min_mn
     
-    switch BOOL_PREPROC
-        case 'y' % Include Preprocessors
-            % if the first subresultant, then build from scratch
-            if (k==1)% Include Preprocessors
-                
-                % Build the partitions of S_{k}(f,g)
-                C_f_unproc = BuildDT1Q1(fx,n-k);
-                C_g_unproc = BuildDT1Q1(gx,m-k);
-                
-                % Get Geometric means.
-                [lambda,mu] = GetGeometricMean(fx,gx,k);
-                vGM_fx(k) = lambda;
-                vGM_gx(k) = mu;
-
-                % Divide the Sylvester Matrix partitions by Geometric mean.
-                C_f_unproc = C_f_unproc ./ vGM_fx(k);
-                C_g_unproc = C_g_unproc ./ vGM_gx(k);
-                
-                
-            else % all subsequent subresultants, build from new method of
-                %'build up' A_{k}S_{k}B_{k}
-                
-                % Get unprocessed partitions
-                C_f_unproc = BuildToeplitz_fromPrev(m,n,k-1,C_f_unproc);
-                C_g_unproc = BuildToeplitz_fromPrev(n,m,k-1,C_g_unproc);
-                
-                
-                % Calculate Geometric mean. Note: my method depends on
-                % using from scratch method. So set geometric mean Method
-                % to Matlab Method.
-                %
-                
-                switch GEOMETRIC_MEAN_METHOD
-                    case 'matlab'
-                        % Get Geometric means
-                        vGM_fx(k) = geomean(abs(C_f_unproc(C_f_unproc~=0)));
-                        vGM_gx(k) = geomean(abs(C_g_unproc(C_g_unproc~=0)));
-                        
-                    case 'mymethod'
-                        % Get Geometric means
-                        vGM_fx(k) = GeometricMean(fx,n,k);
-                        vGM_gx(k) = GeometricMean(gx,m,k);
-                    otherwise
-                        error('global variable geometricMeanMethod must be valid')
-                end
-                
-                % Divide by Geometric means
-                C_f_unproc = C_f_unproc ./ vGM_fx(k);
-                C_g_unproc = C_g_unproc ./ vGM_gx(k);
-                
-            end
-            
-            % Build subresultant S_{k}, and add to array of Sk
-            Sylvester_unproc = [C_f_unproc C_g_unproc];
-            
-            % For each coefficient ai of F, obtain the max and min such
-            % that F_max = [max a0, max a1,...] and similarly for F_min,
-            % G_max, G_min
-            [F_max,F_min,G_max,G_min] = GetMaxMin(Sylvester_unproc,m,n,k);
-            
-            % Calculate the optimal value of alpha and theta for the kth
-            % subresultant matrix.
-            [vAlpha(k),vTheta(k)] = OptimalAlphaTheta(F_max,F_min,G_max,G_min);
-            
-            
-        case 'n'
-            % Don't obtain optimal alpha and theta.
-            vAlpha(k) = 1;
-            vTheta(k) = 1;
-            vGM_fx(k) = 1;
-            vGM_gx(k) = 1;
-        otherwise
-            error('bool_preproc must be set to either (y) or (n)')
+    % if this is the first subresultant, build from scratch
+    if (k == 1)
+        % Build the partitions of S_{k}(f,g)
+        DT1Q1_unproc = BuildDT1Q1(fx,n-k);
+        DT2Q2_unproc = BuildDT1Q1(gx,m-k);
+    else
+        % Get unprocessed partitions
+        DT1Q1_unproc = BuildDT1Q1_fromPrev(m,n,k-1,DT1Q1_unproc);
+        DT2Q2_unproc = BuildDT1Q1_fromPrev(n,m,k-1,DT2Q2_unproc);
+        
     end
+    
+    [vGM_fx(k), vGM_gx(k), vAlpha(k), vTheta(k)] = Preprocess(fx,gx,k);
+    
+    % Divide the Sylvester Matrix partitions by Geometric mean.
+    DT1Q1_unproc = DT1Q1_unproc ./ vGM_fx(k);
+    DT2Q2_unproc = DT2Q2_unproc ./ vGM_gx(k);
+    
     
     % Divide normalised polynomials in Bernstein basis by
     % geometric means.
@@ -171,24 +115,23 @@ for k = 1:1:min_mn
     
     if (k==1)
         % first subresultant must be constructed in the conventional sense.
-        Cf = BuildDT1Q1(fw_n,n-k);
-        Cg = BuildDT1Q1(gw_n,m-k);
+        DT1Q1 = BuildDT1Q1(fw_n,n-k);
+        DT2Q2 = BuildDT1Q1(gw_n,m-k);
         
         % Build subresultant
-        Sk = [Cf vAlpha(k).*Cg]   ;
+        DTQ = [DT1Q1 vAlpha(k).*DT2Q2]   ;
         
     else
         % subsequent subresultants can be built using my build up method.
-        Cf = BuildToeplitz_fromPrev(m,n,k-1,Cf);
-        Cg = BuildToeplitz_fromPrev(n,m,k-1,Cg);
-        Sk = [Cf Cg];
+        DT1Q1 = BuildDT1Q1_fromPrev(m,n,k-1,DT1Q1);
+        DT2Q2 = BuildDT1Q1_fromPrev(n,m,k-1,DT2Q2);
+        DTQ = [DT1Q1 DT2Q2];
         
     end
     
-    Sylvester_preproc = Sk;
-    
+
     % Using QR Decomposition of the sylvester matrix
-    [~,R] = qr(Sk);
+    [~,R] = qr(DTQ);
     
     % Take absolute values.
     R_abs = abs(R);
@@ -237,7 +180,7 @@ for k = 1:1:min_mn
     % minResQR_vector :- stores only one residual (the min) for each
     % subresultant k=1,...min(m,n)
     
-    vMinimumResidual(k) = GetMinimalDistance(Sk);
+    vMinimumResidual(k) = GetMinimalDistance(DTQ);
     
     
 end
@@ -268,7 +211,7 @@ vDelta_MaxMin_Diag_R = abs(diff(log10(vRatio_MaxMin_Diagonals_R)));
 % to one
 
 if min_mn == 1
-    t = Get_Rank_One_Subresultant(Sk);
+    t = Get_Rank_One_Subresultant(DTQ);
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);

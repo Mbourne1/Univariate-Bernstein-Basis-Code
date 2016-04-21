@@ -1,7 +1,8 @@
 function DT1 = BuildDT1(fw,n_k)
 
+global BOOL_LOG
 
-switch bool_log
+switch BOOL_LOG
     case 'n'
         % Build Toeplitz Matrix using nchoosek
         DT1 = BuildDT1_nchoosek(fw,n_k);
@@ -30,12 +31,12 @@ function [DT1] = BuildDT1_nchoosek(fw,n_k)
 %
 % k : Degree of common divisor d(x)
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 
 
 % Get Degree of polynomial f
-m = GetDegree(fx);
+m = GetDegree(fw);
 
 % Buid an empty matrix
 DT1 = zeros(m+n-k+1,n-k+1);
@@ -61,21 +62,23 @@ end
 
 
 function T = BuildDT1_log(fw,n_k)
+% BuildDT1_log(fw,n_k)
+%
 % Build Toeplitz matrix of D^{-1}T(f,g) using logs.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%
+%
 %                       Inputs.
-
+%
 % fx
-
+%
 % theta
-
+%
 % n
-
+%
 % k
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
 
 % Get Degree of polynomial f
 m = GetDegree(fx);

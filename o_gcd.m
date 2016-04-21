@@ -1,5 +1,5 @@
-function [] = o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
-% o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_method)
+function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+% o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
 % g(x) as defined in the example file.
@@ -13,7 +13,9 @@ function [] = o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_met
 %
 % emax: Signal to noise ratio (maximum)
 %
-% bool_preproc : 'y' or 'n' if preprocessing is performed
+% mean_method : Method for taking mean of entires in S_{k}
+%
+% bool_alpha_theat : 'y' or 'n' if preprocessing is performed
 %
 % low_rank_approx_method : 'Standard STLN' 'Standard SNTLN'
 %
@@ -22,7 +24,7 @@ function [] = o_gcd(ex_num,emin,emax,bool_preproc,low_rank_approx_method,apf_met
 
 addpath 'Bezoutian'
 
-SetGlobalVariables(bool_preproc,low_rank_approx_method,apf_method)
+SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 %                Consistency of input parameters.
 
@@ -121,8 +123,8 @@ end
 function [] = PrintCoefficients(name,u_exact,u_calc)
 
 % Normalise quotient polynomial u
-u_calc  = normalise(u_calc);
-u_exact = normalise(u_exact);
+u_calc  = Normalise(u_calc);
+u_exact = Normalise(u_exact);
 
 fprintf('\nCoefficients of %s \n\n',name);
 fprintf('\t Exact \t \t \t \t\t \t \t   Computed \n')
@@ -136,8 +138,8 @@ end
 function [error] = GetError(name,f_calc,f_exact)
 % Get distance between f(x) and the calulated f(x)
 
-f_calc  = normalise(f_calc);
-f_exact = normalise(f_exact);
+f_calc  = Normalise(f_calc);
+f_exact = Normalise(f_exact);
 
 % Calculate relative errors in outputs
 rel_error_f = norm(abs(f_calc - f_exact) ./ f_exact);
@@ -150,11 +152,6 @@ fprintf('\tCalculated error %s : %8.2e \n', name,error);
 
 end
 
-function f = normalise(f)
- 
-f = f./f(1);
-
-end
 
 
 function []= PrintToFile(m,n,t,error_dx)
