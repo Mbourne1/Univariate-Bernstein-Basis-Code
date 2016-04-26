@@ -49,7 +49,7 @@ MEAN_METHOD = mean_method;
 %% Numerical Considerations
 
 global BOOL_LOG
-BOOL_LOG = 'y';
+BOOL_LOG = 'n';
 
 %% Noise 
 
@@ -59,7 +59,7 @@ SEED = 1024;
 %% Outputs
 
 global PLOT_GRAPHS
-PLOT_GRAPHS = 'y';
+PLOT_GRAPHS = 'n';
 
 %% Regarding the computation of the Sylvester low rank approximation
 
@@ -119,7 +119,7 @@ global MAX_ITERATIONS_DECONVOLUTIONS
 global BOOL_DECONVOLVE
 
 % Get Global variables for Deconvolve
-MAX_ERROR_DECONVOLUTIONS = 1e-10;
+MAX_ERROR_DECONVOLUTIONS = 1e-12;
 MAX_ITERATIONS_DECONVOLUTIONS = 50;
-BOOL_DECONVOLVE = 'Single';
+BOOL_DECONVOLVE = 'Batch';
 

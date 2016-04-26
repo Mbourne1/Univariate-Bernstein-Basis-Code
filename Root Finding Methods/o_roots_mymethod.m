@@ -112,18 +112,15 @@ if nEntries_h == 1
     aw = aw./aw(1);
     
     % Get the degree of a(w)
-    deg_aw = length(h1{1}) - 1;
+    deg_aw = GetDegree(h1{1});
     
-    % Get the corresponding binomial coefficients
-    bi_aw = GetBinomials(deg_aw);
-        
     % get aw including its binomial coefficients.
-    aw_binom = (aw .* bi_aw);
+    aw_bi = GetWithBinomials(aw);
     
     % get the roots in terms of z^{i} where z^{i} =(\frac{y}{(1-y)})^{i}.
     % Note we must flip the coefficients to conform with input format of
     % MATLAB roots function.
-    rt_wrt_z = roots(flipud(aw_binom));
+    rt_wrt_z = roots(flipud(aw_bi));
     
     % Get the roots in terms of y.
     roots_wrt_y = [rt_wrt_z./(1.+rt_wrt_z) ]; %Edit 27/07
@@ -198,16 +195,13 @@ else
             aw = aw./aw(1);
             
             % get the degree of a(w)
-            n = length(w1{i}) - 1;
-            
-            % get the corresponding binomial coefficients
-            bi_n = GetBinomials(n);
+            n = GetDegree(w1{i});
             
             % get aw including its binomial coefficients.
-            aw_binom = (aw .* bi_n);
+            aw_bi = GetWithBinomials(aw);
             
             % get the roots in terms of z^{i} where z^{i} =(\frac{y}{(1-y)})^{i}.
-            rt_wrt_z = roots(flipud(aw_binom));
+            rt_wrt_z = roots(flipud(aw_bi));
             
             % get the root in terms of y
             roots_wrt_y = [rt_wrt_z./(1.+rt_wrt_z) ]; %Edit 27/07

@@ -15,6 +15,10 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %
 % mean_method : (string) method used to compute the mean of entries in C_{n-k}(f)
 %               and C_{m-k}(g)
+%               'None' - No mean
+%               'Geometric Mean Matlab Method'
+%               'Geometric Mean My Method'
+%              
 %
 % bool_alpha_theta : (string) {'y,'n''}
 %
@@ -22,6 +26,11 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %
 % apf_method ('string') {'None', 'Standard APF', 'Root Specific APF'}
 %
+% % Example
+%
+% o_roots('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
+
+
 
 SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 
@@ -107,10 +116,10 @@ clc_roots_multroot = o_roots_multroot(fx);
 clc_roots_intervalBisection = o_roots_bisection(fx);
 
 % Calculate roots by 'Subdivisiton' Method
-clc_roots_subdivision = o_roots_subdivision(fx);
+%clc_roots_subdivision = o_roots_subdivision(fx);
 
 % Calculate roots by bezier clipping
-clc_roots_clipping = o_roots_BezierClipping(fx);
+%clc_roots_clipping = o_roots_BezierClipping(fx);
 
 fx_mymethod = GetWithoutBinomials(B_poly(clc_roots_mymethod));
 fx_matlab   = GetWithoutBinomials(B_poly(clc_roots_matlab));

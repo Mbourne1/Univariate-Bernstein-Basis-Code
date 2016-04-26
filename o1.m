@@ -87,7 +87,7 @@ St_preproc = BuildSubresultant(fw,alpha.*gw,t);
 % %
 % % Perform SNTLN
 % Apply / Don't Apply structured perturbations.
-[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta);
+[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,opt_col);
 
 
 % Get quotient polynomials u(x) and v(x)

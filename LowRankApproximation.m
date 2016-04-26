@@ -1,4 +1,4 @@
-function [fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta)
+function [fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,opt_col)
 
 
 global LOW_RANK_APPROXIMATION_METHOD

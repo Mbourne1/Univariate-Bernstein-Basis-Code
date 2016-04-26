@@ -15,7 +15,7 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %
 % mean_method : Method for taking mean of entires in S_{k}
 %
-% bool_alpha_theat : 'y' or 'n' if preprocessing is performed
+% bool_alpha_theta : 'y' or 'n' if preprocessing is performed
 %
 % low_rank_approx_method : 'Standard STLN' 'Standard SNTLN'
 %
