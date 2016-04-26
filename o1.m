@@ -1,5 +1,5 @@
-function [fx,gx,dx, ux, vx,alpha,theta] = ...
-    o1(fx,gx)
+function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
+    o1(fx,gx,nDistinctRoots)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
 %                             Inputs:
@@ -47,7 +47,6 @@ m = GetDegree(fx) ;
     GetGCD_DegreeByNewMethod(fx,gx);
 
 
-fprintf('GCD Degree : %i \n ',t);
 
 if t == 0
     % If the two polynomials f(x) and g(x) are coprime, set GCD to be 1,

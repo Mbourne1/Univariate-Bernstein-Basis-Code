@@ -5,7 +5,7 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 % g(x) as defined in the example file.
 %
 %
-% Inputs.
+% % Inputs.
 %
 % ex:   Example Number
 %
@@ -15,12 +15,22 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %
 % mean_method : Method for taking mean of entires in S_{k}
 %
+%           'Geometric Mean Matlab Method'
+%           'Geometric Mean My Method'
+%           
 % bool_alpha_theta : 'y' or 'n' if preprocessing is performed
 %
-% low_rank_approx_method : 'Standard STLN' 'Standard SNTLN'
-%
+% low_rank_approx_method : 
+%           'Standard STLN' 
+%           'Standard SNTLN'
+%           'None'
+%   
 % apf_method :
-
+%           'Standard APF'
+%           'None'
+%
+% % Example
+% o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None')
 
 addpath 'Bezoutian'
 

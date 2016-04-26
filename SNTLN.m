@@ -22,7 +22,7 @@ function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
 %
 %
 %
-%                           Outputs.
+% % Outputs.
 %
 %
 % fx_output :- Coefficients of fx on output, in standard bernstein basis,
@@ -38,8 +38,8 @@ function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
 % X_output :-
 %
 
-%%
-%                       Global Inputs
+% %
+% Global Inputs
 
 global MAX_ERROR_SNTLN
 global MAX_ITERATIONS_SNTLN
@@ -326,11 +326,12 @@ end
 
 switch PLOT_GRAPHS
     case 'y'
-        figure('name','SNTLN - Residuals')
+        figure_name = sprintf('%s : Residuals',mfilename);
+        figure('name',figure_name)
         hold on
-        title('residuals in SNTLN without constraints')
-        xlabel('iterations')
-        ylabel('residuals')
+        title('Residuals in SNTLN without constraints')
+        xlabel('Iterations')
+        ylabel('log_{10} Residuals')
         plot(log10(condition),'-s')
         hold off
     case 'n'
@@ -363,9 +364,8 @@ theta_output = th(ite);
 
 
 % Print the number of iterations
-fprintf('--------------------------------------------------------------------------- \n')
-fprintf('Iterations over Sylvester Matrix : %i \n', ite);
-fprintf('--------------------------------------------------------------------------- \n')
+
+fprintf('Iterations required for STLN : %i \n', ite);
 
 end
 

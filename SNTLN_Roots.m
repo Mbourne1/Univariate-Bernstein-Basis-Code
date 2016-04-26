@@ -1,7 +1,5 @@
 function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
     SNTLN_Roots(fx_n, gx_n, i_alpha, i_th, t, opt_col, gm_fx, gm_gx)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             Inputs.
 %
 % fx_n : Coefficients of polynomial f, in standard bernstein basis. where
@@ -24,29 +22,28 @@ function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
 %
 % gm_g : Geometric mean of entries of g in the Syvlester matrix.
 %
-%                           Outputs.
+% % Outputs.
 %
 %
 % fx_output :- Coefficients of fx on output, in standard bernstein basis,
 % including added structured perturbations.
-
+%
 % gx_output :- Coefficients of fx on output, in standard bernstein basis,
 % including added structured perturbations.
-
+%
 % alpha_output :-
-
+%
 % theta_output :-
-
+%
 % X_output :-
+%
+%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                       Global Inputs
+% % Global Inputs
 % These values should only be reset in the head function o_roots
 global MAX_ERROR_SNTLN
 global MAX_ITERATIONS_SNTLN
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Get ratio of geometric means.
 ratio = gm_fx./gm_gx;
 
@@ -64,10 +61,6 @@ m = GetDegree(fx_n);
 
 % Get degree of polynomial g.
 n = GetDegree(gx_n);
-
-% Generate some useful vectors
-vecm = (0:1:m)';
-vecn = (0:1:n)';
 
 % Create the identity matrix I
 I = eye(m+n-2*t+2,m+n-2*t+2);
@@ -353,7 +346,8 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
 end
 
-figure('name','SNTLN - Resdiuals')
+figure_name = sprintf('%s : SNTLN Residuals',mfilename);
+figure('name',figure_name)
 hold on
 title('Residuals over SNTLN iterations')
 plot(log10(condition),'-s')
@@ -362,7 +356,7 @@ ylabel('Residuals')
 hold off
 
 if ite == MAX_ITERATIONS_SNTLN
-    fprintf('SNTLN Failed to converge after %i iterations \n\n',ite)
+    fprintf('SNTLN_Roots : failed to converge after %i iterations \n\n',ite)
     fx_output = fx_n;
     gx_output = gx_new;
     X_output = x_ls;
@@ -389,11 +383,12 @@ alpha_output = alpha(ite);
 theta_output = th(ite);
 
 % Print the number of iterations
-fprintf('--------------------------------------------------------------------------- \n')
-fprintf('Iterations over SNTLN_Roots() Sylvester Matrix : %i \n', ite);
-fprintf('--------------------------------------------------------------------------- \n')
 
-figure(30)
+fprintf(' %s : Iterations required : %i \n', mfilename,ite);
+
+
+figure_name = sprintf('%s : SNTLN Residuals',mfilename);
+figure('name',figure_name)
 title('Residual at each Iteration of SNTLN')
 hold on
 plot(1:1:length(condition),log10(condition));
@@ -401,38 +396,34 @@ xlabel('Iteration Number')
 
 global PLOT_GRAPHS
 switch PLOT_GRAPHS
-    case 1
+    case 'y'
+        figure_name = sprintf('%s : Condition',mfilename);
+        figure('name',figure_name)
+        title('Residual at each Iteration of SNTLN')
+        hold on
+        plot(1:1:length(condition),log10(condition));
+        xlabel('Iteration Number')
         
-        plot_residuals = 1;
-        plot_thetas = 1;
-        plot_betas = 1;
         
-        switch plot_residuals
-            case 1
-                figure(30)
-                title('Residual at each Iteration of SNTLN')
-                hold on
-                plot(1:1:length(condition),log10(condition));
-                xlabel('Iteration Number')
-        end
-        switch plot_thetas
-            case 1
-                figure(31)
-                title('Theta at each Iteration of SNTLN')
-                hold on
-                plot(1:1:length(th),log10(th));
-                xlabel('Iteration Number')
-        end
-        switch plot_betas
-            case 1
-                figure(32)
-                title('Alpha at each iteration of SNTLN');
-                hold on
-                plot(1:1:length(alpha),log10(alpha));
-        end
-end
+        figure_name = sprintf('%s : Thetas',mfilename);
+        figure('name',figure_name)
+        title('Theta at each Iteration of SNTLN')
+        hold on
+        plot(1:1:length(th),log10(th));
+        xlabel('Iteration Number')
+        
+        figure_name = sprintf('%s : Alphas',mfilename);
+        figure('name',figure_name)
+        title('Alpha at each iteration of SNTLN');
+        hold on
+        plot(1:1:length(alpha),log10(alpha));
+    case 'n'
+    otherwise 
+        error('err')
 end
 
+
+end
 
 
 function Hz = GetH_z(mincol,n,t,DY,DP)
@@ -442,13 +433,6 @@ else
     Hz = DY-DP;
 end
 end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%% ROOT SPECIFIC FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
 
 

@@ -16,3 +16,11 @@
     2 	  	       	 None 	 None 
     2 	  	       	 None 	 None 
     2 	  	       	 None 	 None 
+    2 	  	       	 Standard SNTLN 	 Standard APF 
+    2 	  	       	 Standard SNTLN 	 Standard APF 
+    2 	  	       	 Standard SNTLN 	 Standard APF 
+    2 	  	       	 Standard SNTLN 	 Standard APF 
+    2 	  	       	 Standard SNTLN 	 Standard APF 
+    2 	  	       	 Standard SNTLN 	 Standard APF 
+    2 	  	       	 Standard SNTLN 	 Standard APF 
+    2 	  	       	 Standard SNTLN 	 Standard APF 

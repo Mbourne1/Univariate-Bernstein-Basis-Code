@@ -11,26 +11,28 @@ fx = abs(fx);
 v_max_ai = zeros(m+1,1);
 v_min_ai = zeros(m+1,1);
 
+
+% First determine the denominator of each entry
+switch BOOL_DENOM_SYL
+    case 'y'
+        denom = nchoosek(m+n_k,m);
+    case 'n'
+        denom = 1;
+end
+
 % For each coefficient
 for i = 0:1:m
     v_ai_value = zeros(n_k+1,1);
     for j = 0:1:n_k
- 
-
+        
+        
         cell_val = fx(i+1) * nchoosek(i+j,i) * nchoosek(m+n_k-i-j,m-i) ;
-        
-        switch BOOL_DENOM_SYL
-            case 'y'
-                denom = nchoosek(m+n_k,m);
-            case 'n'
-                denom = 1;
-        end
-        
+
         cell_val = cell_val ./ denom;
         
         v_ai_value(j+1) = cell_val;
         
-    
+        
     end
     
     v_max_ai(i+1) = max(v_ai_value);

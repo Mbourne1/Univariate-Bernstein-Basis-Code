@@ -43,3 +43,7 @@
    21 	    22 	    12 	 1.342978e-07 	 y 	  	 None 	 None 
    21 	    22 	    12 	 1.342976e-07 	 y 	  	 None 	 None 
    21 	    22 	    12 	 1.342978e-07 	 y 	  	 None 	 None 
+    6 	     4 	     2 	 2.595393e-11 	  	  	 Standard STLN 	 None 
+    4 	     2 	     1 	 7.752492e-10 	  	  	 Standard STLN 	 None 
+   29 	    36 	    26 	 1.043133e-09 	  	  	 Standard STLN 	 None 
+   29 	    36 	    26 	 2.562787e-15 	  	  	 Standard STLN 	 None 

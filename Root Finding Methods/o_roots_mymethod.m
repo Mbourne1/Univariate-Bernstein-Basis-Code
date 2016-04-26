@@ -17,68 +17,73 @@ addpath 'Root Finding Methods/multroot/multroot'
 
 
 % Initialise an iteration counter
-ite_num = 1;
+ite = 1;
 
 % Initialise an array 'q' which stores the gcd outputs from each gcd
 % calculation
-q{1} = fx;
+f{1} = fx;
 
 % let degree_vector store the degrees corresponding to the array of
 % GCDs stored in q.
-degree_vec(1) = size(fx,1)-1;
+M(1) = GetDegree(fx);
 
 % Let theta_vec store all theta values used in each iteration.
-theta_vec(1) = 1;
+vTheta(1) = 1;
+
+% Get the number of distinct roots of f_{1}. Since this is unknown at this
+% time, set number of distinct roots to be m_{1} = deg(f_{1}).
+d(1) = GetDegree(fx);
+
 
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-while length(q{ite_num})-1 > 0
+while length(f{ite})-1 > 0
     
-    % set polynomial f to be the most recently calculated GCD.
-    fx = q{ite_num};
-    
-    % set polynomial g to be the derivative of the GCD.
-    gx = Bernstein_Differentiate(q{ite_num});
-    
-    % get degrees m and n of polynomials f and g respectively.
-    m = GetDegree(fx);
-    
-    fprintf('Begin : GCD Calculation Loop iteration = %i \n\n',ite_num );
-    fprintf('m = %i \n',m);
-    fprintf('n = %i \n\n',m-1);
-    
-    % if degree of f is greater than one
-    if m > 1
+   
+    % if degree of f_{i} is greater than one
+    if M(ite) > 1
         
+        fprintf('*-*-*-*-*-*-*-*-*-*-*-*-*\n')
+        fprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite);
         
-        [fx,~,dx, ~ ,~,~,theta] = o1(fx,gx);
+        % Get upper and lower bounds of the GCD Computation.
+        % M_{i+1} > M_{i} - d_{i-1}
+        try
+            fprintf('Minimum degree of f_{%i}: %i \n', ite+1, M(ite)-d(ite-1));
+            fprintf('Maximum degree of f_{%i}: %i \n\n', ite+1, M(ite)-1);
+        catch
+        end
         
-        % add the value of theta used in this GCD calculation to the theta
-        % vector
-        theta_vec(ite_num+1) = theta;
+        if (ite > 1)
+            n_distinct_roots = d(ite-1);
+        else
+            n_distinct_roots = M(ite);
+        end
         
-        % add the degree of the calculated GCD to the degree vector
-        degree_vec(ite_num+1) = length(dx)-1;
+        % Get GCD of f(x) and f'(x)
+        [f{ite},~,f{ite+1}, ~ ,~,~,vTheta(ite+1), M(ite+1)] = o1( f{ite},...
+            Bernstein_Differentiate(f{ite}), n_distinct_roots);
         
-        % replace input f with updated f
-        q{ite_num} = fx;
+        % Get number of distinct roots of f(ite)
+        d(ite) = M(ite) - M(ite+1);
         
-        % add vector dx to the array of gcds 'q'
-        q{ite_num+1} = dx;
+        fprintf('The computed degree of f_{%i} = deg(GCD(f_{%i},f_{%i})  : %i \n',ite+1, ite, ite,M(ite+1))
+        fprintf('Number of distinct roots in f_{%i} : %i \n',ite,d(ite))
+       
         
         % increment iteration number.
-        ite_num = ite_num+1;
+        ite = ite+1;
         
         
-    elseif m == 1
+    elseif M(ite) == 1
         % if m=1, then n = 0, GCD has maximum degree 0.
         fprintf('Only one subresultant exists \n')
         dx = 1;
         %theta_vec(ite_num+1) = 1;
-        degree_vec(ite_num+1) = length(dx)-1;
-        q{ite_num+1} = dx;
-        ite_num = ite_num+1;
+        M(ite+1) = length(dx)-1;
+        f{ite+1} = dx;
+        ite = ite+1;
         break;
         
         
@@ -94,7 +99,7 @@ end
 % end
 
 % Deconvolve the first set of polynomials.
-h1 = Deconvolve(q);
+h1 = Deconvolve(f);
 
 [~,nEntries_h] = size(h1);
 if nEntries_h == 1
@@ -147,7 +152,7 @@ else
     % w1{i} yields the roots of multiplicity i.
     
     % set the w1{max} = h1{max}
-    w1{ite_num-1} = h1{ite_num-1};
+    w1{ite-1} = h1{ite-1};
     
     % get number of entries in w1
     [~,nEntries_w1] = size(w1);
@@ -222,12 +227,12 @@ end
 
 % Obtaining multiplicities of the calculated roots
 roots_multiplicty = [];
-while sum(degree_vec) ~= 0
+while sum(M) ~= 0
     % Get index of first zero.;
-    index = min(find(degree_vec==0)) - 1;
-    minus_vector = zeros(1,length(degree_vec));
+    index = min(find(M==0)) - 1;
+    minus_vector = zeros(1,length(M));
     minus_vector(1,1:index) = index:-1:1;
-    degree_vec = degree_vec - minus_vector;
+    M = M - minus_vector;
     roots_multiplicty = [roots_multiplicty ; index];
 end
 

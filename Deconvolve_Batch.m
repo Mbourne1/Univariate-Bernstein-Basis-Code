@@ -53,7 +53,7 @@ theta = getOptimalTheta(set_f,m);
 
 
 % Initialise a cell-array for f(w)
-fw = cell(1,length(set_f));
+arr_fw = cell(1,length(set_f));
 
 
 for i = 1:1:length(set_f)
@@ -61,14 +61,14 @@ for i = 1:1:length(set_f)
     % Convert to scaled bernstein basis, by inclusion of theta
     % a_{i}\theta^{i}
     %fw{i} = fx*theta^(i);
-    fw{i} = GetWithThetas(fx,theta);
+    arr_fw{i} = GetWithThetas(fx,theta);
     
 end
 
 % Write Deconvolutions in form [D^{-1}C(f)Q] h = RHS_f
 
-RHS_f = real(BuildRHSF(fw));
-DCQ = BuildDCQ(fw);
+RHS_f = real(BuildRHSF(arr_fw));
+DCQ = BuildDCQ(arr_fw);
 
 % Solve h_{0}
 hw = SolveAx_b(DCQ,RHS_f);
@@ -187,8 +187,8 @@ while (condition > MAX_ERROR_DECONVOLUTIONS)  && ...
     DYU = BuildDYU(arr_hw,m);
     
     % add the structured perturbations to improved fw array.
-    for i = 1:length(fw)
-        new_fw{i} = fw{i} + zi_ite{i};
+    for i = 1:length(arr_fw)
+        new_fw{i} = arr_fw{i} + zi_ite{i};
     end
     
     %Build DCEQ
@@ -395,7 +395,7 @@ F_min = cell(1,nPolys-1);
 for i = 1:1:nPolys-1  
     
     % Get polynomial f_{i} from the set g containing all f_{i}
-    prev_fw = set_f{i+1}
+    prev_fw = set_f{i+1};
     fw = set_f{i+1};
     
     deg_fw = GetDegree(fw);
@@ -435,11 +435,11 @@ for i = 1:1:nPolys-1
     end
 end
 
-opt_theta = MinMaxOpt(F_max,F_min,v_m);
+opt_theta = MinMaxOpt(F_max,F_min);
 
 end
 
-function theta = MinMaxOpt(F_max,F_min,m,nPolys)
+function theta = MinMaxOpt(F_max,F_min)
 %
 % This function computes the optimal value theta for the preprocessing
 % opertation as part of block deconvolution
@@ -468,7 +468,7 @@ for i = 1:1:nPolys
     % Get the max of each coefficient of polynomial fw
     fw_max = F_max{i};
     % Get Degree of the polynomial 
-    deg_fw = GetDegree(fw_max)
+    deg_fw = GetDegree(fw_max);
     
     % Build the matrix A_{i}
     Ai = [ones(deg_fw+1,1) zeros(deg_fw+1,1)   -(0:1:deg_fw)'];
@@ -483,7 +483,7 @@ Part2 = [];
 for i = 1:1:nPolys
     
     % Get the max of each coefficient in polynomial f(x)
-    fw_max = F_max{i}
+    fw_max = F_max{i};
     
     % Get the degree of the polynomial f(x)
     deg_fw = GetDegree(fw_max);
@@ -496,8 +496,8 @@ end
 A = -[Part1;Part2];
 
 % Get the array of entries F_max_{i} as a vector
-v_F_max = cell2mat(F_max)'
-v_F_min = cell2mat(F_min)'
+v_F_max = cell2mat(F_max)';
+v_F_min = cell2mat(F_min)';
 
 b = [-log10(v_F_max); log10(v_F_min)];
 

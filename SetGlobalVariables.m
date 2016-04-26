@@ -59,7 +59,7 @@ SEED = 1024;
 %% Outputs
 
 global PLOT_GRAPHS
-PLOT_GRAPHS = 'n';
+PLOT_GRAPHS = 'y';
 
 %% Regarding the computation of the Sylvester low rank approximation
 
@@ -116,10 +116,10 @@ end
 % Intialise the global variables
 global MAX_ERROR_DECONVOLUTIONS
 global MAX_ITERATIONS_DECONVOLUTIONS
-global BOOL_DECONVOLVE
+global DECONVOLVE_METHOD
 
 % Get Global variables for Deconvolve
 MAX_ERROR_DECONVOLUTIONS = 1e-12;
 MAX_ITERATIONS_DECONVOLUTIONS = 50;
-BOOL_DECONVOLVE = 'Batch';
+DECONVOLVE_METHOD = 'Batch';
 

@@ -33,8 +33,6 @@ m = GetDegree(fx);
 % Get degree n of polynomial g(x)
 n = GetDegree(gx);
 
-fprintf('Begin : Get Degree m = % i , n = % i \n\n' ,m,n)
-
 % get minimum degree of f(x) and g(x)
 min_mn = min(m,n);
 

@@ -370,9 +370,7 @@ end
 
 
 % Display number of iterations
-fprintf('--------------------------------------------------------------------------- \n')
 fprintf('Iterations over approximate polynomial factorisation : %i \n', ite+1);
-fprintf('--------------------------------------------------------------------------- \n')
 
 % Update values of quotients u and v,
 PostAPF_ux = ux + z1x;
@@ -391,10 +389,9 @@ PostAPF_gx = GetWithoutThetas((gw + tw),th(ite));
 
 
 switch PLOT_GRAPHS
-    case 'y'
-        
-        
-        figure('name','APF - Residuals')
+    case 'y'        
+        figure_name = sprintf('%s : Residuals',mfilename);
+        figure('name',figure_name)
         title('plotting residual')
         hold on
         plot(1:1:length(residual),(residual));
