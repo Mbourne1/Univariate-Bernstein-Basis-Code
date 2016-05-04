@@ -30,11 +30,12 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %           'None'
 %
 % % Example
-% o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None')
+% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None')
 
 addpath 'Bezoutian'
 
-SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+SetGlobalVariables(ex_num,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+
 %
 %                Consistency of input parameters.
 
@@ -68,11 +69,6 @@ PrintRoots('d',d_roots)
 % Plot the roots of f(x), g(x) and d(x)
 PlotRoots()
 
-% Display the exact, expected result for the degree of the GCD
-fprintf('Degree of GCD of exact input polynomials: %i \n',t_exact)
-fprintf('--------------------------------------------------------------------------- \n')
-
-
 % Using roots stored as f and g and obtain polys in scaled bernstein basis
 % B_poly returns coefficients $a_{i}$\binom{m}{i} in a scaled bernstein basis.
 % We deal with bernstein basis so wish to remove the (mchoosei) such that
@@ -103,8 +99,12 @@ PrintCoefficients_Bivariate_Bernstein(g_exact,'g')
 fx = VariableNoise(f_exact,emin,emax);
 gx = VariableNoise(g_exact,emin,emax);
 
+% set upper and lower limit of the degree of the GCD
+lower_lim = 1;
+upper_lim = min(GetDegree(fx),GetDegree(gx));
+
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~,~,dx_calc,ux_calc,vx_calc] = o1(fx,gx);
+[~,~,dx_calc,ux_calc,vx_calc] = o_gcd_mymethod(fx,gx,[lower_lim,upper_lim]);
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
@@ -164,10 +164,13 @@ end
 
 
 
-function []= PrintToFile(m,n,t,error_dx)
+function [] = PrintToFile(m,n,t,error_dx)
 
+
+global EX_NUM
 global NOISE
-global BOOL_PREPROC
+global MEAN_METHOD
+global BOOL_ALPHA_THETA
 global LOW_RANK_APPROXIMATION_METHOD
 global APF_METHOD
 
@@ -176,8 +179,8 @@ fullFileName = 'o_gcd_results.txt';
 
 if exist('o_gcd_results.txt', 'file')
     fileID = fopen('o_gcd_results.txt','a');
-    fprintf(fileID,'%5d \t %5d \t %5d \t %s \t %s \t %s \t %s \t %s \n',...
-        m,n,t,error_dx,BOOL_PREPROC, NOISE, LOW_RANK_APPROXIMATION_METHOD,APF_METHOD);
+    fprintf(fileID,'%s \t %d \t %d \t %d \t %s \t %s \t %s \t %s \t %s \t %s \n',...
+        EX_NUM,m,n,t,error_dx,MEAN_METHOD,BOOL_ALPHA_THETA, NOISE, LOW_RANK_APPROXIMATION_METHOD,APF_METHOD);
     fclose(fileID);
 else
   % File does not exist.

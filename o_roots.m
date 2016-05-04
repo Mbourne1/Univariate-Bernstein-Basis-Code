@@ -5,7 +5,7 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 % roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
 % m_{i}. 
 %
-%                           Inputs
+% % Inputs
 %
 % ex_num : (string) Example Number
 %
@@ -28,11 +28,11 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %
 % % Example
 %
-% o_roots('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
+% >> o_roots('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
 
 
 
-SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+SetGlobalVariables(ex_num,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 
 global problemType 
 problemType = 'fromRoots'; % fromRoots/fromCoefficients
@@ -56,49 +56,9 @@ PrintGlobalVariables();
 % Add subdirectories
 addpath 'Root Finding Methods'
 
+% Get the polynomial f(x) as a column vector of coefficients.
+[fx_exact] = Examples_Roots(ex_num);
 
-switch problemType
-    case 'fromRoots'
-        
-
-        % Get exact polynomial roots from the example file.
-        [f_roots_exact,~] = Examples_Roots(ex_num);
-        f_roots_exact = sortrows(f_roots_exact,1);
-        
-        % Print the exact roots and multiplicities to terminal
-        fprintf('\nExact Roots of Input Polynomial \n');
-        fprintf('\t \t \t \t \t Root \t \t \t \t\t  Multiplicity \n')
-        fprintf('%30.15f %30.15f \t \t\n',[f_roots_exact(:,1),f_roots_exact(:,2)]');
-        fprintf('\n');
-        
-        fx_bi = B_poly(f_roots_exact);
-        fx_exact = GetWithoutBinomials(fx_bi); 
-        
-        % Get degree of f
-        m = GetDegree(fx_bi);
-        
-        % Display the degree of the input polynomial
-        disp('Degree of Input Polynomial F ');
-        disp(int2str(m));
-        
-        
-    case 'fromCoefficients'
-        switch ex_num
-            case '1'
-                fx_exact = ...
-                    [
-                    -0.9865
-                    2.2398
-                    2.8950
-                    1.9092
-                    -0.1477
-                    ];
-            otherwise
-                error('Not a valid example number for the *from coefficients* examples.')
-        end
-end
-
-% %
 % Add Noise to coefficients of exact polynomial f_exact, to obtain noisy
 % polynomial fx.
 fx = VariableNoise(fx_exact,emin,emax);
@@ -113,7 +73,7 @@ clc_roots_matlab = o_roots_matlab(fx);
 clc_roots_multroot = o_roots_multroot(fx);
 
 % Calculate roots by 'Interval Bisection' function
-clc_roots_intervalBisection = o_roots_bisection(fx);
+% clc_roots_intervalBisection = o_roots_bisection(fx);
 
 % Calculate roots by 'Subdivisiton' Method
 %clc_roots_subdivision = o_roots_subdivision(fx);
@@ -132,41 +92,7 @@ error_multroot = norm(Normalise(fx_multroot) - Normalise(fx_exact)) ./ norm(Norm
 
 % %
 
-% Get vector of exact roots, and extract multiplicities.
-% eg: if root one has multiplicity 5, then the vector would be given by
-% X1 = [r1 r1 r1 r1 r1 ...].
-switch problemType
-    case 'fromRoots'
-        % Let sum_mult_exct be the sum of all multiplicities of the exact roots
-        sum_mult_exct = sum(f_roots_exact(:,2));
-        
-        % Initialise a vector to store the roots where roots with high multiplicity
-        % are repeated.
-        nondistinctRoots_exct = zeros(sum_mult_exct,1);
-        
-        % Initialise a count
-        count = 1;
-        
-        % for each exact root r_{i}
-        for i = 1:1:size(f_roots_exact,1)
-            
-            % Get multiplicty of root i
-            m = f_roots_exact(i,2);
-            
-            % for j = 1,...,m
-            for j = 1:1:m
-                
-                % Add the root to a vector of nondistinct roots
-                nondistinctRoots_exct(count,1) = f_roots_exact(i,1);
-                
-                % Increment the counter
-                count = count + 1;
-            end
-        end
-    case 'fromCoefficients'
-    otherwise
-        error('Problem type is either fromRoots or fromCoefficients')
-end
+
 % Get vector of roots calculated by my method, and extract multiplicities.
 % eg: if r_{1} has multiplicity 5, then the vector would be given by
 % X1 = [r1 r1 r1 r1 r1 ...].
@@ -186,10 +112,6 @@ switch PLOT_GRAPHS
     case 'y'
         figure_name = sprintf('%s : Plot Calculated Roots',mfilename);
         figure('name',figure_name)
-        switch problemType
-            case 'fromRoots'
-                scatter(real(nondistinctRoots_exct),imag(nondistinctRoots_exct),'black','*','DisplayName','Exact Roots');
-        end
         hold on;
     
         scatter((real(nondistinctRoots_mymethod)),imag(nondistinctRoots_mymethod),'yellow','*','DisplayName','My Method');

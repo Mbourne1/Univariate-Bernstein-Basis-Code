@@ -1,49 +1,10 @@
     m        n       t   error        preproc       noise   Low Rank Approx  APF_Method
 ---------------------------------------------------------------------------------------
-   15 	    12 	    10 	 7.527971e-08 	 n      1.000000e-10 	 None           None 
-    6 	     4 	     2 	 1.264879e-10 	 n      1.000000e-10 	 Standard STLN 	None 
-    6 	     4 	     2 	 2.794808e-11 	 y      1.000000e-10 	 Standard STLN 	None 
-    6 	     4 	     2 	 1.264879e-10 	 n      1.000000e-10 	 Standard STLN 	None 
-    6 	     4 	     2 	 1.273523e-10 	 n      1.000000e-10 	 None           None 
-    4 	     2 	     1 	 8.255627e-10 	 y 	 1.000000e-10 	 None 	 None 
-    4 	     2 	     1 	 8.255627e-10 	 y 	 1.000000e-10 	 None 	 None 
-   29 	    36 	    26 	 8.469729e-09 	 y 	 1.000000e-10 	 None 	 None 
-    4 	     2 	     1 	 8.255627e-10 	 y 	 1.000000e-10 	 None 	 None 
-   10 	     8 	     5 	 9.851533e-13 	 y 	  	 None 	 None 
-   20 	    15 	     7 	 3.809304e-10 	 y 	  	 None 	 None 
-    5 	     4 	     2 	 5.375023e-13 	 y 	  	 None 	 None 
-    5 	     4 	     2 	 5.375023e-13 	 y 	  	 None 	 None 
-    4 	     4 	     2 	 1.776357e-15 	 y 	  	 None 	 None 
-   10 	     7 	     5 	 1.093614e-13 	 y 	  	 None 	 None 
-   20 	    15 	    10 	 7.891614e-02 	 y 	  	 None 	 None 
-   20 	    15 	    10 	 6.922899e+00 	 y 	  	 None 	 None 
-   20 	    15 	    10 	 6.988048e+00 	 y 	  	 Standard STLN 	 None 
-    6 	     4 	     2 	 3.605099e-10 	 y 	  	 None 	 None 
-    6 	     4 	     2 	 3.089013e-10 	 y 	  	 None 	 None 
-    4 	     2 	     1 	 8.319274e-10 	 y 	  	 None 	 None 
-    4 	     2 	     1 	 8.319327e-10 	 y 	  	 None 	 None 
-   10 	     7 	     5 	 6.985339e-09 	 y 	  	 None 	 None 
-   10 	     7 	     5 	 7.021420e-09 	 y 	  	 None 	 None 
-   10 	     7 	     5 	 7.021420e-09 	 y 	  	 None 	 None 
-   10 	     7 	     5 	 7.021388e-09 	 y 	  	 None 	 None 
-   10 	     8 	     5 	 5.358363e-09 	 y 	  	 None 	 None 
-   10 	     8 	     5 	 5.358363e-09 	 y 	  	 None 	 None 
-   10 	     7 	     5 	 7.021388e-09 	 y 	  	 None 	 None 
-   10 	     8 	     5 	 5.358363e-09 	 y 	  	 None 	 None 
-   10 	     8 	     5 	 5.358363e-09 	 y 	  	 None 	 None 
-   29 	    36 	    26 	 2.591040e-07 	 y 	  	 None 	 None 
-   29 	    36 	    26 	 2.591040e-07 	 y 	  	 None 	 None 
-   29 	    36 	    26 	 2.591041e-07 	 y 	  	 None 	 None 
-   22 	    21 	    20 	 2.788955e+11 	 y 	  	 None 	 None 
-   22 	    21 	    20 	 2.788955e+11 	 y 	  	 None 	 None 
-   22 	    21 	    20 	 2.788955e+11 	 y 	  	 None 	 None 
-   22 	    21 	    20 	 2.788955e+11 	 y 	  	 None 	 None 
-   22 	    21 	    20 	 9.837867e+10 	 y 	  	 None 	 None 
-   21 	    22 	    12 	 1.342978e-07 	 y 	  	 None 	 None 
-   21 	    22 	    12 	 1.342978e-07 	 y 	  	 None 	 None 
-   21 	    22 	    12 	 1.342976e-07 	 y 	  	 None 	 None 
-   21 	    22 	    12 	 1.342978e-07 	 y 	  	 None 	 None 
-    6 	     4 	     2 	 2.595393e-11 	  	  	 Standard STLN 	 None 
-    4 	     2 	     1 	 7.752492e-10 	  	  	 Standard STLN 	 None 
-   29 	    36 	    26 	 1.043133e-09 	  	  	 Standard STLN 	 None 
-   29 	    36 	    26 	 2.562787e-15 	  	  	 Standard STLN 	 None 
+6 	 4 	 2 	 1.712552e-10 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 None 	 None 
+6 	 4 	 2 	 2.595393e-11 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.595393e-11 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.595211e-11 	 Geometric Mean My Method 	 y 	 1.000000e-08 	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.595211e-11 	 Geometric Mean My Method 	 y 	 1.000000e-08 	 Standard STLN 	 Standard APF 
+1 	 6 	 4 	 2 	 3.151457e-11 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 Standard SNTLN 	 None 
+1 	 6 	 4 	 2 	 1.250563e-10 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 Standard SNTLN 	 None 
+2 	 4 	 2 	 1 	 1.035932e-09 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 Standard SNTLN 	 None 

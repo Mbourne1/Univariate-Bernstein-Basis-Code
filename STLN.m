@@ -56,8 +56,13 @@ res_vec = (ct + ht) - (At+Bt)*x_ls;
 % Get the vector x with a zero included in the x_ls solution.
 x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
 
+% Seperate the component parts of x into x_v and x_u, where x_v is an
+% approximation of v(x) and x_u is an approximation u(x).
+x_v = x(1:n-t+1);
+x_u = x(n-t+2:end);
+
 % Build the matrix Y_{t}
-Yt = BuildYt(x,m,n,t);
+Yt = BuildDTQ(x_v,x_u,-t);
 
 % Build the Matrx C for LSE problem
 
@@ -127,8 +132,13 @@ while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
     % Get the vector x_ls
     x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
     
-    % Build matrix Y_{t}
-    Yt = BuildYt(x,m,n,t);
+    % Seperate the component parts of x into x_v and x_u, where x_v is an
+    % approximation of v(x) and x_u is an approximation u(x).
+    x_v = x(1:n-t+1);
+    x_u = x(n-t+2:end);
+    
+    % Build Matrix Y_{t}
+    Yt = BuildDTQ(x_v,x_u,-t);
     
     % Get updated residual vector
     res_vec = (ct+ht) - ((At+Bt)*x_ls);
@@ -212,25 +222,5 @@ else
         ];
     
 end
-
-end
-
-function Yt = BuildYt(x,m,n,t)
-% Build the matrix Y_{t}, where D*Y_{t}*K*z = D*E_{t}*Q*x
-
-xa = x(1:n-t+1);
-xb = x(n-t+2:end);
-
-% Get x with binomials
-bi_m = GetBinomials(m);
-bi_n = GetBinomials(n);
-
-D = BuildD(m,n-t);
-
-Y1 = BuildT1(xa,m);
-Y2 = BuildT1(xb,n);
-
-Yt = D*[Y1 Y2]*blkdiag(diag(bi_m),diag(bi_n));
-
 
 end

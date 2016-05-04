@@ -1,14 +1,50 @@
-function [root_mult_array_fx,m] = Examples_Roots(n)
+function [fx_exact] = Examples_Roots(ex_num)
+
+ProblemType = 'From Roots';
+
+switch ProblemType
+    case 'From Roots'
+        
+        
+        % Get exact polynomial roots from the example file.
+        [f_roots_exact,~] = Examples_Roots_FromRoots(ex_num);
+        f_roots_exact = sortrows(f_roots_exact,1);
+        
+        % Print the exact roots and multiplicities to terminal
+        fprintf('\nExact Roots of Input Polynomial \n');
+        fprintf('\t \t \t \t \t Root \t \t \t \t\t  Multiplicity \n')
+        fprintf('%30.15f %30.15f \t \t\n',[f_roots_exact(:,1),f_roots_exact(:,2)]');
+        fprintf('\n');
+        
+        fx_bi = B_poly(f_roots_exact);
+        fx_exact = GetWithoutBinomials(fx_bi);
+        
+        % Get degree of f
+        m = GetDegree(fx_bi);
+        
+        % Display the degree of the input polynomial
+        disp('Degree of Input Polynomial F ');
+        disp(int2str(m));
+        
+        
+    case 'From Coefficients'
+        fx_exact = Examples_Roots_FromCoefficients(ex_num);
+        
+end
+end
+
+
+function [root_mult_array_fx,m] = Examples_Roots_FromRoots(ex_num)
 % Examples_Roots(n)
 %
-% Get a set of roots and multiplicities of a polynomial f(x). 
+% Get a set of roots and multiplicities of a polynomial f(x).
 %
 % Inputs.
 %
+%
 % n : Example Number
 %
-%
-% Outputs.
+% Outputs
 %
 % root_mult_array_fx : Matrix of roots of f(x) and their corresponding
 %                      multiplicities. Each row is a root, multiplicity
@@ -16,9 +52,8 @@ function [root_mult_array_fx,m] = Examples_Roots(n)
 %
 % m : Degree of polynomial f(x).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-switch n
+switch ex_num
     
     case '-1'
         root_mult_array_fx = [
@@ -159,7 +194,7 @@ switch n
             0.9     3;
             1.1     7;
             ];
-
+        
     case 'Custom'
         
         prompt = 'Enter the degree of Polynomial f(x) :';
@@ -179,3 +214,18 @@ m = sum(root_mult_array_fx(:,2)-1);
 
 end
 
+function fx_exact = Examples_Roots_FromCoefficients(ex_num)
+switch ex_num
+    case '1'
+        fx_exact = ...
+            [
+            -0.9865
+            2.2398
+            2.8950
+            1.9092
+            -0.1477
+            ];
+    otherwise
+        error('Not a valid example number for the *from coefficients* examples.')
+end
+end

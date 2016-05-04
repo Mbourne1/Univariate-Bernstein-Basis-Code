@@ -71,7 +71,7 @@ end
 % Given the set of calculated simple roots produce a polynomial in the 
 % bernstein form.
 roots = [real(t(:,1)), ones(length(t),1)];
-
+root_mult_array = roots;
 % Get coefficients of polynomial r1 in the scaled bernstein form
 r1_bi = B_poly(roots);
 

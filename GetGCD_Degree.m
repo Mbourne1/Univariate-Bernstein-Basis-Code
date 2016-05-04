@@ -19,7 +19,6 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 % theta : optimal value of theta
 %
-%
 
 % Get global variables
 

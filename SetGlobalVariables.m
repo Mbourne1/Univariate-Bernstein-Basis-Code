@@ -1,4 +1,4 @@
-function [] = SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_method, apf_method)
+function [] = SetGlobalVariables(ex_num,mean_method,bool_alpha_theta,low_rank_approx_method, apf_method)
 % Set the global variables
 %
 % Inputs.
@@ -10,6 +10,8 @@ function [] = SetGlobalVariables(mean_method,bool_alpha_theta,low_rank_approx_me
 % apf_method
 %
 
+global EX_NUM
+EX_NUM = ex_num;
 
 %% Structuring the Sylvester Matrix
 
@@ -20,9 +22,12 @@ global BOOL_DENOM_SYL
 BOOL_DENOM_SYL = 'y';
 
 global SYLVESTER_BUILD_METHOD
-% Standard D*T*Q
-% Rearranged : Remove common denominator
 SYLVESTER_BUILD_METHOD = 'Standard';
+% Standard : D*T*Q
+%
+% Rearranged : In a format where the entries of the sylvester matrix
+% partition C(f) have a common divisor, and the entries of C(g) have a
+% common divisor
 
 
 %% Structuring the matrix [C(f) | C(g)]

@@ -48,34 +48,46 @@ switch BOOL_LOG
     otherwise 
         error('err')
 end
+% Seperate the component parts of x into x_v and x_u, where x_v is an
+    % approximation of v(x) and x_u is an approximation u(x).
+
+xa = x(1:opt_col-1) ;
+xb = x(opt_col:end) ; 
+x = [xa; 0 ;xb] ;% Insert zero into vector
+
+x_v = x(1:n-t+1);
+x_u = x(n-t+2:end);
+test_DY = BuildDTQ(x_v,x_u,-t);
+
+
 end
 
 
 function DY = BuildDY_nchoosek(m,n,t,mincol,x_ls_wrt_w,alpha,theta)
-
 % Construct Matrix Y, such that E_{k}x = Y_{k}z, where Ek is a matrix of
 % structured perturbations applied to S_{k} = DTQ
-
 % Build in the rearranged format
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                               Inputs
-
-
+%
+%  Inputs
+%
+%
+%
 % m - Degree of polynomial f
-
+%
 % n - Degree of polynomial g
-
+%
 % t - Degree of GCD
-
+%
 % mincol -
-
+%
 % theta -
-
+%
 % alpha -
+%
+%
+%
+%
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                           Global Variables
 

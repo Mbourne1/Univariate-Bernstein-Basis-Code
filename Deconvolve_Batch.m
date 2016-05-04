@@ -15,77 +15,77 @@ function arr_hw = Deconvolve_Batch(set_f)
 %
 
 % Global Variables
-
 global MAX_ITERATIONS_DECONVOLUTIONS
 global MAX_ERROR_DECONVOLUTIONS
 
+% Get the number of polynomials in the set set_f
+nPolys_f = length(set_f);
 
-% let d be the number of deconvolutions = num of polynomials in set_g - 1
-d = length(set_f) -1;
+% let d be the number of deconvolutions = num of polynomials in set_f - 1
+d = nPolys_f - 1;
 
-% Get values of m_{i}, the degrees of the polynomials f_{i}(y) for i =
-% 0...d
-m = zeros(1,length(set_f));
-for i = 1:1:length(set_f)
+% Get the degree m_{i} of each of the polynomials f_{i}
+m = zeros(1,nPolys_f);
+for i = 1:1:nPolys_f
     m(i) = GetDegree(set_f{i});
 end
 
-% get values of n{i}, the degree of polynomials h_{i} for i = 1....d
+% Get the degrees n{i} of polynomials h_{i} = f_{i}/f_{i+1}.
 n = zeros(1,d);
 for i = 1:1:d
     n(i) = m(i)-m(i+1);
 end
 
 %Define M to be the total number of all coefficients of the first d polynomials
-%g_{0}...g_{d-1}, this is used in the RHS vector.
+%f_{0},...,f_{d-1}, this is used in the RHS vector.
 M = sum(m+1)-(m(end:end)+1);
 
 % Define M1 to be the total number of all coefficients of polynomials
-% g_{0}...g_{d}
+% f_{0}...f_{d}
 M1 = sum(m+1) ;% m_{i}+1
 
-% Define N to be the degree of sum of all h_{i}
+% Define N to be the number of coefficients of all h_{i}
 N = sum(n+1);
 
 % Obtain theta such that the ratio of max element to min element is
 % minimised
 theta = getOptimalTheta(set_f,m);
 
-
 % Initialise a cell-array for f(w)
-arr_fw = cell(1,length(set_f));
+fw = cell(1,length(set_f));
 
-
+% for each f_{i} get fw_{i}
 for i = 1:1:length(set_f)
-    fx = set_f{i};
-    % Convert to scaled bernstein basis, by inclusion of theta
-    % a_{i}\theta^{i}
-    %fw{i} = fx*theta^(i);
-    arr_fw{i} = GetWithThetas(fx,theta);
-    
+    fw{i} = GetWithThetas(set_f{i},theta);
 end
 
 % Write Deconvolutions in form [D^{-1}C(f)Q] h = RHS_f
-
-RHS_f = real(BuildRHSF(arr_fw));
-DCQ = BuildDCQ(arr_fw);
+RHS_vec = real(BuildRHSF(fw));
+DCQ = BuildDCQ(fw);
 
 % Solve h_{0}
-hw = SolveAx_b(DCQ,RHS_f);
-v_h = hw;
+hw_vec = SolveAx_b(DCQ,RHS_vec);
+v_h = hw_vec;
 
 % Seperate solution vector h, into component parts h_{1},h_{2},...h_{d},
 % each of degree n_{i}
 % initialise a cell array to store the coefficients of the individual
 % polynomials h_{i}
 
-arr_hw = cell(1,length(n));
-for i = 1:1:length(n)
-    arr_hw{i} = hw(1:n(i)+1);
-    hw(1:n(i)+1) = [];
+% Split vec h in to an array of polynomials.
+for i = 1:1:nPolys_f-1
+    
+    % Get degree of h{i}
+    deg_hw = n(i);
+    
+    % Get coefficients of h_{i} from the solution vector
+    hw{i} = hw_vec(1:deg_hw+1);
+    
+    % Remove the coefficients from the solution vector
+    hw_vec(1:deg_hw+1) = [];
 end
 
-hw = v_h;
+hw_vec = v_h;
 
 % Let z be  vectors of perturbations to polynomials fi such that
 % z = [z{0} z{1} z{2} z{3} ... z{d}]
@@ -105,10 +105,10 @@ P = [eye(M) zeros(M,M1-M)];
 % P, such that we eliminate the z_max
 
 % Build Matrix Y, where E(z)h = Y(h)z
-DYU = BuildDYU(arr_hw,m);
+DYU = BuildDYU(hw,m);
 
 % Compute the first residual
-residual_o = (RHS_f+(P*z_o) - (DCQ*v_h));
+residual_o = (RHS_vec+(P*z_o) - (DCQ*v_h));
 
 % Set the iteration counter.
 ite = 0;
@@ -117,19 +117,19 @@ F = eye(N+M1);
 
 G = [DCQ (DYU)-P];
 
-s = [hw ; z_o];
+s = [hw_vec ; z_o];
 
 t = residual_o;
 
 condition = norm(residual_o);
 
-hw_ite = hw;
+hw_ite = hw_vec;
 
 zw_ite = z_o;
 
 start_point = ...
     [
-    hw;
+    hw_vec;
     z_o;
     ];
 
@@ -187,8 +187,8 @@ while (condition > MAX_ERROR_DECONVOLUTIONS)  && ...
     DYU = BuildDYU(arr_hw,m);
     
     % add the structured perturbations to improved fw array.
-    for i = 1:length(arr_fw)
-        new_fw{i} = arr_fw{i} + zi_ite{i};
+    for i = 1:length(fw)
+        new_fw{i} = fw{i} + zi_ite{i};
     end
     
     %Build DCEQ
@@ -198,10 +198,10 @@ while (condition > MAX_ERROR_DECONVOLUTIONS)  && ...
     G = [DCEQ (DYU-P)];
     
     % Calculate residual and increment t in LSE Problem
-    r = ((RHS_f+Pz) - (DCEQ*hw_ite));
+    r = ((RHS_vec+Pz) - (DCEQ*hw_ite));
     t = r;
     
-    condition = norm(r)./norm(RHS_f+Pz);
+    condition = norm(r)./norm(RHS_vec+Pz);
     
     % Increment iteration number
     ite = ite + 1;
@@ -252,93 +252,9 @@ Y_new = Y;
 end
 
 function Y1 = BuildD0Y1U1(hx,m1)
-global BOOL_LOG
-
-switch BOOL_LOG
-    case 'y' % use logs
-        Y1 = BuildD0Y1U1_log(hx,m1);
-        
-    case 'n' % use nchoosek
-        Y1 = BuildD0Y1U1_nchoosek(hx,m1);
-end
+    Y1= BuildDT1Q1(hx,m1);
 end
 
-function Y1 = BuildD0Y1U1_nchoosek(hx,m1)
-% Build the Partition of the Coefficient matrix D_{i-1}Y_{i}U_{i}
-% to perform the multiplication C(h_{i}) * f_{i} = f_{i+1}
-%
-% Inputs.
-%
-% hx : Coefficients of polynomial h_{i}(x)
-%
-% m1 : Degree of polynomial f_{i} 
-
-global BOOL_DENOM_SYL
-
-% Get degree of polynomial h(x) where deg(h_{1}) = n_{1} = m_{0} - m_{1}
-n1 = GetDegree(hx);
-
-% Y1 = zeros(m0+1,m1+1);
-Y1 = [];
-
-% for each column j = 1:1:m0-m1+1
-for j = 0:1:m1
-    % for each row i = 1:1:m1+1
-    for i = j:1:j+n1
-        Y1(i+1,j+1) = ...
-            hx(i-j+1) .* nchoosek(i,j) .* nchoosek(n1+m1-i,m1-j);
-        
-    end
-end
-
-switch BOOL_DENOM_SYL
-    case 'y'
-        Y1 = Y1 ./  nchoosek(n1+m1,m1);
-    case 'n'
-    otherwise
-        error('err')
-end
-end
-
-
-function Y1 = BuildD0Y1U1_log(hx,m1)
-% Build the Partition of the Coefficient matrix D_{i-1}Y_{i}U_{i}
-% h
-% m0 = degree of previous polynomial
-% m1 = degree of current polynomial
-
-global BOOL_DENOM_SYL
-
-% Y1 = zeros(m0+1,m1+1);
-
-% Get Degree of polynomial deg(h_{x}) = n_{1} = m_{0}-m_{1}
-n1 = GetDegree(hx);
-
-Y1 = [];
-% for each column i = 1:1:m0-m1+1
-for k = 0:1:m1
-    % for each row j = 1:1:m1+1
-    for j = k:1:k+n1
-        BinomsEval_Log = lnnchoosek(j,k) + lnnchoosek(m0-j,m1-(j-k));
-        BinomsEval_Exp = 10.^BinomsEval_Log;
-        Y1(j+1,k+1) = hx(j-k+1) .* BinomsEval_Exp;
-    end
-end
-switch BOOL_DENOM_SYL
-    case 'y'
-        % Include the denominator
-        Denom_Log = lnnchoosek(n1+m1,m1);
-        Denom_Exp = 10.^Denom_Log;
-        
-        Y1 = Y1 ./  Denom_Exp;
-    case 'n'
-        % Exclude the denominator
-    otherwise
-        error('err')
-end
-
-
-end
 
 
 
@@ -521,147 +437,40 @@ function DCQ = BuildDCQ(set_fw)
 % Inputs.
 
 % create cauchy matrices c{i} for i = 1,...
-c = cell(1,length(set_fw));
+T1 = cell(1,length(set_fw));
 
+% for each of the polynomials f_{i}(x), excluding the final polynomial
 for i = 1:1:length(set_fw)-1
     
-    % Start with set_fw{2} = f_{1}(i)
-    prev_fw = set_fw{i};
+    % Get the polynomial f_{i} = set_f{i+1} 
     fw = set_fw{i+1};
     
-    % Get the degree of f, previous f, and h
+    % Get the polynomial f_{i-1} = set_f{i}
+    fw_prev = set_fw{i};
+    
+    % Get degree of polynomial f_{i} = m_{i}
     deg_fw = GetDegree(fw);
-    deg_prev_fw = GetDegree(prev_fw);
     
-    deg_hw = deg_prev_fw - deg_fw;
+    % Get the degree of polynomial f_{i-1}
+    deg_fw_prev = GetDegree(fw_prev);
     
-    c{i} = BuildD0C1Q1(fw,deg_hw);
-
-
+    % Get the degree of the polynomial h_{i}
+    deg_hw = deg_fw_prev - deg_fw;
+    
+    % Build the Matrix T(f)
+    T1{i} = BuildT1(fw,deg_hw);
+    
 end
 
 %Build the Coefficient Matrix C of all matrices c
-DCQ = blkdiag(c{1:length(c)});
-DCQ = real(DCQ);
+DCQ = blkdiag(T1{1:length(T1)});
 
 end
 
 
-function D0C1Q1 = BuildD0C1Q1(fx,m0_m1)
-%% Build the Partition D_{i-1}C_{i}Q_{i}
-%
-%
-% Inputs
-%
-% fx -
-%
-% m0_m1 = m_{0} - m_{1}
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Initialise global variables.
-global BOOL_LOG
 
 
-switch BOOL_LOG
-    case 'n' 
-        % use nchoosek
-        D0C1Q1 = BuildD0C1Q1_nchoosek(fx,m0_m1);
-        
-    case 'y' 
-        % use log
-        D0C1Q1 = BuildD0C1Q1_log(fx,m0_m1);
-    otherwise 
-        error('err')
-end
-
-end
 
 
-function D0C1Q1 = BuildD0C1Q1_nchoosek(fx,m0_m1)
-% Build a partition D_{i-1}C_{i}Q_{i} of the DCQ matrix
-%
-%
-% Inputs
-%
-% fx : Coefficients of polynomial f(x)
-%
-% m0_m1 : Degree of polynomial h_{1}
-%
-
-global BOOL_DENOM_SYL
-
-% Get Degree of polynomial f(x)
-m1 = GetDegree(fx);
-
-% Define n1 the degree of h1
-n1 = m0_m1;
-
-% Preassign space for partition D_{0}C_{1}Q_{1}
-D0C1Q1 = zeros(n1+m1+1,n1+1);
-
-% For each column k = 0:1:m_{i-1} - m_{i}
-for k = 0:1:n1
-    % For each row j = k:1:m_{i}+k
-    for j = k:1:m1+k
-        D0C1Q1(j+1,k+1) = ...
-            fx(j-k+1) .* ...
-            nchoosek(j,k) .* nchoosek(n1+m1-j,m1-(j-k)) ;
-    end
-end
-switch BOOL_DENOM_SYL
-    case 'y'
-        denom = nchoosek(n1+m1,m1);
-        D0C1Q1 = D0C1Q1 ./ denom ;
-    case 'n'
-    otherwise
-        error('err')
-end
-end
-
-
-function D0C1Q1 = BuildD0C1Q1_log(fx,m0_m1)
-% Build a partition D_{i-1}C_{i}Q_{i} of the DCQ matrix
-%
-% Inputs.
-%
-% fx -
-%
-% m0 - Degree of f_{i-1}
-%
-% m1 - Degree of f_{i}
-%
-
-global BOOL_DENOM_SYL
-
-% Define n_{1} the degree of h_{1}
-n1 = m0_m1;
-
-% Preassign space for partition D_{0}C_{1}Q_{1}
-D0C1Q1 = zeros(m0+1,n1+1);
-
-% For each column k = 0:1:m_{i-1} - m_{i}
-for k = 0:1:n1
-    % For each row j = k:1:m_{i}+k
-    for j = k:1:m1+k
-        Numerator_log = lnnchoosek(j,k) + lnnchoosek(n1+m1-j,m1-(j-k));
-        Numerator_exp = 10.^Numerator_log;
-        D0C1Q1(j+1,k+1) = ...
-            fx(j-k+1) .* Numerator_exp ;
-    end
-end
-
-switch BOOL_DENOM_SYL
-    case 'y'
-        Denom_Log = lnnchoosek(n1+m1,m1);
-        Denom_exp = 10.^Denom_Log;
-        
-        D0C1Q1 = D0C1Q1./ Denom_exp;
-    case 'n'
-    otherwise
-        error('err')
-end
-end
 
 

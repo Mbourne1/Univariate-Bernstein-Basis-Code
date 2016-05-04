@@ -3,27 +3,25 @@ function hi = Deconvolve(set_g)
 % where each polynomial g_{i} appears in two deconvolutions.
 %
 %
-% Inputs
-%
+% % Inputs
 %
 % set_g :   set of input polynomials g(y) to be deconvolved. Each g_{i} has a
 %           different number of elements, so set_g is a cell array.
 %
-% Outputs
-%
+% % Outputs
 %
 % h_{i} = g_{i-1}/g_{i}
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 
 
 % Set Deconvolution Method
 %   single := Use standard non batch method
 %   batch  := Use batch deconvolution
-global BOOL_DECONVOLVE
+global DECONVOLVE_METHOD
 
-switch BOOL_DECONVOLVE
+switch DECONVOLVE_METHOD
     case 'Single'
         % Deconvolve independent method
         hi = Deconvolve_Independent(set_g);

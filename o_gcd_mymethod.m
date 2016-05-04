@@ -1,5 +1,5 @@
 function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
-    o1(fx,gx,nDistinctRoots)
+    o_gcd_mymethod(fx,gx,deg_limits)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
 %                             Inputs:
@@ -40,8 +40,14 @@ m = GetDegree(fx) ;
 % Get degree of GCD by first method
 
 % Method 1 - 'From Scratch' Build each subresultant from scratch
-[t, alpha, theta, gm_fx, gm_gx] = ...
-    GetGCD_Degree(fx,gx);
+% EDIT 03/05/2016 - GetGCD_Degree is the same as GetGCD_Degree2 but without
+% limits on degree
+
+% [t, alpha, theta, gm_fx, gm_gx] = ...
+%     GetGCD_Degree(fx,gx);
+
+[t2, alpha, theta, gm_fx, gm_gx] = ...
+    GetGCD_Degree2(fx,gx,deg_limits);
 
 [t, alpha, theta, gm_fx, gm_gx] = ...
     GetGCD_DegreeByNewMethod(fx,gx);
@@ -78,7 +84,8 @@ fw = GetWithThetas(fx_n,theta);
 gw = GetWithThetas(gx_n,theta);
 
 St_preproc = BuildSubresultant(fw,alpha.*gw,t);
-%%
+
+%
 % Get the optimal column of the sylvester matrix to be removed. Where
 % removal of the optimal column gives the minmal residual in (Ak x = ck)
 [opt_col] = GetOptimalColumn(St_preproc);

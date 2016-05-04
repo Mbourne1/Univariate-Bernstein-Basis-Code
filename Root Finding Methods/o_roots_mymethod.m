@@ -25,20 +25,20 @@ f{1} = fx;
 
 % let degree_vector store the degrees corresponding to the array of
 % GCDs stored in q.
-M(1) = GetDegree(fx);
+M(1) = GetDegree(f{1});
 
 % Let theta_vec store all theta values used in each iteration.
 vTheta(1) = 1;
 
 % Get the number of distinct roots of f_{1}. Since this is unknown at this
 % time, set number of distinct roots to be m_{1} = deg(f_{1}).
-d(1) = GetDegree(fx);
+d(1) = GetDegree(f{1});
 
 
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-while length(f{ite})-1 > 0
+while M(ite) > 0
     
    
     % if degree of f_{i} is greater than one
@@ -50,27 +50,28 @@ while length(f{ite})-1 > 0
         % Get upper and lower bounds of the GCD Computation.
         % M_{i+1} > M_{i} - d_{i-1}
         try
-            fprintf('Minimum degree of f_{%i}: %i \n', ite+1, M(ite)-d(ite-1));
-            fprintf('Maximum degree of f_{%i}: %i \n\n', ite+1, M(ite)-1);
+            lower_lim = M(ite)-d(ite-1);
+            upper_lim = M(ite)-1;
+            fprintf('Minimum degree of f_{%i}: %i \n', ite+1, lower_lim);
+            fprintf('Maximum degree of f_{%i}: %i \n\n', ite+1, upper_lim);
         catch
+            lower_lim = 1;
+            upper_lim = M(ite)-1;
         end
-        
-        if (ite > 1)
-            n_distinct_roots = d(ite-1);
-        else
-            n_distinct_roots = M(ite);
-        end
+    
         
         % Get GCD of f(x) and f'(x)
-        [f{ite},~,f{ite+1}, ~ ,~,~,vTheta(ite+1), M(ite+1)] = o1( f{ite},...
-            Bernstein_Differentiate(f{ite}), n_distinct_roots);
+        [f{ite},~,f{ite+1}, ~ ,~,~,vTheta(ite+1), M(ite+1)] = o_gcd_mymethod( f{ite},...
+            Bernstein_Differentiate(f{ite}), [lower_lim, upper_lim]);
         
         % Get number of distinct roots of f(ite)
         d(ite) = M(ite) - M(ite+1);
         
-        fprintf('The computed degree of f_{%i} = deg(GCD(f_{%i},f_{%i})  : %i \n',ite+1, ite, ite,M(ite+1))
+        fprintf('The computed deg(GCD(f_{%i},f_{%i}) is : %i \n',ite,ite,M(ite+1))
+        
         fprintf('Number of distinct roots in f_{%i} : %i \n',ite,d(ite))
-       
+        
+        fprintf('Degree of f_{%i} : %i \n',ite + 1, M(ite+1))
         
         % increment iteration number.
         ite = ite+1;
@@ -89,6 +90,16 @@ while length(f{ite})-1 > 0
         
     end
 end
+
+
+% Get the degree structure of the polynomials h_{i}
+deg_struct_h = diff([M]);
+
+% Get the degree structure of the polynomials w_{i}
+deg_struct_w = diff([deg_struct_h 0]);
+
+vMultiplicities = find(deg_struct_w~=0);
+
 
 % #########################################################################
 % This section performs deconvolution by structured matrix method.
@@ -226,22 +237,22 @@ end
 
 
 % Obtaining multiplicities of the calculated roots
-roots_multiplicty = [];
-while sum(M) ~= 0
-    % Get index of first zero.;
-    index = min(find(M==0)) - 1;
-    minus_vector = zeros(1,length(M));
-    minus_vector(1,1:index) = index:-1:1;
-    M = M - minus_vector;
-    roots_multiplicty = [roots_multiplicty ; index];
+% create a matrix where the first column contains the multiplicities, and
+% the second column contains the number of roots of that multiplicity
+nPolys_wi = length(deg_struct_w);
+mat = [(1:1:nPolys_wi)' deg_struct_w'];
+
+count = 1;
+root_mult_array = [];
+for i = 1:1:size(mat,1)
+    % Get the number of roots of multiplicity i
+    nRoots_of_Multi = mat(i,2);
+    for j = 1:1:nRoots_of_Multi
+        root_mult_array = [root_mult_array ; vRoots(count,1) i];
+        count= count +1;
+    end
 end
 
-
-
-roots_calc = [root_arr(:,1) flipud(roots_multiplicty)];
-
-%% Print the calculated roots and the corresponding multiplicities.
-PrintoutRoots('MY METHOD',roots_calc);
-
-
+% Print the calculated roots and the corresponding multiplicities.
+PrintoutRoots('MY METHOD',root_mult_array);
 
