@@ -55,17 +55,26 @@ function [root_mult_array_fx,m] = Examples_Roots_FromRoots(ex_num)
 
 switch ex_num
     
+    case 'Example'
+        root_mult_array_fx =...
+            [
+                0.1     7;
+                0.9     12;
+            ];
+    
     case '-1'
-        root_mult_array_fx = [
-            0.1     1;
-            0.5     10;
+        root_mult_array_fx = ...
+            [
+                0.1     1;
+                0.5     10;
             ];
         
     case '0'
-        root_mult_array_fx = [
-            0.1     1;
-            0.7     1;
-            0.9     1;
+        root_mult_array_fx = ...
+            [
+                0.1     1;
+                0.7     1;
+                0.9     1;
             ];
         
     case '1'

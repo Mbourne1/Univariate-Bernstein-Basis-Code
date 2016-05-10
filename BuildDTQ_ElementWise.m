@@ -11,16 +11,11 @@ function DTQ = BuildDTQ_ElementWise(fx,gx,t)
 % t : Degree of GCD d(x)
 
 
-%
-
-%                       Global Variables
-
+% Global Variables
 % BOOL_LOG - (Boolean)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
-global BOOL_LOG
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+global SETTINGS
 
 % Get degree of polynomial f
 m = GetDegree(fx);
@@ -28,7 +23,7 @@ m = GetDegree(fx);
 % Get degree of polynomial g
 n = GetDegree(gx);
 
-switch BOOL_LOG
+switch SETTINGS.BOOL_LOG
     case 'y' 
         % Use log method
         DT1Q1 = BuildDT1Q1_log(fx,n-t);
@@ -38,7 +33,7 @@ switch BOOL_LOG
         DT1Q1 = BuildDT1Q1_nchoosek(fx,n-t);
         DT2Q2 = BuildDT1Q1_nchoosek(gx,m-t);
     otherwise
-        error('bool_log must be either y or n')
+        error('SETTINGS.BOOL_LOG must be either y or n')
 end
 
 
@@ -68,7 +63,7 @@ function DT1Q1 = BuildDT1Q1_nchoosek(fx,n_t)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global BOOL_DENOM_SYL
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -92,14 +87,14 @@ for j = 0:1:n_t
     end
 end
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y' 
         % Common Denominator is included in the coefficient matrix.
         DT1Q1 = DT1Q1 ./ nchoosek(m+n_t,n_t);
     case 'n' 
         % Common Denominator is excluded in the coefficient matrix
     otherwise
-        error('bool_denom_syl must be either y or n')
+        error('SETTINGS.BOOL_DENOM_SYL must be either y or n')
 end
 end
 
@@ -115,7 +110,7 @@ function DT1Q1 = BuildDT1Q1_log(f,n_t)
 %
 
 % Global Variables
-global BOOL_DENOM_SYL
+global SETTINGS
 
 % Get degree of polynomial f.
 m = GetDegree(f);
@@ -142,7 +137,7 @@ for j = 0:1:n_t
     end
 end
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y' % If denominator is included in the coefficient matrix.
         
         % Evaluate the binomial coefficient in the denominator in terms of
@@ -157,7 +152,7 @@ switch BOOL_DENOM_SYL
     case 'n'
         % Denominator is excluded
     otherwise 
-        error('err')
+        error('SETTINGS.BOOL_DENOM_SYL must be either y or n')
 end
 
 

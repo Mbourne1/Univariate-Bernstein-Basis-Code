@@ -17,14 +17,14 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %
 %           'Geometric Mean Matlab Method'
 %           'Geometric Mean My Method'
-%           
+%
 % bool_alpha_theta : 'y' or 'n' if preprocessing is performed
 %
-% low_rank_approx_method : 
-%           'Standard STLN' 
+% low_rank_approx_method :
+%           'Standard STLN'
 %           'Standard SNTLN'
 %           'None'
-%   
+%
 % apf_method :
 %           'Standard APF'
 %           'None'
@@ -34,7 +34,7 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 
 addpath 'Bezoutian'
 
-SetGlobalVariables(ex_num,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 
 %
 %                Consistency of input parameters.
@@ -167,12 +167,7 @@ end
 function [] = PrintToFile(m,n,t,error_dx)
 
 
-global EX_NUM
-global NOISE
-global MEAN_METHOD
-global BOOL_ALPHA_THETA
-global LOW_RANK_APPROXIMATION_METHOD
-global APF_METHOD
+global SETTINGS
 
 fullFileName = 'o_gcd_results.txt';
 
@@ -180,12 +175,18 @@ fullFileName = 'o_gcd_results.txt';
 if exist('o_gcd_results.txt', 'file')
     fileID = fopen('o_gcd_results.txt','a');
     fprintf(fileID,'%s \t %d \t %d \t %d \t %s \t %s \t %s \t %s \t %s \t %s \n',...
-        EX_NUM,m,n,t,error_dx,MEAN_METHOD,BOOL_ALPHA_THETA, NOISE, LOW_RANK_APPROXIMATION_METHOD,APF_METHOD);
+        SETTINGS.EX_NUM,...
+        m,n,t,error_dx,...
+        SETTINGS.MEAN_METHOD,...
+        SETTINGS.BOOL_ALPHA_THETA,...
+        SETTINGS.NOISE, ...
+        SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
+        SETTINGS.APF_METHOD);
     fclose(fileID);
 else
-  % File does not exist.
-  warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
-  uiwait(msgbox(warningMessage));
+    % File does not exist.
+    warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
+    uiwait(msgbox(warningMessage));
 end
 
 

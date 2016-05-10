@@ -10,9 +10,9 @@ function H1C1G =  BuildH1C1G(uw,t)
 %
 % t : degree of GCD.
 
-global APF_BUILD_METHOD
+global SETTINGS
 
-switch APF_BUILD_METHOD
+switch SETTINGS.APF_BUILD_METHOD
     case 'Standard'
         
         m_t = GetDegree(uw);
@@ -31,7 +31,8 @@ switch APF_BUILD_METHOD
         H1C1G = H1*C1*G;
     case 'Rearranged'
         H1C1G = BuildH1C1G_Rearranged(uw,t);
-       
+    otherwise
+        error('SETTINGS.APF_BUILD_METHOD must be either standard or Rearranged')
 end
 
 
@@ -48,17 +49,17 @@ function H1C1G = BuildH1C1G_Rearranged(uw,t)
 
 
 % Global Variables
-global BOOL_LOG
+global SETTINGS
 
-switch BOOL_LOG
-    case 'y' 
+switch SETTINGS.BOOL_LOG
+    case 'y'
         % Use logs
         H1C1G = BuildH1C1G_log(uw,t);
-    case 'n' 
+    case 'n'
         % Use nchoosek
         H1C1G = BuildH1C1G_nchoosek(uw,t);
     otherwise
-        error('err')
+        error('SETTINGS.BOOL_LOG is either y or n')
 end
 
 end
@@ -78,7 +79,7 @@ function H1C1G = BuildH1C1G_nchoosek(uw,t)
 %
 
 
-global BOOL_DENOM_APF
+global SETTINGS
 %
 
 % Get degree of polynomial u(w)
@@ -101,14 +102,14 @@ for j = 0:1:t
     end
 end
 
-switch BOOL_DENOM_APF
-    case 'y' 
+switch SETTINGS.BOOL_DENOM_APF
+    case 'y'
         % Include Common Denominator in the matrix
         H1C1G  = H1C1G ./ nchoosek(m,t);
     case 'n'
         % do nothing
-    otherwise 
-        error('err')
+    otherwise
+        error('SETTINGS.BOOL_DENOM_APF is either y or n')
         
 end
 end
@@ -116,7 +117,7 @@ end
 function H1C1G = BuildH1C1G_log(uw,t)
 % Build the partition H1C1G where HCG = [H1C1G | H2C2G]
 %
-%                           Inputs.
+% Inputs.
 %
 %
 % uw :  Input polynomial
@@ -124,10 +125,9 @@ function H1C1G = BuildH1C1G_log(uw,t)
 % t :   Degree of GCD
 %
 
-%%
 %                           Global Variables.
 
-global BOOL_DENOM_APF
+global SETTINGS
 
 %%
 
@@ -155,7 +155,7 @@ for j = 0:1:t
 end
 
 % If include common denominator of the partition of HCG
-switch BOOL_DENOM_APF
+switch SETTINGS.BOOL_DENOM_APF
     case 'y' % Include the common denominator
         
         Denom_Eval_log = lnnchoosek(m,t);
@@ -163,6 +163,9 @@ switch BOOL_DENOM_APF
         Denom_Eval_exp  = 10.^Denom_Eval_log;
         
         H1C1G = H1C1G ./Denom_Eval_exp;
+    case n
+    otherwise
+        error('SETTINGS.BOOL_DENOM_APF is either y or n');
 end
 
 end

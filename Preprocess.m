@@ -23,7 +23,7 @@ function [lambda, mu, alpha, theta] = Preprocess(fx,gx,k)
 
 
 % Global variables
-global BOOL_ALPHA_THETA
+global SETTINGS
 
 % Get Degree of polynomial f(x)
 m = GetDegree(fx);
@@ -40,7 +40,7 @@ fx_n = fx./ lambda;
 gx_n = gx./ mu;
 
 
-switch BOOL_ALPHA_THETA
+switch SETTINGS.BOOL_ALPHA_THETA
     case 'y'
   
         % For each coefficient ai of F, obtain the max and min such that F_max =
@@ -93,7 +93,7 @@ end
 
 function [] = PrintToFile(F_max,F_min,G_max,G_min,m,n,k,comment,alpha,theta)
 
-global MEAN_METHOD
+global SETTINGS
 
 fullFileName = 'o_Preprocessing.txt';
 
@@ -101,7 +101,7 @@ fullFileName = 'o_Preprocessing.txt';
 if exist('Preprocessing.txt', 'file')
     fileID = fopen('Preprocessing.txt','a');
     fprintf(fileID,'%5d \t %5d \t %5d \t %s \t %5d \t %d \t %d \t %d \t %s \t %5d \t %5d\n',...
-        m,n,k,MEAN_METHOD,F_max,F_min,G_max,G_min,comment,alpha,theta);
+        m,n,k,SETTINGS.MEAN_METHOD,F_max,F_min,G_max,G_min,comment,alpha,theta);
     fclose(fileID);
 else
   % File does not exist.

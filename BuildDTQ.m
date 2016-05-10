@@ -14,7 +14,7 @@ function [DTQ] = BuildDTQ(fx,gx,t)
 % inputs to this function.
 
 % Global Variables.
-global SYLVESTER_BUILD_METHOD
+global SETTINGS
 
 % Get degree of polynomial f(w)
 m = GetDegree(fx);
@@ -23,7 +23,7 @@ m = GetDegree(fx);
 n = GetDegree(gx);
  
 
-switch SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'Standard'
         % Build matrices D,T and Q.
         D = BuildD(m,n-t);
@@ -35,7 +35,7 @@ switch SYLVESTER_BUILD_METHOD
         
         DTQ = BuildDTQ_ElementWise(fx,gx,t);
     otherwise
-        error('Error : Build Method is either (Standard) or (Rearranged)')
+        error('Error : SETTINGS.SYLVESTER_BUILD_METHOD is either (Standard) or (Rearranged)')
 end
 
 end

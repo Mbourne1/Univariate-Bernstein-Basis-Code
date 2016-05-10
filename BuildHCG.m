@@ -12,10 +12,10 @@ function [HCG, H1C1G, H2C2G] = BuildHCG(uw,vw,m,n,t)
 % t : Degree of GCD d(x,y)
 
 
-global APF_BUILD_METHOD
+global SETTINGS
 
 % Build H_{t}C(f,g)G_{t}
-switch APF_BUILD_METHOD
+switch SETTINGS.APF_BUILD_METHOD
     case 'Standard'
         
         H1 = BuildH1(m);
@@ -36,7 +36,7 @@ switch APF_BUILD_METHOD
         HCG = [H1C1G ; H2C2G ];
         
     otherwise
-        error('error : Build method is either (Standard) or (Rearranged)');
+        error('error : SETTINGS.APF_BUILD_METHOD method is either (Standard) or (Rearranged)');
 end
 
 

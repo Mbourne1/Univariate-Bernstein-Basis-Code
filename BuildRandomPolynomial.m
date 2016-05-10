@@ -1,9 +1,10 @@
 function [f_roots] = BuildRandomPolynomial(m,int_low,int_up)
 
-global SEED
+global SETTINGS
 
 a = int_low;
 b = int_up;
+
 % Get a multiplicity structure for polynomial f
 
     prob_arr = zeros(1,m);
@@ -13,7 +14,7 @@ b = int_up;
     
     prob_arr = fliplr(prob_arr);
     
-    rng(SEED);
+    rng(SETTINGS.SEED);
     
     % Get the multiplicity structure of d.
     total = 0;

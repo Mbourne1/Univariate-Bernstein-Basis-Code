@@ -1,5 +1,5 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    GetGCD_DegreeByNewMethod(fx,gx)
+    GetGCD_DegreeByNewMethod(fx,gx,deg_limits)
 % Get degree of the AGCD of input polynomials f(x) and g(x)
 %
 % Inputs.
@@ -31,6 +31,12 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 
 
+% Get lower limit of degree of gcd
+lower_lim = deg_limits(1);
+upper_lim = deg_limits(2);
+
+% Get the number of subresultants to be built
+nSubresultants = upper_lim - lower_lim +1 ;
 
 % Get degree m of polynomial f
 m = GetDegree(fx);
@@ -41,38 +47,36 @@ n = GetDegree(gx);
 % get minimum degree of f and g
 min_mn = min(m,n);
 
-%
-lower_lim = 1;
-upper_lim = min_mn;
-
-
 % Initialise vectors to store all optimal alphas and theta, and each
 % geometric mean for f and g in each S_{k} for k = 1,...,min(m,n)
-vAlpha    =   zeros(1,min_mn);
-vTheta    =   zeros(1,min_mn);
-vGM_fx    =   zeros(1,min_mn);
-vGM_gx    =   zeros(1,min_mn);
+vAlpha    =   zeros(1,nSubresultants);
+vTheta    =   zeros(1,nSubresultants);
+vGM_fx    =   zeros(1,nSubresultants);
+vGM_gx    =   zeros(1,nSubresultants);
 
 
 % Initialise vectors to store values calculated from each subresultant
 % S_{k} for k = 1,...,min(m,n).
-
-vMaxDiagR1= zeros(1,min_mn);
-vMinDiagR1= zeros(1,min_mn);
-vMaxRowNormR1= zeros(1,min_mn);
-vMinRowNormR1 = zeros(1,min_mn);
-vMinimumResidual = zeros(1,min_mn);
-vMinimumSingularValues = zeros(1,min_mn);
+vMaxDiagR1= zeros(1,nSubresultants);
+vMinDiagR1= zeros(1,nSubresultants);
+vMaxRowNormR1= zeros(1,nSubresultants);
+vMinRowNormR1 = zeros(1,nSubresultants);
+vMinimumResidual = zeros(1,nSubresultants);
+vMinimumSingularValues = zeros(1,nSubresultants);
 % Stores Data from QR decomposition.
 Data_RowNorm = [];
 Data_DiagNorm = [];
 
 
 % For each subresultant $$S_{k}$$
-for k = 1:1:min_mn
+for k = lower_lim:1:upper_lim
     
-    % if this is the first subresultant, build from scratch
-    if (k == 1)
+    % Get index i, used for storing in vectors.
+    i = k - lower_lim + 1;
+    
+    % If S_{k} is the first subresultant, then it must be built from
+    % scratch
+    if (i == 1)
         % Build the partitions of S_{k}(f,g)
         DT1Q1_unproc = BuildDT1Q1(fx,n-k);
         DT2Q2_unproc = BuildDT1Q1(gx,m-k);
@@ -85,31 +89,31 @@ for k = 1:1:min_mn
     
     % Preprocess polynomials f(x) and g(x) in the Sylvester matrix
     % S_{k}(f,g)
-    [vGM_fx(k), vGM_gx(k), vAlpha(k), vTheta(k)] = Preprocess(fx,gx,k);
+    [vGM_fx(i), vGM_gx(i), vAlpha(i), vTheta(i)] = Preprocess(fx,gx,k);
     
     % Divide the Sylvester Matrix partitions by Geometric mean.
-    DT1Q1_unproc = DT1Q1_unproc ./ vGM_fx(k);
-    DT2Q2_unproc = DT2Q2_unproc ./ vGM_gx(k);
+    DT1Q1_unproc = DT1Q1_unproc ./ vGM_fx(i);
+    DT2Q2_unproc = DT2Q2_unproc ./ vGM_gx(i);
     
     % Divide normalised polynomials in Bernstein basis by
     % geometric means.
-    fx_n = fx./vGM_fx(k);
-    gx_n = gx./vGM_gx(k);
+    fx_n = fx./vGM_fx(i);
+    gx_n = gx./vGM_gx(i);
     
     % Calculate the coefficients of the modified Bernstein basis
     % polynomials F2 and G2. Multiply G2 by alpha.
-    fw_n = GetWithThetas(fx_n,vTheta(k));
-    gw_n = GetWithThetas(gx_n,vTheta(k));
+    fw_n = GetWithThetas(fx_n,vTheta(i));
+    gw_n = GetWithThetas(gx_n,vTheta(i));
     
     % Construct the kth subresultant matrix for the optimal values of alpha
     % and theta.
-    if (k == 1)
+    if (i == 1)
         % first subresultant must be constructed in the conventional sense.
         DT1Q1 = BuildDT1Q1(fw_n,n-k);
         DT2Q2 = BuildDT1Q1(gw_n,m-k);
         
         % Build subresultant
-        DTQ = [DT1Q1 vAlpha(k).*DT2Q2]   ;
+        DTQ = [DT1Q1 vAlpha(i).*DT2Q2]   ;
         
     else
         % Subsequent subresultants can be built using my build up method.
@@ -119,7 +123,7 @@ for k = 1:1:min_mn
         
     end
     
-
+    
     % Using QR Decomposition of the sylvester matrix
     [~,R] = qr(DTQ);
     
@@ -155,16 +159,23 @@ for k = 1:1:min_mn
     %
     % Get ratio of max diag elem of S_{k} to min diag elemente of S_{k}
     
-    vMaxDiagR1(k) = max(diag(R1_abs));
-    vMinDiagR1(k) = min(diag(R1_abs));
+    vMaxDiagR1(i) = max(diag(R1_abs));
+    vMinDiagR1(i) = min(diag(R1_abs));
     
-    vMaxRowNormR1(k) = max(R1_RowNorm);
-    vMinRowNormR1(k) = min(R1_RowNorm);
+    vMaxRowNormR1(i) = max(R1_RowNorm);
+    vMinRowNormR1(i) = min(R1_RowNorm);
     
-  
-    vMinimumResidual(k) = GetMinimalDistance(DTQ);
+    % For each subresultant Sk - Remove each column c_{k,i} in turn, obtain
+    % the residuals c_{k}-A_{k}.
     
-    vMinimumSingularValues(k) = min(svd(DTQ));
+    % residualQR_vector :- stores all residuals for 1,...,m+n-k+2 for a
+    % given subresultant
+    
+    % minResQR_vector :- stores only one residual (the min) for each
+    % subresultant k=1,...min(m,n)
+    
+    vMinimumResidual(i) = GetMinimalDistance(DTQ);
+    vMinimumSingularValues(i) = min(svd(DTQ));
     
 end
 
@@ -172,21 +183,20 @@ end
 % %
 % %
 % %
-
-[max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = Analysis(vMaxDiagR1./vMinDiagR1);
-
-% %
-% %
-% %
-% %
-
-[max_Delta_mag_rowsum,indexMaxChange_RowNorm] = Analysis(vMaxRowNormR1 ./ vMinRowNormR1);
+[max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = Analysis(vMaxDiagR1 ./ vMinDiagR1);
 
 % %
 % %
 % %
 % %
-[max_Delta_Residual,indexMaxChange_Residual] = Analysis(vMinimumResidual);
+[max_delta_mag_rowsum,indexMaxChange_RowNorm] = Analysis(vMaxRowNormR1 ./ vMinRowNormR1);
+
+
+% %
+% %
+% %
+% %
+[max_delta_min_residuals,indexMaxChange_Residuals] = Analysis(vMinimumResidual);
 
 
 
@@ -194,7 +204,7 @@ end
 % Check to see if only one subresultant exists, ie if m or n is equal
 % to one
 
-if min_mn == 1
+if nSubresultants == 1
     t = GetRankOneSubresultant(DTQ);
     alpha = vAlpha(1);
     theta = vTheta(1);
@@ -207,27 +217,20 @@ end
 %
 [t] = GetProblemType(vMinimumSingularValues,lower_lim);
 
-
+PlotGraphs();
 
 % Outputs
 
 % Output just corresponding to calculated value of the degree. Output
 % subresultant S_{t}, alpha_{t}, theta_{t}, and corresponding geometric
 % means.
-alpha = vAlpha(t);
-theta = vTheta(t);
-GM_fx = vGM_fx(t);
-GM_gx = vGM_gx(t);
-
-% % Graph Plotting
-PlotGraphs()
-
-
-
+alpha = vAlpha(t-lower_lim+1);
+theta = vTheta(t-lower_lim+1);
+GM_fx = vGM_fx(t-lower_lim+1);
+GM_gx = vGM_gx(t-lower_lim+1);
 
 
 
 
 end
-
 

@@ -27,9 +27,8 @@ function [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_th
 
 
 
-global MAX_ERROR_APF
-global MAX_ITERATIONS_APF
-global PLOT_GRAPHS;
+global SETTINGS
+
 
 % Initialise iteration index
 ite = 1;
@@ -126,7 +125,7 @@ yy = startpoint;
 
 % Start the iterative procedure for the solution of the LSE problem.
 
-while condition > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
+while condition > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     
     % Use the QR decomposition to solve the LSE problem.
     % min |y-p| subject to Cy=q
@@ -244,7 +243,7 @@ while condition > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
     
 end
 
-if ite == MAX_ITERATIONS_APF
+if ite == SETTINGS.MAX_ITERATIONS_APF
     fprintf('APF failed to converge after %i iterations\n',ite)
     PostAPF_dx = dx;
     PostAPF_uk = ux;
@@ -285,7 +284,7 @@ PostAPF_gx = zeros(m,1);
 % end
 
 
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         
         figure(100)

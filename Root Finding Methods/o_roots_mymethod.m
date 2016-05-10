@@ -1,4 +1,4 @@
-function [roots_calc] = o_roots_mymethod(fx)
+function [root_mult_array] = o_roots_mymethod(fx)
 % Calculate the roots of the input polynomial f(x) in Bernstein form.
 %
 % Inputs.
@@ -44,7 +44,7 @@ while M(ite) > 0
     % if degree of f_{i} is greater than one
     if M(ite) > 1
         
-        fprintf('*-*-*-*-*-*-*-*-*-*-*-*-*\n')
+        
         fprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite);
         
         % Get upper and lower bounds of the GCD Computation.
@@ -67,12 +67,9 @@ while M(ite) > 0
         % Get number of distinct roots of f(ite)
         d(ite) = M(ite) - M(ite+1);
         
-        fprintf('The computed deg(GCD(f_{%i},f_{%i}) is : %i \n',ite,ite,M(ite+1))
-        
-        fprintf('Number of distinct roots in f_{%i} : %i \n',ite,d(ite))
-        
         fprintf('Degree of f_{%i} : %i \n',ite + 1, M(ite+1))
-        
+        fprintf('Number of distinct roots in f_{%i} : %i \n',ite,d(ite))
+
         % increment iteration number.
         ite = ite+1;
         
@@ -110,7 +107,7 @@ vMultiplicities = find(deg_struct_w~=0);
 % end
 
 % Deconvolve the first set of polynomials.
-h1 = Deconvolve(f);
+h1 = Deconvolve_Set(f);
 
 [~,nEntries_h] = size(h1);
 if nEntries_h == 1
@@ -156,7 +153,7 @@ else
     
     % Deconvolve the second set of polynomials h_{i} to obtain the set of
     % polynomials w_{i}
-    w1 = Deconvolve(h1);
+    w1 = Deconvolve_Set(h1);
     
     
     % w1 yields the simple, double, triple roots of input polynomial f.
@@ -246,9 +243,10 @@ count = 1;
 root_mult_array = [];
 for i = 1:1:size(mat,1)
     % Get the number of roots of multiplicity i
-    nRoots_of_Multi = mat(i,2);
-    for j = 1:1:nRoots_of_Multi
-        root_mult_array = [root_mult_array ; vRoots(count,1) i];
+    nRoots_of_Multplicity_i = mat(i,2);
+    
+    for j = 1:1:nRoots_of_Multplicity_i
+        root_mult_array = [root_mult_array ; root_arr(count,1) i];
         count= count +1;
     end
 end

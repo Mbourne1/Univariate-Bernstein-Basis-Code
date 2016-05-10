@@ -14,37 +14,35 @@ function HYQ = BuildHYQ1(dx,m,n,theta)
 % Builds the Matrix H.Y.Q where Y_{k} performs a change of variable.
 % E(w).d = Y(d).w where d is vector of coefficients of GCD, and w is vector
 % of perturbations to f and g
-
+%
 % (See Report "APF - General Case - Rearrangement of the matrix vector
 % Product")
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                           Inputs
-
-% dw -
-
+%
+% Inputs
+%
+% dw:
+%
 % m -
-
+%
 % n -
-
+%
 % theta -
-
+%
 % alpha - 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
 %                       Global Variables
 
 % BOOL_LOG - (Boolean)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
-global BOOL_LOG
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-switch BOOL_LOG
+switch SETTINGS.BOOL_LOG
     case 'n' % Use Nchoosek
         A = BuildHYPartition_nchoosek(dx,m,theta);
         B = BuildHYPartition_nchoosek(dx,n,theta);
@@ -74,7 +72,7 @@ function A = BuildHYPartition_nchoosek(dx,m,theta)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global BOOL_DENOM_APF
+global SETTINGS
 
 t = GetDegree(dx);
 A = zeros(m+1,m-t+1);
@@ -94,7 +92,7 @@ for j = 0:1:(m-t)
     end
 end
 
-switch BOOL_DENOM_APF
+switch SETTINGS.BOOL_DENOM_APF
     case 'y'
         % include the denominator
         A = A./nchoosek(m,t);
@@ -124,7 +122,7 @@ function A = BuildHYPartition_log(dx,m,theta)
 %
 %
 
-global BOOL_DENOM_APF
+global SETTINGS
 
 % Get degree of polynomial dw
 t = GetDegree(dx);
@@ -149,7 +147,7 @@ for j = 0:1:(m-t)
 end
 
 
-switch BOOL_DENOM_APF
+switch SETTINGS.BOOL_DENOM_APF
     case 'y'
         Denom_eval_log = lnnchoosek(m,t);
         Denom_eval_exp = 10.^Denom_eval_log;

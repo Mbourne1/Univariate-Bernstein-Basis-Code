@@ -1,38 +1,32 @@
-function hi = Deconvolve(set_g)
-% Performs a series of d deconvolutions over a set of polynomials,
-% where each polynomial g_{i} appears in two deconvolutions.
+function h1 = Bernstein_Deconvolve(fx,gx)
+% Given two polynomials, f(x) and g(x) of degrees m and n, perform
+% deconvolution to obtain h = f(x)/g(x), 
+%
+% Inputs.
 %
 %
-% % Inputs
+% fx : Coefficients of polynomial f(x)
 %
-% set_g :   set of input polynomials g(y) to be deconvolved. Each g_{i} has a
-%           different number of elements, so set_g is a cell array.
+% gx : Coefficients of polynomial g(x)
 %
-% % Outputs
-%
-% h_{i} = g_{i-1}/g_{i}
+% Outputs.
 %
 %
+% hx : Coefficients of polynomial h(x)
 
 
+% h1 : output polynomial = f(x)/g(x).
 
-% Set Deconvolution Method
-%   single := Use standard non batch method
-%   batch  := Use batch deconvolution
-global DECONVOLVE_METHOD
+% Obtain degree of polynomial f(x)
+m = GetDegree(fx);
 
-switch DECONVOLVE_METHOD
-    case 'Single'
-        % Deconvolve independent method
-        hi = Deconvolve_Independent(set_g);
-    case 'Batch'
-        % Deconvolve Batch Method
-        hi = Deconvolve_Batch(set_g);
-    otherwise
-        error('BOOL_DECONVOLVE must be either (Single) or (Batch)')
-end
+% Get the degree of polynomial g(x)
+n = GetDegree(gx);
 
+% Build the matrix DCQ
+DCQ = BuildDT1Q1(gx,m-n);
 
-
+% Solve C(g) * h = f, for the unknown vector h.
+h1 = SolveAx_b(DCQ,fx);
 
 end

@@ -22,22 +22,24 @@ function [gm]=GetGeometricMean(fx,n_k)
 %                       Global Variables.
 
 
-global BOOL_LOG
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%S
 
 % Get previous state of logs
-previous_log_state = BOOL_LOG;
+previous_log_state = SETTINGS.BOOL_LOG;
 %BOOL_LOG = 'y';
 
 % Dependent on which method is used, 1 - use logs, 0 - use nchoosek
 
-switch BOOL_LOG
+switch SETTINGS.BOOL_LOG
     case 'y' % Calculate GM using logs
-        gm = GMlog(fx,n_k);       
+        gm = GMlog(fx,n_k);
         
     case 'n' % Calculate GM without logs
         gm = GMnchoosek(fx,n_k);
+    otherwise
+        error('SETTINGS.BOOL_LOG is either y or n')
 end
 
 % reset log method
@@ -64,13 +66,13 @@ function gm = GMlog(fx,n_k)
 
 % Global Variables.
 
-global BOOL_DENOM_SYL
-global BOOL_Q
+
+global SETTINGS
 
 
 
-switch BOOL_Q
-    case 'y' 
+switch SETTINGS.BOOL_Q
+    case 'y'
         % Compute Geometric Mean of D^{-1}T(f,g)Q, which contains three
         % binomial coefficients
         
@@ -94,11 +96,11 @@ switch BOOL_Q
         
         % Calculate part 1 of the geometric mean, the coefficient part.
         % p1_log = (1/(m+1)).*log10(sum(abs(fx)));
-                
+        
         p1_log = (1/(m+1)).*sum(log10(abs(fx)));
         
-                
-%         % Calculate part 2 of the geometric mean.
+        
+        %         % Calculate part 2 of the geometric mean.
         p2_log = 0;
         for j = 0:1:n_k
             for i = 0:1:m
@@ -120,17 +122,17 @@ switch BOOL_Q
         
         
         
-        switch BOOL_DENOM_SYL
+        switch SETTINGS.BOOL_DENOM_SYL
             case 'y' % if denominator is included
                 p4_log = lnnchoosek(m+n_k,m);
             case 'n' % if denominator is not included
                 p4_log = 0;
             otherwise
-                error('BOOL_DENOM_SYL must be set to either (y) or (n)')
+                error('SETTINGS.BOOL_DENOM_SYL must be set to either (y) or (n)')
         end
-
+        
         gm = 10.^(p1_log + p3_log + p3_log - p4_log);
-
+        
     case 'n'
         % Exclude Q from Geometric mean calculations.
         % Split this calculation in to three parts, Numerator_A, the
@@ -141,7 +143,7 @@ switch BOOL_Q
         % and is given by \binom{m+n-k}{i+j} where i is the row number and
         % j is the column number, (index from 0).
         
-        % Geometric mean is given by 
+        % Geometric mean is given by
         % $$\prod_{j=0}^{n-k}\prod_{i=0}^{m}$$
         %
         %
@@ -157,7 +159,7 @@ switch BOOL_Q
         Numerator_A = 1;
         Numerator_B = 0;
         
-        % For each coefficient a_{i} 
+        % For each coefficient a_{i}
         for i = 0:1:m
             Numerator_A = Numerator_A .* fx(i+1);
             Numerator_B = Numerator_B + lnnchoosek(m,i);
@@ -185,7 +187,7 @@ switch BOOL_Q
         gm = GM_Numerator./GM_Denominator;
         
     otherwise
-        error('BOOL_Q must either be set to (y) or (n)')
+        error('SETTINGS.BOOL_Q must either be set to (y) or (n)')
         
 end
 
@@ -193,7 +195,7 @@ end
 
 
 function gm = GMnchoosek(fx,n_k)
-% Get geometric mean of the entries of f(x) in the matrix DTQ using 
+% Get geometric mean of the entries of f(x) in the matrix DTQ using
 % nchoosek
 %
 % Inputs.
@@ -212,13 +214,11 @@ function gm = GMnchoosek(fx,n_k)
 % gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
 %
 
-%                       Global Variables.
-global BOOL_DENOM_SYL
-global BOOL_Q
+% Global Variables.
+global SETTINGS
 
-%
 
-switch BOOL_Q
+switch SETTINGS.BOOL_Q
     
     case 'y' % Include Q
         
@@ -232,7 +232,7 @@ switch BOOL_Q
         % \prod_{i=0}^{m} a_{i} .^(1/m+1)
         % p1 = prod(abs(fx)).^(1./(m+1)) % without using geomean
         
-        p1 = geomean(abs(fx));      
+        p1 = geomean(abs(fx));
         
         
         
@@ -247,13 +247,15 @@ switch BOOL_Q
         end
         p2 = temp_prod.^(1./((m+1)*(n_k+1)));
         
-        switch BOOL_DENOM_SYL
-            case 'y' 
+        switch SETTINGS.BOOL_DENOM_SYL
+            case 'y'
                 % Denominator is included
                 p3 = nchoosek(m+n_k,n_k);
-            case 'n' 
+            case 'n'
                 % Denominator is not included
                 p3 = 1;
+            otherwise
+                error('SETTINGS.BOOL_DENOM_SYL is either y or n')
         end
         
         gm = (p1.*p2.*p2) ./ p3;
@@ -264,7 +266,7 @@ switch BOOL_Q
         % Calculate the degree of the polynomial f.
         m = GetDegree(fx);
         
-        % Get the product of the numerators       
+        % Get the product of the numerators
         prod_numerator = prod(fx.*GetBinomials(m));
         
         
@@ -272,7 +274,7 @@ switch BOOL_Q
         prod_denom =1 ;
         
         for i = 0:1:m
-            for j = 0:1:n_k        
+            for j = 0:1:n_k
                 prod_denom = prod_denom * nchoosek(m+n_k,i+j);
             end
         end
@@ -282,7 +284,7 @@ switch BOOL_Q
         
         gm = num/denom;
     otherwise
-        error('err')
+        error('SETTINGS.BOOL_Q is either y or n')
 end
 end
 

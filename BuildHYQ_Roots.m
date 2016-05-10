@@ -10,7 +10,6 @@ function H1Y1Q1 = BuildHYQ_Roots(dx,m,theta)
 
 % HYQ*[u;v] is equivalent to HCG*d
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %                         Inputs
 
@@ -21,13 +20,13 @@ function H1Y1Q1 = BuildHYQ_Roots(dx,m,theta)
 
 %   theta - optimal value of \theta
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 
-    %H1Y1Q1_old = BuildHYQ_Roots1(dx,m,theta)
-    
-    H1Y1Q1 = BuildHYQ_Roots2(dx,m,theta);
-    
-    %H1Y1Q1 - H1Y1Q1_old;
+%H1Y1Q1_old = BuildHYQ_Roots1(dx,m,theta)
+
+H1Y1Q1 = BuildHYQ_Roots2(dx,m,theta);
+
+%H1Y1Q1 - H1Y1Q1_old;
 
 end
 
@@ -119,7 +118,7 @@ end
 % Build thetas matrix
 theta_vector = zeros(m+1,1);
 for i = 0:1:m
-   theta_vector(i+1) = theta^(i); 
+    theta_vector(i+1) = theta^(i);
 end
 theta_matrix = diag(theta_vector);
 
@@ -127,7 +126,7 @@ theta_matrix = diag(theta_vector);
 Q1 = zeros(m-t+1,1);
 
 for i = 0:1:m-t
-   Q1(i+1) = nchoosek(m-t,i); 
+    Q1(i+1) = nchoosek(m-t,i);
 end
 
 Q1 = diag(Q1);

@@ -1,6 +1,6 @@
 function DY = BuildDY(m,n,t,opt_col,x,alpha,theta)
 % USED IN SNTLN function
-
+%
 % Construct Matrix DY, such that E_{k}(z)x = D^{-1}Y_{k}(x)z, where E_{k}(z) is a 
 % matrix of structured perturbations applied to S_{k}, where S_{k} = DTQ.
 %
@@ -24,20 +24,18 @@ function DY = BuildDY(m,n,t,opt_col,x,alpha,theta)
 % theta - the calculated optimal value of theta
 
 
-%
-%                            Global Variables
 
 
 % BOOL_LOG - (Boolean)
 %   'y' :- Perform calculations by log method
 %   'n' :- Perform calculations by standard method.
 
-global BOOL_LOG
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-switch BOOL_LOG
+switch SETTINGS.BOOL_LOG
     case 'n' % Use nchoosek method
         
         DY = BuildDY_nchoosek(m,n,t,opt_col,x,alpha,theta);
@@ -46,7 +44,7 @@ switch BOOL_LOG
         
         DY = BuildDY_log(m,n,t,opt_col,x,alpha,theta);
     otherwise 
-        error('err')
+        error('SETTINGS.BOOL_LOG is either y or n')
 end
 % Seperate the component parts of x into x_v and x_u, where x_v is an
     % approximation of v(x) and x_u is an approximation u(x).
@@ -89,16 +87,14 @@ function DY = BuildDY_nchoosek(m,n,t,mincol,x_ls_wrt_w,alpha,theta)
 %
 
 
-%                           Global Variables
-
+% Global Variables
 % bool_denom_syl - (Boolean) Given the rearrangement of the Sylvester matrix in
 % the Bernstein basis, each partition of each subresultant has a common
 % divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
-global BOOL_DENOM_SYL
+%    y :- Include Common Denominator.
+%    n :- Exclude Common Denominator.
+global SETTINGS
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 xa = x_ls_wrt_w(1:mincol-1) ;
@@ -152,7 +148,7 @@ for j=0:1:n
 end
 
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y'
         %Include the denominator
         Y1 = Y1./nchoosek(m+n-t,n-t);
@@ -174,33 +170,33 @@ function Y = BuildDY_log(m,n,t,mincol,x,alpha,theta)
 % Construct Matrix Y, such that E_{k}x = Y_{k}z, where Ek is a matrix of
 % structured perturbations.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                           Inputs
-
-
+%
+%
 % m - Degree of polynomial f
-
+%
 % n - Degree of polynomial g
-
+%
 % t - Degree of GCD
-
+%
 % mincol -
-
+%
 % x -
-
+%
 % theta -
+%
+%
+%
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                        Global Variables
+% Global Variables
 
 % BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
 % the Bernstein basis, each partition of each subresultant has a common
 % divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
-global BOOL_DENOM_SYL
+%    y :- Include Common Denominator.
+%    n :- Exclude Common Denominator.
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -263,7 +259,7 @@ end
 
 
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y' 
         % Include the denominator in the coefficient matrix.
         
@@ -293,7 +289,7 @@ switch BOOL_DENOM_SYL
         % Exclude the denominator from the Sylvester Matrix
         Y2 = alpha.*Y2;
     otherwise 
-        error('err')
+        error('SETTINGS.BOOL_DENOM_SYL is either y or n')
         
 end
 

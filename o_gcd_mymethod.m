@@ -28,9 +28,9 @@ function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
 %
 %                       GLOBAL VARIABLES
 
-global LOW_RANK_APPROXIMATION_METHOD
-global APF_METHOD
-global PLOT_GRAPHS
+
+global SETTINGS
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -43,20 +43,39 @@ m = GetDegree(fx) ;
 % EDIT 03/05/2016 - GetGCD_Degree is the same as GetGCD_Degree2 but without
 % limits on degree
 
-% [t, alpha, theta, gm_fx, gm_gx] = ...
-%     GetGCD_Degree(fx,gx);
-
-[t2, alpha, theta, gm_fx, gm_gx] = ...
+% % Get degree by original method - no limits
+% [t1, alpha1, theta1, gm_fx1, gm_gx1] = ...
+%      GetGCD_Degree(fx,gx);
+% display(t1)
+% LineBreakMedium();
+% 
+%Get degree by original method - limits
+[t2, alpha2, theta2, gm_fx2, gm_gx2] = ...
     GetGCD_Degree2(fx,gx,deg_limits);
+%display(t2)
+LineBreakMedium();
+% 
+% % % Get Degree by new method - no limits
+% [t3, alpha3, theta3, gm_fx3, gm_gx3] = ...
+%     GetGCD_DegreeByNewMethod(fx,gx);
+% display(t3)
+% LineBreakMedium();
+% 
+% % Get degree by new method - limits
+% [t4, alpha4, theta4, gm_fx4, gm_gx5] = ...
+%     GetGCD_DegreeByNewMethod2(fx,gx,deg_limits);
+% display(t4)
+% LineBreakMedium();
 
-[t, alpha, theta, gm_fx, gm_gx] = ...
-    GetGCD_DegreeByNewMethod(fx,gx);
-
-
+t = t2;
+alpha = alpha2;
+theta = theta2;
+gm_fx = gm_fx2;
+gm_gx = gm_gx2;
 
 if t == 0
     % If the two polynomials f(x) and g(x) are coprime, set GCD to be 1,
-    fprintf('\n f(x) and g(x) are coprime \n')
+    fprintf([mfilename ' : ' sprintf('f(x) and g(x) are coprime \n')])
     dx = 1;
     ux = fx;
     vx = gx;
@@ -117,7 +136,7 @@ dx = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta);
 % %
 % Apply/Don't Apply structured perturbations to Approximate Polynomial
 % Factorisation such that approximation becomes equality.
-switch APF_METHOD
+switch SETTINGS.APF_METHOD
     case 'Root Specific APF'
         % Use root method which has added constraints.
         
@@ -155,7 +174,7 @@ switch APF_METHOD
     case 'None'
         % Do Nothing
     otherwise
-        error('err')
+        error('SETTINGS.APF_METHOD IS either Standard APF, Root Specific APF or None')
 end
 
 
@@ -182,13 +201,13 @@ vSingVals_St_LowRank = vSingVals_St_LowRank./norm(vSingVals_St_LowRank);
 
 
 % Plot the Singular Values of the Sylvester matrix
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure('name','Singaular values of Sylvester Matrix');
         plot(1:1:length(vSingVals_St_unproc),log10(vSingVals_St_unproc),'red-s','DisplayName','Before Preprocessing')
         hold on
         plot(1:1:length(vSingVals_St_preproc),log10(vSingVals_St_preproc),'blue-s','DisplayName','After Preprocessing')
-        switch LOW_RANK_APPROXIMATION_METHOD
+        switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
             case {'Standard STLN', 'Standard SNTLN','Root Specific SNTLN'}
                 plot(1:1:length(vSingVals_St_LowRank),log10(vSingVals_St_LowRank),'green-s','DisplayName','Low Rank Approximation')
             case 'None'

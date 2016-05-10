@@ -1,4 +1,4 @@
-function arr_hw = Deconvolve_Batch(set_fx)
+function arr_hw = Deconvolve_Batch(set_f)
 % Performs a series of d deconvolutions over a set of polynomials,
 % where each polynomial g_{i} appears in two of the deconvolutions.
 % 
@@ -15,13 +15,11 @@ function arr_hw = Deconvolve_Batch(set_fx)
 %
 
 % Global Variables
-%global SETTINGS
 global SETTINGS
 
 
-
 % Get the number of polynomials in the set set_f
-nPolys_f = length(set_fx);
+nPolys_f = length(set_f);
 
 % let d be the number of deconvolutions = num of polynomials in set_f - 1
 d = nPolys_f - 1;
@@ -29,7 +27,7 @@ d = nPolys_f - 1;
 % Get the degree m_{i} of each of the polynomials f_{i}
 m = zeros(1,nPolys_f);
 for i = 1:1:nPolys_f
-    m(i) = GetDegree(set_fx{i});
+    m(i) = GetDegree(set_f{i});
 end
 
 % Get the degrees n{i} of polynomials h_{i} = f_{i}/f_{i+1}.
@@ -51,15 +49,14 @@ N = sum(n+1);
 
 % Obtain theta such that the ratio of max element to min element is
 % minimised
-theta = getOptimalTheta(set_fx,m);
-theta = 1;
+theta = getOptimalTheta(set_f,m);
 
 % Initialise a cell-array for f(w)
-fw = cell(1,length(set_fx));
+fw = cell(1,length(set_f));
 
 % for each f_{i} get fw_{i}
-for i = 1:1:length(set_fx)
-    fw{i} = GetWithThetas(set_fx{i},theta);
+for i = 1:1:length(set_f)
+    fw{i} = GetWithThetas(set_f{i},theta);
 end
 
 % Write Deconvolutions in form [D^{-1}C(f)Q] h = RHS_f
@@ -209,13 +206,6 @@ while (condition > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     % Increment iteration number
     ite = ite + 1;
 end
-
-% Get h(w) without thetas
-for i = 1:1:length(hw)
-    hx(ite) = GetWithoutThetas(hw);
-    
-end
-
 
 % Print outputs to command line
 fprintf('Performed Deconvolutions...\n')
@@ -441,22 +431,22 @@ end
 
 end
 
-function DCQ = BuildDCQ(set_fx)
+function DCQ = BuildDCQ(set_fw)
 % set fw is the cell array of poly coefficiencts fw_i
 %
 % Inputs.
 
 % create cauchy matrices c{i} for i = 1,...
-T1 = cell(1,length(set_fx));
+T1 = cell(1,length(set_fw));
 
 % for each of the polynomials f_{i}(x), excluding the final polynomial
-for i = 1:1:length(set_fx)-1
+for i = 1:1:length(set_fw)-1
     
     % Get the polynomial f_{i} = set_f{i+1} 
-    fw = set_fx{i+1};
+    fw = set_fw{i+1};
     
     % Get the polynomial f_{i-1} = set_f{i}
-    fw_prev = set_fx{i};
+    fw_prev = set_fw{i};
     
     % Get degree of polynomial f_{i} = m_{i}
     deg_fw = GetDegree(fw);

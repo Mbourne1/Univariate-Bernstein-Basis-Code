@@ -1,9 +1,9 @@
 function [fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,opt_col)
 
 
-global LOW_RANK_APPROXIMATION_METHOD
+global SETTINGS
 
-switch LOW_RANK_APPROXIMATION_METHOD
+switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard STLN'
         
         fw = GetWithThetas(fx_n,theta);
@@ -33,7 +33,7 @@ switch LOW_RANK_APPROXIMATION_METHOD
     case 'None'
         
     otherwise
-        error('Global variable LOW_RANK_APPROXIMATION_METHOD must be valid')
+        error('SETTINGS.LOW_RANK_APPROXIMATION_METHOD must be valid')
 end
 
 end

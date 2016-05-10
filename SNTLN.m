@@ -41,9 +41,8 @@ function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
 % %
 % Global Inputs
 
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
-global PLOT_GRAPHS
+global SETTINGS
+
 
 
 % Set the initial iterations number
@@ -181,7 +180,7 @@ p = zeros(2*m+2*n-2*t+5,1);
 % over written later.
 condition(ite) = norm(res_vec)/norm(ct);
 
-while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
+while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
    
     
     % Use the QR decomposition to solve the LSE problem
@@ -324,7 +323,7 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
 end
 
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure_name = sprintf('%s : Residuals',mfilename);
         figure('name',figure_name)

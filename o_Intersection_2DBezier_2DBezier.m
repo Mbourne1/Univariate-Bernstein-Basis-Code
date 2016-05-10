@@ -1,6 +1,6 @@
-function [] =  o_Intersection_2DBezier_2DBezier(ex_num,bool_preproc,low_rank_approx_method,apf_method)
-% o_Intersection_2DBezier_2DBezier
-%       ...(ex_num,bool_preproc,low_rank_approx_methed,apf_method)
+function [] =  o_Intersection_2DBezier_2DBezier(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+% o_Intersection_2DBezier_2DBezier(ex_num, emin, emax, mean_method, ...
+%       bool_alpha_theta, low_rank_approx_method, apf_method)
 %
 % Given an example number, get the control points of 2 Bezier Curves, and
 % calculate their intersections.
@@ -9,13 +9,23 @@ function [] =  o_Intersection_2DBezier_2DBezier(ex_num,bool_preproc,low_rank_app
 % 
 % ex_num :
 %
+% emin:
+%
+% emax:
+%
+% mean_method:
+%
 % bool_preproc :
 %
 % low_rank_approx_method : 
 %
 % apf_method :
 %
+% 
+% % Example
 %
+% >> o_Intersection_2DBezier_2DBezier('1',1e-12,1e-11,'Geometric Mean
+% Matlab Method', 'y','Standard STLN','None')
 
 
 % 1. Get Control Points of polynomial f.
@@ -26,13 +36,12 @@ function [] =  o_Intersection_2DBezier_2DBezier(ex_num,bool_preproc,low_rank_app
 
 addpath('Root Finding Methods')
 
-
-SetGlobalVariables(bool_preproc,low_rank_approx_method,apf_method);
+SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method);
 
 switch ex_num
     case '1'
         ex_num_f = '1';
-        ex_num_g = '1';
+        ex_num_g = '2';
 end
 
 
@@ -45,10 +54,12 @@ CP_g = Examples_2DBezier_ControlPoints(ex_num_g);
 array_cp{1} = CP_f;
 array_cp{2} = CP_g;
 
-Plot2DBeziers(array_cp);
+Plot2DBezier(array_cp);
 
-
-%% Implicitize the Bezier Control Points of g
+% %
+% %
+% %
+% Implicitize the Bezier Control Points of g
 
 fprintf('Implicit representation of g:\n')
 [gxy,symbolic_expression] = ImplicitizeBezierBySylvester(CP_g);
@@ -56,7 +67,9 @@ fprintf('Implicit representation of g:\n')
 % Print the coefficients of the polynomial g(x,y) in Bernstein form.
 PrintCoefficients_Bivariate_Bernstein(gxy,'C_{2}:')
 
-%%
+% %
+% %
+% %
 % Get the parametric expressions of polynomial f in the brn basis
 
 
@@ -75,11 +88,11 @@ f_y =  CP_f(2,:);
 % x(t) and y(t) from f(x,y) into g(x,y).
 coef_Bernstein_Poly = Substitute(CP_f,gxy);
 
-%% Get the roots of the polynomial
+% % Get the roots of the polynomial
 roots = o_roots_mymethod(coef_Bernstein_Poly);
 roots = o_roots_matlab(coef_Bernstein_Poly);
 
-%% 
+% % 
 % Given roots are calculated, plug in roots to one of the original 
 % parametric equations
 [num_rts,~] = size(roots);

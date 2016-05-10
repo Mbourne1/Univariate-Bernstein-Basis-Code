@@ -1,7 +1,7 @@
-global PLOT_GRAPHS
+global SETTINGS
 
 % given the roots of f and g, plot them on a line
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'n'
         % Dont plot graphs
     case 'y'

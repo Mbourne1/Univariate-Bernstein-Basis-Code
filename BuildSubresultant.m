@@ -18,11 +18,8 @@ function [S] = BuildSubresultant(fw,gw,k)
 %
 
 
-%                       Global Variables.
-
-global BOOL_Q
-global SYLVESTER_BUILD_METHOD
-%
+% Global Variables.
+global SETTINGS
 
 
 % Get the degree of the polynomial f(x)
@@ -32,7 +29,7 @@ m = GetDegree(fw);
 n = GetDegree(gw);
 
 
-switch SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'Rearranged' % Build based on generating individual elements
         
         % Build First Partition   
@@ -51,16 +48,16 @@ switch SYLVESTER_BUILD_METHOD
         T = BuildT(fw,gw,k);
         Q = BuildQ(m,n,k);
 
-        switch BOOL_Q
+        switch SETTINGS.BOOL_Q
             case 'y' % Include Q
                 S = D*T*Q;
             case 'n' % Exclude Q
                 S = D*T;
             otherwise
-                error('err')
+                error('Error SETTINGS.BOOL_Q is either y or n')
         end
     otherwise
-        error('bool_sylvesterBuildMethod is either standard or rearranged')
+        error('SETTINGS.SYLVESTER_BUILD_METHOD is either standard or rearranged')
 end
 
 end

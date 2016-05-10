@@ -1,4 +1,4 @@
-function [C1,C2] = Examples_Intersection(ex_num)
+function [C1,C2] = Examples_Explicit_Bezier_Intersection(ex_num)
 
 
 switch ex_num

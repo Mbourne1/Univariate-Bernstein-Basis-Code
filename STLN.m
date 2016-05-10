@@ -1,9 +1,7 @@
 function [fx,gx] = STLN(fx,gx,t,colIndex)
 % Perform STLN with no preprocessors
 
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
-global PLOT_GRAPHS
+global SETTINGS
 
 % Get degree of polynomial f(x)
 m = GetDegree(fx);
@@ -96,7 +94,7 @@ ite = 1;
 condition(ite) = norm(res_vec)./norm(ct);
 
 
-while condition(ite) >  MAX_ERROR_SNTLN &&  ite < MAX_ITERATIONS_SNTLN
+while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
     
     % increment iteration number
     ite = ite + 1;
@@ -160,7 +158,7 @@ end
 fx = fx + zf;
 gx = gx + zg;
 
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure('name','STLN - Residuals')
         hold on
@@ -168,7 +166,7 @@ switch PLOT_GRAPHS
         hold off
     case 'n'
     otherwise
-        error('err')
+        error('SETTINGS.PLOT_GRAPHS must be either y or n')
 end
 
 fprintf('Required number of iterations : %i \n',ite)

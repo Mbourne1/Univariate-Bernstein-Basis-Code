@@ -1,6 +1,12 @@
-function [] = Plot2DBeziers(cp_f_arr)
-% Given a set of control points for curves {C1, C2,...} plot the curves
-% Input is an array of polynomial control points
+function [] = Plot2DBezier(cp_f_arr)
+% Plot the curves C_{1},C_{2},... whose control points are given in an
+% array cp_f_arr.
+%
+% Inputs.
+% 
+% cp_f_arr : Cell array, where each cell cp_f_arr{i} contains the control
+% points of curve C_{i}
+
 
 
 % Plot the Graph

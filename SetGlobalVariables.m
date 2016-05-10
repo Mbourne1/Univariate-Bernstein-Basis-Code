@@ -1,4 +1,4 @@
-function [] = SetGlobalVariables(ex_num,mean_method,bool_alpha_theta,low_rank_approx_method, apf_method)
+function [] = SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method, apf_method)
 % Set the global variables
 %
 % Inputs.
@@ -10,19 +10,17 @@ function [] = SetGlobalVariables(ex_num,mean_method,bool_alpha_theta,low_rank_ap
 % apf_method
 %
 
-global EX_NUM
-EX_NUM = ex_num;
-
+global SETTINGS
+SETTINGS.EX_NUM = ex_num;
+SETTINGS.NOISE = emin;
+SETTINGS.EMIN = emin;
+SETTINGS.EMAX = emax;
 %% Structuring the Sylvester Matrix
 
-global BOOL_Q
-BOOL_Q = 'y';
+SETTINGS.BOOL_Q = 'y';
+SETTINGS.BOOL_DENOM_SYL = 'y';
+SETTINGS.SYLVESTER_BUILD_METHOD = 'Rearranged';
 
-global BOOL_DENOM_SYL
-BOOL_DENOM_SYL = 'y';
-
-global SYLVESTER_BUILD_METHOD
-SYLVESTER_BUILD_METHOD = 'Standard';
 % Standard : D*T*Q
 %
 % Rearranged : In a format where the entries of the sylvester matrix
@@ -31,40 +29,24 @@ SYLVESTER_BUILD_METHOD = 'Standard';
 
 
 %% Structuring the matrix [C(f) | C(g)]
-
-global APF_METHOD
-APF_METHOD = apf_method;
-
-global BOOL_DENOM_APF
-BOOL_DENOM_APF = 'y';
-
-global APF_BUILD_METHOD
-APF_BUILD_METHOD = 'Standard';
+SETTINGS.APF_METHOD = apf_method;
+SETTINGS.BOOL_DENOM_APF = 'y';
+SETTINGS.APF_BUILD_METHOD = 'Standard';
 
 
 %% Preprocessing
 
-global BOOL_ALPHA_THETA
-BOOL_ALPHA_THETA = bool_alpha_theta;
-
-
-global MEAN_METHOD
-MEAN_METHOD = mean_method;
+SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
+SETTINGS.MEAN_METHOD = mean_method;
 
 %% Numerical Considerations
-
-global BOOL_LOG
-BOOL_LOG = 'n';
+SETTINGS.BOOL_LOG = 'n';
 
 %% Noise 
-
-global SEED
-SEED = 1024;
+SETTINGS.SEED = 1024;
 
 %% Outputs
-
-global PLOT_GRAPHS
-PLOT_GRAPHS = 'y';
+SETTINGS.PLOT_GRAPHS = 'n';
 
 %% Regarding the computation of the Sylvester low rank approximation
 
@@ -74,27 +56,16 @@ PLOT_GRAPHS = 'y';
 % Root Specific SNTLN : Non-Linear low form, with g = f' constraint
 % Standard SNTLN : Non-Linear low rank form, without constraint
 
-global LOW_RANK_APPROXIMATION_METHOD
-LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
-
-global MAX_ERROR_SNTLN
-MAX_ERROR_SNTLN = 1e-15;
-
-global MAX_ITERATIONS_SNTLN
-MAX_ITERATIONS_SNTLN = 50;
+SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
+SETTINGS.MAX_ERROR_SNTLN = 1e-15;
+SETTINGS.MAX_ITERATIONS_SNTLN = 50;
 
 %% Regarding the computation of the low rank approximation of the 
 % C = [C(u) ; C(v)] matrix
 
-global MAX_ERROR_APF
-MAX_ERROR_APF = 1e-12;
 
-global MAX_ITERATIONS_APF
-MAX_ITERATIONS_APF = 50;
-
-% global BOOL_APF_ROOTS
-% BOOL_APF_ROOTS = 'StandardAPF';
-
+SETTINGS.MAX_ERROR_APF = 1e-12;
+SETTINGS.MAX_ITERATIONS_APF = 50;
 
 % nominal value used when:
 % Only one sylvester subresultant exists, ie k = 1 and min(m,n) = 1. where
@@ -102,8 +73,8 @@ MAX_ITERATIONS_APF = 50;
 % if max_r./min_r > nominal_value (then minimum value is significantly
 % small, to assume that the sylvester matrix is rank deficient)
 % then degree is one. otherwise degree is zero
-global THRESHOLD
-THRESHOLD = 2;
+
+SETTINGS.THRESHOLD = 4;
 
 
 %% Validation
@@ -111,20 +82,19 @@ THRESHOLD = 2;
 % applicable, and the common denominators can not be removed.
 % Simplest method, no structure added.
 % Override users input options if incompatable.
-if (BOOL_Q == 'n')
-    LOW_RANK_APPROXIMATION_METHOD = 'None';
-    APF_METHOD = 'None'; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
-    BOOL_DENOM_SYL = 'y';
+if (SETTINGS.BOOL_Q == 'n')
+    SETTINGS.LOW_RANK_APPROXIMATION_METHOD = 'None';
+    SETTINGS.APF_METHOD = 'None'; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
+    SETTINGS.BOOL_DENOM_SYL = 'y';
 end
 
 %%
-% Intialise the global variables
-global MAX_ERROR_DECONVOLUTIONS
-global MAX_ITERATIONS_DECONVOLUTIONS
-global DECONVOLVE_METHOD
-
 % Get Global variables for Deconvolve
-MAX_ERROR_DECONVOLUTIONS = 1e-12;
-MAX_ITERATIONS_DECONVOLUTIONS = 50;
-DECONVOLVE_METHOD = 'Batch';
+SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-12;
+SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;
+
+% Deconvolution is either
+% 'Separate'
+% 'Batch'
+SETTINGS.DECONVOLVE_METHOD = 'Separate';
 

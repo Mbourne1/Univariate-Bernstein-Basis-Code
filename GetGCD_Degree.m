@@ -22,10 +22,6 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 
 % Get global variables
 
-global PLOT_GRAPHS
-global THRESHOLD
-
-
 % Get degree m of polynomial f(x)
 m = GetDegree(fx);
 
@@ -34,6 +30,11 @@ n = GetDegree(gx);
 
 % get minimum degree of f(x) and g(x)
 min_mn = min(m,n);
+
+% Set upper and lower limit
+lower_lim = 1;
+upper_lim = min_mn;
+
 
 %% Initialisation stage
 
@@ -44,8 +45,8 @@ vTheta    =   zeros(min_mn,1);
 vGM_fx    =   zeros(min_mn,1);
 vGM_gx    =   zeros(min_mn,1);
 
-vMax_Diag_R1 = zeros(min_mn,1);
-vMin_Diag_R1 = zeros(min_mn,1);
+vMaxDiagR1 = zeros(min_mn,1);
+vMinDiagR1 = zeros(min_mn,1);
 vMaxRowNormR1 = zeros(min_mn,1);
 vMinRowNormR1 = zeros(min_mn,1);
 
@@ -53,20 +54,14 @@ vMinRowNormR1 = zeros(min_mn,1);
 % decomposition of each subresultant S_{k} for k=1,...,min(m,n)
 vMinimumResidual             =   zeros(min_mn,1);
 
-% Initialise a vector to store max/min diagonal entry in the upper
-% triangular matrix R1_{k} from the QR decomposition of S_{k} for
-% k=1,...,min(m,n)
-vRatio_MaxMin_Diagonals_R    =   zeros(min_mn,1);
-
-
+% Initialise a vector to store minimal singular values of each S_{k}
 vMinimumSingularValues = zeros(min_mn,1);
 
 % Stores Data from QR decomposition.
 Data_RowNorm    = [];
 Data_DiagNorm   = [];
 
-
-%% Loop
+%%
 
 % For each subresultant $S_{k}$
 for k = 1:1:min_mn
@@ -78,7 +73,8 @@ for k = 1:1:min_mn
     % Given the previous geometric mean of f(x) calculate the new geometric
     % mean by my new method
     if k>1
-        GM = GetGeometricMeanFromPrevious(fx , vGM_fx(k-1) , m , n-k);
+        GM_fx = GetGeometricMeanFromPrevious(fx , vGM_fx(k-1) , m , n-k);
+        GM_gx = GetGeometricMeanFromPrevious(gx , vGM_gx(k-1) , n , m-k);
     end
     
     % Divide f(x) and g(x) by geometric means
@@ -112,8 +108,8 @@ for k = 1:1:min_mn
     Data_DiagNorm = AddToResults(Data_DiagNorm,vDiagsR1_norm,k);
     
     % Get maximum and minimum row diagonals of R1
-    vMax_Diag_R1(k) = max(vDiagsR1);
-    vMin_Diag_R1(k) = min(vDiagsR1);
+    vMaxDiagR1(k) = max(vDiagsR1);
+    vMinDiagR1(k) = min(vDiagsR1);
     
     % Get maximum and minimum row norms of rows of R1.
     vMaxRowNormR1(k) = max(vR1_RowNorms);
@@ -127,37 +123,34 @@ end
 
 % End of Loop
 
-% Get ratio of max:min Row Norms of R1
-vRatio_MaxMin_RowNorm_R = vMaxRowNormR1./ vMinRowNormR1;
-vRatio_MaxMin_RowNorm_R = sanitize(vRatio_MaxMin_RowNorm_R);
+% %
+% %         Get ratio of max:min Row Norms of R1
+% %
+% %
+[max_Delta_MaxMin_RowSum_R,indexMaxChange_RowNorm] = Analysis(vMaxRowNormR1./vMinRowNormR1);
 
-% Get ratio of max:min diagonals of R1
-vRatio_MaxMin_Diagonals_R = vMax_Diag_R1 ./ vMin_Diag_R1;
-vRatio_MaxMin_Diagonals_R = sanitize(vRatio_MaxMin_Diagonals_R);
 
-% % Analyse Max:Min Row Norms for each subresultant
-% Get the change in the ratios from one subresultant to the next.
-vDelta_MaxMin_RowNorm_R = abs(diff(log10(vRatio_MaxMin_RowNorm_R)));
 
-% Get the maximum change in rowsum ratio and its index
-[max_Delta_MaxMin_RowSum_R,indexMaxChange_RowNorm] = max(vDelta_MaxMin_RowNorm_R);
+% %
+% %         Get ratio of max:min diagonals of R1
+% %
+% %
+[max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = Analysis(vMaxDiagR1./vMinDiagR1);
 
-% % Anaysis of Max:Min Diagonal entries of each subresultant
 
-% Get the change in the ratios of diagonal elements from one subresultant
-% to the next.
-vDelta_MaxMin_Diag_R = abs(diff(log10(vRatio_MaxMin_Diagonals_R)));
+% %
+% %         Analysis of Minimum Residuals
+% %
+% %
+[max_Delta_Min_Residaul, indexMaxDeltaMinResidaul] = Analysis(vMinimumResidual);
 
-% Get the maximum change in diag ratio and its index
-[max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = max(vDelta_MaxMin_Diag_R);
 
-% % Analysis of Minimum Singular values
 
-%%
-
+%
 % If only one subresultant exists, get GCD by alternative method
 if min_mn == 1
-    t = Get_Rank_One_Subresultant(Sk);
+    fprintf([mfilename ' : ' 'Only One Subresultant \n'])
+    t = GetRankOneSubresultant(Sk);
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);
@@ -165,110 +158,11 @@ if min_mn == 1
     return;
 end
 
+t = GetProblemType(vMinimumResidual,lower_lim);
 
-% Set a condition for which we consider the maximum change in row sums to
-% significant or insignificant.
-if abs(max_Delta_MaxMin_Diag_R) < THRESHOLD
-    
-    % Check to see if all subresultants are rank deficient in which case
-    % the degree of the GCD is min(m,n)
-    
-    if mean(log10(vRatio_MaxMin_Diagonals_R)) < THRESHOLD
-        
-        %all subresultants are full rank
-        t = 0;
-        alpha = 0;
-        theta = 0;
-        GM_fx = 0;
-        GM_gx = 0;
-        fprintf('All subresultants are Non-Singular \n')
-        return;
-    else
-        % All subresultants are rank deficient
-        fprintf('All subresultants are Singular \n')
-        t = min(m,n);
-    end
-    
-else % The degree of the GCD is somewhere between 1 and min(m,n)
-    
-    % Get degree of GCD by ration of max:min row norms
-    degree_calc_1 = indexMaxChange_RowNorm;
-    
-    % Get degree by ratio of max/min element in N, where N is a vector of the
-    % norms of each row of R1.
-    degree_calc_2 = indexMaxChange_Ratio_DiagsR;
-    
-    % Get degree by minimal residual obtained by removing each column from each
-    % subresultant, giving Ak x = ck. When residual is 'close to zero'. Matrix is rank
-    % deficient. (Note if zero, log10(0) = inf. so use fudge factor)
-    A = log10(vMinimumResidual);
-    [~,degree_calc_3] = max(abs(diff(A)));
-    
-    % Take the mode of the three degree calculation methods
-    t = mode([degree_calc_1,degree_calc_2,degree_calc_3]);
-    
-    
-    
-    
-end
+% % Graph Plotting
+PlotGraphs()
 
-%% Graph Plotting
-
-switch PLOT_GRAPHS
-    case 'y'
-        % Plot Graph of ratio of max : min element of the diagonal elements of R1 from the QR decompositions.
-        figure_name = sprintf('%s : Max:min Row Diagonals',mfilename);
-        figure('name',figure_name)
-        x = 1:min_mn;
-        plot(x,log10(vRatio_MaxMin_Diagonals_R),'red-s');
-        hold on
-        axis([1,min_mn,0,inf])
-        legend('Max:Min diag element of subresultant S_{k}');
-        title('Max:Min diagonal elements of R1 from the QR decomposition of S_{k} (Original)');
-        ylabel('log_{10} max:min diag element')
-        hold off
-        
-        
-        % Plot Graph of ratio of max : min row sum in R1 from the QR decompositions.
-        figure_name = sprintf('%s : Max:min Row Norms',mfilename);
-        figure('name',figure_name)
-        x = 1:min_mn;
-        plot(x,log10(vRatio_MaxMin_RowNorm_R),'red-s');
-        hold on
-        axis([1,min_mn,0,inf])
-        legend('Max:Min Row Norms of Rows in R1 from the QR decomposition of S_{k}');
-        title('Max:Min Row Norms of Rows in R1 from the QR Decomposition of S_{k} (Original)');
-        hold off
-        
-        
-        % Plot graph of norms of each row (N) from the qr decompostion of each S_{k}
-        figure_name = sprintf('%s : RowNorm',mfilename);
-        figure('name',figure_name)
-        plot(Data_RowNorm(:,1),(log10(Data_RowNorm(:,2))),'*')
-        axis([0.9,min_mn,-inf,+inf])
-        xlabel('k')
-        ylabel('Normalised Row Sums of R1 in S_{k}')
-        title(['Normalised Row Sums of R1 fom the QR decomposition of each subresultant S_{k} \newline '...
-            'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
-        hold off
-        
-        
-        % %
-        figure_name = sprintf('%s : RowNorm',mfilename);
-        figure('name',figure_name)
-        plot(Data_DiagNorm(:,1),(log10(Data_DiagNorm(:,2))),'*')
-        axis([0.9,min_mn,-inf,+inf])
-        xlabel('k')
-        ylabel('Normalised Diagonals of R1 in S_{k}')
-        title(['Normalised Diagonals in R1 matrix from the QR decomposition of each subresultant S_{k} \newline '...
-            'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
-        hold off
-        
-    case 'n'
-        % Do Nothing
-    otherwise
-        error('err');
-end
 
 
 %%
@@ -281,6 +175,8 @@ alpha                   = vAlpha(t);
 theta                   = vTheta(t);
 GM_fx                   = vGM_fx(t);
 GM_gx                   = vGM_gx(t);
+
+
 end
 
 
@@ -307,26 +203,6 @@ data = [data; temp_data];
 
 end
 
-function R1 = GetR1(Sk)
-% Get the square upper triangular matrix R1 from the QR Decomposition of
-% the kth subresultant matrix Sk
-%
-% Inputs.
-%
-% Sk : k-th Subresultant matrix S_{k}(f,g)
-
-% Get QR Decomposition of the sylvester matrix S_{k}(f(\theta,w),g(\theta,w))
-[~,R] = qr(Sk);
-
-% Take absolute values of R_{k}
-R = abs(R);
-
-% Get number of rows in R1_{k}
-[nRowsR1,~] = size(diag(R));
-
-% Obtain R1 the top square of the R matrix.
-R1 = R(1:nRowsR1,1:nRowsR1);
 
 
-end
 

@@ -2,7 +2,7 @@ function [ux,vx] = GetQuotients(fx_n,gx_n,t,alpha,theta)
 % Given polynomials f(x) and g(x), get the quotient polynomials u(x) and
 % v(x) such that f(x)*v(x) = g(x)*u(x).
 
-global BOOL_Q
+global SETTINGS
 
 % Get degree of input polynomial g(x)
 n = GetDegree(gx_n);
@@ -43,7 +43,7 @@ uw = -vec_x(n-t+2:end);
 % If Q is not included in Sylvester matrix, then binomials are included in
 % x. Remove binomials
 
-switch BOOL_Q
+switch SETTINGS.BOOL_Q
     case 'y'
     case 'n'
         % Remove binomials from the coefficients.

@@ -29,13 +29,13 @@ function [f_noisy,noisevector]=VariableNoise(f,el,eu)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global SEED
+global SETTINGS
 
 % Get degree of input polynomial f.
 m = GetDegree(f);
 
 % Set Seed for random number generator.
-rng(SEED)
+rng(SETTINGS.SEED)
 
 % Generate random variables r_{i}
 r = (2*rand(m+1,1))-ones(m+1,1);

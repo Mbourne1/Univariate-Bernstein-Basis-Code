@@ -65,28 +65,18 @@ vRoots = o_roots_matlab(poly);
 
 %%
 % Define the global variables for my root finder.
-global PLOT_GRAPHS
-global BOOL_PREPROC
-global BOOL_SYLVESTER_BUILD_METHOD
-global BOOL_Q
-global BOOL_LOG
-global BOOL_DENOM_SYL
-global BOOL_SNTLN
-global BOOL_APF_BUILD_METHOD
-global BOOL_DENOM_APF
-global BOOL_APF
-global BOOL_DECONVOLVE
-PLOT_GRAPHS = 'y';
-BOOL_PREPROC = 'n';
-BOOL_SYLVESTER_BUILD_METHOD = 'rearranged';
-BOOL_Q = 'y';
-BOOL_LOG = 'y';
-BOOL_DENOM_SYL = 'y';
-BOOL_SNTLN = 'n';
-BOOL_APF_BUILD_METHOD = 'rearranged';
-BOOL_DENOM_APF = 'y';
-BOOL_APF = 'n';
-BOOL_DECONVOLVE = 'single';
+global SETTINGS
+SETTINGS.PLOT_GRAPHS = 'y';
+SETTINGS.BOOL_Q = 'y';
+SETTINGS.BOOL_LOG = 'y';
+SETTINGS.BOOL_DENOM_SYL = 'y';
+SETTINGS.BOOL_ALPHA_THETA = 'y';
+SETTINGS.MEAN_METHOD = 'Geometric Mean Matlab Method';
+SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard STLN';
+SETTINGS.SNTLN_METHOD = 'y';
+SETTINGS.APF_METHOD = 'n';
+SETTINGS.APF_BUILD_METHOD = 'Standard APF' ;
+SETTINGS.DECONVOLVE_METHOD = 'single';
 
 % Calculate roots by my method
 %vRoots = o_roots_mymethod(poly);

@@ -8,3 +8,20 @@
 1 	 6 	 4 	 2 	 3.151457e-11 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 Standard SNTLN 	 None 
 1 	 6 	 4 	 2 	 1.250563e-10 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 Standard SNTLN 	 None 
 2 	 4 	 2 	 1 	 1.035932e-09 	 Geometric Mean Matlab Method 	 y 	 1.000000e-08 	 Standard SNTLN 	 None 
+1 	 6 	 4 	 2 	 2.594164e-11 	 Geometric Mean Matlab Method 	 y 	  	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.594164e-11 	 Geometric Mean Matlab Method 	 y 	  	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.594164e-11 	 Geometric Mean Matlab Method 	 y 	  	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.594164e-11 	 Geometric Mean Matlab Method 	 y 	  	 Standard STLN 	 None 
+2 	 4 	 2 	 1 	 7.752394e-10 	 Geometric Mean Matlab Method 	 y 	  	 Standard STLN 	 None 
+2 	 4 	 2 	 1 	 1.181268e-09 	 Geometric Mean Matlab Method 	 y 	  	 None 	 None 
+2 	 4 	 2 	 1 	 7.752394e-10 	 Geometric Mean Matlab Method 	 y 	  	 Standard STLN 	 Standard APF 
+2 	 4 	 2 	 1 	 7.752394e-10 	 Geometric Mean Matlab Method 	 y 	  	 Standard STLN 	 Standard APF 
+3 	 29 	 36 	 26 	 1.043075e-09 	 Geometric Mean Matlab Method 	 y 	  	 Standard STLN 	 Standard APF 
+1 	 6 	 4 	 2 	 2.594164e-11 	 Geometric Mean Matlab Method 	 y 	 1.000000e-12 	 Standard STLN 	 None 
+2 	 4 	 2 	 1 	 7.752394e-10 	 Geometric Mean Matlab Method 	 y 	 1.000000e-12 	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.594164e-11 	 Geometric Mean Matlab Method 	 y 	 1.000000e-12 	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.594164e-11 	 Geometric Mean Matlab Method 	 y 	 1.000000e-12 	 Standard STLN 	 None 
+1 	 6 	 4 	 2 	 2.594164e-11 	 Geometric Mean Matlab Method 	 y 	 1.000000e-12 	 Standard STLN 	 None 
+Custom 	 15 	 14 	 10 	 2.436669e-06 	 Geometric Mean Matlab Method 	 y 	 1.000000e-12 	 Standard STLN 	 None 
+Custom 	 15 	 14 	 10 	 2.436669e-06 	 Geometric Mean Matlab Method 	 y 	 1.000000e-12 	 Standard STLN 	 None 
+Custom 	 15 	 14 	 10 	 2.773914e-06 	 Geometric Mean Matlab Method 	 n 	 1.000000e-12 	 None 	 None 

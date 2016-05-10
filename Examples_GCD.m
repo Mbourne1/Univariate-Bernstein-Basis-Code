@@ -18,7 +18,7 @@ function [roots_fx,roots_gx,roots_dx,t,roots_ux,roots_vx]=Examples_GCD(n)
 % v - Roots and multiplicities of quotient polynomial g/v = d.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global SEED
+global SETTINGS
 
 switch n
     

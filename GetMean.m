@@ -2,10 +2,10 @@ function [lambda] = GetMean(fx,n_k)
 % Calculate Geometric means of input polynomials f(x,y) and g(x,y)
 
 
-global MEAN_METHOD
+global SETTINGS
 
 
-switch MEAN_METHOD
+switch SETTINGS.MEAN_METHOD
     case 'Geometric Mean Matlab Method'
         
         C_f_unproc = BuildDT1Q1(fx,n_k);

@@ -81,17 +81,17 @@ function G = LeftDG_Build(m,n,t,mincol,theta)
 % BOOL_LOG - (Boolean)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
-global BOOL_LOG
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-switch BOOL_LOG
+switch SETTINGS.BOOL_LOG
     case 'y' % use log
         G = LeftDG_Build_log(m,n,t,mincol,theta);
     case 'n' % use nchoosek
         G = LeftDG_Build_nchoosek(m,n,t,mincol,theta);
     otherwise
-        error('bool_log must be either y or n')
+        error('SETTINGS.BOOL_LOG must be either y or n')
 end
 end
 
@@ -118,11 +118,11 @@ function G = RightDG_Build(n,m,t,mincol,theta)
 % BOOL_LOG - (Boolean)
 %   1 :- Perform calculations by log method
 %   0 :- Perform calculations by standard method.
-global BOOL_LOG
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-switch BOOL_LOG
+switch SETTINGS.BOOL_LOG
     case 'y' % use logs
         G = RightDG_Build_log(n,m,t,mincol,theta);
     case 'n' % use nchoosek
@@ -130,7 +130,7 @@ switch BOOL_LOG
         G = RightDG_Build_nchoosek(n,m,t,mincol,theta);
         warning('on','all');
     otherwise
-        error('bool_log must be either y or n')
+        error('SETTINGS.BOOL_LOG must be either y or n')
 end
 end
 
@@ -159,7 +159,7 @@ function [G] = LeftDG_Build_nchoosek(m,n,t,num_mincolumn,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global BOOL_DENOM_SYL
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -181,14 +181,14 @@ end
 G = diag(G);
 
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y'
         % Included denominator in coefficient matrix.
         G = G./ nchoosek(m+n-t,n-t);
     case 'n'
         % Exclude
     otherwise
-        error('bool_denom_syl must be either y or n')
+        error(' SETTINGS.BOOL_DENOM_SYL must be either y or n')
 end
 
 end
@@ -218,7 +218,7 @@ function [G] = LeftDG_Build_log(m,n,t,num_mincolumn,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global BOOL_DENOM_SYL
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -245,7 +245,7 @@ end
 % Create diagonal matrix G from values in vector G.
 G = diag(G);
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y'
         % Included denominator in coefficient matrix.
         
@@ -260,7 +260,7 @@ switch BOOL_DENOM_SYL
     case 'n'
         % Exclude denominator from coefficient matrix
     otherwise
-        error('bool_denom_syl must be either y or n')
+        error('SETTINGS.BOOL_DENOM_SYL must be either y or n')
         
 end
 
@@ -272,30 +272,30 @@ end
 
 function [G] = RightDG_Build_nchoosek(n,m,t,num_mincolumn,theta)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                           Inputs
-
+%
 % m - Degree of polynomial f
-
+%
 % n - Degree of polynomial g
-
+%
 % t - Degree of GCD
-
+%
 % mincol -
-
+%
 % theta -
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                       Global Variables
-
+%
+% Global Variables
+%
 % BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
 % the Bernstein basis, each partition of each subresultant has a common
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global BOOL_DENOM_SYL
-
+global SETTINGS
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialise empty vector G.
@@ -312,14 +312,14 @@ end
 % Create diagonal matrix G from vector G.
 G = diag(G);
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y'
         % Denominator is included in coefficient matrix.
         G = G./ nchoosek(m+n-t,m-t);
     case 'n'
         % Denominator is excluded from the coefficient matrix
     otherwise
-        error('bool_denom_syl must be either y or n')
+        error('SETTINGS.BOOL_DENOM_SYL must be either y or n')
         
 end
 
@@ -355,7 +355,7 @@ function [G] = RightDG_Build_log(n,m,t,num_mincolumn,theta)
 % divisor to its elements.
 %    1 :- Include Common Denominator.
 %    0 :- Exclude Common Denominator.
-global BOOL_DENOM_SYL
+global SETTINGS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -379,7 +379,7 @@ end
 % Create diagonal matrix G from vector G.
 G = diag(G);
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y'
         % Include the denominator
         
@@ -391,7 +391,7 @@ switch BOOL_DENOM_SYL
     case 'n'
         % Exclude the denominator
     otherwise
-        error('bool_denom_syl must be either y or n')
+        error('SETTINGS.BOOL_DENOM_SYL must be either y or n')
 end
 
 end

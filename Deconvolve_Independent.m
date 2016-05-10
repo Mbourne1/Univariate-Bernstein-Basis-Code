@@ -14,7 +14,7 @@ function hi = Deconvolve_Independent(set_g)
 for i = 1:1:length(set_g)-1
     % Get the two polynomials which are to be deconvolved
     % f{i},f{i+1}
-    hi{i} = Bernstein_Deconvolve(set_g{i},set_g{i+1});
+    hi{i} = Deconvolve(set_g{i},set_g{i+1});
 end
 
 

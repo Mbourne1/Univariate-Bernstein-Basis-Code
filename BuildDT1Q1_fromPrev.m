@@ -1,10 +1,10 @@
-function C1a = BuildToeplitz_fromPrev(m,n,k,C_0a)
+function C1a = BuildDT1Q1_fromPrev(m,n,k,C_0a)
 % Build Toeplitz Matrix (Partition of Sylvester Matrix) in the 'Build Up' method.
 % m : degree of polynomial f n : degree of polynomial g k : index of
 % subresultant S_{k} to be built. C_0a : the preceeding Partition, from
 % which C1a will be built. BOOL_DENOM : BOOL_LOG : Unused.
 
-global BOOL_DENOM_SYL
+global SETTINGS
 
 
 % Where C_0 is the previous Cauchy Matrix,
@@ -22,7 +22,7 @@ Ba = [...
 C1a = A * C_0a * Ba;
 
 %
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 1
         % if Denominator is included in building toeplitz, then update
         % denominator for next S_k

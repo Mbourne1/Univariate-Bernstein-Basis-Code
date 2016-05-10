@@ -32,14 +32,14 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 
 
 
-SetGlobalVariables(ex_num,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 
 global problemType 
 problemType = 'fromRoots'; % fromRoots/fromCoefficients
 
 
 % Validate Inputs.
-
+PrintGlobalVariables();
 
 % Check that max and min signal to noise ratio are the correct way around.
 % If not, rearrange min and max.
@@ -51,7 +51,7 @@ if emin > emax
     emax = emin_wrong;
 end
 
-PrintGlobalVariables();
+
 
 % Add subdirectories
 addpath 'Root Finding Methods'
@@ -63,14 +63,46 @@ addpath 'Root Finding Methods'
 % polynomial fx.
 fx = VariableNoise(fx_exact,emin,emax);
 
+% %
+% %
+% %
 % Calculate roots by mymethod.
-clc_roots_mymethod = o_roots_mymethod(fx);
+arr_root_mult_MyMethod = o_roots_mymethod(fx);
+fx_mymethod = GetWithoutBinomials(B_poly(arr_root_mult_MyMethod));
+error.MyMethod = norm(Normalise(fx_mymethod) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
+display(error.MyMethod);
+LineBreakLarge()
 
+% %
+% %
+% %
+% Calculate roots by Musser Method
+arr_root_mult_MuzzerMethod = o_roots_Musser(fx);
+fx_MuzzerMethod = GetWithoutBinomials(B_poly(arr_root_mult_MuzzerMethod));
+error.MuzzerMethod = norm(Normalise(fx_MuzzerMethod) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
+display(error.MuzzerMethod);
+LineBreakLarge()
+
+% %
+% %
+% %
 % Calculate roots by matlab 'roots' function.
-clc_roots_matlab = o_roots_matlab(fx);
+arr_root_mult_Matlab = o_roots_matlab(fx);
+fx_matlab   = GetWithoutBinomials(B_poly(arr_root_mult_Matlab));
+error.MatlabMethod   = norm(Normalise(fx_matlab) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
+display(error.MatlabMethod);
+LineBreakLarge()
 
+
+% %
+% %
+% %
 % Calculate roots by 'multroot' function.
-clc_roots_multroot = o_roots_multroot(fx);
+arr_root_mult_Multroot = o_roots_multroot(fx);
+fx_multroot = GetWithoutBinomials(B_poly(arr_root_mult_Multroot));
+error.MultrootMethod = norm(Normalise(fx_multroot) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
+display(error.MultrootMethod);
+LineBreakLarge()
 
 % Calculate roots by 'Interval Bisection' function
 % clc_roots_intervalBisection = o_roots_bisection(fx);
@@ -81,13 +113,7 @@ clc_roots_multroot = o_roots_multroot(fx);
 % Calculate roots by bezier clipping
 %clc_roots_clipping = o_roots_BezierClipping(fx);
 
-fx_mymethod = GetWithoutBinomials(B_poly(clc_roots_mymethod));
-fx_matlab   = GetWithoutBinomials(B_poly(clc_roots_matlab));
-fx_multroot = GetWithoutBinomials(B_poly(clc_roots_multroot));
 
-error_mymethod = norm(Normalise(fx_mymethod) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
-error_matlab   = norm(Normalise(fx_matlab) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
-error_multroot = norm(Normalise(fx_multroot) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
 
 
 % %
@@ -98,17 +124,17 @@ error_multroot = norm(Normalise(fx_multroot) - Normalise(fx_exact)) ./ norm(Norm
 % X1 = [r1 r1 r1 r1 r1 ...].
 
 
-nondistinctRoots_mymethod = GetRepeatedRoots(clc_roots_mymethod);
-nondistinctRoots_matlab   = GetRepeatedRoots(clc_roots_matlab);
-nondistinctRoots_multroot  = GetRepeatedRoots(clc_roots_multroot);
-nondistinctRoots_bisection  = GetRepeatedRoots(clc_roots_intervalBisection);
+nondistinctRoots_mymethod = GetRepeatedRoots(arr_root_mult_MyMethod);
+nondistinctRoots_matlab   = GetRepeatedRoots(arr_root_mult_Matlab);
+nondistinctRoots_multroot  = GetRepeatedRoots(arr_root_mult_Multroot);
+%nondistinctRoots_bisection  = GetRepeatedRoots(clc_roots_intervalBisection);
 
 
 %
 % Plot the graph real (x) imaginary (y) components of the nondistinct roots
 % obtained by the root calculating methods.
-global PLOT_GRAPHS
-switch PLOT_GRAPHS
+global SETTINGS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure_name = sprintf('%s : Plot Calculated Roots',mfilename);
         figure('name',figure_name)
@@ -129,54 +155,9 @@ switch PLOT_GRAPHS
         error('error: plot_graphs is either y or n')
 end
 
-% #########################################################################
-
-% Error Measure One.
-% Take the roots, and form a polynomial from the roots calculated by each
-% corresponding method. then take the difference in the coefficients of the
-% exact polynomial - calculated polynomial / exact polynomial
-% \hat{a}_{i} - a_{i} ./ \hat{a}_{i}
-
-% #########################################################################
-
-% Having obtained my root estimates. build the polynomial from the
-% calculated roots of the methods above.
-calculated_poly_mymthd = B_poly(clc_roots_mymethod);
-calculated_poly_mymthd = calculated_poly_mymthd./calculated_poly_mymthd(1) ;
-
-
-fx_bi = B_poly(f_roots_exact);
-fx_bi = Normalise(fx_bi);
-
-switch 'problemType'
-    case 'fromRoots'
-        % Get error measure
-        err_mymthd  = (calculated_poly_mymthd - fx_bi) ./ fx_bi;
-        fprintf('\nObtaining polynomial coefficients from calculated roots...\n');
-        fprintf('Normalised error in coefficients\n\n')
-        
-        fprintf('My Method: %g \n\n',norm(err_mymthd))
-        
-        % Having obtained MultRoot Estimates, build the polynomial from the calculated roots.
-        
-        calculated_poly_multroot = B_poly(clc_roots_multroot);
-        calculated_poly_multroot = calculated_poly_multroot./calculated_poly_multroot(1);
-        
-        err_mltrt = ((calculated_poly_multroot - fx_bi)) ./ fx_bi;
-        fprintf('Multroot Method: %g \n\n',norm(err_mltrt));
-        
-        % Having obtained the Matlab ROOTS, build the polynomial from the calculated roots
-        
-        calculated_poly_matlabroot = B_poly(clc_roots_matlab);
-        calculated_poly_matlabroot = calculated_poly_matlabroot ./ calculated_poly_matlabroot(1);
-        
-        err_mtlbrt = ((calculated_poly_matlabroot) - fx_bi) ./ fx_bi;
-        fprintf('MATLAB Roots Method: %g \n\n', norm(err_mtlbrt));
-    case 'fromCoefficients'
-end
-
-% % 
-PrintToFile(m);
+% %
+% %
+PrintToFile(error)
 
 
 end
@@ -217,20 +198,34 @@ end
 end
 
 
-function []= PrintToFile(m)
+function []= PrintToFile(error)
 
-global NOISE
-global BOOL_PREPROC
-global LOW_RANK_APPROXIMATION_METHOD
-global APF_METHOD
+global SETTINGS
 
 fullFileName = 'o_roots_results.txt';
 
-
 if exist(fullFileName, 'file')
     fileID = fopen(fullFileName,'a');
-    fprintf(fileID,'%5d \t %s \t %5s \t %s \t %s \n',...
-        m,NOISE,BOOL_PREPROC, LOW_RANK_APPROXIMATION_METHOD,APF_METHOD);
+    
+    str_errors = '%s \t %s \t %s \t %s \t';
+    str_globals = '%s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t';
+    str_types = strcat(str_errors,str_globals, '\n');
+    
+    fprintf(fileID,str_types,...
+        error.MyMethod,...
+        error.MuzzerMethod,...
+        error.MatlabMethod,...
+        error.MultrootMethod,...
+        SETTINGS.EX_NUM,...
+        SETTINGS.EMIN,...
+        SETTINGS.EMAX,...
+        SETTINGS.MEAN_METHOD,...
+        SETTINGS.BOOL_ALPHA_THETA, ...
+        SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
+        SETTINGS.APF_METHOD, ...
+        SETTINGS.BOOL_Q,...
+        SETTINGS.DECONVOLVE_METHOD,...
+        SETTINGS.BOOL_LOG);
     fclose(fileID);
 else
   % File does not exist.
@@ -239,6 +234,5 @@ else
 end
 
 
-
-
 end
+

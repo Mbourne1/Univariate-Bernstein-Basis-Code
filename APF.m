@@ -25,11 +25,7 @@ function [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_ux, PostAPF_vx, PostAPF_th
 
 % Global Variables
 
-global PLOT_GRAPHS
-global MAX_ERROR_APF
-global MAX_ITERATIONS_APF
-
-
+global SETTINGS
 
 % Initialise iteration index
 ite = 1;
@@ -162,7 +158,7 @@ yy = startpoint;
 
 % Start the iterative procedure for the solution of the LSE problem.
 
-while condition(ite) > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
+while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     
     % Use the QR decomposition to solve the LSE problem.
     % min |y-p| subject to Cy=q
@@ -332,7 +328,7 @@ while condition(ite) > (MAX_ERROR_APF) && ite < MAX_ITERATIONS_APF
 end
 
 
-if ite == MAX_ITERATIONS_APF
+if ite == SETTINGS.MAX_ITERATIONS_APF
     fprintf('APF failed to converge after %i iterations\n',ite)
     PostAPF_dx = dx;
     PostAPF_ux = ux;
@@ -351,7 +347,7 @@ if ite == MAX_ITERATIONS_APF
 end
 
 try
-    switch PLOT_GRAPHS
+    switch SETTINGS.PLOT_GRAPHS
         case 'y'
             % Plot the normalised residuals res_ux, res_vx, res_uw and res_vw.
             plotgraphs3(res_ux,res_vx,res_uw,res_vw);
@@ -388,7 +384,7 @@ PostAPF_gx = GetWithoutThetas((gw + tw),th(ite));
 
 
 
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'        
         figure_name = sprintf('%s : Residuals',mfilename);
         figure('name',figure_name)

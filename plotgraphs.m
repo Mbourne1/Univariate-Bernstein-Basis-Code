@@ -1,5 +1,5 @@
-
-switch PLOT_GRAPHS
+global SETTINGS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         
         x = lower_lim:1:upper_lim;
@@ -8,6 +8,7 @@ switch PLOT_GRAPHS
         % Plot Graph of ratio of max : min element of the diagonal elements of R1 from the QR decompositions.
         figure_name = sprintf('%s : Max:min Row Diagonals',mfilename);
         figure('name',figure_name)
+        vRatio_MaxMin_Diagonals_R = vMaxDiagR1./vMinDiagR1;
         plot(x,log10(vRatio_MaxMin_Diagonals_R),'red-s');
         hold on
         legend('Max:Min diag element of subresultant S_{k}');
@@ -19,6 +20,7 @@ switch PLOT_GRAPHS
         % Plot Graph of ratio of max : min row sum in R1 from the QR decompositions.
         figure_name = sprintf('%s : Max:min Row Norms',mfilename);
         figure('name',figure_name)
+        vRatio_MaxMin_RowNorm_R = vMaxRowNormR1 ./ vMinRowNormR1;
         plot(x,log10(vRatio_MaxMin_RowNorm_R),'red-s');
         hold on
         legend('Max:Min Row Norms of Rows in R1 from the QR decomposition of S_{k}');

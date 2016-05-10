@@ -15,10 +15,10 @@ function DT1Q1 = BuildDT1Q1(fx,n_k)
 %
 %
 
-global SYLVESTER_BUILD_METHOD
+global SETTINGS
 
 
-switch SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'Standard'
         
         % Get the degree of polynomial f(x)
@@ -39,7 +39,7 @@ switch SYLVESTER_BUILD_METHOD
     case 'Rearranged'
         DT1Q1 = BuildDT1Q1_Rearranged(fx,n_k);
     otherwise
-        error('Error : Build Method is either (Standard) or (Rearranged)')
+        error('Error : SETTINGS.BUILD_METHOD is either (Standard) or (Rearranged)')
 end
 
 end
@@ -51,11 +51,11 @@ function DT1Q1 = BuildDT1Q1_Rearranged(fx,n_k)
 %
 %
 
-global BOOL_LOG
+global SETTINGS
 % If Q is included, use the rearrangment such that each Toeplitz
 % matrix has a common divisor in each element.
 
-switch BOOL_LOG
+switch SETTINGS.BOOL_LOG
     case 'n'
         % Build Toeplitz Matrix using nchoosek
         DT1Q1 = BuildDT1Q1_Rearranged_nchoosek(fx,n_k);
@@ -83,12 +83,7 @@ function DT1Q1 = BuildDT1Q1_Rearranged_log(fx,n_k)
 %
 
 %                       Global Variables.
-
-
-global BOOL_DENOM_SYL
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+global SETTINGS
 
 % Get degree of polynomial f(w)
 m = GetDegree(fx);
@@ -116,7 +111,7 @@ for j=0:1:n_k
     end
 end
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y' % Include denominator
         
         % Get log of the binomial coefficient.
@@ -148,13 +143,14 @@ function T = BuildDT1Q1_Rearranged_nchoosek(fw,n_k)
 % k :   Index of the subresultant S_{k}
 %
 %
-
-%                       Global Variables.
-%   BOOL_DENOM - The rearrangment of the Sylvester Matrix in the Bernstein
-%   basis reveals common denominators.
+%
+% Global Variables.
+% 
+% BOOL_DENOM - The rearrangment of the Sylvester Matrix in the Bernstein
+% basis reveals common denominators.
 %     1 :- Include Common Denominators in the Sylvester Matrix 0 :- Exclude
 %     Common Denominators from the Sylvester Matrix.
-global BOOL_DENOM_SYL
+global SETTINGS
 
 
 % Get degree of polynomial f
@@ -175,7 +171,7 @@ for j=0:1:n_k
 end
 
 
-switch BOOL_DENOM_SYL
+switch SETTINGS.BOOL_DENOM_SYL
     case 'y' % Include denominator
         scalar = nchoosek(m+n_k,n_k);
         T = T./scalar;
