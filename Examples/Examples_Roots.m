@@ -1,8 +1,8 @@
 function [fx_exact] = Examples_Roots(ex_num)
 
-ProblemType = 'From Roots';
+global Example_Type
 
-switch ProblemType
+switch Example_Type
     case 'From Roots'
         
         
@@ -29,7 +29,9 @@ switch ProblemType
         
     case 'From Coefficients'
         fx_exact = Examples_Roots_FromCoefficients(ex_num);
-        
+        %fx_bi = GetWithBinomials(fx_exact);
+    otherwise
+        error('error : Example_Type not valid')
 end
 end
 
@@ -58,27 +60,36 @@ switch ex_num
     case 'Example'
         root_mult_array_fx =...
             [
-                0.1     7;
-                0.9     12;
+            0.1     7;
+            0.9     12;
             ];
-    
+        
+    case 'Example Zeng'
+        root_mult_array_fx = ...
+            [
+            10/11   5
+            20/11   3
+            30/11   2
+            ];
+        
     case '-1'
         root_mult_array_fx = ...
             [
-                0.1     1;
-                0.5     10;
+            0.1     1;
+            0.5     10;
             ];
         
     case '0'
         root_mult_array_fx = ...
             [
-                0.1     1;
-                0.7     1;
-                0.9     1;
+            0.1     1;
+            0.7     1;
+            0.9     1;
             ];
         
     case '1'
-        root_mult_array_fx = [
+        root_mult_array_fx = ...
+            [
             0.1     1;
             0.9     2;
             0.2     3;
@@ -87,18 +98,22 @@ switch ex_num
             ];
         
     case '2'
-        root_mult_array_fx = [
+        root_mult_array_fx = ...
+            [
             0.5     1;
             0.8     2;
             ];
         
     case '3'
-        root_mult_array_fx=[0.3,     1;
+        root_mult_array_fx = ...
+            [
+            0.3,     1;
             0.6,    2;
             -1.1,    3;
             ];
     case '4'
-        root_mult_array_fx=[
+        root_mult_array_fx = ...
+            [
             0.1    1;
             0.5    2;
             0.9    3;
@@ -106,7 +121,8 @@ switch ex_num
             ];
         
     case '5'
-        root_mult_array_fx=[
+        root_mult_array_fx = ...
+            [
             0.1   1;
             0.5   2;
             0.8   3;
@@ -115,7 +131,9 @@ switch ex_num
             ];
         
     case '6'
-        root_mult_array_fx=[0.14,  1;
+        root_mult_array_fx = ...
+            [
+            0.14,  1;
             0.56,  2;
             0.89,  3;
             0.45,  4;
@@ -124,7 +142,8 @@ switch ex_num
             ];
         
     case '7'
-        root_mult_array_fx=[
+        root_mult_array_fx = ...
+            [
             0.14    1;
             0.56    2;
             0.89    3;
@@ -135,7 +154,9 @@ switch ex_num
             ];
         
     case '8'
-        root_mult_array_fx=[0.14,  1;
+        root_mult_array_fx = ...
+            [
+            0.14,  1;
             0.56,  2;
             0.89,  3;
             1.45,  4;
@@ -146,7 +167,9 @@ switch ex_num
             ];
         
     case '9'
-        root_mult_array_fx=[0.14,  1;
+        root_mult_array_fx= ...
+            [
+            0.14,  1;
             0.56,  2;
             0.89,  3;
             1.45,  4;
@@ -157,7 +180,9 @@ switch ex_num
             1.2     9
             ];
     case '10'
-        root_mult_array_fx=[0.14,  1;
+        root_mult_array_fx = ...
+            [
+            0.14,  1;
             0.56,  2;
             0.89,  3;
             1.45,  4;
@@ -171,14 +196,16 @@ switch ex_num
         
         % cases with roots of same multiplicites
     case '11'
-        root_mult_array_fx = [
+        root_mult_array_fx = ...
+            [
             0.1     1;
             0.4     2;
             0.7     2;
             ];
         
     case '12'
-        root_mult_array_fx = [
+        root_mult_array_fx = ...
+            [
             0.1     1;
             0.5     2;
             0.6     2;
@@ -187,7 +214,8 @@ switch ex_num
             ];
         
     case '13'
-        root_mult_array_fx = [
+        root_mult_array_fx = ...
+            [
             0.1     1;
             0.5     2;
             0.6     2;
@@ -196,7 +224,8 @@ switch ex_num
             ];
         
     case '14'
-        root_mult_array_fx = [
+        root_mult_array_fx = ...
+            [
             0.1     1;
             0.5     2;
             0.6     2;

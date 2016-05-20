@@ -23,6 +23,7 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 % low_rank_approx_method :
 %           'Standard STLN'
 %           'Standard SNTLN'
+%           'Root Specific SNTLN'
 %           'None'
 %
 % apf_method :
@@ -32,12 +33,10 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 % % Example
 % >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None')
 
-addpath 'Bezoutian'
+% Set the problem type to a GCD problem
+problemType = 'GCD';
 
-SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
-
-%
-%                Consistency of input parameters.
+% Consistency of input parameters.
 
 % Check that max and min signal to noise ratio are the correct way around.
 % If not, rearrange min and max.
@@ -46,7 +45,15 @@ if emin > emax
     [emin,emax] = swap(emin,emax);
 end
 
+% Set the global variables
+global SETTINGS
+if isempty(SETTINGS)
+    fprintf('Set Q and log')
+    SETTINGS.BOOL_Q = 'n';
+    SETTINGS.BOOL_LOG = 'n';
+end
 
+SetGlobalVariables(problemType,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 
 % Print the parameters.
 PrintGlobalVariables()
@@ -104,7 +111,8 @@ lower_lim = 1;
 upper_lim = min(GetDegree(fx),GetDegree(gx));
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~,~,dx_calc,ux_calc,vx_calc] = o_gcd_mymethod(fx,gx,[lower_lim,upper_lim]);
+bool_CanBeCoprime = true;
+[~,~,dx_calc,ux_calc,vx_calc] = o_gcd_mymethod(fx,gx,[lower_lim,upper_lim],bool_CanBeCoprime);
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
@@ -169,19 +177,28 @@ function [] = PrintToFile(m,n,t,error_dx)
 
 global SETTINGS
 
-fullFileName = 'o_gcd_results.txt';
+fullFileName = 'Results_o_gcd.txt';
 
 
-if exist('o_gcd_results.txt', 'file')
-    fileID = fopen('o_gcd_results.txt','a');
-    fprintf(fileID,'%s \t %d \t %d \t %d \t %s \t %s \t %s \t %s \t %s \t %s \n',...
+if exist('Results_o_gcd.txt', 'file')
+    fileID = fopen('Results_o_gcd.txt','a');
+    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
+        datetime('now'),...
+        SETTINGS.PROBLEM_TYPE,...
         SETTINGS.EX_NUM,...
-        m,n,t,error_dx,...
+        int2str(m),...
+        int2str(n),...
+        int2str(t),...
+        error_dx,...
         SETTINGS.MEAN_METHOD,...
         SETTINGS.BOOL_ALPHA_THETA,...
-        SETTINGS.NOISE, ...
+        SETTINGS.EMAX,...
+        SETTINGS.EMIN,...
         SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
-        SETTINGS.APF_METHOD);
+        SETTINGS.APF_METHOD,...
+        SETTINGS.BOOL_LOG,...
+        SETTINGS.BOOL_Q...
+    );
     fclose(fileID);
 else
     % File does not exist.

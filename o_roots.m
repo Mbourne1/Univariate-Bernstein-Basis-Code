@@ -30,15 +30,28 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %
 % >> o_roots('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
 
+% Set the problem type to a roots type problem.
+ProblemType = 'Roots';
+
+% Set the global variables
+global SETTINGS
+if isempty(SETTINGS)
+    fprintf('Set Q and log \n');
+    SETTINGS.BOOL_Q = 'y';
+    SETTINGS.BOOL_LOG = 'n';
+    SETTINGS.ROOTS_HX = 'From Deconvolutions';
+    SETTINGS.DECONVOLVE_METHOD = 'Batch'
+end
+
+SetGlobalVariables(ProblemType, ex_num, emin, emax,...
+    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method)
+
+% Use the examples from a set of given roots
+global Example_Type 
+Example_Type = 'From Roots'; % fromRoots/fromCoefficients
 
 
-SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
-
-global problemType 
-problemType = 'fromRoots'; % fromRoots/fromCoefficients
-
-
-% Validate Inputs.
+% Print Settings to console
 PrintGlobalVariables();
 
 % Check that max and min signal to noise ratio are the correct way around.
@@ -67,30 +80,42 @@ fx = VariableNoise(fx_exact,emin,emax);
 % %
 % %
 % Calculate roots by mymethod.
-arr_root_mult_MyMethod = o_roots_mymethod(fx);
-fx_mymethod = GetWithoutBinomials(B_poly(arr_root_mult_MyMethod));
-error.MyMethod = norm(Normalise(fx_mymethod) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
-display(error.MyMethod);
-LineBreakLarge()
+try
+    myMethodStart = tic;
+    arr_root_mult_MyMethod = o_roots_mymethod(fx);
+    time.MyMethod = toc(myMethodStart);
+    errors.MyMethod = GetErrorMeasure(arr_root_mult_MyMethod,fx_exact);
+    LineBreakLarge()
+catch err
+    fprintf([mfilename ' : ' 'Error computing Roots by My Method \n' ])
+    fprintf(err.message);
+    errors.MyMethod = 9999999;
+    time.MyMethod = 999999999;
+end
 
 % %
 % %
 % %
 % Calculate roots by Musser Method
-arr_root_mult_MuzzerMethod = o_roots_Musser(fx);
-fx_MuzzerMethod = GetWithoutBinomials(B_poly(arr_root_mult_MuzzerMethod));
-error.MuzzerMethod = norm(Normalise(fx_MuzzerMethod) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
-display(error.MuzzerMethod);
-LineBreakLarge()
-
+try
+    MusserMethodStart = tic;
+    arr_root_mult_MusserMethod = o_roots_Musser(fx);
+    time.MusserMethod = toc(MusserMethodStart);
+    errors.MusserMethod = GetErrorMeasure(arr_root_mult_MusserMethod,fx_exact);
+    LineBreakLarge()
+catch err
+    
+    fprintf([mfilename ' : ' 'Error computing Roots by Musser Method \n' ])
+    fprintf(err.message);
+    errors.MusserMethod = 9999999;  
+    time.MusserMethod = 9999999;
+end
 % %
 % %
 % %
 % Calculate roots by matlab 'roots' function.
-arr_root_mult_Matlab = o_roots_matlab(fx);
-fx_matlab   = GetWithoutBinomials(B_poly(arr_root_mult_Matlab));
-error.MatlabMethod   = norm(Normalise(fx_matlab) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
-display(error.MatlabMethod);
+arr_root_mult_MatlabMethod = o_roots_matlab(fx);
+errors.MatlabMethod = GetErrorMeasure(arr_root_mult_MatlabMethod,fx_exact);
 LineBreakLarge()
 
 
@@ -98,11 +123,14 @@ LineBreakLarge()
 % %
 % %
 % Calculate roots by 'multroot' function.
+try
 arr_root_mult_Multroot = o_roots_multroot(fx);
-fx_multroot = GetWithoutBinomials(B_poly(arr_root_mult_Multroot));
-error.MultrootMethod = norm(Normalise(fx_multroot) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
-display(error.MultrootMethod);
+errors.MultrootMethod = GetErrorMeasure(arr_root_mult_Multroot,fx_exact);
 LineBreakLarge()
+catch
+errors.MultrootMethod = 9999999;    
+end
+
 
 % Calculate roots by 'Interval Bisection' function
 % clc_roots_intervalBisection = o_roots_bisection(fx);
@@ -124,25 +152,17 @@ LineBreakLarge()
 % X1 = [r1 r1 r1 r1 r1 ...].
 
 
-nondistinctRoots_mymethod = GetRepeatedRoots(arr_root_mult_MyMethod);
-nondistinctRoots_matlab   = GetRepeatedRoots(arr_root_mult_Matlab);
-nondistinctRoots_multroot  = GetRepeatedRoots(arr_root_mult_Multroot);
-%nondistinctRoots_bisection  = GetRepeatedRoots(clc_roots_intervalBisection);
-
-
 %
 % Plot the graph real (x) imaginary (y) components of the nondistinct roots
 % obtained by the root calculating methods.
-global SETTINGS
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure_name = sprintf('%s : Plot Calculated Roots',mfilename);
         figure('name',figure_name)
         hold on;
-    
-        scatter((real(nondistinctRoots_mymethod)),imag(nondistinctRoots_mymethod),'yellow','*','DisplayName','My Method');
-        scatter((real(nondistinctRoots_matlab)),imag(nondistinctRoots_matlab),'red','DisplayName','Matlab Roots');
-        scatter((real(nondistinctRoots_multroot)),imag(nondistinctRoots_multroot),'green','s','filled','DisplayName','MultRoots');
+        scatter( real(arr_root_mult_MyMethod(:,1)), imag(arr_root_mult_MyMethod(:,2)),'yellow','*','DisplayName','My Method');
+        scatter( real(arr_root_mult_MatlabMethod(:,1)), imag(arr_root_mult_MatlabMethod(:,2)),'red','DisplayName','Matlab Roots');
+        scatter( real(arr_root_mult_Multroot(:,1)), imag(arr_root_mult_Multroot(:,2)),'green','s','filled','DisplayName','MultRoots');
         xlabel('Real');
         ylabel('Imaginary');
         legend(gca,'show')
@@ -157,7 +177,7 @@ end
 
 % %
 % %
-PrintToFile(error)
+PrintToFile(errors,time)
 
 
 end
@@ -198,25 +218,29 @@ end
 end
 
 
-function []= PrintToFile(error)
+function []= PrintToFile(error,time)
 
 global SETTINGS
 
-fullFileName = 'o_roots_results.txt';
+fullFileName = 'Results_o_roots.txt';
 
 if exist(fullFileName, 'file')
     fileID = fopen(fullFileName,'a');
     
-    str_errors = '%s \t %s \t %s \t %s \t';
-    str_globals = '%s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t %s \t';
+    str_errors = ' %s, \t %s, \t %s, \t %s, \t %s, \t';
+    str_globals = '%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \t';
     str_types = strcat(str_errors,str_globals, '\n');
     
     fprintf(fileID,str_types,...
+        datetime('now'),...
+        SETTINGS.PROBLEM_TYPE,...
+        SETTINGS.EX_NUM,...
         error.MyMethod,...
-        error.MuzzerMethod,...
+        time.MyMethod,...
+        error.MusserMethod,...
+        time.MusserMethod,...
         error.MatlabMethod,...
         error.MultrootMethod,...
-        SETTINGS.EX_NUM,...
         SETTINGS.EMIN,...
         SETTINGS.EMAX,...
         SETTINGS.MEAN_METHOD,...
@@ -225,7 +249,9 @@ if exist(fullFileName, 'file')
         SETTINGS.APF_METHOD, ...
         SETTINGS.BOOL_Q,...
         SETTINGS.DECONVOLVE_METHOD,...
-        SETTINGS.BOOL_LOG);
+        SETTINGS.BOOL_LOG,...
+        SETTINGS.ROOTS_HX...
+    );
     fclose(fileID);
 else
   % File does not exist.
@@ -236,3 +262,23 @@ end
 
 end
 
+
+function [error] = GetErrorMeasure(arr_root_mult,fx_exact)
+% Get the distance between the polynomial f_{comp} and f_{exact}
+%
+% Inputs.
+%
+% arr_root_mult : Matrix whose rows contain a computed root of f(x) and 
+%                 its corresponding multiplicitiy.
+%
+% fx_exact : Coefficients of exact Polynomial f(x)
+%
+
+% Get coefficients of computed polynomial f(x)
+fx_comp = GetWithoutBinomials(B_poly(arr_root_mult));
+
+% Get distance between f_{comp}(x) and f_{exact}(x)
+error  = norm(Normalise(fx_comp) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
+display(error);
+
+end

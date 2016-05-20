@@ -1,4 +1,23 @@
-function [fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,opt_col)
+function [fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,opt_col,gm_fx,gm_gx)
+%
+%
+% Inputs.
+%
+% fx_n : Normalized coefficients of polynomial f(x)
+%
+% gx_n : Normalized coefficients of polynomial g(x)
+%
+% alpha : Optimal value of alph
+%
+% theta : Optimal value of theta
+%
+% t : Degree of GCD of f(x) and g(x)
+%
+% opt_col : Index of optimal column for removal from S_{t}(f,g)
+%
+% gm_fx : Mean of entries of f(x) in T_{n-t}(f)
+%
+% gm_gx : Mean of entries of g(x) in T_{m-t}(g)
 
 
 global SETTINGS
@@ -26,7 +45,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         
     case 'Root Specific SNTLN'
-        
+            
         [fx_n,gx_n,alpha,theta,~] = ...
             SNTLN_Roots(fx_n,gx_n,alpha,theta,t,opt_col,gm_fx,gm_gx);
         

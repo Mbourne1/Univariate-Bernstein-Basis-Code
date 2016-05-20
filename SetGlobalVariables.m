@@ -1,4 +1,5 @@
-function [] = SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method, apf_method)
+function [] = SetGlobalVariables(problemType, ex_num, emin, emax, ...
+    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method)
 % Set the global variables
 %
 % Inputs.
@@ -12,14 +13,33 @@ function [] = SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,l
 
 global SETTINGS
 SETTINGS.EX_NUM = ex_num;
-SETTINGS.NOISE = emin;
 SETTINGS.EMIN = emin;
 SETTINGS.EMAX = emax;
+
+% Set the problem Type
+SETTINGS.PROBLEM_TYPE = problemType;
+
+
+%% Get GCD Degree
+
+% Set the metric for measuring the degree of the GCD.
+SETTINGS.METRIC = 'Singular Values';
+
+% Set the threshold for measuring the degree of the GCD. If max change in
+% metric is less than this value, then all subresultants are full rank or
+% rank deficient.
+SETTINGS.THRESHOLD = 3;
+
+%
+SETTINGS.THRESHOLD_RANK = -5;
+
 %% Structuring the Sylvester Matrix
 
-SETTINGS.BOOL_Q = 'y';
+
+
+
 SETTINGS.BOOL_DENOM_SYL = 'y';
-SETTINGS.SYLVESTER_BUILD_METHOD = 'Rearranged';
+SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
 
 % Standard : D*T*Q
 %
@@ -31,7 +51,7 @@ SETTINGS.SYLVESTER_BUILD_METHOD = 'Rearranged';
 %% Structuring the matrix [C(f) | C(g)]
 SETTINGS.APF_METHOD = apf_method;
 SETTINGS.BOOL_DENOM_APF = 'y';
-SETTINGS.APF_BUILD_METHOD = 'Standard';
+SETTINGS.APF_BUILD_METHOD = 'Rearranged';
 
 
 %% Preprocessing
@@ -40,7 +60,7 @@ SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
 SETTINGS.MEAN_METHOD = mean_method;
 
 %% Numerical Considerations
-SETTINGS.BOOL_LOG = 'n';
+
 
 %% Noise 
 SETTINGS.SEED = 1024;
@@ -57,8 +77,8 @@ SETTINGS.PLOT_GRAPHS = 'n';
 % Standard SNTLN : Non-Linear low rank form, without constraint
 
 SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
-SETTINGS.MAX_ERROR_SNTLN = 1e-15;
-SETTINGS.MAX_ITERATIONS_SNTLN = 50;
+SETTINGS.MAX_ERROR_SNTLN = 1e-16;
+SETTINGS.MAX_ITERATIONS_SNTLN = 75;
 
 %% Regarding the computation of the low rank approximation of the 
 % C = [C(u) ; C(v)] matrix
@@ -67,14 +87,7 @@ SETTINGS.MAX_ITERATIONS_SNTLN = 50;
 SETTINGS.MAX_ERROR_APF = 1e-12;
 SETTINGS.MAX_ITERATIONS_APF = 50;
 
-% nominal value used when:
-% Only one sylvester subresultant exists, ie k = 1 and min(m,n) = 1. where
-% m and n are the degrees of input polynomials f and g.
-% if max_r./min_r > nominal_value (then minimum value is significantly
-% small, to assume that the sylvester matrix is rank deficient)
-% then degree is one. otherwise degree is zero
 
-SETTINGS.THRESHOLD = 4;
 
 
 %% Validation
@@ -83,18 +96,25 @@ SETTINGS.THRESHOLD = 4;
 % Simplest method, no structure added.
 % Override users input options if incompatable.
 if (SETTINGS.BOOL_Q == 'n')
+    SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard'
     SETTINGS.LOW_RANK_APPROXIMATION_METHOD = 'None';
     SETTINGS.APF_METHOD = 'None'; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
     SETTINGS.BOOL_DENOM_SYL = 'y';
 end
+
+
+if ( strcmp(SETTINGS.PROBLEM_TYPE,'GCD') && strcmp(SETTINGS.LOW_RANK_APPROXIMATION_METHOD, 'Root Specific SNTLN'))
+    
+    fprintf([mfilename ' : Can not use root specific SNTLN method for GCD type problem']);
+    SETTINGS.LOW_RANK_APPROXIMATION_METHOD = 'Standard SNTLN';
+    
+end
+    
 
 %%
 % Get Global variables for Deconvolve
 SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-12;
 SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;
 
-% Deconvolution is either
-% 'Separate'
-% 'Batch'
-SETTINGS.DECONVOLVE_METHOD = 'Separate';
+
 

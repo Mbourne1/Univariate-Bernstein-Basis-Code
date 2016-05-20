@@ -1,4 +1,4 @@
-function DY = BuildDY(m,n,t,opt_col,x,alpha,theta)
+function DY = BuildDY(xu,xv,t,alpha,theta)
 % USED IN SNTLN function
 %
 % Construct Matrix DY, such that E_{k}(z)x = D^{-1}Y_{k}(x)z, where E_{k}(z) is a 
@@ -25,151 +25,106 @@ function DY = BuildDY(m,n,t,opt_col,x,alpha,theta)
 
 
 
-
-% BOOL_LOG - (Boolean)
-%   'y' :- Perform calculations by log method
-%   'n' :- Perform calculations by standard method.
-
 global SETTINGS
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+m_t = GetDegree(xu);
+n_t = GetDegree(xv);
 
 switch SETTINGS.BOOL_LOG
     case 'n' % Use nchoosek method
         
-        DY = BuildDY_nchoosek(m,n,t,opt_col,x,alpha,theta);
+        m = m_t + t;
+        n = n_t + t;
         
+        Y1 = BuildDY_nchoosek_partition(xv,m,theta);
+        Y2 = BuildDY_nchoosek_partition(alpha.*xu,n,theta);
+        
+        DY = [Y1,Y2];
+        
+                
     case 'y' % Use Logs method
         
-        DY = BuildDY_log(m,n,t,opt_col,x,alpha,theta);
+        m = m_t + t;
+        n = n_t + t;
+                
+        DY = BuildDY_log(xu,xv,t,alpha,theta);
+        
+        
     otherwise 
         error('SETTINGS.BOOL_LOG is either y or n')
 end
-% Seperate the component parts of x into x_v and x_u, where x_v is an
-    % approximation of v(x) and x_u is an approximation u(x).
 
-xa = x(1:opt_col-1) ;
-xb = x(opt_col:end) ; 
-x = [xa; 0 ;xb] ;% Insert zero into vector
 
-x_v = x(1:n-t+1);
-x_u = x(n-t+2:end);
-test_DY = BuildDTQ(x_v,x_u,-t);
 
 
 end
 
 
-function DY = BuildDY_nchoosek(m,n,t,mincol,x_ls_wrt_w,alpha,theta)
-% Construct Matrix Y, such that E_{k}x = Y_{k}z, where Ek is a matrix of
-% structured perturbations applied to S_{k} = DTQ
-% Build in the rearranged format
-%
-%  Inputs
-%
-%
-%
-% m - Degree of polynomial f
-%
-% n - Degree of polynomial g
-%
-% t - Degree of GCD
-%
-% mincol -
-%
-% theta -
-%
-% alpha -
-%
-%
-%
-%
 
 
-% Global Variables
-% bool_denom_syl - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    y :- Include Common Denominator.
-%    n :- Exclude Common Denominator.
+
+
+function Y1 = BuildDY_nchoosek_partition(xv,m,theta)
+% Build the matrix D*T(xv)*R = D*T(f)*Q.
+% Where R is a diagonal matrix of binomials and thetas corresponding to
+% polynomial f(x). so f*R gives coefficients of f in the scaled modified
+% Bernstein basis. a_{i}\theta^{i}\binom{m}{i}
+
 global SETTINGS
 
-
-
-xa = x_ls_wrt_w(1:mincol-1) ;
-xb = x_ls_wrt_w(mincol:end) ;
-x_ls_wrt_w = [xa; 0 ;xb] ;% Insert zero into vector
-
-% Get number of cols in left partition
-c_leftmatrix = (n-t+1);
-
-% Get number of cols in right partition
-c_rightmatrix = (m-t+1);
-
-
-Xv_w = x_ls_wrt_w(1:c_leftmatrix);
-
-Xu_w = x_ls_wrt_w(c_leftmatrix+1:c_leftmatrix+c_rightmatrix);
-
-
-%Build Empty Sylvester Matrix
-% First half
-Y1 = zeros(m+n-t+1,m+1);
-
-% Second half
-Y2 = zeros(m+n-t+1,n+1);
-
-% Build the first half of the matrix DY
-
-% For each column j = 0,...,
-for j=0:1:m
-    % For each row i = j,...,
-    for i=j:1:j + length(Xv_w)-1
-        Y1(i+1,j+1) = ...
-            Xv_w(i-j+1) .*(theta^(j)) ...
-            .* nchoosek(m+n-t-i,n-t-(i-j)) ...
-            .* nchoosek(i,i-j);
-    end
-end
-
-
-% Build the second half of the matrix DY
-% for each column j = 0,...,n
-for j=0:1:n
-    % for each row i = j,...,
-    for i=j:1:j + length(Xu_w)-1
-        Y2(i+1,j+1)= ...
-            Xu_w(i-j+1).*(theta^(j)) .* ...
-            nchoosek(m+n-t-i,m-t-(i-j)) .*...
-            nchoosek(i,i-j);
-    end
-%X2(i-j+1).*(theta^(j)) .* ...
-end
-
-
-switch SETTINGS.BOOL_DENOM_SYL
-    case 'y'
-        %Include the denominator
-        Y1 = Y1./nchoosek(m+n-t,n-t);
-        Y2 = alpha.*Y2./nchoosek(m+n-t,m-t);
-    case 'n'
-        % Exclude the denominator
+switch SETTINGS.SYLVESTER_BUILD_METHOD
+    case 'Standard'
         
-        Y2 = alpha.*Y2;
-    otherwise 
-        error('err')
+        % Get the degree of xv
+        n_t = GetDegree(xv);
+        
+        % Get the diagonal matrix D^{-1}
+        D = BuildD(n_t,m);
+        
+        % Get the binomials corresponding to f(x)
+        Bi_m = GetBinomials(m);
+        
+        % Build the Cauchy matrix T(xv)
+        T = BuildT1(xv,m);
+        
+        % Build the matrix R which is diagonal and includes thetas
+        R = diag(GetWithThetas(Bi_m,theta));
+        
+        % Build the matrix DY
+        Y1 = D*T*R;
+        
+    case 'Rearranged'
+        
+        % 
+        n_t = GetDegree(xv);
+        
+        %
+        Y1 = zeros(n_t+1,m+1);
+        
+        %
+        for j = 0:1:m
+            for i = j :1 : j + n_t
+                Y1(i+1,j+1) = ...
+                    xv(i-j+1) .* theta^j ...
+                    .* nchoosek(m+n_t-i,n_t-(i-j)) ...
+                    .* nchoosek(i,i-j);
+            end
+        end
+        
+        %
+        switch SETTINGS.BOOL_DENOM_SYL
+            case 'y'
+                Y1 = Y1./nchoosek(m+n_t,n_t);
+            case 'n'
+        end
 end
 
-
-DY=[Y1,Y2];
-
 end
 
-function Y = BuildDY_log(m,n,t,mincol,x,alpha,theta)
+function Y = BuildDY_log(xu,xv,t,alpha,theta)
 % Construct Matrix Y, such that E_{k}x = Y_{k}z, where Ek is a matrix of
 % structured perturbations.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %                           Inputs
 %
@@ -190,28 +145,15 @@ function Y = BuildDY_log(m,n,t,mincol,x,alpha,theta)
 %
 
 % Global Variables
-
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    y :- Include Common Denominator.
-%    n :- Exclude Common Denominator.
 global SETTINGS
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+m_t = GetDegree(xu);
+n_t = GetDegree(xv);
 
-xa = x(1:mincol-1) ;
-xb = x(mincol:end) ;
-x = [xa; 0 ;xb] ;% Insert zero into vector
-
-c_leftmatrix = (n-t+1);
-c_rightmatrix = (m-t+1);
-
-X1 = x(1:c_leftmatrix);
-X2 = x(c_leftmatrix+1:c_leftmatrix+c_rightmatrix);
-
-%Build Empty Sylvester Matrix
-
+m = m_t + t;
+ 
+n = n_t + t;
+        
 % First half
 Y1 = zeros(m+n-t+1,m+1);
 
@@ -222,7 +164,7 @@ Y2 = zeros(m+n-t+1,n+1);
 % For each column k
 for j=0:1:m
     % For each row i
-    for i=j:1:j+length(X1)-1
+    for i=j:1:j+length(xv)-1
         
         % Evaluate binomial coefficients in the numerator in logs
         Numerator_Eval_log = ...
@@ -234,14 +176,14 @@ for j=0:1:m
         
         
         Y1(i+1,j+1) = ...
-            X1(i-j+1) .*(theta^j) .* Numerator_Eval_exp;
+            xv(i-j+1) .*(theta^j) .* Numerator_Eval_exp;
         
     end
 end
 
 % Build the second half of the sylvester matrix
 for j=0:1:n
-    for i=j:1:j+length(X2)-1
+    for i=j:1:j+length(xu)-1
         
         % Evaluate the binomial coefficients in the numerator in logs
         Numerator_Eval_log = ...
@@ -253,7 +195,7 @@ for j=0:1:n
         
         %
         Y2(i+1,j+1)= ...
-            X2(i-j+1).*(theta^(j)) .* Numerator_Eval_exp;
+            xu(i-j+1).*(theta^(j)) .* Numerator_Eval_exp;
     end
 end
 

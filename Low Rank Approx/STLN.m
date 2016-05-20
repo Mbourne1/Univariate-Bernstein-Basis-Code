@@ -56,15 +56,15 @@ x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
 
 % Seperate the component parts of x into x_v and x_u, where x_v is an
 % approximation of v(x) and x_u is an approximation u(x).
-x_v = x(1:n-t+1);
-x_u = x(n-t+2:end);
+xv = x(1:n-t+1);
+xu = x(n-t+2:end);
 
 % Build the matrix Y_{t}
-Yt = BuildDTQ(x_v,x_u,-t);
+DY = BuildDY(xu,xv,t,1,1);
 
 % Build the Matrx C for LSE problem
 
-H_z = Yt - Pt;
+H_z = DY - Pt;
 H_x = At + Bt;
 
 C = [H_z H_x];
@@ -132,17 +132,16 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Seperate the component parts of x into x_v and x_u, where x_v is an
     % approximation of v(x) and x_u is an approximation u(x).
-    x_v = x(1:n-t+1);
-    x_u = x(n-t+2:end);
+    xv = x(1:n-t+1);
+    xu = x(n-t+2:end);
     
-    % Build Matrix Y_{t}
-    Yt = BuildDTQ(x_v,x_u,-t);
+    DY = BuildDY(xu,xv,t,1,1);
     
     % Get updated residual vector
     res_vec = (ct+ht) - ((At+Bt)*x_ls);
     
     % Update the matrix C
-    H_z = Yt - Pt;
+    H_z = DY - Pt;
     H_x = At + Bt;
     C = [H_z H_x];
     
@@ -160,7 +159,8 @@ gx = gx + zg;
 
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
-        figure('name','STLN - Residuals')
+        figure_name = sprintf([mfilename ' : ' 'Residuals']);
+        figure('name',figure_name)
         hold on
         plot(log10(condition),'-s');
         hold off
@@ -169,7 +169,7 @@ switch SETTINGS.PLOT_GRAPHS
         error('SETTINGS.PLOT_GRAPHS must be either y or n')
 end
 
-fprintf('Required number of iterations : %i \n',ite)
+fprintf([mfilename ' : ' sprintf('Required number of iterations : %i \n',ite)]);
 
 end
 

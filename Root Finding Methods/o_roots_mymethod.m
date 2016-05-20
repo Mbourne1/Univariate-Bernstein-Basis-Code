@@ -9,12 +9,8 @@ function [root_mult_array] = o_roots_mymethod(fx)
 %
 % Outputs.
 %
-% roots_calc : The Calculated roots of the polynomial f(x)
-
-
-addpath 'Measures'
-addpath 'Root Finding Methods/multroot/multroot'
-
+% root_mult_array : The Calculated roots of the polynomial f(x) and their
+% corresponding multiplicities.
 
 % Initialise an iteration counter
 ite = 1;
@@ -32,7 +28,7 @@ vTheta(1) = 1;
 
 % Get the number of distinct roots of f_{1}. Since this is unknown at this
 % time, set number of distinct roots to be m_{1} = deg(f_{1}).
-d(1) = GetDegree(f{1});
+nDistinctRoots(1) = GetDegree(f{1});
 
 
 % Whilst the most recently calculated GCD has a degree greater than
@@ -50,7 +46,7 @@ while M(ite) > 0
         % Get upper and lower bounds of the GCD Computation.
         % M_{i+1} > M_{i} - d_{i-1}
         try
-            lower_lim = M(ite)-d(ite-1);
+            lower_lim = M(ite)-nDistinctRoots(ite-1);
             upper_lim = M(ite)-1;
             fprintf('Minimum degree of f_{%i}: %i \n', ite+1, lower_lim);
             fprintf('Maximum degree of f_{%i}: %i \n\n', ite+1, upper_lim);
@@ -60,15 +56,17 @@ while M(ite) > 0
         end
     
         
+        bool_canbe_coprime = false;
+        
         % Get GCD of f(x) and f'(x)
-        [f{ite},~,f{ite+1}, ~ ,~,~,vTheta(ite+1), M(ite+1)] = o_gcd_mymethod( f{ite},...
-            Bernstein_Differentiate(f{ite}), [lower_lim, upper_lim]);
+        [f{ite},~,f{ite+1}, h1{ite} ,~,~,vTheta(ite+1), M(ite+1)] = o_gcd_mymethod( f{ite},...
+            Bernstein_Differentiate(f{ite}), [lower_lim, upper_lim],bool_canbe_coprime);
         
         % Get number of distinct roots of f(ite)
-        d(ite) = M(ite) - M(ite+1);
+        nDistinctRoots(ite) = M(ite) - M(ite+1);
         
         fprintf('Degree of f_{%i} : %i \n',ite + 1, M(ite+1))
-        fprintf('Number of distinct roots in f_{%i} : %i \n',ite,d(ite))
+        fprintf('Number of distinct roots in f_{%i} : %i \n',ite,nDistinctRoots(ite))
 
         % increment iteration number.
         ite = ite+1;
@@ -76,11 +74,12 @@ while M(ite) > 0
         
     elseif M(ite) == 1
         % if m=1, then n = 0, GCD has maximum degree 0.
-        fprintf('Only one subresultant exists \n')
+        fprintf([mfilename ' : ' 'Only one subresultant exists \n'])
         dx = 1;
         %theta_vec(ite_num+1) = 1;
         M(ite+1) = length(dx)-1;
         f{ite+1} = dx;
+        h1{ite} = f{ite};
         ite = ite+1;
         break;
         
@@ -107,7 +106,14 @@ vMultiplicities = find(deg_struct_w~=0);
 % end
 
 % Deconvolve the first set of polynomials.
-h1 = Deconvolve_Set(f);
+
+global SETTINGS
+switch SETTINGS.ROOTS_HX
+    case 'From Deconvolution'
+        h1 = Deconvolve_Set(f);
+    case 'From ux'
+        h1 = h1;
+end
 
 [~,nEntries_h] = size(h1);
 if nEntries_h == 1

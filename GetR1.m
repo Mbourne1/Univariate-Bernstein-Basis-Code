@@ -1,4 +1,3 @@
-
 function R1 = GetR1(Sk)
 % Get the square upper triangular matrix R1 from the QR Decomposition of
 % the kth subresultant matrix Sk

@@ -88,8 +88,11 @@ for k = 1:1:min_mn
     % Build the k-th subresultant
     Sk = BuildSubresultant(fw,vAlpha(k).*gw,k);
     
+    % Get the singular values of S_{k}
+    vSingularValues = svd(Sk);
+    
     % Get the minimal singular value from S_{k}
-    vMinimumSingularValues(k) = min(svd(Sk));
+    vMinimumSingularValues(k) = min(vSingularValues);
     
     % Get the matrix R1 from the QR Decomposition of S
     R1 = GetR1(Sk);
@@ -119,62 +122,58 @@ for k = 1:1:min_mn
     vMinimumResidual(k) = GetMinimalDistance(Sk);
     
     
+end % End of For
+
+% %
+% %
+% %
+% Choose a metric to determine the degree of the GCD.
+global SETTINGS
+switch SETTINGS.METRIC
+    case 'Row Norms'
+        metric = vMaxRowNormR1./vMinRowNormR1;
+        
+    case 'Row Diagonals'
+        metric = vMaxDiagR1./vMinDiagR1;
+        
+    case 'Singular Values'
+        metric = vMinimumSingularValues;
 end
-
-% End of Loop
-
-% %
-% %         Get ratio of max:min Row Norms of R1
-% %
-% %
-[max_Delta_MaxMin_RowSum_R,indexMaxChange_RowNorm] = Analysis(vMaxRowNormR1./vMinRowNormR1);
-
-
-
-% %
-% %         Get ratio of max:min diagonals of R1
-% %
-% %
-[max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = Analysis(vMaxDiagR1./vMinDiagR1);
-
-
-% %
-% %         Analysis of Minimum Residuals
-% %
-% %
-[max_Delta_Min_Residaul, indexMaxDeltaMinResidaul] = Analysis(vMinimumResidual);
 
 
 
 %
 % If only one subresultant exists, get GCD by alternative method
 if min_mn == 1
+    
     fprintf([mfilename ' : ' 'Only One Subresultant \n'])
-    t = GetRankOneSubresultant(Sk);
+    t = GetGCDDegree_OneSubresultant(vSingularValues);
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);
     GM_gx = vGM_gx(1);
     return;
+    
+else
+    t = GetGCDDegree_MultipleSubresultants(metric,lower_lim);
+    
+    % % Graph Plotting
+    PlotGraphs()
+    % Outputs
+    
+    % Output all subresultants, all optimal alphas, all optimal thetas and all
+    % geometric means for each subresultant S_{k} where k = 1,...,min(m,n)
+    
+    alpha                   = vAlpha(t);
+    theta                   = vTheta(t);
+    GM_fx                   = vGM_fx(t);
+    GM_gx                   = vGM_gx(t);
 end
 
-t = GetProblemType(vMinimumResidual,lower_lim);
-
-% % Graph Plotting
-PlotGraphs()
 
 
 
-%%
-% Outputs
 
-% Output all subresultants, all optimal alphas, all optimal thetas and all
-% geometric means for each subresultant S_{k} where k = 1,...,min(m,n)
-
-alpha                   = vAlpha(t);
-theta                   = vTheta(t);
-GM_fx                   = vGM_fx(t);
-GM_gx                   = vGM_gx(t);
 
 
 end

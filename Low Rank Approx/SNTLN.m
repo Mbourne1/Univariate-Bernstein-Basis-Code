@@ -128,7 +128,22 @@ ct_wrt_theta     = DTQ_wrt_theta*e;
 x_ls = SolveAx_b(At,ct);
 
 % Build Matrix Y
-DY = BuildDY(m,n,t,opt_col,x_ls,alpha(ite),th(ite));
+xa = x_ls(1:opt_col-1) ;
+xb = x_ls(opt_col:end) ;
+x = [xa; 0 ;xb] ;% Insert zero into vector
+
+% Get number of cols in left partition
+nCols_leftPart = (n-t+1);
+
+% Get number of cols in right partition
+nCols_rightPart = (m-t+1);
+
+% Get the coefficients of xv and xu
+xv = x(1:nCols_leftPart);
+xu = x(nCols_leftPart+1:nCols_leftPart+nCols_rightPart);
+
+
+DY = BuildDY(xu,xv,t,alpha(ite),th(ite));
 
 % Calculate the initial residual r = ck - (Ak*x)
 res_vec = ct - (DTQ*M*x_ls);
@@ -138,7 +153,6 @@ res_vec = ct - (DTQ*M*x_ls);
 E = eye(2*m+2*n-2*t+5);
 
 % Create the matrix D(T+N)Q
-
 DTNQ = BuildDTQ(fw,alpha(ite).*gw,t);
 
 % Create The matrix D(T+N)Q with respect to alpha
@@ -173,7 +187,7 @@ start_point     =   ...
 yy              =   start_point;
 
 % Set the initial value of vector p to be zero
-p = zeros(2*m+2*n-2*t+5,1);
+f = zeros(2*m+2*n-2*t+5,1);
 
 
 % Set the termination criterion to a large value. It will be
@@ -185,7 +199,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     % Use the QR decomposition to solve the LSE problem
     % min |y-p| subject to Cy=q
-    y = LSE(E,p,C,res_vec);
+    y = LSE(E,f,C,res_vec);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -203,7 +217,9 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     % coefficients of f and g. x_{k} is the solution vector, containing
     % coefficients u and v.
     zt   = zt   + delta_zt;
+    
     x_ls = x_ls + delta_xt;
+        
     
     % Update alpha and theta
     alpha(ite) = alpha(ite-1) + delta_alpha;
@@ -292,7 +308,25 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
                     alpha(ite).*(gw_wrt_theta + zgw_wrt_theta),t);
         
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
-    DY = BuildDY(m,n,t,opt_col,x_ls,alpha(ite),th(ite));
+    %x_ls = SolveAx_b(DTNQ * M ,ct+ht);
+
+    % Build Matrix Y
+    xa = x_ls(1:opt_col-1) ;
+    xb = x_ls(opt_col:end) ;
+    x = [xa; 0 ;xb] ;% Insert zero into vector
+    
+    % Get number of cols in left partition
+    nCols_leftPart = (n-t+1);
+    
+    % Get number of cols in right partition
+    nCols_rightPart = (m-t+1);
+    
+    % Get the coefficients of xv and xu
+    xv = x(1:nCols_leftPart);
+    xu = x(nCols_leftPart+1:nCols_leftPart+nCols_rightPart);
+    
+    % Build the matrix DY
+    DY = BuildDY(xu,xv,t,alpha(ite),th(ite));
     
     % Calculate the matrix DP where P is the matrix such that c = P[f;g]
     DP = BuildDP(m,n,th(ite),opt_col,t);
@@ -317,11 +351,12 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     condition(ite) = norm(res_vec)./ norm(ct + ht) ;
     
     % Update fnew - used in LSE Problem.
-    p = -(yy-start_point);
+    f = -(yy-start_point);
     
 
     
 end
+
 
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
@@ -364,7 +399,7 @@ theta_output = th(ite);
 
 % Print the number of iterations
 
-fprintf('Iterations required for STLN : %i \n', ite);
+fprintf([mfilename ' : ' sprintf('Iterations required for STLN : %i \n', ite)]);
 
 end
 

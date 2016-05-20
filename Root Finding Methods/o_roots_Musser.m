@@ -15,6 +15,8 @@ function [root_mult_array] = o_roots_Musser(fx)
 % column contains all of the roots of f(x) and the second contains the
 % corresponding multiplicities.
 
+global SETTINGS
+
 % Set Iteration number
 ite = 1;
 
@@ -36,9 +38,12 @@ lower_lim = 1;
 upper_lim = min(m,n);
 deg_limits = [lower_lim, upper_lim];
 
+
+bool_CanBeCoprime = false;
+
 % Perform GCD computation.
 [fx_n,gx_n,dx, ux, vx, alpha, theta, t] ...
-    = o_gcd_mymethod(f{1},gx{ite},deg_limits);
+    = o_gcd_mymethod(f{1},gx{ite},deg_limits,bool_CanBeCoprime);
 
 LineBreakMedium();
 g{ite} = dx;
@@ -57,6 +62,7 @@ while (GetDegree(h{ite}) > 0 )
     lower_lim = 1;
     upper_lim = min(m,n);
     deg_limits = [lower_lim, upper_lim];
+    bool_coprime = true;
     
     if (GetDegree(h{ite}) ==0 || GetDegree(g{ite}) == 0)
         h{ite+1} = 1;
@@ -67,24 +73,24 @@ while (GetDegree(h{ite}) > 0 )
         
         
         [~,~,dx, ux, ~, ~, ~, ~] ...
-            = o_gcd_mymethod(g{ite},h{ite},deg_limits);
+            = o_gcd_mymethod(g{ite},h{ite},deg_limits,bool_coprime);
         
         h{ite+1} = dx;
     end
     
     % The polynomial g can be obtained in two ways, as u(x) from the GCD
     % triple (d(x),u(x),v(x)) or by deconvolution.
-    method = 'From ux';
-    %method = 'From Deconvolution';
-    switch method
+    
+    
+    switch SETTINGS.ROOTS_HX
         case 'From ux'
             g{ite+1} = ux;
-        case 'From Deconvolution'
-            g{ite+1} = Bernstein_Deconvolve(g{ite},h{ite+1});
+        case 'From Deconvolutions'
+            g{ite+1} = Deconvolve(g{ite},h{ite+1});
     end
     
-    fprintf([mfilename ' : ' sprintf('g_{%i} degree : %i \n',ite+1,GetDegree(g{ite+1})) ]);
-    fprintf([mfilename ' : ' sprintf('h_{%i} degree : %i \n',ite+1,GetDegree(h{ite+1})) ]);
+    %fprintf([mfilename ' : ' sprintf('g_{%i} degree : %i \n',ite+1,GetDegree(g{ite+1})) ]);
+    %fprintf([mfilename ' : ' sprintf('h_{%i} degree : %i \n',ite+1,GetDegree(h{ite+1})) ]);
     
     w{ite} = Deconvolve(h{ite},h{ite+1});
     ite = ite+1;

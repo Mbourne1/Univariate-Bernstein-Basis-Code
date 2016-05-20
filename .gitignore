@@ -1,3 +1,9 @@
+# My Ignores
+*.xls
+*.xlsx
+*.txt
+
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

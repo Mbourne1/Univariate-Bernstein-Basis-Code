@@ -18,7 +18,6 @@ function [roots_fx,roots_gx,roots_dx,t,roots_ux,roots_vx]=Examples_GCD(n)
 % v - Roots and multiplicities of quotient polynomial g/v = d.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global SETTINGS
 
 switch n
     
@@ -191,12 +190,24 @@ switch n
             ];
     case '12'
         roots_fx = [
-            0.10    1;
-            0.50    1;
+            0.10    7;
+            0.50    12;
         ];
     
         roots_gx = [
+            0.10    6;
+            0.50    11;
+            0.99    1;
             ];
+    case '13'
+        roots_fx = ...
+            [
+            0.5     4;  
+            ];
+        roots_gx = ...
+            [
+            0.5     3;
+            ]
         
     case '13'
         
@@ -207,7 +218,7 @@ switch n
         m = 10;
         n = 7;
         [roots_fx,roots_gx] = BuildRandomPolynomials(m,n,t,intvl_low, intvl_high);
-        
+       
     case 'Custom'
         intvl_low = -1;
         intvl_high = 1;

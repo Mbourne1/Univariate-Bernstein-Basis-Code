@@ -1,5 +1,5 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    GetGCD_DegreeByNewMethod(fx,gx,deg_limits)
+    GetGCD_DegreeByNewMethod2(fx,gx,deg_limits)
 % Get degree of the AGCD of input polynomials f(x) and g(x)
 %
 % Inputs.
@@ -44,8 +44,6 @@ m = GetDegree(fx);
 % Get degree n of polynomial g
 n = GetDegree(gx);
 
-% get minimum degree of f and g
-min_mn = min(m,n);
 
 % Initialise vectors to store all optimal alphas and theta, and each
 % geometric mean for f and g in each S_{k} for k = 1,...,min(m,n)
@@ -57,12 +55,15 @@ vGM_gx    =   zeros(1,nSubresultants);
 
 % Initialise vectors to store values calculated from each subresultant
 % S_{k} for k = 1,...,min(m,n).
-vMaxDiagR1= zeros(1,nSubresultants);
-vMinDiagR1= zeros(1,nSubresultants);
-vMaxRowNormR1= zeros(1,nSubresultants);
-vMinRowNormR1 = zeros(1,nSubresultants);
-vMinimumResidual = zeros(1,nSubresultants);
-vMinimumSingularValues = zeros(1,nSubresultants);
+vMaxDiagR1  = zeros(1,nSubresultants);
+vMinDiagR1  = zeros(1,nSubresultants);
+
+vMaxRowNormR1   = zeros(1,nSubresultants);
+vMinRowNormR1   = zeros(1,nSubresultants);
+
+vMinimumResidual    = zeros(1,nSubresultants);
+
+vMinimumSingularValues  = zeros(1,nSubresultants);
 % Stores Data from QR decomposition.
 Data_RowNorm = [];
 Data_DiagNorm = [];
@@ -175,59 +176,78 @@ for k = lower_lim:1:upper_lim
     % subresultant k=1,...min(m,n)
     
     vMinimumResidual(i) = GetMinimalDistance(DTQ);
-    vMinimumSingularValues(i) = min(svd(DTQ));
+    
+    vSingularValues = svd(DTQ);
+    
+    vMinimumSingularValues(i) = min(vSingularValues);
     
 end
 
+% % 
 % %
 % %
-% %
-% %
-[max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = Analysis(vMaxDiagR1 ./ vMinDiagR1);
-
-% %
-% %
-% %
-% %
-[max_delta_mag_rowsum,indexMaxChange_RowNorm] = Analysis(vMaxRowNormR1 ./ vMinRowNormR1);
-
-
-% %
-% %
-% %
-% %
-[max_delta_min_residuals,indexMaxChange_Residuals] = Analysis(vMinimumResidual);
+% Choose a metric to determine the degree of the GCD.
+global SETTINGS
+switch SETTINGS.METRIC
+    case 'Row Norms'
+        metric = vMaxRowNormR1./vMinRowNormR1;
+        
+        
+    case 'Row Diagonals'
+        metric = vMaxDiagR1./vMinDiagR1;
+        
+    case 'Singular Values'
+        metric = vMinimumSingularValues;
+end
 
 
+if (lower_lim == 1)
+    can_be_coprime = true;
+else
+    can_be_coprime = false;
+end
 
 
 % Check to see if only one subresultant exists, ie if m or n is equal
 % to one
 
-if nSubresultants == 1
-    t = GetRankOneSubresultant(DTQ);
-    alpha = vAlpha(1);
-    theta = vTheta(1);
-    GM_fx = vGM_fx(1);
-    GM_gx = vGM_gx(1);
+
+
+if lower_lim == upper_lim
+    
+    if can_be_coprime
+    
+        t = GetGCDDegree_OneSubresultant(vSingularValues);
+        alpha = vAlpha(1);
+        theta = vTheta(1);
+        GM_fx = vGM_fx(1);
+        GM_gx = vGM_gx(1);    
+    else
+       t = lower_lim;
+       
+    end
+    
     return;
+else
+    %
+    %
+    [t] = GetGCDDegree_MultipleSubresultants(metric,lower_lim);
+    
+    PlotGraphs();
+    % Outputs
+    
+    % Output just corresponding to calculated value of the degree. Output
+    % subresultant S_{t}, alpha_{t}, theta_{t}, and corresponding geometric
+    % means.
+    alpha = vAlpha(t-lower_lim+1);
+    theta = vTheta(t-lower_lim+1);
+    GM_fx = vGM_fx(t-lower_lim+1);
+    GM_gx = vGM_gx(t-lower_lim+1);
 end
 
-%
-%
-[t] = GetProblemType(vMinimumSingularValues,lower_lim);
 
-PlotGraphs();
 
-% Outputs
 
-% Output just corresponding to calculated value of the degree. Output
-% subresultant S_{t}, alpha_{t}, theta_{t}, and corresponding geometric
-% means.
-alpha = vAlpha(t-lower_lim+1);
-theta = vTheta(t-lower_lim+1);
-GM_fx = vGM_fx(t-lower_lim+1);
-GM_gx = vGM_gx(t-lower_lim+1);
 
 
 

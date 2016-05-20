@@ -1,4 +1,4 @@
-function [S] = BuildSubresultant(fw,gw,k)
+function [S] = BuildSubresultant(fx,gx,k)
 % BuildSubresultant(fw,gw,k,alpha)
 % 
 % This function builds the k-th subresultant matrix S_{k}, in the 
@@ -23,20 +23,20 @@ global SETTINGS
 
 
 % Get the degree of the polynomial f(x)
-m = GetDegree(fw);
+m = GetDegree(fx);
 
 % Get the degree of the polynomial g.
-n = GetDegree(gw);
+n = GetDegree(gx);
 
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'Rearranged' % Build based on generating individual elements
         
         % Build First Partition   
-        D1T1Q = BuildDT1Q1(fw,n-k);
+        D1T1Q = BuildDT1Q1(fx,n-k);
 
         % Build Second Partition
-        D2T2Q = BuildDT1Q1(gw,m-k);
+        D2T2Q = BuildDT1Q1(gx,m-k);
         
         % Build Sylvester Matrix by concatenation of matrices A and B.
         S = [D1T1Q D2T2Q];
@@ -45,7 +45,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'Standard' % Build based on multiplying by precalculated matrices .
         
         D = BuildD(m,n-k);
-        T = BuildT(fw,gw,k);
+        T = BuildT(fx,gx,k);
         Q = BuildQ(m,n,k);
 
         switch SETTINGS.BOOL_Q

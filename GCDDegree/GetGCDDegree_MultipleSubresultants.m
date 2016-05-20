@@ -1,5 +1,5 @@
 
-function [t] = GetProblemType(vMinimumSingularValues,lower_lim)
+function [t] = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,lower_lim)
 % Get the problem type, dependent on the vector of singular values from the
 % series s_{k}
 %
@@ -24,8 +24,8 @@ min_mn = lower_lim + length(vMinimumSingularValues) - 1;
 % maximum change occured.
 [maxChangeSingularValues, indexMaxChange] = Analysis(vMinimumSingularValues);
 
-fprintf([calling_function ' : ' sprintf('Max Change : %2.4f \n', maxChangeSingularValues)]);
-fprintf([calling_function ' : ' sprintf('Threshold : %2.4f \n',SETTINGS.THRESHOLD)]);
+fprintf([mfilename ' : ' calling_function ' : ' sprintf('Max Change : %2.4f \n', maxChangeSingularValues)]);
+fprintf([mfilename ' : ' calling_function ' : ' sprintf('Threshold : %2.4f \n',SETTINGS.THRESHOLD)]);
 
 
 if  abs(maxChangeSingularValues) < SETTINGS.THRESHOLD
@@ -37,7 +37,10 @@ if  abs(maxChangeSingularValues) < SETTINGS.THRESHOLD
     % %
     % %
     % %
-    figure_name = sprintf([calling_function ': Singular Values']);
+    switch SETTINGS.PLOT_GRAPHS
+        case 'y'
+        
+    figure_name = sprintf([mfilename ' : ' calling_function ': Singular Values']);
     figure('name',figure_name)
     plot(log10(vMinimumSingularValues));
     hold on
@@ -45,24 +48,33 @@ if  abs(maxChangeSingularValues) < SETTINGS.THRESHOLD
     hline = refline([0 mu]);
     hline.Color = 'r';  
     hold off
+        case 'n'
+    end
     
     
-    if  avgMinSingularValue < SETTINGS.THRESHOLD
+    if  avgMinSingularValue < SETTINGS.THRESHOLD_RANK
         % If all singular values are close to zero, then rank deficient, degree of
         % gcd is min(m,n)
-        fprintf([calling_function ' : ' sprintf('All Subresultants are Rank Deficient \n')])
         t = min_mn;
+        fprintf([mfilename ' : ' calling_function ' : ' sprintf('All Subresultants are Rank Deficient \n')])
+        fprintf([mfilename ' : ' calling_function ' : ' sprintf('t = %i \n',t)])
         
     else
         % if all singular values are not close to zero, then full rank, degree
         % of gcd is 0
-        fprintf([calling_function ' : ' sprintf('All subresultants Full Rank \n')])
         t = 0;
+        fprintf([mfilename ' : ' calling_function ' : ' sprintf('All subresultants Full Rank \n')])
+        fprintf([mfilename ' : ' calling_function ' : ' sprintf('t = %i \n',t)])
+        
     end
 else
     % maxChange is signifcant
-    fprintf([calling_function ' : ' 'Mixed \n'])
     t = lower_lim + indexMaxChange - 1;
+    
+    fprintf([mfilename ' : ' calling_function ' : ' 'Mixed \n'])
+    fprintf([mfilename ' : ' calling_function ' : ' sprintf('t = %i \n',t)])
+    
+    
 end
 
 end

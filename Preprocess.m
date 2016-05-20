@@ -33,6 +33,7 @@ n = GetDegree(gx);
 
 % Get the mean of the entries.
 lambda = GetMean(fx,n-k);
+
 mu = GetMean(gx,m-k);
 
 % 
@@ -56,7 +57,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
         g_min = min(v_G_min);
         
         
-        PrintToFile(f_max,f_min,g_max,g_min,m,n,k, 'without thetas',1,1)
+        PrintToFile(f_max,f_min,g_max,g_min,m,n,k,1,1)
         
         % Calculate the optimal value of alpha and theta for the kth
         % subresultant matrix.
@@ -79,7 +80,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
         g_max = max(v_G_max);
         g_min = min(v_G_min);
         
-        PrintToFile(f_max,f_min,g_max,g_min,m,n,k,'With Thetas',alpha,theta)
+        PrintToFile(f_max,f_min,g_max,g_min,m,n,k,alpha,theta)
         
     case 'n'
         alpha = 1;
@@ -91,17 +92,29 @@ end
 
 end
 
-function [] = PrintToFile(F_max,F_min,G_max,G_min,m,n,k,comment,alpha,theta)
+function [] = PrintToFile(F_max,F_min,G_max,G_min,m,n,k,alpha,theta)
 
 global SETTINGS
 
-fullFileName = 'o_Preprocessing.txt';
+fullFileName = 'Results_Preprocessing.txt';
 
 
-if exist('Preprocessing.txt', 'file')
-    fileID = fopen('Preprocessing.txt','a');
-    fprintf(fileID,'%5d \t %5d \t %5d \t %s \t %5d \t %d \t %d \t %d \t %s \t %5d \t %5d\n',...
-        m,n,k,SETTINGS.MEAN_METHOD,F_max,F_min,G_max,G_min,comment,alpha,theta);
+if exist('Results_Preprocessing.txt', 'file')
+    fileID = fopen('Results_Preprocessing.txt','a');
+    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s,\t %s,\t %s, \t %s \n',...
+        SETTINGS.PROBLEM_TYPE,...
+        SETTINGS.EX_NUM,...
+        int2str(m),...
+        int2str(n),...
+        int2str(k),...
+        SETTINGS.MEAN_METHOD,...
+        F_max,...
+        F_min,...
+        G_max,...
+        G_min,...
+        alpha,...
+        theta...
+        );
     fclose(fileID);
 else
   % File does not exist.

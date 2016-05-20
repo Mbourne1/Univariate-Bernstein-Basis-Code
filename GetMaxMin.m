@@ -30,11 +30,16 @@ for i = 0:1:m
 
     for j = 0:1:n_k
         
-        %
-        cell_val = fx(i+1) * nchoosek(i+j,i) * nchoosek(m+n_k-i-j,m-i) ;
         
-        %
-        cell_val = cell_val ./ denom;
+        switch SETTINGS.SYLVESTER_BUILD_METHOD
+            case 'Standard'
+                cell_val = fx(i+1) * nchoosek(m,i) * nchoosek(n_k,j) ./ nchoosek(m+n_k,i+j);
+            case 'Rearranged'
+                %
+                cell_val = fx(i+1) * nchoosek(i+j,i) * nchoosek(m+n_k-i-j,m-i) ./ denom ;
+        
+        end
+        
         
         %
         v_ai_value(j+1) = cell_val;

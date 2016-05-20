@@ -1,5 +1,5 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    GetGCD_Degree2(fx,gx,deg_limits)
+    GetGCD_Degree2(fx,gx,deg_limits,bool_coprime)
 % GetGCD_Degree(fx,gx)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
@@ -14,7 +14,7 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 % deg_limits : set the upper and lower bound of the degree of the
 % GCD of polynomials f(x) and g(x). Usually used when using o_roots() where
 % prior information is known about the upper and lower bound due to number
-% of distinct roots. 
+% of distinct roots.
 %
 %
 % % Outputs.
@@ -25,7 +25,7 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 % theta : optimal value of theta
 %
-% deg_limits : 
+% deg_limits :
 
 
 % Get degree m of polynomial f(x)
@@ -38,23 +38,6 @@ n = GetDegree(gx);
 % GCD of f(x) and f'(x) = m-1 = n.
 lower_lim = deg_limits(1);
 upper_lim = deg_limits(2);
-
-if (upper_lim == lower_lim)
-    alpha = 1;
-    theta = 1;
-    GM_fx = 1;
-    GM_gx = 1;
-    fprintf([mfilename ' : ' sprintf('Only One Subresultant\n')])
-    t = upper_lim;
-    return;
-end
-
-% if the lower limit is zero, ie - deg(GCD) = 0, then set to 1, since we
-% are only interested in Sylvester matrices S_{1},...
-if lower_lim == 0
-    lower_lim = 0;
-else 
-end
 
 % Get the number of subresultants which must be constructed.
 nSubresultants = upper_lim - lower_lim +1 ;
@@ -98,8 +81,8 @@ for k = lower_lim:1:upper_lim
     % Given the previous geometric mean of f(x) calculate the new geometric
     % mean by my new method
     if i>1
-        GM_fx = GetGeometricMeanFromPrevious(fx , vGM_fx(i-1) , m , n-k);
-        GM_gx = GetGeometricMeanFromPrevious(gx , vGM_gx(i-1) , n , m-k);
+        %GM_fx = GetGeometricMeanFromPrevious(fx , vGM_fx(i-1) , m , n-k);
+        %GM_gx = GetGeometricMeanFromPrevious(gx , vGM_gx(i-1) , n , m-k);
     end
     
     % Divide f(x) and g(x) by geometric means
@@ -113,8 +96,11 @@ for k = lower_lim:1:upper_lim
     % Build the k-th subresultant
     Sk = BuildSubresultant(fw,vAlpha(i).*gw,k);
     
+    % Get singular values of S_{k}
+    vSingularValues = svd(Sk);
+    
     % Get the minimal singular value from S_{k}
-    vMinimumSingularValues(i) = min(svd(Sk));
+    vMinimumSingularValues(i) = min(vSingularValues);
     
     % Get the matrix R1 from the QR Decomposition of S
     R1 = GetR1(Sk);
@@ -144,52 +130,91 @@ for k = lower_lim:1:upper_lim
     vMinimumResidual(i) = GetMinimalDistance(Sk);
     
     
+end % End of for
+
+% % 
+% %
+% %
+% Choose a metric to determine the degree of the GCD.
+global SETTINGS
+switch SETTINGS.METRIC
+    case 'Row Norms'
+        metric = vMaxRowNormR1./vMinRowNormR1;
+        
+        
+    case 'Row Diagonals'
+        metric = vMaxDiagR1./vMinDiagR1;
+        
+    case 'Singular Values'
+        metric = vMinimumSingularValues;
 end
 
-% End of Loop
-
-
-% %
-% %     Analysis of Row Norms
-% %
-% %
-[max_Delta_MaxMin_RowSum_R,indexMaxChange_RowNorm] = Analysis(vMaxRowNormR1./vMinRowNormR1);
-
-% %
-% %     Analysis of Row Diagonals
-% %
-% %
-[max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = Analysis(vMaxDiagR1./vMinDiagR1);
 
 % % Analysis of Minimum Singular values
 
-
-% If only one subresultant exists, use an alternative method.
-if (upper_lim -lower_lim == 0 ) % If only one Subresultant Exists
-     t = GetRankOneSubresultant(Sk);
-     alpha = vAlpha(1);
+if (upper_lim == lower_lim && bool_coprime == false)
+    alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);
     GM_gx = vGM_gx(1);
+    t = upper_lim;
+    
     return;
 end
 
-[t] = GetProblemType(vMinimumSingularValues,lower_lim);
+if (lower_lim == 1)
+    can_be_coprime = true;
+else
+    can_be_coprime = false;
+end
+
+% If only one subresultant exists, use an alternative method.
+if (upper_lim - lower_lim == 0 )
+    
+    if (can_be_coprime)
+        t = GetGCDDegree_OneSubresultant(vSingularValues);
+        alpha = vAlpha(1);
+        theta = vTheta(1);
+        GM_fx = vGM_fx(1);
+        GM_gx = vGM_gx(1);
+        return;
+        
+    else
+        t = lower_lim;
+        alpha = vAlpha(1);
+        theta = vTheta(1);
+        GM_fx = vGM_fx(1);
+        GM_gx = vGM_gx(1);
+        fprintf([mfilename ' : ' sprintf('Only One Subresultant\n')])
+        fprintf([mfilename ' : ' sprintf('Polynomials not coprime\n')])
+        fprintf([mfilename ' : ' sprintf('t = %i \n',t) ] );
+        return;
+        
+    end
+    
+else
+    
+    [t] = GetGCDDegree_MultipleSubresultants(metric,lower_lim);
+    
+    
+    % % Graph Plotting
+    PlotGraphs()
+    
+    % %
+    % Outputs
+    
+    % Output all subresultants, all optimal alphas, all optimal thetas and all
+    % geometric means for each subresultant S_{k} where k = 1,...,min(m,n)
+    alpha                   = vAlpha(t-lower_lim+1);
+    theta                   = vTheta(t-lower_lim+1);
+    GM_fx                   = vGM_fx(t-lower_lim+1);
+    GM_gx                   = vGM_gx(t-lower_lim+1);
+    
+end
 
 
-% % Graph Plotting
-PlotGraphs()
 
 
-% %  
-% Outputs
-
-% Output all subresultants, all optimal alphas, all optimal thetas and all
-% geometric means for each subresultant S_{k} where k = 1,...,min(m,n)
-alpha                   = vAlpha(t-lower_lim+1);
-theta                   = vTheta(t-lower_lim+1);
-GM_fx                   = vGM_fx(t-lower_lim+1);
-GM_gx                   = vGM_gx(t-lower_lim+1);
 end
 
 

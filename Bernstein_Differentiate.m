@@ -18,7 +18,7 @@ gx = zeros(m,1);
 
 %Loop through all coefficients of g(x)
 for i = 0:1:m-1
-    gx(i+1) = m * (fx(i+1+1)-fx(i+1));
+    gx(i+1) = m * (fx(i+1+1) - fx(i+1));
 end
 
 

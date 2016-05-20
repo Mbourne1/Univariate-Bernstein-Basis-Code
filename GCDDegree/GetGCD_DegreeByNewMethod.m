@@ -57,12 +57,13 @@ vGM_gx    =   zeros(1,min_mn);
 % Initialise vectors to store values calculated from each subresultant
 % S_{k} for k = 1,...,min(m,n).
 
-vMaxDiagR1= zeros(1,min_mn);
-vMinDiagR1= zeros(1,min_mn);
-vMaxRowNormR1= zeros(1,min_mn);
-vMinRowNormR1 = zeros(1,min_mn);
-vMinimumResidual = zeros(1,min_mn);
-vMinimumSingularValues = zeros(1,min_mn);
+vMaxDiagR1  = zeros(1,min_mn);
+vMinDiagR1  = zeros(1,min_mn);
+vMaxRowNormR1   = zeros(1,min_mn);
+vMinRowNormR1   = zeros(1,min_mn);
+vMinimumResidual    = zeros(1,min_mn);
+vMinimumSingularValues  = zeros(1,min_mn);
+
 % Stores Data from QR decomposition.
 Data_RowNorm = [];
 Data_DiagNorm = [];
@@ -119,7 +120,7 @@ for k = 1:1:min_mn
         
     end
     
-
+    
     % Using QR Decomposition of the sylvester matrix
     [~,R] = qr(DTQ);
     
@@ -161,33 +162,30 @@ for k = 1:1:min_mn
     vMaxRowNormR1(k) = max(R1_RowNorm);
     vMinRowNormR1(k) = min(R1_RowNorm);
     
-  
+    
     vMinimumResidual(k) = GetMinimalDistance(DTQ);
     
-    vMinimumSingularValues(k) = min(svd(DTQ));
+    vSingularValues = svd(DTQ);
     
+    vMinimumSingularValues(k) = min(vSingularValues);
+    
+end % End of for
+
+% % 
+% %
+% %
+% Choose a metric to determine the degree of the GCD.
+global SETTINGS
+switch SETTINGS.METRIC
+    case 'Row Norms'
+        metric = vMaxRowNormR1./vMinRowNormR1;
+        
+    case 'Row Diagonals'
+        metric = vMaxDiagR1./vMinDiagR1;
+        
+    case 'Singular Values'
+        metric = vMinimumSingularValues;
 end
-
-% %
-% %
-% %
-% %
-
-[max_Delta_MaxMin_Diag_R, indexMaxChange_Ratio_DiagsR] = Analysis(vMaxDiagR1./vMinDiagR1);
-
-% %
-% %
-% %
-% %
-
-[max_Delta_mag_rowsum,indexMaxChange_RowNorm] = Analysis(vMaxRowNormR1 ./ vMinRowNormR1);
-
-% %
-% %
-% %
-% %
-[max_Delta_Residual,indexMaxChange_Residual] = Analysis(vMinimumResidual);
-
 
 
 
@@ -195,32 +193,34 @@ end
 % to one
 
 if min_mn == 1
-    t = GetRankOneSubresultant(DTQ);
+    t = GetGCDDegree_OneSubresultant(vSingularValues);
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);
     GM_gx = vGM_gx(1);
     return;
+    
+else
+    
+    %
+    %
+    [t] = GetGCDDegree_MultipleSubresultants(metric,lower_lim);
+       
+    % Outputs
+    
+    % Output just corresponding to calculated value of the degree. Output
+    % subresultant S_{t}, alpha_{t}, theta_{t}, and corresponding geometric
+    % means.
+    alpha = vAlpha(t);
+    theta = vTheta(t);
+    GM_fx = vGM_fx(t);
+    GM_gx = vGM_gx(t);
+    
+    % % Graph Plotting
+    PlotGraphs()
+    
 end
 
-%
-%
-[t] = GetProblemType(vMinimumSingularValues,lower_lim);
-
-
-
-% Outputs
-
-% Output just corresponding to calculated value of the degree. Output
-% subresultant S_{t}, alpha_{t}, theta_{t}, and corresponding geometric
-% means.
-alpha = vAlpha(t);
-theta = vTheta(t);
-GM_fx = vGM_fx(t);
-GM_gx = vGM_gx(t);
-
-% % Graph Plotting
-PlotGraphs()
 
 
 

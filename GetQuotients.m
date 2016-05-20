@@ -1,18 +1,15 @@
-function [ux,vx] = GetQuotients(fx_n,gx_n,t,alpha,theta)
+function [ux,vx] = GetQuotients(fx,gx,t)
 % Given polynomials f(x) and g(x), get the quotient polynomials u(x) and
 % v(x) such that f(x)*v(x) = g(x)*u(x).
 
 global SETTINGS
 
 % Get degree of input polynomial g(x)
-n = GetDegree(gx_n);
+n = GetDegree(gx);
 
-% Get the polynomails f(\omega,\theta) and g(\omega,\theta)
-fw = GetWithThetas(fx_n,theta);
-gw = GetWithThetas(gx_n,theta);
 
 % Build the t^th subresultant
-St = BuildSubresultant(fw,alpha.*gw,t);
+St = BuildSubresultant(fx,gx,t);
 
 % Get the optimal column for removal
 [opt_col] = GetOptimalColumn(St);
@@ -37,8 +34,8 @@ vec_x =[
 
 % Obtain values for quotient polynomials u and v. still expressed in the
 % scaled bernstein basis, including theta.
-vw = vec_x(1:n-t+1);
-uw = -vec_x(n-t+2:end);
+vx = vec_x(1:n-t+1);
+ux = -vec_x(n-t+2:end);
 
 % If Q is not included in Sylvester matrix, then binomials are included in
 % x. Remove binomials
@@ -47,15 +44,13 @@ switch SETTINGS.BOOL_Q
     case 'y'
     case 'n'
         % Remove binomials from the coefficients.
-        vw = GetWithoutBinomials(vw);
-        uw = GetWithoutBinomials(uw);
+        vx = GetWithoutBinomials(vx);
+        ux = GetWithoutBinomials(ux);
         
     otherwise 
         error('err')
 end
 
-% Divide v(w) and u(w) to obtain u(x) and v(x)
-vx = GetWithoutThetas(vw,theta);
-ux = GetWithoutThetas(uw,theta);
+
 
 end

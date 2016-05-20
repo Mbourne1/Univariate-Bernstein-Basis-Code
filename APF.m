@@ -313,9 +313,9 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     % variables from the modified Bernstein basis to the Bernstein
     % basis.
     
-    %fx_p_= GetWithoutThetas(fw,th(ite));
-    %sx_p = GetWithoutThetas(sw,th(ite));
-    gx = GetWithoutThetas(gw,th(ite));
+    fx_p = GetWithoutThetas(fw,th(ite));
+    sx_p = GetWithoutThetas(sw,th(ite));
+    gx_p = GetWithoutThetas(gw,th(ite));
     tx_p = GetWithoutThetas(tw,th(ite));
     ukx = ux + z1x;
     vkx = vx + z2x;

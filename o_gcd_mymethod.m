@@ -1,5 +1,5 @@
 function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
-    o_gcd_mymethod(fx,gx,deg_limits)
+    o_gcd_mymethod(fx,gx,deg_limits,bool_coprime)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
 %                             Inputs:
@@ -7,6 +7,11 @@ function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
 % fx : Coefficients of the polynomial f(x)
 %
 % gx : Coefficients of the polynomial g(x)
+%
+% deg_limits : 
+%
+% bool_coprime : 'y' polynomials may be coprime
+%
 %
 % Outputs:
 %
@@ -31,9 +36,6 @@ function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
 
 global SETTINGS
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % Get the degree m of polynomial f
 m = GetDegree(fx) ;
 
@@ -48,10 +50,10 @@ m = GetDegree(fx) ;
 %      GetGCD_Degree(fx,gx);
 % display(t1)
 % LineBreakMedium();
-% 
+
 %Get degree by original method - limits
 [t2, alpha2, theta2, gm_fx2, gm_gx2] = ...
-    GetGCD_Degree2(fx,gx,deg_limits);
+    GetGCD_Degree2(fx,gx,deg_limits,bool_coprime);
 %display(t2)
 LineBreakMedium();
 % 
@@ -112,12 +114,26 @@ St_preproc = BuildSubresultant(fw,alpha.*gw,t);
 % %
 % % Perform SNTLN
 % Apply / Don't Apply structured perturbations.
-[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,opt_col);
+[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,opt_col,gm_fx,gm_gx);
 
+
+% %
+% % Get u(x) and v(x)
+% %
+% %
+fw = GetWithThetas(fx_n,theta);
+gw = GetWithThetas(gx_n,theta);
 
 % Get quotient polynomials u(x) and v(x)
-[ux,vx] = GetQuotients(fx_n,gx_n,t,alpha,theta);
+[uw,vw] = GetQuotients(fw,alpha.*gw,t);
 
+% Divide v(w) and u(w) to obtain u(x) and v(x)
+vx = GetWithoutThetas(vw,theta);
+ux = GetWithoutThetas(uw,theta);
+
+
+% %
+% %
 % %
 % %
 % Build Sylvester Matrix for normalised, refined coefficients, used in

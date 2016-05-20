@@ -41,8 +41,7 @@ function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
 
 % % Global Inputs
 % These values should only be reset in the head function o_roots
-global MAX_ERROR_SNTLN
-global MAX_ITERATIONS_SNTLN
+global SETTINGS
 
 % Get ratio of geometric means.
 ratio = gm_fx./gm_gx;
@@ -196,7 +195,7 @@ condition(ite) = norm(res_vec)/norm(ct);
 
 xk = x_ls;
 
-while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
+while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
     
     % Use the QR decomposition to solve the LSE problem
     % min |y-p| subject to Cy=q
@@ -346,16 +345,23 @@ while condition(ite) >(MAX_ERROR_SNTLN) &&  ite < MAX_ITERATIONS_SNTLN
     
 end
 
-figure_name = sprintf('%s : SNTLN Residuals',mfilename);
-figure('name',figure_name)
-hold on
-title('Residuals over SNTLN iterations')
-plot(log10(condition),'-s')
-xlabel('iterations')
-ylabel('Residuals')
-hold off
+global SETTINGS
+switch SETTINGS.PLOT_GRAPHS
+    case 'y'
+        figure_name = sprintf('%s : SNTLN Residuals',mfilename);
+        figure('name',figure_name)
+        hold on
+        title('Residuals over SNTLN iterations')
+        plot(log10(condition),'-s')
+        xlabel('iterations')
+        ylabel('Residuals')
+        hold off
+    case 'n'
+    otherwise
+        error('err')
+end
 
-if ite == MAX_ITERATIONS_SNTLN
+if ite == SETTINGS.MAX_ITERATIONS_SNTLN
     fprintf('SNTLN_Roots : failed to converge after %i iterations \n\n',ite)
     fx_output = fx_n;
     gx_output = gx_new;
@@ -394,8 +400,7 @@ hold on
 plot(1:1:length(condition),log10(condition));
 xlabel('Iteration Number')
 
-global PLOT_GRAPHS
-switch PLOT_GRAPHS
+switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure_name = sprintf('%s : Condition',mfilename);
         figure('name',figure_name)

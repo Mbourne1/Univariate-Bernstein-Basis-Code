@@ -8,8 +8,11 @@ function x = SolveAx_b(A,b)
 %
 % b : Right hand side vector b
 
-
+% %
 % % Get x_ls by QR Decomposition method
+% %
+% %
+% %
 [~,n2] = size(A);
 [Q,R] = qr(A);
 R1 = R(1:n2,:);
@@ -21,7 +24,10 @@ x_ls_QR = R1\c;
 % Calculate the residual
 res_QR = b - (A*x_ls_QR);
 
+% %
+% %
 % % Get x_ls by matlab pinv method
+% %
 x_ls_SVD = pinv(A)*b;
 
 res_SVD = b - (A*x_ls_SVD);
