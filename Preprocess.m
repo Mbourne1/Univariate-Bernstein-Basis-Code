@@ -25,7 +25,7 @@ function [lambda, mu, alpha, theta] = Preprocess(fx,gx,k)
 % Global variables
 global SETTINGS
 
-% Get Degree of polynomial f(x)
+% Get degree of polynomial f(x)
 m = GetDegree(fx);
 
 % Get degree of polynomial g(x)
@@ -36,7 +36,7 @@ lambda = GetMean(fx,n-k);
 
 mu = GetMean(gx,m-k);
 
-% 
+% Normalize f(x) and g(x) by geometric means
 fx_n = fx./ lambda;
 gx_n = gx./ mu;
 
@@ -83,8 +83,8 @@ switch SETTINGS.BOOL_ALPHA_THETA
         PrintToFile(f_max,f_min,g_max,g_min,m,n,k,alpha,theta)
         
         % Testing to see if preprocessing lowers condition number
-        cond(BuildDTQ(fx,gx,k))
-        cond(BuildDTQ(fw,alpha.*gw,k))
+        fprintf([mfilename ' : ' sprintf('Condition S(f(x),g(x)) : %2.4e \n', cond(BuildDTQ(fx,gx,k)))]);
+        fprintf([mfilename ' : ' sprintf('Conditon S(f(w),alpha g(w)) : %2.4e \n', cond(BuildDTQ(fw,alpha.*gw,k)))]);
         
     case 'n'
         alpha = 1;

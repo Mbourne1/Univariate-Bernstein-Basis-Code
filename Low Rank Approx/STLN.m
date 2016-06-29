@@ -1,5 +1,21 @@
-function [fx,gx] = STLN(fx,gx,t,colIndex)
-% Perform STLN with no preprocessors
+function [fx_out,gx_out] = STLN(fx,gx,t,colIndex)
+% Perform STLN with no refinement of alpha or theta
+%
+% Inputs.
+%
+% fx : Coefficients of polynomial f(x)
+%
+% gx : coefficients of polynomial g(x)
+% 
+% t : Degree of GCD d(x)
+%
+% colIndex : Index of optimal column to be removed from S_{t}(f,g)
+%
+% Outputs.
+%
+% fx_out : Coefficients of f(x) after addition of structured perturbations
+%
+% gx_out : Coefficients of g(x) after addition of strucutred perturbations
 
 global SETTINGS
 
@@ -71,14 +87,14 @@ C = [H_z H_x];
 
 % Build the identity matrix E.
 E = eye(2*m+2*n-2*t+3);
-%E = blkdiag(eye(m+n+2),zeros(m+n-2*t+1,m+n-2*t+1))
+E = blkdiag(eye(m+n+2),zeros(m+n-2*t+1,m+n-2*t+1));
 
 
 % Define the starting vector for the iterations for the LSE problem.
 start_point     =   ...
     [...
-    z;...
-    x_ls;
+        z;...
+        x_ls;
     ];
 
 % Set the initial value of vector p to be zero
@@ -117,7 +133,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     zf = z(1:m+1);
     zg = z(m+2:end);
     
-    % Build the matrix E = DBQ
+    % Build the matrix E = D^{-1} * B(zf,zg) * Q
     DBQ = BuildDTQ(zf,zg,t);
     
     % Build the matrix Bt = DBQ with opt column removed.
@@ -153,9 +169,15 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
 end
 
-% update f(x)
-fx = fx + zf;
-gx = gx + zg;
+if (ite < SETTINGS.MAX_ITERATIONS_SNTLN) 
+    % update f(x)
+    fx_out = fx + zf;
+    gx_out = gx + zg;
+else
+    fx_out = fx;
+    gx_out = gx;
+end
+
 
 switch SETTINGS.PLOT_GRAPHS
     case 'y'

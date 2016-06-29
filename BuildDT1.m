@@ -1,14 +1,15 @@
-function DT1 = BuildDT1(fw,n_k)
+function DT1 = BuildDT1(fx,n_k)
+% Build the matrix D*T_{n-k}(fx)
 
 global SETTINGS
 
 switch SETTINGS.BOOL_LOG
     case 'n'
         % Build Toeplitz Matrix using nchoosek
-        DT1 = BuildDT1_nchoosek(fw,n_k);
+        DT1 = BuildDT1_nchoosek(fx,n_k);
     case 'y'
         % Build Toeplitz Matrix using log version of nchoosek.
-        DT1 = BuildDT1_log(fw,n_k);
+        DT1 = BuildDT1_log(fx,n_k);
     otherwise
         error('error : bool_log must be either (y) or (n)')
 end
@@ -30,20 +31,19 @@ function [DT1] = BuildDT1_nchoosek(fx,n_k)
 % n : Degree of polynomial g(x)
 %
 % k : Degree of common divisor d(x)
-%
-%
 
 
 
-% Get Degree of polynomial f
+% Get Degree of polynomial f(x)
 m = GetDegree(fx);
 
-% Build matrix D
+% Build matrix D^{-1}
 D = BuildD(m,n_k);
 
 % Build matrix T_{n-k}(f)
 T1 = BuildT1(fx,n_k);
 
+% Get D^{-1}T_{n-k}(f)
 DT1 = D*T1;
 
 

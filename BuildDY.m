@@ -4,20 +4,13 @@ function DY = BuildDY(xu,xv,t,alpha,theta)
 % Construct Matrix DY, such that E_{k}(z)x = D^{-1}Y_{k}(x)z, where E_{k}(z) is a 
 % matrix of structured perturbations applied to S_{k}, where S_{k} = DTQ.
 %
-%                           Inputs
+% Inputs
 %
-% m - Degree of polynomial f
+% xu : coefficients of u from the matrix x_ls
 %
-% n - Degree of polynomial g
+% xv : coefficients of v from the matrix x_ls
 %
 % t - Degree of GCD
-%
-% opt_col - the optimal column (also referred to as ck) for removal from 
-% the Sylvester matrix such that the residual obtained is minimal. 
-% Ak x = ck.
-%
-% x - the Approximate solution, which consists of coefficients of the
-% coprime polynomials u and v.
 %
 % alpha - the calculated optimal value of alpha
 %
@@ -27,9 +20,12 @@ function DY = BuildDY(xu,xv,t,alpha,theta)
 
 global SETTINGS
 
-
+% Get degree of u(x)
 m_t = GetDegree(xu);
+
+% Get degree of v(x)
 n_t = GetDegree(xv);
+
 
 switch SETTINGS.BOOL_LOG
     case 'n' % Use nchoosek method

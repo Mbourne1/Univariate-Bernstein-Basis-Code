@@ -1,9 +1,6 @@
 
 function [resid_u,resid_v] = ScaleCoprime(u,v,f,g,t)
 
-
-
-
 % This function scales the coprime polynomials u and v in order to
 % minimise the residual of the equations (u)(d)=f and (v)(d)=g,
 % where d is the 
@@ -54,10 +51,8 @@ function [resid_u,resid_v] = ScaleCoprime(u,v,f,g,t)
 bk = [f;g];
 
 % Build the coefficient vector HCG.
-% EDIT - 03/06/2015  09:27:00
-% Removed buildC1_log and BuildC1_nchoosek replaced with BuildHCGPart(u,t)
-C1 = BuildHCGPart(u,t);
-C2 = BuildHCGPart(v,t);
+C1 = BuildH1C1G(u,t);
+C2 = BuildH1C1G(v,t);
         
   
 HCG = [C1;C2];

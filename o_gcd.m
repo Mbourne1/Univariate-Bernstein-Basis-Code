@@ -41,6 +41,7 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 
 % Set the problem type to a GCD problem
 problemType = 'GCD';
+addpath('Examples','GCDDegree','Low Rank Approx' , 'APF')
 
 % Consistency of input parameters.
 

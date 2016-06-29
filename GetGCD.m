@@ -15,24 +15,18 @@ function [dx] = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta)
 % t     : Degree of AGCD.
 %
 
-% Get degree of polynomials f(x)
-m = GetDegree(fx_n);
 
-% Get degree of polynomial g(x)
-n = GetDegree(gx_n);
+% Global variables
+global SETTINGS
 
-% Get fw and gw
+% Get f(w) and g(w)
 fw = GetWithThetas(fx_n,theta);
 gw = GetWithThetas(gx_n,theta);
 
-% Get uw and vw
+% Get u(w) and v(w)
 uw = GetWithThetas(ux,theta);
 vw = GetWithThetas(vx,theta);
 
-
-
-%
-global SETTINGS
 
 switch SETTINGS.GCD_COEFFICIENT_METHOD
     case 'ux and vx'
@@ -40,12 +34,14 @@ switch SETTINGS.GCD_COEFFICIENT_METHOD
         bk = [fw ; alpha .* gw];
         
         % Build the coefficient vector HCG
-        HCG = BuildHCG(uw,vw,m,n,t);
+        HCG = BuildHCG(uw,vw,t);
         
         % Get the vector d(w), which is the solution of a problem of the form Ax=b
         dw = SolveAx_b(HCG,bk);
         
+        % Get d(x) without thetas
         dx = GetWithoutThetas(dw,theta);
+        
     case 'ux'
         bk = fw;
         
@@ -55,7 +51,7 @@ switch SETTINGS.GCD_COEFFICIENT_METHOD
         
         dx = GetWithoutThetas(dw,theta);
     otherwise
-        error('GCD_COEFFICIENT_METHOD is either ux or ux and vx')
+        error('GCD_COEFFICIENT_METHOD is either (ux) or (ux and vx)')
 end
 
 

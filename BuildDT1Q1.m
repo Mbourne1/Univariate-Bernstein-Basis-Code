@@ -32,6 +32,8 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
         % Build the matrix Q1
         Q1 = BuildQ1(n_k);
+        
+        % Get the matrix D^{-1} * T_{n-k}(f) * Q_{n-k}
         DT1Q1 = D*T1*Q1;
         
         
@@ -45,11 +47,13 @@ end
 end
 
 function DT1Q1 = BuildDT1Q1_Rearranged(fx,n_k)
+% Build the matrix D^{-1}*T_{n-k}(f) * Q_{n-k} in its rearranged format.
 %
+% Inputs 
 %
+% fx : Coefficients of polynomial f(x,y)
 %
-%
-%
+% n_k : Degree of polynomial v_{k}(x,y) 
 
 global SETTINGS
 % If Q is included, use the rearrangment such that each Toeplitz
@@ -69,20 +73,17 @@ end
 
 
 function DT1Q1 = BuildDT1Q1_Rearranged_log(fx,n_k)
-% Build Toeplitz matrix D^{-1}T(f,g)Q
+% Build Toeplitz matrix D^{-1}T_{n-k}(f)Q_{n-k}
 %
 % Inputs.
 %
 %
-% fx :  Coefficients of polynomial f(x) in bernstein basis.
+% fx :  Coefficients of polynomial f(x) in Bernstein basis.
 %
-% n :   Degree of polynomial g.
-%
-% k :   Index of subresultant to be built.
-%
-%
+% n_k : Degree of polynomial v(x).
 
-%                       Global Variables.
+
+% Global Variables
 global SETTINGS
 
 % Get degree of polynomial f(w)
@@ -111,6 +112,9 @@ for j=0:1:n_k
     end
 end
 
+% Include/Exclude the denominator which is common to all elements of
+% D^{-1}*T_{n-k}(f)*Q_{n-k}.
+
 switch SETTINGS.BOOL_DENOM_SYL
     case 'y' % Include denominator
         
@@ -122,39 +126,30 @@ switch SETTINGS.BOOL_DENOM_SYL
         
         % Divide each element of T by the common denominator.
         DT1Q1 = DT1Q1./Denom_exp;
-    case 'n'
+    case 'n' % Exclude denominator
+        
     otherwise
         error('err')
 end
 end
 
-function T = BuildDT1Q1_Rearranged_nchoosek(fw,n_k)
-% Build Toeplitz matrix D^{-1}T(f,g)Q
+function T = BuildDT1Q1_Rearranged_nchoosek(fx,n_k)
+% Build the matrix D^{-1}*T_{n-k}(f)Q_{n-k}
 %
-%
-%                           Inputs.
+% Inputs.
 %
 % fx :  Coefficients of polynomial f in bernstein basis.
 %
-% theta :   Optimal value of theta where \theta\omega = y
+% n_k :   Degree of polynomial v(x)
 %
-% n :   Degree of polynomial g
-%
-% k :   Index of the subresultant S_{k}
-%
-%
-%
-% Global Variables.
-% 
-% BOOL_DENOM - The rearrangment of the Sylvester Matrix in the Bernstein
-% basis reveals common denominators.
-%     1 :- Include Common Denominators in the Sylvester Matrix 0 :- Exclude
-%     Common Denominators from the Sylvester Matrix.
+
+
+% Global variables
 global SETTINGS
 
 
-% Get degree of polynomial f
-m = GetDegree(fw);
+% Get degree of polynomial f(x)
+m = GetDegree(fx);
 
 % Build an empty matrix
 T = zeros(m+n_k+1,n_k+1);
@@ -164,7 +159,7 @@ for j=0:1:n_k
     % for each row from i = j,...
     for i = j:1:(j+m)
         T(i+1,j+1) = ...
-            fw(i-j+1) ...
+            fx(i-j+1) ...
             .* nchoosek(i,j) ...
             .* nchoosek(m+n_k-i,n_k-j);
     end

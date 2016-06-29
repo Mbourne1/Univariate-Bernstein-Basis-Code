@@ -85,12 +85,12 @@ dw_wrt_theta = Differentiate_wrt_theta(dw,th(ite));
 Partial_uw_wrt_theta = Differentiate_wrt_theta(uw,th(ite));
 Partial_vw_wrt_theta = Differentiate_wrt_theta(vw,th(ite));
 
-% Get HCG
-[HCG,H1C1G,H2C2G] = BuildHCG(uw,vw,m,n,t);
+% Get H^{-1} * C * G
+[HCG,H1C1G,H2C2G] = BuildHCG(uw,vw,t);
 
 % Build HCG with respect to theta
 [~,H1C1G_wrt_theta,H2C2G_wrt_theta] = ...
-    BuildHCG(Partial_uw_wrt_theta,Partial_vw_wrt_theta,m,n,t);
+    BuildHCG(Partial_uw_wrt_theta,Partial_vw_wrt_theta,t);
 
 %Build the RHS vector b = [fw,alpha.*gw]
 bk = [fw ; alpha(ite).*gw];
@@ -204,7 +204,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     vw_wrt_theta = Differentiate_wrt_theta(vw,th(ite));
     
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G
-    [~,H1C1G,H2C2G] = BuildHCG(uw,vw,m,n,t);
+    [~,H1C1G,H2C2G] = BuildHCG(uw,vw,t);
     
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G with respect to
     % theta

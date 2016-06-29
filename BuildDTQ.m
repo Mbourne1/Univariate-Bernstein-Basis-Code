@@ -1,5 +1,5 @@
-function [DTQ] = BuildDTQ(fx,gx,t)
-% BuildDTQ(fw,gw,alpha,t)
+function [DTQ] = BuildDTQ(fx,gx,k)
+% BuildDTQ(fx,gx,t)
 %
 % Build the matrix DTQ = D^{-1}T(f,g)*Q.
 %
@@ -7,7 +7,7 @@ function [DTQ] = BuildDTQ(fx,gx,t)
 %
 % gx : Coefficients of polynomial g(x)
 %
-% t : Degree of GCD d(x).
+% k : index of subresultant
 %
 % Note: If you wish to build the Sylvester matrix for preprocessed and
 % scaled polynomials f(\omega)g(\omega), the preprocessed forms must be the
@@ -25,15 +25,23 @@ n = GetDegree(gx);
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'Standard'
-        % Build matrices D,T and Q.
-        D = BuildD(m,n-t);
-        T = BuildT(fx,gx,t);
-        Q = BuildQ(m,n,t);
+        
+        % Build matrix D^{-1}
+        D = BuildD(m,n-k);
+        
+        % Build matrix T(f,g) = T_{n-k}(f) T_{m-k}*(g)
+        T = BuildT(fx,gx,k);
+        
+        % Build matrix Q = [Q_{n-k} Q_{m-k}]
+        Q = BuildQ(m,n,k);
+        
+        % Get D^{-1} * T(f,g) * Q
         DTQ = D*T*Q;
         
     case 'Rearranged'
         
-        DTQ = BuildDTQ_ElementWise(fx,gx,t);
+        DTQ = BuildDTQ_ElementWise(fx,gx,k);
+        
     otherwise
         error('Error : SETTINGS.SYLVESTER_BUILD_METHOD is either (Standard) or (Rearranged)')
 end

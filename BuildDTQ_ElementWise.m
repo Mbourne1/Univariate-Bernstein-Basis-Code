@@ -42,31 +42,16 @@ DTQ = [DT1Q1 DT2Q2];
 end
 
 function DT1Q1 = BuildDT1Q1_nchoosek(fx,n_t)
-% Build DTQ partition by, using matlabs nchoosek function.
+% Build D^{-1}T_{n-k}(f)Q_{n-k} partition using matlabs nchoosek function.
 %
 % Inputs
-%
 %
 % fx : Coefficients of the polynomial f(x)
 %
 % n_t : Degree of polynomial v(x,y) = n - t
-%
-% n : Degree of other polynomial g(\omega,\theta).
-%
-% t : Degree of GCD.
 
-%
 % Global Variables
-
-% BOOL_DENOM_SYL - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
 global SETTINGS
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 % Get Degree of input polynomial
 m = GetDegree(fx);
@@ -74,11 +59,9 @@ m = GetDegree(fx);
 % Initialise the partition of DTQ \in\mathbb{R}^{(m+n-t+1)\times(n-t+1)}.
 DT1Q1 = zeros(m+n_t+1,n_t+1);
 
-%fw = fx .* theta.^(0:1:m);
-
-% for each column k in the partition of DTQ.
+% for each column k in the matrix D^{-1}T_{n-k}(f)Q_{n-k}.
 for j = 0:1:n_t
-    % for each coefficient in the polynomial f
+    % for each coefficient a_{i} in the polynomial f(x)
     for i = j:1:m+j
         DT1Q1(i+1,j+1) = ...
             fx(i-j+1) .*...
@@ -87,6 +70,8 @@ for j = 0:1:n_t
     end
 end
 
+% Include/Exclude the denominator common to each element of
+% D^{-1}T_{n-k}(f)Q_{n-k} in rearranged format.
 switch SETTINGS.BOOL_DENOM_SYL
     case 'y' 
         % Common Denominator is included in the coefficient matrix.
@@ -99,15 +84,13 @@ end
 end
 
 function DT1Q1 = BuildDT1Q1_log(f,n_t)
+% Build D^{-1}T_{n-k}(f)Q_{n-k} partition using logs function.
 %
+% Inputs
 %
-%                        Inputs
+% fx : Coefficients of the polynomial f(x)
 %
-% f   : Coefficients of polynomial f(\omega,\theta).
-%
-% n_t : Degree of polynomial v(x,y).
-%
-%
+% n_t : Degree of polynomial v(x,y) = n - t
 
 % Global Variables
 global SETTINGS
@@ -115,10 +98,10 @@ global SETTINGS
 % Get degree of polynomial f.
 m = GetDegree(f);
 
-% Initialise the partition of DTQ \in\mathbb{R}^{(m+n-t+1)\times(n-t+1)}.
+% Initialise the partition of D^{-1}T_{n-k}(f)Q_{n-k} \in\mathbb{R}^{(m+n-t+1)\times(n-t+1)}.
 DT1Q1 = zeros(m+n_t+1,n_t+1);
 
-% for each column in partition of DTQ
+% for each column in partition of D^{-1}T_{n-k}(f)Q_{n-k}
 for j = 0:1:n_t
     % for each coefficient f_{i-j} in the polynomial f
     for i = j:1:m+j
@@ -137,6 +120,8 @@ for j = 0:1:n_t
     end
 end
 
+% Include/Exclude the denominator common to each element of
+% D^{-1}T_{n-k}(f)Q_{n-k} in rearranged format.
 switch SETTINGS.BOOL_DENOM_SYL
     case 'y' % If denominator is included in the coefficient matrix.
         

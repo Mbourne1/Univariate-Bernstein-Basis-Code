@@ -1,8 +1,8 @@
 function [P] = BuildDP(m,n,theta,mincol,t)
 % Build the matrix DP.
 % Used in SNTLN.m
-% Build the matrix such that DP * z gives the column of the Sylvester
-% matrix.
+% Build the matrix DP such that DP * z gives the column of the Sylvester
+% matrix whose column index is equal to mincol
 %
 %
 % Inputs
@@ -18,7 +18,9 @@ function [P] = BuildDP(m,n,theta,mincol,t)
 %
 % t :   Degree of GCD
 %
+% Outputs.
 %
+% P : matrix DP
 
 
 if mincol <= (n-t+1) % the optimal column is from poly f

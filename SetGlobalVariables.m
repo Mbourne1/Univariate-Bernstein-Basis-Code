@@ -77,9 +77,7 @@ SETTINGS.MAX_ITERATIONS_SNTLN = 75;
 
 % Regarding the computation of the low rank approximation of the 
 % C = [C(u) ; C(v)] matrix
-
-
-SETTINGS.MAX_ERROR_APF = 1e-12;
+SETTINGS.MAX_ERROR_APF = 1e-14;
 SETTINGS.MAX_ITERATIONS_APF = 50;
 
 
