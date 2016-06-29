@@ -1,5 +1,5 @@
 function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
-    o_gcd_mymethod(fx,gx,deg_limits,bool_coprime)
+    o_gcd_mymethod(fx,gx,deg_limits,bool_canBeCoprime)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
 %                             Inputs:
@@ -8,9 +8,10 @@ function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
 %
 % gx : Coefficients of the polynomial g(x)
 %
-% deg_limits : 
+% deg_limits : Upper and lower limits for GCD degree may be defined here
+% otherwise set to [0,min(m,n)]
 %
-% bool_coprime : 'y' polynomials may be coprime
+% bool_canBeCoprime : 'y' polynomials may be coprime
 %
 %
 % Outputs:
@@ -51,9 +52,16 @@ m = GetDegree(fx) ;
 % display(t1)
 % LineBreakMedium();
 
+
+figure('name','svd')
+hold on
+BuildSubresultant(fx,gx,1)
+plot((svd(BuildSubresultant(fx,gx,1))),'-s');
+hold off
+
 %Get degree by original method - limits
 [t2, alpha2, theta2, gm_fx2, gm_gx2] = ...
-    GetGCD_Degree2(fx,gx,deg_limits,bool_coprime);
+    GetGCD_Degree2(fx,gx,deg_limits,bool_canBeCoprime);
 %display(t2)
 LineBreakMedium();
 % 

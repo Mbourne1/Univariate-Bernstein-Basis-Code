@@ -31,6 +31,5 @@ switch SETTINGS.BOOL_DENOM_SYL
     case 0
 end
 
-warning('on')
 
 end

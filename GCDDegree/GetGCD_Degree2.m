@@ -132,6 +132,19 @@ for k = lower_lim:1:upper_lim
     
 end % End of for
 
+figure()
+hold on
+plot((vGM_fx))
+plot((vGM_gx))
+hold off
+
+figure()
+hold on
+plot(log10(vTheta))
+plot(log10(vAlpha))
+hold off
+
+
 % % 
 % %
 % %
@@ -140,7 +153,6 @@ global SETTINGS
 switch SETTINGS.METRIC
     case 'Row Norms'
         metric = vMaxRowNormR1./vMinRowNormR1;
-        
         
     case 'Row Diagonals'
         metric = vMaxDiagR1./vMinDiagR1;
@@ -185,9 +197,9 @@ if (upper_lim - lower_lim == 0 )
         theta = vTheta(1);
         GM_fx = vGM_fx(1);
         GM_gx = vGM_gx(1);
-        fprintf([mfilename ' : ' sprintf('Only One Subresultant\n')])
-        fprintf([mfilename ' : ' sprintf('Polynomials not coprime\n')])
-        fprintf([mfilename ' : ' sprintf('t = %i \n',t) ] );
+        display([mfilename ' : ' sprintf('Only One Subresultant\n')])
+        display([mfilename ' : ' sprintf('Polynomials not coprime\n')])
+        display([mfilename ' : ' sprintf('t = %i \n',t) ] );
         return;
         
     end

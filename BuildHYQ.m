@@ -1,16 +1,15 @@
 function HYQ = BuildHYQ(dx,m,n,theta)
 % Build the matrix HYQ such that H*Y(dx)*Q * [u;v] = [f;g]
 
-    HYQ_v1 = BuildHYQ1(dx,m,n,theta);
-    HYQ_v2 = BuildHYQ2(dx,m,n,theta);
+    HYQ = BuildHYQ1(dx,m,n,theta);
+    %HYQ = BuildHYQ2(dx,m,n,theta);
     
-    HYQ = HYQ_v1;
+
     
     
 end
 
 function HYQ = BuildHYQ1(dx,m,n,theta)
-
 % Builds the Matrix H.Y.Q where Y_{k} performs a change of variable.
 % E(w).d = Y(d).w where d is vector of coefficients of GCD, and w is vector
 % of perturbations to f and g
@@ -28,7 +27,6 @@ function HYQ = BuildHYQ1(dx,m,n,theta)
 %
 % theta -
 %
-% alpha - 
 %
 
 %                       Global Variables
@@ -61,7 +59,7 @@ end
 function A = BuildHYPartition_nchoosek(dx,m,theta)
 % 
 %
-%                       Inputs.
+% Inputs.
 %
 % dw -
 %

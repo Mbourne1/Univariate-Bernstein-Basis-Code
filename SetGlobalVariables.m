@@ -13,6 +13,7 @@ function [] = SetGlobalVariables(problemType, ex_num, emin, emax, ...
 
 global SETTINGS
 SETTINGS.EX_NUM = ex_num;
+
 SETTINGS.EMIN = emin;
 SETTINGS.EMAX = emax;
 
@@ -20,7 +21,7 @@ SETTINGS.EMAX = emax;
 SETTINGS.PROBLEM_TYPE = problemType;
 
 
-%% Get GCD Degree
+% Get GCD Degree
 
 % Set the metric for measuring the degree of the GCD.
 SETTINGS.METRIC = 'Singular Values';
@@ -28,16 +29,10 @@ SETTINGS.METRIC = 'Singular Values';
 % Set the threshold for measuring the degree of the GCD. If max change in
 % metric is less than this value, then all subresultants are full rank or
 % rank deficient.
-SETTINGS.THRESHOLD = 3;
-
-%
+SETTINGS.THRESHOLD = 1;
 SETTINGS.THRESHOLD_RANK = -5;
 
-%% Structuring the Sylvester Matrix
-
-
-
-
+% Structuring the Sylvester Matrix
 SETTINGS.BOOL_DENOM_SYL = 'y';
 SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
 
@@ -48,13 +43,13 @@ SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
 % common divisor
 
 
-%% Structuring the matrix [C(f) | C(g)]
+% Structuring the matrix [C(f) | C(g)]
 SETTINGS.APF_METHOD = apf_method;
 SETTINGS.BOOL_DENOM_APF = 'y';
 SETTINGS.APF_BUILD_METHOD = 'Rearranged';
 
 
-%% Preprocessing
+% Preprocessing
 
 SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
 SETTINGS.MEAN_METHOD = mean_method;
@@ -62,13 +57,13 @@ SETTINGS.MEAN_METHOD = mean_method;
 %% Numerical Considerations
 
 
-%% Noise 
+% Noise 
 SETTINGS.SEED = 1024;
 
-%% Outputs
-SETTINGS.PLOT_GRAPHS = 'n';
+% Outputs
+SETTINGS.PLOT_GRAPHS = 'y';
 
-%% Regarding the computation of the Sylvester low rank approximation
+% Regarding the computation of the Sylvester low rank approximation
 
 % LOW_RANK_APPROXIMATION_METHOD:
 % None : No perturbations added
@@ -80,7 +75,7 @@ SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 SETTINGS.MAX_ERROR_SNTLN = 1e-16;
 SETTINGS.MAX_ITERATIONS_SNTLN = 75;
 
-%% Regarding the computation of the low rank approximation of the 
+% Regarding the computation of the low rank approximation of the 
 % C = [C(u) ; C(v)] matrix
 
 
@@ -90,13 +85,13 @@ SETTINGS.MAX_ITERATIONS_APF = 50;
 
 
 
-%% Validation
+% Validation
 % If BOOL_Q has not been included, then the Sylvester rearrangement is not
 % applicable, and the common denominators can not be removed.
 % Simplest method, no structure added.
 % Override users input options if incompatable.
 if (SETTINGS.BOOL_Q == 'n')
-    SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard'
+    SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
     SETTINGS.LOW_RANK_APPROXIMATION_METHOD = 'None';
     SETTINGS.APF_METHOD = 'None'; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
     SETTINGS.BOOL_DENOM_SYL = 'y';
@@ -111,7 +106,7 @@ if ( strcmp(SETTINGS.PROBLEM_TYPE,'GCD') && strcmp(SETTINGS.LOW_RANK_APPROXIMATI
 end
     
 
-%%
+%
 % Get Global variables for Deconvolve
 SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-12;
 SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;

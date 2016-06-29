@@ -32,6 +32,12 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %
 % % Example
 % >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None')
+% 
+% % Custom Example
+%
+% ex_num = 'Custom:m=10 n=10 t=5 low=0 high=1'
+% >> o_gcd(ex_num,1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None')
+
 
 % Set the problem type to a GCD problem
 problemType = 'GCD';
@@ -40,17 +46,18 @@ problemType = 'GCD';
 
 % Check that max and min signal to noise ratio are the correct way around.
 % If not, rearrange min and max.
-if emin > emax
-    fprintf('minimum noise greater than maximum noise \n swapping values...\n')
-    [emin,emax] = swap(emin,emax);
-end
+% if emin > emax
+%     fprintf('minimum noise greater than maximum noise \n swapping values...\n')
+%     [emin,emax] = swap(emin,emax);
+% end
 
 % Set the global variables
 global SETTINGS
 if isempty(SETTINGS)
     fprintf('Set Q and log')
-    SETTINGS.BOOL_Q = 'n';
+    SETTINGS.BOOL_Q = 'y';
     SETTINGS.BOOL_LOG = 'n';
+    SETTINGS.GCD_COEFFICIENT_METHOD = 'ux';
 end
 
 SetGlobalVariables(problemType,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
@@ -67,40 +74,12 @@ PrintGlobalVariables()
 addpath 'Measures'
 
 % Get roots from example file
-[f_roots, g_roots,d_roots,t_exact,u_roots,v_roots] = Examples_GCD(ex_num);
+[f_exact, g_exact,d_exact] = Examples_GCD(ex_num);
 
-PrintRoots('f',f_roots)
-PrintRoots('g',g_roots)
-PrintRoots('d',d_roots)
-
-% Plot the roots of f(x), g(x) and d(x)
-PlotRoots()
-
-% Using roots stored as f and g and obtain polys in scaled bernstein basis
-% B_poly returns coefficients $a_{i}$\binom{m}{i} in a scaled bernstein basis.
-% We deal with bernstein basis so wish to remove the (mchoosei) such that
-% we have $a_{i}$ only which is the coefficient in the Bersntein Basis..
-%   fx_exact_bi = \hat{a}_{i} binom{m}{i}
-%   gx_exact_bi = \hat{b}_{i} binom{n}{i}
-
-f_exact_bi = B_poly(f_roots);
-g_exact_bi = B_poly(g_roots);
-d_exact_bi = B_poly(d_roots);
-u_exact_bi = B_poly(u_roots);
-v_exact_bi = B_poly(v_roots);
-
-
-% Get exact coefficients of a_{i},b_{i},u_{i},v_{i} and d_{i} of
-% polynomials f, g, u, v and d in standard bernstein form.
-f_exact = GetWithoutBinomials(f_exact_bi);
-g_exact = GetWithoutBinomials(g_exact_bi);
-d_exact = GetWithoutBinomials(d_exact_bi);
-u_exact = GetWithoutBinomials(u_exact_bi);
-v_exact = GetWithoutBinomials(v_exact_bi);
 
 % Print the coefficients of f(x) and g(x)
-PrintCoefficients_Bivariate_Bernstein(f_exact,'f')
-PrintCoefficients_Bivariate_Bernstein(g_exact,'g')
+%PrintCoefficients_Bivariate_Bernstein(f_exact,'f')
+%PrintCoefficients_Bivariate_Bernstein(g_exact,'g')
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
 fx = VariableNoise(f_exact,emin,emax);
@@ -116,8 +95,8 @@ bool_CanBeCoprime = true;
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
-PrintCoefficients('u',u_exact, ux_calc);
-PrintCoefficients('v',v_exact, vx_calc);
+%PrintCoefficients('u',u_exact, ux_calc);
+%PrintCoefficients('v',v_exact, vx_calc);
 PrintCoefficients('d',d_exact, dx_calc);
 
 error_dx = GetError('d',d_exact,dx_calc);
@@ -156,6 +135,11 @@ end
 function [error] = GetError(name,f_calc,f_exact)
 % Get distance between f(x) and the calulated f(x)
 
+% Get the angle between the two vectors
+angle = dot(f_calc,f_exact) ./ (norm(f_calc) * norm(f_exact));
+angle_error = 1 - angle;
+fprintf('Calculated angle error : %8.2e \n', angle_error)
+
 f_calc  = Normalise(f_calc);
 f_exact = Normalise(f_exact);
 
@@ -167,6 +151,8 @@ fprintf('\tCalculated relative error %s : %8.2e \n ',name,rel_error_f);
 error = norm(abs(f_calc - f_exact) );
 
 fprintf('\tCalculated error %s : %8.2e \n', name,error);
+
+
 
 end
 
@@ -182,22 +168,23 @@ fullFileName = 'Results_o_gcd.txt';
 
 if exist('Results_o_gcd.txt', 'file')
     fileID = fopen('Results_o_gcd.txt','a');
-    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
+    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
         datetime('now'),...
         SETTINGS.PROBLEM_TYPE,...
         SETTINGS.EX_NUM,...
         int2str(m),...
         int2str(n),...
         int2str(t),...
-        error_dx,...
+        num2str(error_dx),...
         SETTINGS.MEAN_METHOD,...
         SETTINGS.BOOL_ALPHA_THETA,...
-        SETTINGS.EMAX,...
         SETTINGS.EMIN,...
+        SETTINGS.EMAX,...
         SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
         SETTINGS.APF_METHOD,...
         SETTINGS.BOOL_LOG,...
-        SETTINGS.BOOL_Q...
+        SETTINGS.BOOL_Q,...
+        SETTINGS.GCD_COEFFICIENT_METHOD...
     );
     fclose(fileID);
 else

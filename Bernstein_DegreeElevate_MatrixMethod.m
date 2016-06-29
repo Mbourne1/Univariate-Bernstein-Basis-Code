@@ -24,7 +24,7 @@ E = zeros(m+r+1,m+1);
 for j = 0:1:m
     % for each row of the matrix E
     for i = j:1:j+r
-        E(i+1,j+1) = nchoosek(r,i-j) * nchoosek(m,j)
+        E(i+1,j+1) = nchoosek(r,i-j) * nchoosek(m,j);
     end
 end
 

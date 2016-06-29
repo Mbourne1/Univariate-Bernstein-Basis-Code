@@ -1,5 +1,8 @@
 function [P] = BuildDP(m,n,theta,mincol,t)
-% Build the matrix DP. Used in SNTLN.
+% Build the matrix DP.
+% Used in SNTLN.m
+% Build the matrix such that DP * z gives the column of the Sylvester
+% matrix.
 %
 %
 % Inputs
@@ -59,31 +62,27 @@ end
 end
 
 function G = LeftDG_Build(m,n,t,mincol,theta)
+% Build the matrix G, where G forms part of DP.
 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %                           Inputs
+%
+% m : Degree of polynomial f
+%
+% n : Degree of polynomial g
+%
+% t : Degree of GCD
+%
+% mincol :
+%
+% theta :
 
-% m - Degree of polynomial f
-
-% n - Degree of polynomial g
-
-% t - Degree of GCD
-
-% mincol -
-
-% theta -
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %                           Global Variables
-
-% BOOL_LOG - (Boolean)
-%   1 :- Perform calculations by log method
-%   0 :- Perform calculations by standard method.
+%
 global SETTINGS
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 switch SETTINGS.BOOL_LOG
     case 'y' % use log
@@ -101,26 +100,20 @@ function G = RightDG_Build(n,m,t,mincol,theta)
 %
 %                               Inputs.
 %
-% m - Degree of polynomial f
+% m : Degree of polynomial f
 %
-% n - Degree of polynomial g
+% n : Degree of polynomial g
 %
-% t - Degree of GCD
+% t : Degree of GCD
 %
-% mincol -
+% mincol : index of column of S_{t}
 %
-% theta -
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% theta : Optimal value of theta
+
 
 %                           Global Variables.
 
-% BOOL_LOG - (Boolean)
-%   1 :- Perform calculations by log method
-%   0 :- Perform calculations by standard method.
 global SETTINGS
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch SETTINGS.BOOL_LOG
     case 'y' % use logs
@@ -136,32 +129,24 @@ end
 
 function [G] = LeftDG_Build_nchoosek(m,n,t,num_mincolumn,theta)
 %
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                               Inputs
-
-% m - Degree of polynomial f
-
-% n - Degree of polynomial g
-
-% t - Degree of GCD
-
-% mincol -
-
-% theta -
-
 %
-%                           Global Variables
+%                               Inputs
+%
+% m : Degree of polynomial f
+%
+% n : Degree of polynomial g
+%
+% t : Degree of GCD
+%
+% mincol :
+%
+% theta :
 
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
+
+%                           Global Variables
 global SETTINGS
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % Initalise vector G
 G = zeros(1,m+1);
@@ -170,7 +155,6 @@ G = zeros(1,m+1);
 j = num_mincolumn-1;
 
 for i = 0:1:m
-    
     G(i+1) =  (theta.^(i)) ...
         .* nchoosek(i+j,j) ...
         .* nchoosek(m+n-t-(i+j),n-t-j);
@@ -210,16 +194,8 @@ function [G] = LeftDG_Build_log(m,n,t,num_mincolumn,theta)
 % theta -
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %                       Global Variables
-
-% BOOL_DENOM - (Boolean) Given the rearrangement of the Sylvester matrix in
-% the Bernstein basis, each partition of each subresultant has a common
-% divisor to its elements.
-%    1 :- Include Common Denominator.
-%    0 :- Exclude Common Denominator.
 global SETTINGS
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialise empty vector G.

@@ -29,6 +29,9 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 % % Example
 %
 % >> o_roots('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
+%
+% >> o_roots('Custom:m=10 low=-1 high=1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
+
 
 % Set the problem type to a roots type problem.
 ProblemType = 'Roots';
@@ -40,7 +43,8 @@ if isempty(SETTINGS)
     SETTINGS.BOOL_Q = 'y';
     SETTINGS.BOOL_LOG = 'n';
     SETTINGS.ROOTS_HX = 'From Deconvolutions';
-    SETTINGS.DECONVOLVE_METHOD = 'Batch'
+    SETTINGS.DECONVOLVE_METHOD = 'Batch';
+    SETTINGS.GCD_COEFFICIENT_METHOD = 'ux';
 end
 
 SetGlobalVariables(ProblemType, ex_num, emin, emax,...
@@ -49,7 +53,6 @@ SetGlobalVariables(ProblemType, ex_num, emin, emax,...
 % Use the examples from a set of given roots
 global Example_Type 
 Example_Type = 'From Roots'; % fromRoots/fromCoefficients
-
 
 % Print Settings to console
 PrintGlobalVariables();
@@ -86,11 +89,13 @@ try
     time.MyMethod = toc(myMethodStart);
     errors.MyMethod = GetErrorMeasure(arr_root_mult_MyMethod,fx_exact);
     LineBreakLarge()
+    comp_roots.MyMethod = mat2str(arr_root_mult_MyMethod(:,1));
 catch err
     fprintf([mfilename ' : ' 'Error computing Roots by My Method \n' ])
     fprintf(err.message);
-    errors.MyMethod = 9999999;
-    time.MyMethod = 999999999;
+    errors.MyMethod = 999999999;
+    time.MyMethod   = 999999999;
+    comp_roots.MyMethod = mat2str([0 0 0 0 0 0]);
 end
 
 % %
@@ -103,6 +108,7 @@ try
     time.MusserMethod = toc(MusserMethodStart);
     errors.MusserMethod = GetErrorMeasure(arr_root_mult_MusserMethod,fx_exact);
     LineBreakLarge()
+    
 catch err
     
     fprintf([mfilename ' : ' 'Error computing Roots by Musser Method \n' ])
@@ -110,6 +116,8 @@ catch err
     errors.MusserMethod = 9999999;  
     time.MusserMethod = 9999999;
 end
+
+
 % %
 % %
 % %
@@ -177,7 +185,7 @@ end
 
 % %
 % %
-PrintToFile(errors,time)
+PrintToFile(comp_roots,errors,time)
 
 
 end
@@ -218,7 +226,7 @@ end
 end
 
 
-function []= PrintToFile(error,time)
+function []= PrintToFile(comp_roots,error,time)
 
 global SETTINGS
 
@@ -228,19 +236,19 @@ if exist(fullFileName, 'file')
     fileID = fopen(fullFileName,'a');
     
     str_errors = ' %s, \t %s, \t %s, \t %s, \t %s, \t';
-    str_globals = '%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \t';
+    str_globals = '%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \t';
     str_types = strcat(str_errors,str_globals, '\n');
     
     fprintf(fileID,str_types,...
         datetime('now'),...
         SETTINGS.PROBLEM_TYPE,...
         SETTINGS.EX_NUM,...
-        error.MyMethod,...
-        time.MyMethod,...
-        error.MusserMethod,...
-        time.MusserMethod,...
-        error.MatlabMethod,...
-        error.MultrootMethod,...
+        num2str(error.MyMethod),...
+        num2str(time.MyMethod),...
+        num2str(error.MusserMethod),...
+        num2str(time.MusserMethod),...
+        num2str(error.MatlabMethod),...
+        num2str(error.MultrootMethod),...
         SETTINGS.EMIN,...
         SETTINGS.EMAX,...
         SETTINGS.MEAN_METHOD,...
@@ -250,7 +258,8 @@ if exist(fullFileName, 'file')
         SETTINGS.BOOL_Q,...
         SETTINGS.DECONVOLVE_METHOD,...
         SETTINGS.BOOL_LOG,...
-        SETTINGS.ROOTS_HX...
+        SETTINGS.ROOTS_HX,...
+        comp_roots.MyMethod...
     );
     fclose(fileID);
 else

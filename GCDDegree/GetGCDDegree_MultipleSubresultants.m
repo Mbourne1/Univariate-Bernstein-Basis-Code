@@ -24,8 +24,8 @@ min_mn = lower_lim + length(vMinimumSingularValues) - 1;
 % maximum change occured.
 [maxChangeSingularValues, indexMaxChange] = Analysis(vMinimumSingularValues);
 
-fprintf([mfilename ' : ' calling_function ' : ' sprintf('Max Change : %2.4f \n', maxChangeSingularValues)]);
-fprintf([mfilename ' : ' calling_function ' : ' sprintf('Threshold : %2.4f \n',SETTINGS.THRESHOLD)]);
+display([mfilename ' : ' calling_function ' : ' sprintf('Max Change : %2.4f ', maxChangeSingularValues)]);
+display([mfilename ' : ' calling_function ' : ' sprintf('Threshold : %2.4f ',SETTINGS.THRESHOLD)]);
 
 
 if  abs(maxChangeSingularValues) < SETTINGS.THRESHOLD
