@@ -20,6 +20,26 @@ SETTINGS.EMAX = emax;
 % Set the problem Type
 SETTINGS.PROBLEM_TYPE = problemType;
 
+%
+% 'y' : include the matrix Q in the Sylvester matrix S = D^{-1}T(f,g)Q
+% 'n' : Sylvester matrix excludes Q, S = D^{-1}T(f,g)
+%
+SETTINGS.BOOL_Q = 'y';
+
+%
+% 'y' : Use Logs
+% 'n'
+%
+SETTINGS.BOOL_LOG = 'n';
+
+% When computing the GCD do we wish to use both u(x,y) and v(x,y) or only
+% u(x,y). Note: It is necessary to use both for standard GCD computations.
+%
+% 'ux and vx'
+% 'ux'
+%
+SETTINGS.GCD_COEFFICIENT_METHOD = 'ux and vx';
+
 
 % Get GCD Degree
 
@@ -54,7 +74,10 @@ SETTINGS.APF_BUILD_METHOD = 'Rearranged';
 SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
 SETTINGS.MEAN_METHOD = mean_method;
 
-%% Numerical Considerations
+
+% %
+% %
+% Numerical Considerations
 
 
 % Noise 
@@ -88,6 +111,9 @@ SETTINGS.MAX_ITERATIONS_APF = 50;
 % applicable, and the common denominators can not be removed.
 % Simplest method, no structure added.
 % Override users input options if incompatable.
+
+
+
 if (SETTINGS.BOOL_Q == 'n')
     SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
     SETTINGS.LOW_RANK_APPROXIMATION_METHOD = 'None';

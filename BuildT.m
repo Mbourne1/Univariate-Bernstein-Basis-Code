@@ -3,7 +3,7 @@ function T = BuildT(fx,gx,t)
 % f(x) and g(x).
 %
 %
-%                               Input
+% % Input
 %
 %
 % fx: vector of coefficients of f(x) in the standard bernstein basis. a_{i}
@@ -12,7 +12,7 @@ function T = BuildT(fx,gx,t)
 %
 % t : index of subresultant S_{t} to be formed. (Also degree of GCD)
 %
-%                              Output
+% % Output
 %
 %
 % T : the partitioned matrix T = [T(f) T(g)].

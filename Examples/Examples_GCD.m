@@ -1,4 +1,3 @@
-
 function [f_exact,g_exact,d_exact]=Examples_GCD(ex_num)
 % Inputs.
 %
@@ -20,11 +19,11 @@ EXAMPLE_TYPE = 'From Roots';
 
 switch EXAMPLE_TYPE
     case 'From Coefficients'
-        [f_exact,g_exact,d_exact] = FromCoefficients(ex_num);
+        [f_exact,g_exact,d_exact] = Examples_GCD_FromCoefficients(ex_num);
         
         
     case 'From Roots'
-        [f_roots,g_roots,d_roots] = FromRoots(ex_num);
+        [f_roots,g_roots,d_roots] = Examples_GCD_FromRoots(ex_num);
         
         f_exact_bi = B_poly(f_roots);
         g_exact_bi = B_poly(g_roots);
@@ -43,7 +42,7 @@ end
 
 end
 
-function [f,g,d] = FromCoefficients(ex_num)
+function [f,g,d] = Examples_GCD_FromCoefficients(ex_num)
 
     switch ex_num
         case '1'
@@ -64,7 +63,7 @@ function [f,g,d] = FromCoefficients(ex_num)
 
 end
 
-function [root_mult_array_fx, root_mult_array_gx , root_mult_array_dx] = FromRoots(ex_num)
+function [root_mult_array_fx, root_mult_array_gx , root_mult_array_dx] = Examples_GCD_FromRoots(ex_num)
 
 
 pattern = 'Custom:m=(\d+).n=(\d+).t=(\d+).low=(-?\d+).high=(-?\d+)';
@@ -292,7 +291,7 @@ else
                 0.5     3;
                 ]
             
-        case '13'
+        case '14'
             
             intvl_low = -1;
             intvl_high = 1;
@@ -340,5 +339,105 @@ t = d;
 end
 
 
+function d_roots = GetGCDRoots(f_roots,g_roots)
+% getDivisor(f_roots,g_roots)
+%
+% Given the set of roots of f(x) and roots of g(x) and their multiplicities,
+% get the common roots of polynomials f(x) and g(x) given by d(x).
+
+% get the number of roots in polynomial f
+num_roots_f = size(f_roots,1);
+
+% Initialise the set of roots of d(x)
+d_roots = [];
+
+% for each root in f(x), check to see if it exists in g(x)
+for i = 1:1:num_roots_f
+    
+    % Get the root of f(x)
+    root = f_roots(i,1);
+    
+    % Get the multiplicity of root r_{i}
+    mult_root_in_f = f_roots(i,2);
+    
+    % Get the number of distinct roots in g
+    [distinct_roots_g,~] = size(g_roots);
+    if  distinct_roots_g == 0
+        return
+    end
+    
+    % Look if the root r_{i} exists in g(x)
+    if ~isempty(find(g_roots(:,1) == root));
+        
+        % Get the index of the row which corresponds to the root r_{i} in
+        % the matrix of roots of g(x)
+        [row_d,~] = find(g_roots(:,1) == root);
+        
+        % Get the multiplicity of the root r_{i} in g(x)
+        mult_root_in_g = g_roots(row_d,2);
+        
+        % Calculate the multiplicity of the root in d(x)
+        mult_root_in_d = min(mult_root_in_f,mult_root_in_g);
+        
+        % Add the root to d(x)
+        d_roots = [d_roots ; root mult_root_in_d]; 
+    end
+end
 
 
+end
+
+
+function u_roots = GetQuotientRoots(f_roots,d_roots)
+% Fet the roots of quotient polynomial u(x) given the roots of polynomial 
+% f(x), and the roots of polynomial d(x), where d(x) is the GCD of f(x) and
+% g(x) and where f(x)/u(x) = d(x)
+
+% Get the number of distinct roots in f(x)
+nRoots_f_x = size(f_roots,1);
+
+% Initialise an empty matrix of roots in u(x)
+u_roots = [];
+
+% Catch the case that the degree of the GCD is zero, and therefore the quotient
+% polynomial u(x) is equal to f(x)
+[nRoots_d,~] = size(d_roots);
+if nRoots_d == 0 % If d has no roots, then d is scalar and u(x) = f(x)
+    u_roots = f_roots;
+    return
+end
+
+% For each root of f(x), check to see if it exists in d(x).
+for i = 1:1:nRoots_f_x
+    
+    % Get the root r_{i}
+    root = f_roots(i,1);
+    
+    % Get the multiplicity of the root r_{i}
+    mult_f = f_roots(i,2);
+    
+    % Look up the root in roots of d
+    if ~isempty(find(d_roots(:,1) == root));
+    
+        % Get the row on which we find the root
+        [row_d,~] = find(d_roots(:,1) == root);
+        
+        % Get the multiplicity of the root
+        mult_d = d_roots(row_d,2);
+        
+        % Subtract multiplicty in d to obtain multiplicity in quotient
+        % polynomial u
+        mult_u = mult_f - mult_d;
+        
+        % Add the root and its multiplicity to the set of roots for
+        % quotient polynomial u
+        if mult_u > 0
+            u_roots = [u_roots; root mult_u];
+        end
+        
+    else
+        
+        u_roots = [u_roots; root mult_f];
+    end
+end
+end

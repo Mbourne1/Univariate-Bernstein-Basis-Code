@@ -1,4 +1,4 @@
-function hi = Deconvolve_Independent(set_g)
+function hi = Deconvolve_Separate(set_g)
 % Given a set of polynomials g_{i}, Perform a series of deconvolutions 
 % independently, and output the solutions as an array of vectors.
 %

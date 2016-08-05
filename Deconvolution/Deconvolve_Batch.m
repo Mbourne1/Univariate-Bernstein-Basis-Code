@@ -317,6 +317,8 @@ switch SETTINGS.BOOL_LOG
         
     case 'n' % use nchoosek
         Y1 = BuildD0Y1U1_nchoosek(hx,m1);
+    otherwise
+        error([mfilename ' : ' 'BOOL_LOG is either (y) or (n)'])
 end
 end
 

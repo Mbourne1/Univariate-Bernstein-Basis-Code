@@ -153,7 +153,7 @@ gw = GetWithThetas(gx_n,theta);
 St_low_rank = BuildSubresultant(fw,alpha.*gw,t);
 
 % % Get the coefficients of the GCD
-dx = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta);
+dx = GetGCDCoefficients(ux,vx,fx_n,gx_n,t,alpha,theta);
 
 
 

@@ -43,21 +43,15 @@ gx_n = gx./ mu;
 
 switch SETTINGS.BOOL_ALPHA_THETA
     case 'y'
-  
+        
         % For each coefficient ai of F, obtain the max and min such that F_max =
         % [max a0, max a1,...] and similarly for F_min, G_max, G_min
+        
         
         [v_F_max,v_F_min] = GetMaxMin(fx_n,n-k);
         [v_G_max,v_G_min] = GetMaxMin(gx_n,m-k);
         
-        
-        f_max = max(v_F_max);
-        f_min = min(v_F_min);
-        g_max = max(v_G_max);
-        g_min = min(v_G_min);
-        
-        
-        PrintToFile(f_max,f_min,g_max,g_min,m,n,k,1,1)
+        print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
         
         % Calculate the optimal value of alpha and theta for the kth
         % subresultant matrix.
@@ -75,12 +69,7 @@ switch SETTINGS.BOOL_ALPHA_THETA
         [v_F_max,v_F_min] = GetMaxMin(fw,n-k);
         [v_G_max,v_G_min] = GetMaxMin(alpha.*gw,m-k);
         
-        f_max = max(v_F_max);
-        f_min = min(v_F_min);
-        g_max = max(v_G_max);
-        g_min = min(v_G_min);
-        
-        PrintToFile(f_max,f_min,g_max,g_min,m,n,k,alpha,theta)
+        print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
         
         % Testing to see if preprocessing lowers condition number
         fprintf([mfilename ' : ' sprintf('Condition S(f(x),g(x)) : %2.4e \n', cond(BuildDTQ(fx,gx,k)))]);
@@ -122,9 +111,26 @@ if exist('Results_Preprocessing.txt', 'file')
         );
     fclose(fileID);
 else
-  % File does not exist.
-  warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
-  uiwait(msgbox(warningMessage));
+    % File does not exist.
+    warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
+    uiwait(msgbox(warningMessage));
 end
 
+end
+
+function [] = print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k)
+% Get maximum entry of all entries of T_{n-k}(f)
+f_max = max(v_F_max);
+
+% Get minimum entry of all entries of T_{n-k}(f)
+f_min = min(v_F_min);
+
+% Get maximum entry of all entries of T_{m-k}(g)
+g_max = max(v_G_max);
+
+% Get minimum entry of all entries of T_{m-k}(g)
+g_min = min(v_G_min);
+
+% Print max and minimum entries
+PrintToFile(f_max,f_min,g_max,g_min,m,n,k,1,1)
 end

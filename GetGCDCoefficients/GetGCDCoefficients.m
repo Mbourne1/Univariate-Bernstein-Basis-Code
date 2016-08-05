@@ -1,4 +1,4 @@
-function [dx] = GetGCD(ux,vx,fx_n,gx_n,t,alpha,theta)
+function [dx] = GetGCDCoefficients(ux,vx,fx_n,gx_n,t,alpha,theta)
 % Get The Coefficients of the approximate GCD using Quotient Polynomials.
 %
 % Inputs

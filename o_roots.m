@@ -84,9 +84,16 @@ fx = VariableNoise(fx_exact,emin,emax);
 % %
 % Calculate roots by mymethod.
 try
+    % Start timer
     myMethodStart = tic;
+    
+    % Get roots by my method
     arr_root_mult_MyMethod = o_roots_mymethod(fx);
+    
+    % End timer
     time.MyMethod = toc(myMethodStart);
+    
+    % Get error
     errors.MyMethod = GetErrorMeasure(arr_root_mult_MyMethod,fx_exact);
     LineBreakLarge()
     comp_roots.MyMethod = mat2str(arr_root_mult_MyMethod(:,1));

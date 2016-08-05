@@ -30,7 +30,7 @@ switch nargin
         
         y = (2*rand(m+1,1))-ones(m+1,1);
         s = eu *ones(m+1,1) -  y.*(eu-el);
-        noisevector = f'.*s;
-        f_noisy = f + noisevector';
+        noisevector = f.*s;
+        f_noisy = f + noisevector;
 end
 
