@@ -26,6 +26,8 @@ LHS_Matrix = BuildDTQ(arr_fx,vMult);
 % %
 % Build the RHS vector
 
+
+
 % RHS vector consists of f_{1},...,f_{m_{i}} where m_{i} is the highest
 % degree of any root of f_{0}(x).
 RHS_vec = [];
