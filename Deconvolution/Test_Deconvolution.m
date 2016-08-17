@@ -1,4 +1,4 @@
-function [] = Test_Deconvolution
+function [] = Test_Deconvolution(ex_num)
 % Test the different methods of deconvolving the polynomials f_{i}(x), to
 % form the set of polynomials h_{i} where h_{i} = f{i}/f_{i+1}
 %
@@ -21,7 +21,6 @@ SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
 x = sym('x');
 
 % Set example number 
-ex_num = '1';
 
 switch ex_num
     case '1'
@@ -80,7 +79,7 @@ vDeg_arr_wx = diff([vDeg_arr_hx 0]);
 vMultiplicities = find(vDeg_arr_wx~=0);
 
 % Get the sequence of polynomials h_{i}(x) in symbolic form
-sym_arr_h = cell(length(arr_sym_f)-1,1)
+sym_arr_h = cell(length(arr_sym_f)-1,1);
 for i = 1:1:length(arr_sym_f)-1
     sym_arr_h{i} = arr_sym_f{i} / arr_sym_f{i+1};
 end
@@ -108,11 +107,11 @@ end
 % %
 % Convert to Bernstein Basis
 for i = 1:1:length(arr_fx)
-    arr_fx{i,1} = PowerToBernstein(arr_fx{i,1})
+    arr_fx{i,1} = PowerToBernstein(arr_fx{i,1});
 end
 
 for i = 1:1:length(arr_hx)
-    arr_hx{i,1} = PowerToBernstein(arr_hx{i,1})
+    arr_hx{i,1} = PowerToBernstein(arr_hx{i,1});
 end
 
 
@@ -133,6 +132,40 @@ end
 
 
 
+%--------------------------------------------------------------------------
+% %
+% %
+% %
+% Testing deconvolution
+LineBreakLarge();
+fprintf([mfilename ' : ' 'Deconvolution Separate \n']);
+
+
+arr_hx_Separate = Deconvolve_Separate(arr_fx_noisy);
+vError_Separate = GetErrors(arr_hx_Separate,arr_hx);
+
+
+%--------------------------------------------------------------------------
+% %
+% %
+% %
+% Testing standard deconvolution batch method
+LineBreakLarge();
+fprintf([mfilename ' : ' 'Deconvolution Batch\n']);
+
+arr_hx_Batch = Deconvolve_Batch(arr_fx_noisy);
+
+vError_Batch = GetErrors(arr_hx_Batch,arr_hx);
+
+%--------------------------------------------------------------------------
+% %
+% %
+% %
+% Testing standard deconvolution batch method
+LineBreakLarge();
+fprintf([mfilename ' : ' 'Deconvolution Batch (Staircase Method)\n']);
+arr_hx_BatchSTLN = Deconvolve_Batch_With_STLN(arr_fx_noisy);
+vError_BatchSTLN = GetErrors(arr_hx_BatchSTLN,arr_hx);
 
 % -------------------------------------------------------------------------
 % %
@@ -141,101 +174,59 @@ end
 % Testing deconvolution batch method with constraints
 
 LineBreakLarge()
-fprintf('Deconvolve with the constraint that all h_{i} for i between m_{j} and m_{j+1} are equal \n')
-fprintf('Staggered Staircase Method \n\n')
+fprintf([mfilename ' : ''Deconvoltuion Batch Constrained \n']);
 
-arr_hx_test_1 = Deconvolve_Batch_Constrained(arr_fx_noisy,vMultiplicities);
+arr_hx_BatchConstrained = Deconvolve_Batch_Constrained(arr_fx_noisy,vMultiplicities);
 
-for i = 1:1:length(arr_hx_test_1)
-    %display(arr_hx_test_1{i} );
-end
-
-% Compare each computed h{i} with actual h_{i}
-for i = 1:1:length(arr_hx_test_1)
-    
-    exact = arr_hx{i};
-    comp = arr_hx_test_1{i};
-    
-    err_measure = norm(exact - comp) ./ norm(exact);
-    fprintf([mfilename ': ' sprintf('%i : Error : %2.4e \n', i,err_measure)]);
-end
+vError_BatchConstrained = GetErrors(arr_hx_BatchConstrained,arr_hx);
 
 % -------------------------------------------------------------------------
 % %
 % %
 % %
-% Testing deconvolution batch method with constraints and low rank approx
+% Testing deconvolution batch method with constraints
 
-% LineBreakLarge()
-% fprintf('Deconvolve with the constraint that all h_{i} for i between m_{j} and m_{j+1} are equal \n')
-% fprintf('With STLN \n')
-% fprintf('Staggered Staircase Method \n\n')
-% 
-% arr_hx_test_3 = Deconvolve_Batch_Constrained_With_STLN(arr_fx_noisy,vMultiplicities);
-% 
-% for i = 1:1:length(arr_hx_test_3)
-%     %display(arr_hx_test_1{i} );
-% end
-% 
-% % Compare each computed h{i} with actual h_{i}
-% for i = 1:1:length(arr_hx_test_3)
-%     
-%     exact = arr_hx{i};
-%     comp = arr_hx_test_3{i};
-%     
-%     err_measure = norm(exact - comp) ./ norm(exact);
-%     fprintf([mfilename ': ' sprintf('%i : Error : %2.4e \n', i,err_measure)]);
-% end
+LineBreakLarge()
+fprintf([mfilename ' : ''Deconvoltuion Batch Constrained With STLN \n']);
 
-%--------------------------------------------------------------------------
-% %
-% %
-% %
-% Testing standard deconvolution batch method
-LineBreakLarge();
-fprintf('Deconvolution Batch (Staircase Method)\n')
+%arr_hx_BatchConstrainedSTLN = Deconvolve_Batch_Constrained(arr_fx_noisy,vMultiplicities);
 
-arr_hx_test_3 = Deconvolve_Batch(arr_fx_noisy);
-for i = 1:1:length(arr_hx_test_3)
-    %display(arr_hx_test_2{i});
+%vError_BatchConstrainedSTLN = GetErrors(arr_hx_BatchConstrainedSTLN,arr_hx);
+% -------------------------------------------------------------------------
+
+nPolys_hx = size(arr_hx,1);
+
+figure()
+hold on
+plot(log10(vError_Separate),'-s','DisplayName','Separate')
+plot(log10(vError_Batch),'-s','DisplayName','Batch')
+plot(log10(vError_BatchSTLN),'-s','DisplayName','Batch STLN')
+plot(log10(vError_BatchConstrained),'-s','DisplayName','Batch Constrained')
+legend(gca,'show');
+%plot(vError_BatchConstrainedSTLN)
+xlim([1 nPolys_hx]);
+xlabel('Factor')
+
+ylabel('log_{10} error')
+
+hold off
 end
 
+
+function vErrors = GetErrors(arr_hx_comp,arr_hx_exact)
 % Compare each computed h{i} with actual h_{i}
-for i = 1:1:length(arr_hx_test_3)
+
+nPolys_hx = size(arr_hx_comp,1);
+
+vErrors = zeros(nPolys_hx,1);
+
+for i = 1:1:nPolys_hx
     
-    exact = arr_hx{i};
-    comp = arr_hx_test_3{i};
+    exact = arr_hx_exact{i}./ arr_hx_exact{i,1}(1,1);
+    comp = arr_hx_comp{i}./arr_hx_comp{i,1}(1,1);
     
-    err_measure = norm(exact - comp) ./ norm(exact);
-    fprintf([mfilename ': ' sprintf('%i : Error : %2.4e \n', i,err_measure)]);
+    vErrors(i) = norm(exact - comp) ./ norm(exact);
+    
+    
 end
-
-
-
-%--------------------------------------------------------------------------
-% %
-% %
-% %
-% Testing deconvolution
-LineBreakLarge();
-fprintf('Deconvolve - Each deconvolution is independent \n');
-fprintf('Deconvolution Separate \n');
-
-
-arr_hx_test_4 = Deconvolve_Separate(arr_fx_noisy);
-
-for i = 1:1:length(arr_hx_test_4)
-    %display(arr_hx_test_3{i});
-end
-% Compare each computed h{i} with actual h_{i}
-for i = 1:1:length(arr_hx_test_4)
-    
-    exact = arr_hx{i};
-    comp = arr_hx_test_4{i};
-    
-    err_measure = norm(exact - comp) ./ norm(exact);
-    fprintf([mfilename ': ' sprintf('%i : Error : %2.4e \n', i,err_measure)]);
-end
-
-
 end

@@ -26,12 +26,14 @@ LHS_Matrix = BuildDTQ(arr_fx,vMult);
 % %
 % Build the RHS vector
 
-
+% Get number of polynomials in array of f_{i}(x)
+nPolys_arr_fx = size(arr_fx,1);
+nPolys_hx = nPolys_arr_fx - 1;
 
 % RHS vector consists of f_{1},...,f_{m_{i}} where m_{i} is the highest
 % degree of any root of f_{0}(x).
 RHS_vec = [];
-for i = 1:1:length(arr_fx)-1
+for i = 1:1:nPolys_arr_fx - 1;
     RHS_vec = [RHS_vec ; arr_fx{i}];
 end
 
@@ -45,7 +47,7 @@ for i = 1:1:length(unique_vMult)
     mult = unique_vMult(i);
     deg = GetDegree(arr_fx{mult}) - GetDegree(arr_fx{mult+1});
        
-    arr_px{i} = x_temp(1:deg+1);
+    arr_px{i,1} = x_temp(1:deg+1);
     x_temp(1:deg+1) = [];
 end
 
@@ -55,10 +57,16 @@ end
 % Get the polynomials p_{i}(x) repeated to give the set of polynomials
 % h_{i}(x).
 
-nEntries_px = length(arr_px);
+% Get number of entries in array of polynomials p_{i}(x)
+nPolys_arr_px = size(arr_px,1);
 
+% Initialise the array of h_{i}(x)
+arr_hx = cell(nPolys_arr_fx-1,1);
+
+% Initialise a count
 count = 1;
-for i = 1:1:nEntries_px
+
+for i = 1:1:nPolys_arr_px
         
     if i == 1
         nReps = unique_vMult(i);
@@ -67,7 +75,7 @@ for i = 1:1:nEntries_px
     end
         
     for j = 1:1:nReps
-        arr_hx{count} = arr_px{i};
+        arr_hx{count,1} = arr_px{i};
         count = count + 1; 
     end
     

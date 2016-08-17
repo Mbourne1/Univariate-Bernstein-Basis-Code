@@ -1,0 +1,91 @@
+function arr_hx = Deconvolve_Batch(arr_fx)
+% Perform batch deconvolution
+
+% Get the number of polynomials in the set set_f
+nPolys_arr_fx = size(arr_fx,1);
+
+% let d be the number of deconvolutions = num of polynomials in set_f - 1
+nPolys_arr_hx = nPolys_arr_fx - 1;
+
+% %
+% %
+% Get the degree m_{i} of each of the polynomials f_{i}
+
+% Intialise vector to store the degree of the set of polynomaisl f_{i}
+vDeg_arr_fx = zeros(1,nPolys_arr_fx);
+
+% For each polynomial f_{i}, get its degree.
+for i = 1:1:nPolys_arr_fx
+    vDeg_arr_fx(i) = GetDegree(arr_fx{i});
+end
+
+% %
+% %
+% %
+% Get the degrees n{i} of polynomials h_{i} = f_{i}/f_{i+1}.
+vDeg_arr_hx = vDeg_arr_fx(1:end-1) - vDeg_arr_fx(2:end); 
+
+
+% %
+% % Preprocessing
+% %
+% Obtain theta such that the ratio of max element to min element is
+% minimised
+%theta = GetOptimalTheta(arr_fx,vDeg_arr_fx);
+theta = 1;
+
+% % 
+% %
+% Initialise a cell-array for f(w)
+% %
+arr_fw = cell(nPolys_arr_fx,1);
+
+% for each f_{i} get fw_{i}
+for i = 1:1:length(arr_fx)
+    arr_fw{i,1} = GetWithThetas(arr_fx{i},theta);
+end
+
+% % 
+% %
+% %
+% Write Deconvolutions in form [D^{-1}C(f)Q] h = RHS_f
+RHS_vec = real(BuildRHSF(arr_fw));
+DCQ = BuildDCQ(arr_fw);
+
+% Get the solution vector h(w) in the system of equations
+% DCQ * hw = RHS_vec.
+v_hw = SolveAx_b(DCQ,RHS_vec);
+
+
+% %
+% %
+% %
+% Seperate solution vector h, into component parts h_{1},h_{2},...h_{d},
+% each of degree n_{i}
+% initialise a cell array to store the coefficients of the individual
+% polynomials h_{i}
+
+% Split vec h in to an array of polynomials.
+
+% I
+arr_hw = cell(nPolys_arr_hx,1);
+GetArray(hw,vDeg_arr_hw);
+
+
+for i = 1:1:nPolys_arr_fx-1
+    
+    % Get degree of h{i}
+    deg_hw = vDeg_arr_hx(i);
+    
+    % Get coefficients of h_{i} from the solution vector
+    arr_hw{i} = v_hw(1:deg_hw+1);
+    
+    % Remove the coefficients from the solution vector
+    v_hw(1:deg_hw+1) = [];
+end
+
+v_hw = v_hw;
+
+
+
+end
