@@ -1,7 +1,7 @@
 function [arr_hx] = Deconvolve_Batch_With_STLN(arr_fx)
 % Performs a series of d deconvolutions over a set of polynomials,
 % where each polynomial g_{i} appears in two of the deconvolutions.
-% 
+%
 %
 % Input:
 %
@@ -17,19 +17,17 @@ function [arr_hx] = Deconvolve_Batch_With_STLN(arr_fx)
 % Global Variables
 global SETTINGS
 
-
-
-% Get the number of polynomials in the set set_f
+% Get the number of polynomials in the array of f_{i}(x)
 nPolys_arr_fx = size(arr_fx,1);
 
-% let d be the number of deconvolutions = num of polynomials in set_f - 1
+% Get number of polynomials in the array arr_hxy of h_{i}(x)
 nPolys_arr_hx = nPolys_arr_fx - 1;
 
 % %
 % %
 % Get the degree m_{i} of each of the polynomials f_{i}
 
-% Intialise m
+% Initialise vector to store degrees of f_{i}(x)
 vDeg_arr_fx = zeros(nPolys_arr_fx,1);
 
 % For each polynomial f_{i}, get its degree.
@@ -40,11 +38,11 @@ end
 % %
 % %
 % %
-% Get the degrees n{i} of polynomials h_{i} = f_{i}/f_{i+1}.
-vDeg_arr_hx = (vDeg_arr_fx(1:end-1) - vDeg_arr_fx(2:end)); 
+% Get the degrees n{i} of polynomials h_{i} = f_{i-1}/f_{i}.
+vDeg_arr_hx = (vDeg_arr_fx(1:end-1) - vDeg_arr_fx(2:end));
 
 
-% Define M to be the total number of coefficeints of all the polynomials 
+% Define M to be the total number of coefficeints of all the polynomials
 % f_{i} excluding the last f_{i}.
 % f_{0},...,f_{nPolys_f-1}.
 M = sum(vDeg_arr_fx+1)-(vDeg_arr_fx(end:end)+1);
@@ -56,35 +54,49 @@ M1 = sum(vDeg_arr_fx+1);
 % Define N to be the number of coefficients of all h_{i}
 N = sum(vDeg_arr_hx+1);
 
-% %
-% % Preprocessing
-% %
-% Obtain theta such that the ratio of max element to min element is
-% minimised
-%theta = GetOptimalTheta(arr_fx,vDeg_arr_fx);
-theta = 1;
+%
+% y - Preprocess
+% n - Dont preprocess
+SETTINGS.PREPROC_DECONVOLUTIONS;
 
-% % 
+switch SETTINGS.PREPROC_DECONVOLUTIONS
+    case 'y'
+        theta = GetOptimalTheta(arr_fx);
+        fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
+    case 'n'
+        theta = 1;
+    otherwise
+        error([mfilename ' : error '])
+end
+
 % %
+% %
+% Get preprocessed f(\omega) from f_{i}(x)
+
 % Initialise a cell-array for f(w)
-% %
 arr_fw = cell(nPolys_arr_fx,1);
 
-% for each f_{i} get fw_{i}
+% for each f_{i}(x,y) get f_{i}(w,w)
 for i = 1:1:nPolys_arr_fx
     arr_fw{i} = GetWithThetas(arr_fx{i},theta);
 end
 
-% % 
 % %
 % %
-% Write Deconvolutions in form [D^{-1}C(f)Q] h = RHS_f
+% %
+% Write Deconvolutions in form [D^{-1}T(f)Q] h = RHS_f
+
+% %
+% %
+% Get the right hand side vector of coefficients of f_{\omega}
 vRHS_fw = BuildRHSF(arr_fw);
-DCQ = BuildDCQ(arr_fw);
+
+% Get the Left hand side matrix C(f1,...,fd)
+DT_fwQ = BuildDTQ(arr_fw);
 
 % Get the solution vector h(w) in the system of equations
 % DCQ * hw = RHS_vec.
-v_hw = SolveAx_b(DCQ,vRHS_fw);
+v_hw = SolveAx_b(DT_fwQ,vRHS_fw);
 
 
 % %
@@ -109,19 +121,19 @@ arr_hw = GetArray(v_hw,vDeg_arr_hx);
 arr_zw = cell(nPolys_arr_fx,1);
 
 for i =1:1:nPolys_arr_fx
-
+    
     % initialise polynomial z_{i} as a zero vector.
     arr_zw{i,1} = zeros(vDeg_arr_fx(i)+1,1);
+    
     
 end
 
 % Build vector z, consisting of all vectors z_{i}
-z_o = cell2mat(arr_zw);
+v_zw = cell2mat(arr_zw);
 
 
 % Build the Matrix P
 P = [eye(M) zeros(M,M1-M)];
-%P = [eye(M) eye(M,M1-M)];
 
 % Get Vector of perturbations for RHS by multiplying perturbation vector by
 % P, such that we eliminate the z_max
@@ -129,28 +141,24 @@ P = [eye(M) zeros(M,M1-M)];
 % Build Matrix Y, where E(z)h = Y(h)z
 DYU = BuildDYU(arr_hw,vDeg_arr_fx);
 
-% Compute the first initial residual
-residual_o = (vRHS_fw + (P*z_o) - (DCQ*v_hw));
+% Compute the initial residual
+res_vec = (vRHS_fw + (P*v_zw) - (DT_fwQ*v_hw));
 
 % Set the iteration counter.
 ite = 1;
 
 F = eye(N+M1);
 
-G = [DCQ (DYU)-P];
+G = [DT_fwQ (DYU)-P];
 
-s = [v_hw ; z_o];
+s = [v_hw ; v_zw];
 
-t = residual_o;
-
-condition(ite) = norm(residual_o)./ norm(vRHS_fw);
-
-v_zw = z_o;
+condition(ite) = norm(res_vec)./ norm(vRHS_fw);
 
 start_point = ...
     [
     v_hw;
-    z_o;
+    v_zw;
     ];
 
 yy = start_point;
@@ -163,7 +171,7 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     % Use the QR decomposition to solve the LSE problem and then
     % update the solution.
     % min |Fy-s| subject to Gy=t
-    y = LSE(F,s,G,t);
+    y = LSE(F,s,G,res_vec);
     
     yy = yy + y;
     
@@ -188,13 +196,13 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     
     %Increment s in LSE Problem
     s = -(yy-start_point);
-     
+    
     %Build iterative DYU
     DYU = BuildDYU(arr_hw,vDeg_arr_fx);
     
     % Build DCEQ
-    DC_fQ = BuildDCQ(arr_fw);
-    DC_zQ = BuildDCQ(arr_zw);
+    DC_fQ = BuildDTQ(arr_fw);
+    DC_zQ = BuildDTQ(arr_zw);
     
     % Build G
     G = [(DC_fQ + DC_zQ) (DYU-P)];
@@ -204,19 +212,18 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     vRHS_zw = BuildRHSF(arr_zw);
     
     % Calculate residual and increment t in LSE Problem
-    r = ((vRHS_fw + vRHS_zw ) - ((DC_fQ + DC_zQ)*v_hw));
-    t = r;
+    res_vec = ((vRHS_fw + vRHS_zw ) - ((DC_fQ + DC_zQ)*v_hw));
+    
     
     % Get the condition
-    condition(ite +1) = norm(r)./norm((vRHS_fw + vRHS_zw));
+    condition(ite +1) = norm(res_vec)./norm((vRHS_fw + vRHS_zw));
     
     % Increment iteration number
     ite = ite + 1;
     
 end
 
-% Get the array of polynomials h_{i}(w) without thetas.
-
+% Get the array of polynomials h_{i}(x) from h_{i}(w) by removing thetas.
 arr_hx = cell(nPolys_arr_hx,1);
 for i = 1:1:nPolys_arr_hx
     arr_hx{i} = GetWithoutThetas(arr_hw{i},theta);
@@ -236,7 +243,7 @@ hold off
 
 end
 
-function Y_new = BuildDYU(arr_hw,vDeg_arr_fx)
+function Y_new = BuildDYU(arr_hx,vDeg_arr_fx)
 % Build the coefficient matrix DYU. This is the change of variable such
 % that
 % D^{-1}*E(z)*Q * g = D^{-1}*Y(g)*U * z
@@ -247,9 +254,9 @@ function Y_new = BuildDYU(arr_hw,vDeg_arr_fx)
 %
 % vDeg_arr_fx : vector of degrees of polynomials f_{0},...
 
-nPolys_hw = size(arr_hw,1);
+nPolys_arr_hx = size(arr_hx,1);
 
-for i = 1:1:nPolys_hw
+for i = 1:1:nPolys_arr_hx
     
     % Start with f1*h1
     % h_{1} is the first in the cell array h_{i}
@@ -257,12 +264,12 @@ for i = 1:1:nPolys_hw
     % deg(f_{1}) = m(2)
     
     % Get polynomial h(w)
-    hw = arr_hw{i,1};
+    hx = arr_hx{i,1};
     
     % Get degree of f_{i}
-    deg_fw = vDeg_arr_fx(i+1);
+    deg_fx = vDeg_arr_fx(i+1);
     
-    y{i,1} = real(BuildD0Y1U1(hw,deg_fw));
+    y{i,1} = real(BuildD0Y1U1(hx,deg_fx));
 end
 
 %Build the Coefficient Matrix C
@@ -303,7 +310,7 @@ function Y1 = BuildD0Y1U1_nchoosek(hx,m1)
 %
 % hx : Coefficients of polynomial h_{i}(x)
 %
-% m1 : Degree of polynomial f_{i} 
+% m1 : Degree of polynomial f_{i}
 
 global SETTINGS
 
@@ -399,171 +406,24 @@ end
 
 
 
-function opt_theta = getOptimalTheta(set_f,v_m)
-% Get optimal value of theta for the matrix. 
-%
-%
-% Inputs
-%
-% set_f : Set of vectors f_{i}
-%
-% v_m : vector which stores each m_{i}, the degree of the polynomial f_{i}
-%
-%
 
 
-% Let f_{i} denote the ith polynomial stored in the array set_g
-%
-
-
-% Get number of polynomials in set_g
-nPolys = length(set_f);
-
-%For each coefficient ai,j
-% Let \lambda_{i,j} be its max value in c_i(f_i)
-% Let \mu_{i,j} be its min value in c_{i}(f_i)
-
-F_max = cell(1,nPolys-1);
-F_min = cell(1,nPolys-1);
-
-% For each polynomial f_{1},...,f_{}, note we exclude f_{0} from this,
-% since f_{0} does not appear in the LHS matrix.
-for i = 1:1:nPolys-1  
-    
-    % Get polynomial f_{i} from the set g containing all f_{i}
-    prev_fw = set_f{i+1};
-    fw = set_f{i+1};
-    
-    deg_fw = GetDegree(fw);
-    deg_prev_fw = GetDegree(prev_fw);
-    
-    deg_hw = deg_fw - deg_prev_fw;
-    
-    % Each coefficient a_{j} of polynomial f_{i} appears in deg(h_{i})
-    % columns, where the degree of h_{i} = m(i-1) - m(i).
-    
-    % Assign empty vectors for the max and minimum values of each
-    % coefficient in F.
-    F_max{i} = zeros(1,v_m(i+1)+1);
-    F_min{i} = zeros(1,v_m(i+1)+1);
-    
-    % For each coefficient a_{j} in f_{i+1}
-    for j = 0:1:deg_hw
-        
-        % Get the coefficient a_{j} of polynomial f_{i}
-        aij = fw(j+1);
-        
-        % initialise a vector to store all the a_{i}
-        x = zeros(1,deg_hw+1);
-        
-        % For each occurence of the coefficient ai_j in the columns of C(fi)
-        for k = 0:1: deg_hw
-            x(k+1) = aij .* nchoosek(j+k,k) .* nchoosek(v_m(i)-(j+k),v_m(i+1)-j) ./ nchoosek(v_m(i),v_m(i+1));
-            %x(k+1) = aij .* nchoosek(deg_fw,j+k) * nchoosek(deg_hw,k) ./ nchoosek(deg_fw + deg_hw,j);
-            
-        end
-        
-        % Get max entry of each coefficient.
-        F_max{i}(j+1) = max(abs(x));
-        % Get min entry of each coefficient.
-        F_min{i}(j+1) = min(abs(x));
-        
-    end
-end
-
-opt_theta = MinMaxOpt(F_max,F_min);
-
-end
-
-function theta = MinMaxOpt(F_max,F_min)
-%
-% This function computes the optimal value theta for the preprocessing
-% opertation as part of block deconvolution
-%
-% F_max   :  A vector of length m1+1 + m2+1 + ... + md+1, such that F_max(i) stores the
-%            element of maximum magnitude of D(C(f))Q that contains the
-%            coefficient a(i,j) of polys fi, j=0,...,m1.
-%
-% F_min   :  A vector of length m+1, such that F_min(i) stores the
-%            element of minimum magnitude of S(f,g)Q that contains the
-%            coefficient a(i) of f, i=1,...,m+1.
-%
-
-% Get the number of polynomials
-nPolys = size(F_max,2);
-
-
-
-f = [1 -1 0];
-
-Part1 = [];
-
-% For each Ai
-for i = 1:1:nPolys
-    
-    % Get the max of each coefficient of polynomial fw
-    fw_max = F_max{i};
-    % Get Degree of the polynomial 
-    deg_fw = GetDegree(fw_max);
-    
-    % Build the matrix A_{i}
-    Ai = [ones(deg_fw+1,1) zeros(deg_fw+1,1)   -(0:1:deg_fw)'];
-    
-    % Append the matrix
-    Part1 = [Part1 ; Ai];
-end
-
-
-Part2 = [];
-% For each Bi
-for i = 1:1:nPolys
-    
-    % Get the max of each coefficient in polynomial f(x)
-    fw_max = F_max{i};
-    
-    % Get the degree of the polynomial f(x)
-    deg_fw = GetDegree(fw_max);
-    
-    Bi = [zeros(deg_fw+1,1) -ones(deg_fw+1,1) (0:1:deg_fw)'];
-    
-    Part2 = [Part2 ; Bi];
-end
-
-A = -[Part1;Part2];
-
-% Get the array of entries F_max_{i} as a vector
-v_F_max = cell2mat(F_max)';
-v_F_min = cell2mat(F_min)';
-
-b = [-log10(v_F_max); log10(v_F_min)];
-
-
-% Solve the linear programming problem and extract alpha and theta
-% from the solution vector x.
-try
-    x = linprog(f,A,b);
-    theta = 10^x(3);
-catch
-    fprintf('Error Calculating Optimal value of theta\n');
-    theta = 1;
-    
-end
-
-end
-
-function DCQ = BuildDCQ(set_fx)
+function DCQ = BuildDTQ(arr_fx)
 % set fw is the cell array of poly coefficiencts fw_i
 %
 % Inputs.
 
+% Get number of polynomials in array of f_{i}(x)
+nPolys_arr_fx = size(arr_fx,1);
+
 % For each of the polynomials f_{i}(x), excluding the final polynomial
-for i = 1:1:length(set_fx)-1
+for i = 2:1:nPolys_arr_fx
     
-    % Get the polynomial f_{i} = set_f{i+1} 
-    fw = set_fx{i+1};
+    % Get the polynomial f_{i} = set_f{i+1}
+    fw = arr_fx{i};
     
     % Get the polynomial f_{i-1} = set_f{i}
-    fw_prev = set_fx{i};
+    fw_prev = arr_fx{i-1};
     
     % Get degree of polynomial f_{i} = m_{i}
     deg_fw = GetDegree(fw);
@@ -576,10 +436,10 @@ for i = 1:1:length(set_fx)-1
     
     % Build the Matrix T(f)
     T1 = BuildT1(fw,deg_hw);
-
+    
     D = BuildD(deg_fw,deg_hw);
     Q1 = BuildQ1(deg_hw);
-    DT1Q1{i}  = D*T1*Q1;
+    DT1Q1{i-1}  = D*T1*Q1;
 end
 
 
@@ -601,13 +461,13 @@ arr_hx = cell(nPolys_arr_hx,1);
 for i = 1:1:nPolys_arr_hx
     
     % Get degree of h{i}
-    deg_hw = vDeg_arr_hx(i);
+    deg_hx = vDeg_arr_hx(i);
     
     % Get coefficients of h_{i} from the solution vector
-    arr_hx{i} = v_hw(1:deg_hw+1);
+    arr_hx{i} = v_hw(1:deg_hx+1);
     
     % Remove the coefficients from the solution vector
-    v_hw(1:deg_hw+1) = [];
+    v_hw(1:deg_hx+1) = [];
 end
 
 end

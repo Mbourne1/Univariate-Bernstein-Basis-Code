@@ -12,8 +12,11 @@ function [f_noisy]=Noise(f,el,eu)
 
 
 % get the degree of input polynomial f
-[r,c] = size(f);
-m = r -1;
+m = GetDegree(f);
+
+
+global SETTINGS
+rng(SETTINGS.SEED)
 
 switch nargin
     case 2 % Only one noise is specified, set upper = lower

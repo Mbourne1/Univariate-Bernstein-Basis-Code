@@ -1,17 +1,23 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    GetGCD_Degree(fx,gx)
+    GetGCD_Degree(fx,gx,deg_limits,bool_coprime)
 % GetGCD_Degree(fx,gx)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
 %
 %
-% Inputs.
+% % Inputs.
 %
 % fx : coefficients of polynomial f, expressed in Bernstein Basis
 %
 % gx : coefficients of polynomail g, expressed in Bernstein Basis
 %
-%                       Outputs.
+% deg_limits : set the upper and lower bound of the degree of the
+% GCD of polynomials f(x) and g(x). Usually used when using o_roots() where
+% prior information is known about the upper and lower bound due to number
+% of distinct roots.
+%
+%
+% % Outputs.
 %
 % t : Degree of GCD of f(x) and g(x)
 %
@@ -19,80 +25,80 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 % theta : optimal value of theta
 %
+% deg_limits :
 
-% Get global variables
 
-% Get degree m of polynomial f(x)
+% Get degree of polynomail f(x)
 m = GetDegree(fx);
-
-% Get degree n of polynomial g(x)
 n = GetDegree(gx);
 
-% get minimum degree of f(x) and g(x)
-min_mn = min(m,n);
+% If the number of distinct roots in f(x) is one, then the degree of the
+% GCD of f(x) and f'(x) = m-1 = n.
+lower_lim = deg_limits(1);
+upper_lim = deg_limits(2);
 
-% Set upper and lower limit
-lower_lim = 1;
-upper_lim = min_mn;
+% Get the number of subresultants which must be constructed.
+nSubresultants = upper_lim - lower_lim +1 ;
 
-
-%% Initialisation stage
+% %
+% Initialisation stage
 
 % Initialise vectors to store all optimal alphas and theta, and each
 % geometric mean for f and g in each S_{k} for k = 1,...,min(m,n)
-vAlpha    =   zeros(min_mn,1);
-vTheta    =   zeros(min_mn,1);
-vGM_fx    =   zeros(min_mn,1);
-vGM_gx    =   zeros(min_mn,1);
+vAlpha    =   zeros(nSubresultants,1);
+vTheta    =   zeros(nSubresultants,1);
+vGM_fx    =   zeros(nSubresultants,1);
+vGM_gx    =   zeros(nSubresultants,1);
 
-vMaxDiagR1 = zeros(min_mn,1);
-vMinDiagR1 = zeros(min_mn,1);
-vMaxRowNormR1 = zeros(min_mn,1);
-vMinRowNormR1 = zeros(min_mn,1);
+vMaxDiagR1 = zeros(nSubresultants,1);
+vMinDiagR1 = zeros(nSubresultants,1);
+vMaxRowNormR1 = zeros(nSubresultants,1);
+vMinRowNormR1 = zeros(nSubresultants,1);
 
 % Initialise a vector to store minimal residuals obtained by QR
 % decomposition of each subresultant S_{k} for k=1,...,min(m,n)
-vMinimumResidual             =   zeros(min_mn,1);
+vMinimumResidual             =   zeros(nSubresultants,1);
 
-% Initialise a vector to store minimal singular values of each S_{k}
-vMinimumSingularValues = zeros(min_mn,1);
+% Initialise a vector to store the minimum singular values \sigma_{i} of each
+% subresultant S_{i}(f,g), where i is between the upper and lower bound.
+vMinimumSingularValues = zeros(nSubresultants,1);
 
 % Stores Data from QR decomposition.
 Data_RowNorm    = [];
 Data_DiagNorm   = [];
 
-%%
 
 % For each subresultant $S_{k}$
-for k = 1:1:min_mn
+for k = lower_lim:1:upper_lim
     
+    i = k - lower_lim + 1;
     
-    [vGM_fx(k), vGM_gx(k),vAlpha(k),vTheta(k)] = Preprocess(fx,gx,k);
+    [vGM_fx(i), vGM_gx(i),vAlpha(i),vTheta(i)] = Preprocess(fx,gx,k);
     
     % 18/04/2016
     % Given the previous geometric mean of f(x) calculate the new geometric
     % mean by my new method
-    if k>1
-        GM_fx = GetGeometricMeanFromPrevious(fx , vGM_fx(k-1) , m , n-k);
-        GM_gx = GetGeometricMeanFromPrevious(gx , vGM_gx(k-1) , n , m-k);
+    if i>1
+        %GM_fx = GetGeometricMeanFromPrevious(fx , vGM_fx(i-1) , m , n-k);
+        %GM_gx = GetGeometricMeanFromPrevious(gx , vGM_gx(i-1) , n , m-k);
     end
     
     % Divide f(x) and g(x) by geometric means
-    fx_n = fx./vGM_fx(k);
-    gx_n = gx./vGM_gx(k);
+    fx_n = fx./vGM_fx(i);
+    gx_n = gx./vGM_gx(i);
     
     % Construct the kth subresultant matrix S_{k}(f(\theta),g(\theta))
-    fw = GetWithThetas(fx_n,vTheta(k));
-    gw = GetWithThetas(gx_n,vTheta(k));
+    fw = GetWithThetas(fx_n,vTheta(i));
+    gw = GetWithThetas(gx_n,vTheta(i));
     
     % Build the k-th subresultant
-    Sk = BuildSubresultant(fw,vAlpha(k).*gw,k);
+    Sk = BuildSubresultant(fw,vAlpha(i).*gw,k);
     
-    % Get the singular values of S_{k}
+    % Get singular values of S_{k}
     vSingularValues = svd(Sk);
     
     % Get the minimal singular value from S_{k}
-    vMinimumSingularValues(k) = min(vSingularValues);
+    vMinimumSingularValues(i) = min(vSingularValues);
     
     % Get the matrix R1 from the QR Decomposition of S
     R1 = GetR1(Sk);
@@ -111,24 +117,43 @@ for k = 1:1:min_mn
     Data_DiagNorm = AddToResults(Data_DiagNorm,vDiagsR1_norm,k);
     
     % Get maximum and minimum row diagonals of R1
-    vMaxDiagR1(k) = max(vDiagsR1);
-    vMinDiagR1(k) = min(vDiagsR1);
+    vMaxDiagR1(i) = max(vDiagsR1);
+    vMinDiagR1(i) = min(vDiagsR1);
     
     % Get maximum and minimum row norms of rows of R1.
-    vMaxRowNormR1(k) = max(vR1_RowNorms);
-    vMinRowNormR1(k) = min(vR1_RowNorms);
+    vMaxRowNormR1(i) = max(vR1_RowNorms);
+    vMinRowNormR1(i) = min(vR1_RowNorms);
     
     % Get the minimal residuals for each subresultant S_{k}.
-    vMinimumResidual(k) = GetMinimalDistance(Sk);
+    vMinimumResidual(i) = GetMinimalDistance(Sk);
     
     
-end % End of For
+end % End of for
+
+global SETTINGS
+switch SETTINGS.PLOT_GRAPHS
+    case 'y'
+        figure()
+        hold on
+        plot((vGM_fx))
+        plot((vGM_gx))
+        hold off
+        
+        figure()
+        hold on
+        plot(log10(vTheta))
+        plot(log10(vAlpha))
+        hold off
+    case 'n'
+    otherwise
+        error('err');
+end
 
 % %
 % %
 % %
 % Choose a metric to determine the degree of the GCD.
-global SETTINGS
+
 switch SETTINGS.METRIC
     case 'Row Norms'
         metric = vMaxRowNormR1./vMinRowNormR1;
@@ -141,37 +166,67 @@ switch SETTINGS.METRIC
 end
 
 
+% % Analysis of Minimum Singular values
 
-%
-% If only one subresultant exists, get GCD by alternative method
-if min_mn == 1
-    
-    fprintf([mfilename ' : ' 'Only One Subresultant \n'])
-    t = GetGCDDegree_OneSubresultant(vSingularValues);
+if (upper_lim == lower_lim && bool_coprime == false)
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);
     GM_gx = vGM_gx(1);
+    t = upper_lim;
+    
     return;
+end
+
+if (lower_lim == 1)
+    can_be_coprime = true;
+else
+    can_be_coprime = false;
+end
+
+% If only one subresultant exists, use an alternative method.
+if (upper_lim - lower_lim == 0 )
+    
+    if (can_be_coprime)
+        t = GetGCDDegree_OneSubresultant(vSingularValues);
+        alpha = vAlpha(1);
+        theta = vTheta(1);
+        GM_fx = vGM_fx(1);
+        GM_gx = vGM_gx(1);
+        return;
+        
+    else
+        t = lower_lim;
+        alpha = vAlpha(1);
+        theta = vTheta(1);
+        GM_fx = vGM_fx(1);
+        GM_gx = vGM_gx(1);
+        display([mfilename ' : ' sprintf('Only One Subresultant\n')])
+        display([mfilename ' : ' sprintf('Polynomials not coprime\n')])
+        display([mfilename ' : ' sprintf('t = %i \n',t) ] );
+        return;
+        
+    end
     
 else
-    t = GetGCDDegree_MultipleSubresultants(metric,lower_lim);
+    
+    [t] = GetGCDDegree_MultipleSubresultants(metric,lower_lim);
+    
     
     % % Graph Plotting
     PlotGraphs()
+    
+    % %
     % Outputs
     
     % Output all subresultants, all optimal alphas, all optimal thetas and all
     % geometric means for each subresultant S_{k} where k = 1,...,min(m,n)
+    alpha                   = vAlpha(t-lower_lim+1);
+    theta                   = vTheta(t-lower_lim+1);
+    GM_fx                   = vGM_fx(t-lower_lim+1);
+    GM_gx                   = vGM_gx(t-lower_lim+1);
     
-    alpha                   = vAlpha(t);
-    theta                   = vTheta(t);
-    GM_fx                   = vGM_fx(t);
-    GM_gx                   = vGM_gx(t);
 end
-
-
-
 
 
 

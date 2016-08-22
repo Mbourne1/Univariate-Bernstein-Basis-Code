@@ -26,13 +26,22 @@ end
 vDeg_arr_hx = (vDeg_arr_fx(1:end-1) - vDeg_arr_fx(2:end))'; 
 
 
-% %
-% % Preprocessing
-% %
 % Obtain theta such that the ratio of max element to min element is
 % minimised
-%theta = GetOptimalTheta(arr_fx,vDeg_arr_fx);
-theta = 1;
+
+% 
+% y - Preprocess
+% n - Dont preprocess 
+global SETTINGS
+SETTINGS.PREPROC_DECONVOLUTIONS;
+
+switch SETTINGS.PREPROC_DECONVOLUTIONS
+    case 'y'
+        theta = GetOptimalTheta(arr_fx);
+        fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
+    case 'n'
+        theta = 1;
+end
 
 % % 
 % %
@@ -49,12 +58,12 @@ end
 % %
 % %
 % Write Deconvolutions in form [D^{-1}C(f)Q] h = RHS_f
-RHS_vec = real(BuildRHSF(arr_fw));
+RHS_fw = BuildRHSF(arr_fw);
 DCQ = BuildDCQ(arr_fw);
 
 % Get the solution vector h(w) in the system of equations
 % DCQ * hw = RHS_vec.
-v_hw = SolveAx_b(DCQ,RHS_vec);
+v_hw = SolveAx_b(DCQ,RHS_fw);
 
 
 % %

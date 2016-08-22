@@ -1,11 +1,19 @@
-function [] = Test_Deconvolution(ex_num)
+function [] = Test_Deconvolution(ex_num,noise,bool_preproc)
 % Test the different methods of deconvolving the polynomials f_{i}(x), to
 % form the set of polynomials h_{i} where h_{i} = f{i}/f_{i+1}
 %
+% % Inputs
+% 
+% ex_num : Example number (String)
+%
+% noise : noise level
+%
+% bool_preproc : Bool determining whether to include preprocessing
 %
 %
+% % Example
 %
-%
+% >> Test_Deconvolution('1',1e-12,'y')
 
 % Set settings pertaining to this test
 
@@ -16,14 +24,53 @@ SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 100;
 SETTINGS.BOOL_LOG = 'n';
 SETTINGS.BOOL_DENOM_SYL = 'y';
 SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
+SETTINGS.PREPROC_DECONVOLUTIONS = bool_preproc;
+SETTINGS.SEED = 1024;
+
+
+
 
 % Input f_{i} polynomials
 x = sym('x');
 
-% Set example number 
+% Set example number
 
 switch ex_num
     case '1'
+        
+        % Create set of factors whose multiplicities are defined in vMult
+        factor(1,1) = (x+1.0177);
+        factor(2,1) = (x-0.5296);
+        
+        % Set multiplicity of each factor
+        vMult = [9 ; 14];
+        
+    case '2'
+        
+        % Create set of factors whose multiplicities are defined in vMult
+        factor(1,1) = (x-2);
+        factor(2,1) = (x-3.2789);
+        factor(3,1) = (x-1.589);
+        factor(4,1) = (x-0.7213);
+        factor(5,1) = (x-1.5432);
+        factor(6,1) = (x+5.72);
+        
+        % Set multiplicitiy of each factor
+        vMult = [ 1; 3; 4; 4; 5; 12 ];
+        
+    case '3'
+        factor(1,1) = (x-2);
+        factor(2,1) = (x-3.2789);
+        factor(3,1) = (x-1.589);
+        vMult = [2; 4; 12 ];
+        
+    case '4'
+        factor(1,1) = (x-0.56897);
+        factor(2,1) = (x+1.24672);
+        factor(3,1) = (x+0.56921);
+        vMult = [3; 6; 9];
+        
+    case '5'
         
         % Create set of factors whose multiplicities are defined in vMult
         factor(1) = (x - 0.246512);
@@ -33,8 +80,8 @@ switch ex_num
         % Set multiplicity of each factor
         vMult = [2, 5 , 7 , 12];
         
-    case '2'
-                                
+    case '6'
+        
         % Create set of factors whose multiplicities are defined in vMult
         factor(1) = (x-2);
         factor(2) = (x-3.2789);
@@ -124,10 +171,9 @@ end
 arr_fx_noisy = cell(nPolys_arr_fx,1);
 
 % Set upper and lower noise levels
-emin = 1e-8;
-emax = 1e-12;
+
 for i = 1:1:nPolys_arr_fx
-    arr_fx_noisy{i,1} = Noise(arr_fx{i},emin,emax);
+    arr_fx_noisy{i,1} = Noise(arr_fx{i},noise,noise);
 end
 
 
@@ -154,7 +200,6 @@ LineBreakLarge();
 fprintf([mfilename ' : ' 'Deconvolution Batch\n']);
 
 arr_hx_Batch = Deconvolve_Batch(arr_fx_noisy);
-
 vError_Batch = GetErrors(arr_hx_Batch,arr_hx);
 
 %--------------------------------------------------------------------------
@@ -163,7 +208,8 @@ vError_Batch = GetErrors(arr_hx_Batch,arr_hx);
 % %
 % Testing standard deconvolution batch method
 LineBreakLarge();
-fprintf([mfilename ' : ' 'Deconvolution Batch (Staircase Method)\n']);
+fprintf([mfilename ' : ' 'Deconvolution Batch With STLN\n']);
+
 arr_hx_BatchSTLN = Deconvolve_Batch_With_STLN(arr_fx_noisy);
 vError_BatchSTLN = GetErrors(arr_hx_BatchSTLN,arr_hx);
 
@@ -177,7 +223,6 @@ LineBreakLarge()
 fprintf([mfilename ' : ''Deconvoltuion Batch Constrained \n']);
 
 arr_hx_BatchConstrained = Deconvolve_Batch_Constrained(arr_fx_noisy,vMultiplicities);
-
 vError_BatchConstrained = GetErrors(arr_hx_BatchConstrained,arr_hx);
 
 % -------------------------------------------------------------------------
@@ -189,27 +234,44 @@ vError_BatchConstrained = GetErrors(arr_hx_BatchConstrained,arr_hx);
 LineBreakLarge()
 fprintf([mfilename ' : ''Deconvoltuion Batch Constrained With STLN \n']);
 
-%arr_hx_BatchConstrainedSTLN = Deconvolve_Batch_Constrained(arr_fx_noisy,vMultiplicities);
-
-%vError_BatchConstrainedSTLN = GetErrors(arr_hx_BatchConstrainedSTLN,arr_hx);
+arr_hx_BatchConstrainedSTLN = Deconvolve_Batch_Constrained_With_STLN(arr_fx_noisy,vMultiplicities);
+vError_BatchConstrainedSTLN = GetErrors(arr_hx_BatchConstrainedSTLN,arr_hx);
 % -------------------------------------------------------------------------
 
 nPolys_hx = size(arr_hx,1);
 
-figure()
-hold on
-plot(log10(vError_Separate),'-s','DisplayName','Separate')
-plot(log10(vError_Batch),'-s','DisplayName','Batch')
-plot(log10(vError_BatchSTLN),'-s','DisplayName','Batch STLN')
-plot(log10(vError_BatchConstrained),'-s','DisplayName','Batch Constrained')
-legend(gca,'show');
-%plot(vError_BatchConstrainedSTLN)
-xlim([1 nPolys_hx]);
-xlabel('Factor')
+switch SETTINGS.PLOT_GRAPHS
+    case 'y'
+        figure()
+        hold on
+        plot(log10(vError_Separate),'-o','DisplayName','Separate')
+        plot(log10(vError_Batch),'-s','DisplayName','Batch')
+        plot(log10(vError_BatchSTLN),'-s','DisplayName','Batch STLN')
+        plot(log10(vError_BatchConstrained),'-s','DisplayName','Batch Constrained')
+        plot(log10(vError_BatchConstrainedSTLN),'-s','DisplayName','Batch Constrained STLN')
+        legend(gca,'show');
+        xlim([1 nPolys_hx]);
+        xlabel('Factor')
+        ylabel('log_{10} error')
+        hold off
+    case 'n'
+    otherwise
+        error('err');
+end
 
-ylabel('log_{10} error')
+A = ...
+    [
+    norm(vError_Separate),...
+    norm(vError_Batch),...
+    norm(vError_BatchSTLN),...
+    norm(vError_BatchConstrained),...
+    norm(vError_BatchConstrainedSTLN)
+    ];
 
-hold off
+fileID = fopen('Deconvolution/Test_Deconvolution.txt','a');
+fprintf(fileID,'%s %s %6.2e %6.2e %6.2e %6.2e %6.2e %6.2e\n',ex_num,bool_preproc,noise,A);
+fclose(fileID);
+
 end
 
 

@@ -72,8 +72,8 @@ switch SETTINGS.BOOL_ALPHA_THETA
         print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
         
         % Testing to see if preprocessing lowers condition number
-        fprintf([mfilename ' : ' sprintf('Condition S(f(x),g(x)) : %2.4e \n', cond(BuildDTQ(fx,gx,k)))]);
-        fprintf([mfilename ' : ' sprintf('Conditon S(f(w),alpha g(w)) : %2.4e \n', cond(BuildDTQ(fw,alpha.*gw,k)))]);
+        %fprintf([mfilename ' : ' sprintf('Condition S(f(x),g(x)) : %2.4e \n', cond(BuildDTQ(fx,gx,k)))]);
+        %fprintf([mfilename ' : ' sprintf('Conditon S(f(w),alpha g(w)) : %2.4e \n', cond(BuildDTQ(fw,alpha.*gw,k)))]);
         
     case 'n'
         alpha = 1;

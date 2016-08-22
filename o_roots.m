@@ -1,5 +1,5 @@
 function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
-% o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+% O_ROOTS(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Given an example number, and a set of input parameters, calculate the
 % roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
@@ -28,9 +28,9 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %
 % % Example
 %
-% >> o_roots('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
+% >> O_ROOTS('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
 %
-% >> o_roots('Custom:m=10 low=-1 high=1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
+% >> O_ROOTS('Custom:m=10 low=-1 high=1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
 
 
 % Set the problem type to a roots type problem.
@@ -43,7 +43,7 @@ if isempty(SETTINGS)
     SETTINGS.BOOL_Q = 'y';
     SETTINGS.BOOL_LOG = 'n';
     SETTINGS.ROOTS_HX = 'From Deconvolutions';
-    SETTINGS.DECONVOLVE_METHOD = 'Batch';
+    
     SETTINGS.GCD_COEFFICIENT_METHOD = 'ux';
 end
 
@@ -83,7 +83,7 @@ fx = VariableNoise(fx_exact,emin,emax);
 % %
 % %
 % Calculate roots by mymethod.
-try
+%try
     % Start timer
     myMethodStart = tic;
     
@@ -97,13 +97,14 @@ try
     errors.MyMethod = GetErrorMeasure(arr_root_mult_MyMethod,fx_exact);
     LineBreakLarge()
     comp_roots.MyMethod = mat2str(arr_root_mult_MyMethod(:,1));
-catch err
-    fprintf([mfilename ' : ' 'Error computing Roots by My Method \n' ])
-    fprintf(err.message);
-    errors.MyMethod = 999999999;
-    time.MyMethod   = 999999999;
-    comp_roots.MyMethod = mat2str([0 0 0 0 0 0]);
-end
+%catch err
+ %   fprintf([mfilename ' : ' 'Error computing Roots by My Method \n' ])
+%
+ %   fprintf(err.message);
+  %  errors.MyMethod = 999999999;
+   % time.MyMethod   = 999999999;
+  %  comp_roots.MyMethod = mat2str([0 0 0 0 0 0]);
+%end
 
 % %
 % %
@@ -263,9 +264,9 @@ if exist(fullFileName, 'file')
         SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
         SETTINGS.APF_METHOD, ...
         SETTINGS.BOOL_Q,...
-        SETTINGS.DECONVOLVE_METHOD,...
+        SETTINGS.DECONVOLVE_METHOD_HX_FX,...
         SETTINGS.BOOL_LOG,...
-        SETTINGS.ROOTS_HX,...
+        SETTINGS.DECONVOLVE_METHOD_HX_FX,...
         comp_roots.MyMethod...
     );
     fclose(fileID);

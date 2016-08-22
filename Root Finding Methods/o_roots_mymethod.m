@@ -17,18 +17,18 @@ ite = 1;
 
 % Initialise an array 'q' which stores the gcd outputs from each gcd
 % calculation
-f{1} = fx;
+arr_fx{1,1} = fx;
 
 % let degree_vector store the degrees corresponding to the array of
 % GCDs stored in q.
-M(1) = GetDegree(f{1});
+M(1) = GetDegree(arr_fx{1});
 
 % Let theta_vec store all theta values used in each iteration.
 vTheta(1) = 1;
 
 % Get the number of distinct roots of f_{1}. Since this is unknown at this
 % time, set number of distinct roots to be m_{1} = deg(f_{1}).
-nDistinctRoots(1) = GetDegree(f{1});
+nDistinctRoots(1) = GetDegree(arr_fx{1});
 
 
 % Whilst the most recently calculated GCD has a degree greater than
@@ -59,8 +59,8 @@ while M(ite) > 0
         bool_canbe_coprime = false;
         
         % Get GCD of f(x) and f'(x)
-        [f{ite},~,f{ite+1}, h1{ite} ,~,~,vTheta(ite+1), M(ite+1)] = o_gcd_mymethod( f{ite},...
-            Bernstein_Differentiate(f{ite}), [lower_lim, upper_lim],bool_canbe_coprime);
+        [arr_fx{ite,1},~,arr_fx{ite+1,1}, arr_hx{ite,1} ,~,~,vTheta(ite+1,1), M(ite+1)] = o_gcd_mymethod( arr_fx{ite},...
+            Bernstein_Differentiate(arr_fx{ite}), [lower_lim, upper_lim],bool_canbe_coprime);
         
         % Get number of distinct roots of f(ite)
         nDistinctRoots(ite) = M(ite) - M(ite+1);
@@ -78,8 +78,8 @@ while M(ite) > 0
         dx = 1;
         %theta_vec(ite_num+1) = 1;
         M(ite+1) = length(dx)-1;
-        f{ite+1} = dx;
-        h1{ite} = f{ite};
+        arr_fx{ite+1} = dx;
+        arr_hx{ite} = arr_fx{ite};
         ite = ite+1;
         break;
         
@@ -108,30 +108,35 @@ vMultiplicities = find(deg_struct_w~=0);
 % Deconvolve the first set of polynomials.
 
 global SETTINGS
-switch SETTINGS.ROOTS_HX
+
+switch SETTINGS.GET_HX_METHOD
     case 'From Deconvolution'
-        h1 = Deconvolve_Set(f);
+        arr_hx = Deconvolve_Set(arr_fx,SETTINGS.DECONVOLVE_METHOD_HX_FX);
     case 'From ux'
-        h1 = h1;
+        arr_hx = arr_hx;
+    otherwise
+        error('err');
 end
 
-[~,nEntries_h] = size(h1);
+% Get number of polynomials in the array h_{i}(x)
+[nEntries_h] = size(arr_hx,1);
+
 if nEntries_h == 1
     
     % if number of cols in h1 is only 1, then do not perform second set of
     % deconvolutions, since only one entry in h1.
     
     % Initialise an empty root array
-    root_arr = [];
+    arr_roots = [];
     
     % Get the polynomial a(w)
-    aw = h1{1};
+    aw = arr_hx{1};
     
     % Normalise the coefficients of a(w)
     aw = aw./aw(1);
     
     % Get the degree of a(w)
-    deg_aw = GetDegree(h1{1});
+    deg_aw = GetDegree(arr_hx{1});
     
     % get aw including its binomial coefficients.
     aw_bi = GetWithBinomials(aw);
@@ -152,40 +157,39 @@ if nEntries_h == 1
     roots_wrt_y = [roots_wrt_y one];
         
     % Add the roots to the array of roots
-    root_arr = [root_arr ; roots_wrt_y];
+    arr_roots = [arr_roots ; roots_wrt_y];
 else
     
     % perform deconvolutions
     
     % Deconvolve the second set of polynomials h_{i} to obtain the set of
     % polynomials w_{i}
-    w1 = Deconvolve_Set(h1);
+    arr_wx = Deconvolve_Set(arr_hx,SETTINGS.DECONVOLVE_METHOD_WX_HX);
     
     
     % w1 yields the simple, double, triple roots of input polynomial f.
     % w1{i} yields the roots of multiplicity i.
     
     % set the w1{max} = h1{max}
-    w1{ite-1} = h1{ite-1};
+    arr_wx{ite-1,1} = arr_hx{ite-1,1};
     
     % get number of entries in w1
-    [~,nEntries_w1] = size(w1);
+    [nEntries_arr_wx] = size(arr_wx,1);
     
     % initialise an empty set
-    root_arr = [];
+    arr_roots = [];
     
-    % for each multiplicity in w1.
-    for i = 1:1:nEntries_w1
+    % for each polynomial w_{i}(x)
+    for i = 1:1:nEntries_arr_wx
         
         
         % if the polynomial of said multiplicity is of length 2, degree 1, then
         % only one root exists for this multiplicity. Add it to the list wp1.
-        if (length(w1{i}) == 2)
-            
-            
+        if (length(arr_wx{i}) == 2)
+
             % Get the polynomial a(w), whose simple roots have multiplicty 
             % i in the polynomial f which we started with.
-            aw = w1{i};
+            aw = arr_wx{i};
             
             % Normalise the polynomial coefficients
             aw = aw./aw(1);
@@ -198,9 +202,9 @@ else
             a_rt = [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)];
             
             % Add the root to the [root, mult] matrix
-            root_arr = [root_arr ; a_rt];
+            arr_roots = [arr_roots ; a_rt];
             
-        elseif (length(w1{i}) > 2)
+        elseif (length(arr_wx{i}) > 2)
             % The given multiplicity contains more than one root, such that
             % number of coefficients in greater than 2, use MATLAB roots
             % function to find roots.
@@ -208,13 +212,13 @@ else
             
             % get the polynomial a(w), whose roots have multiplicity i, in bernstein
             % form.
-            aw = w1{i};
+            aw = arr_wx{i};
             
             % Normalise the polynomial coefficients
             aw = aw./aw(1);
             
             % get the degree of a(w)
-            n = GetDegree(w1{i});
+            n = GetDegree(arr_wx{i});
             
             % get aw including its binomial coefficients.
             aw_bi = GetWithBinomials(aw);
@@ -233,7 +237,7 @@ else
             roots_wrt_y = [roots_wrt_y one];
             
             % add the roots to the array of roots
-            root_arr = [root_arr ; roots_wrt_y];
+            arr_roots = [arr_roots ; roots_wrt_y];
         end
     end
 end
@@ -252,7 +256,7 @@ for i = 1:1:size(mat,1)
     nRoots_of_Multplicity_i = mat(i,2);
     
     for j = 1:1:nRoots_of_Multplicity_i
-        root_mult_array = [root_mult_array ; root_arr(count,1) i];
+        root_mult_array = [root_mult_array ; arr_roots(count,1) i];
         count= count +1;
     end
 end

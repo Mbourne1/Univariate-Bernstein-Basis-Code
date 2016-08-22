@@ -55,13 +55,13 @@ m = GetDegree(fx) ;
 
 figure('name','svd')
 hold on
-BuildSubresultant(fx,gx,1)
+
 plot((svd(BuildSubresultant(fx,gx,1))),'-s');
 hold off
 
 %Get degree by original method - limits
 [t2, alpha2, theta2, gm_fx2, gm_gx2] = ...
-    GetGCD_Degree2(fx,gx,deg_limits,bool_canBeCoprime);
+    GetGCD_Degree(fx,gx,deg_limits,bool_canBeCoprime);
 %display(t2)
 LineBreakMedium();
 % 

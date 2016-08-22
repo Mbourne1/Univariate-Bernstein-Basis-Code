@@ -15,11 +15,39 @@ function [arr_hx] = Deconvolve_Batch_Constrained(arr_fx,vMult)
 % arr_hx : Array of polynomials h(x) where h_{i}(x) = f_{i-1}(x) / f_{i}(x) 
 
 
+nPolys_arr_fx = size(arr_fx,1);
+
+%
+% y - Preprocess
+% n - Dont preprocess
+global SETTINGS
+SETTINGS.PREPROC_DECONVOLUTIONS;
+
+switch SETTINGS.PREPROC_DECONVOLUTIONS
+    case 'y'
+        theta = GetOptimalTheta(arr_fx);
+        fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
+    case 'n'
+        theta = 1;
+end
+
+% %
+% %
+% Initialise a cell-array for f(w)
+% %
+arr_fw = cell(nPolys_arr_fx,1);
+
+% for each f_{i} get fw_{i}
+for i = 1:1:nPolys_arr_fx
+    arr_fw{i} = GetWithThetas(arr_fx{i},theta);
+end
+
+
 % %
 % %
 % Build LHS Matrix
 
-LHS_Matrix = BuildDTQ(arr_fx,vMult);
+LHS_Matrix = BuildDTQ(arr_fw,vMult);
 
 
 % %
@@ -27,14 +55,13 @@ LHS_Matrix = BuildDTQ(arr_fx,vMult);
 % Build the RHS vector
 
 % Get number of polynomials in array of f_{i}(x)
-nPolys_arr_fx = size(arr_fx,1);
-nPolys_hx = nPolys_arr_fx - 1;
+nPolys_arr_hx = nPolys_arr_fx - 1;
 
 % RHS vector consists of f_{1},...,f_{m_{i}} where m_{i} is the highest
 % degree of any root of f_{0}(x).
 RHS_vec = [];
 for i = 1:1:nPolys_arr_fx - 1;
-    RHS_vec = [RHS_vec ; arr_fx{i}];
+    RHS_vec = [RHS_vec ; arr_fw{i}];
 end
 
 x = SolveAx_b(LHS_Matrix,RHS_vec);
@@ -47,7 +74,7 @@ for i = 1:1:length(unique_vMult)
     mult = unique_vMult(i);
     deg = GetDegree(arr_fx{mult}) - GetDegree(arr_fx{mult+1});
        
-    arr_px{i,1} = x_temp(1:deg+1);
+    arr_pw{i,1} = x_temp(1:deg+1);
     x_temp(1:deg+1) = [];
 end
 
@@ -58,10 +85,10 @@ end
 % h_{i}(x).
 
 % Get number of entries in array of polynomials p_{i}(x)
-nPolys_arr_px = size(arr_px,1);
+nPolys_arr_px = size(arr_pw,1);
 
 % Initialise the array of h_{i}(x)
-arr_hx = cell(nPolys_arr_fx-1,1);
+arr_hw = cell(nPolys_arr_fx-1,1);
 
 % Initialise a count
 count = 1;
@@ -75,18 +102,16 @@ for i = 1:1:nPolys_arr_px
     end
         
     for j = 1:1:nReps
-        arr_hx{count,1} = arr_px{i};
+        arr_hw{count,1} = arr_pw{i};
         count = count + 1; 
     end
     
 end
 
-% %
-% %
-% Get Residual
-residual = RHS_vec - (LHS_Matrix*x);
-display(norm(residual));
-
+arr_hx = cell(nPolys_arr_hx,1);
+for i = 1:nPolys_arr_hx
+    arr_hx{i} = GetWithoutThetas(arr_hw{i},theta);
+end
 
 end
 
