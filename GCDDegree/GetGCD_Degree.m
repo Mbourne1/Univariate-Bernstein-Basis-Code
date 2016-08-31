@@ -1,5 +1,5 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    GetGCD_Degree(fx,gx,deg_limits,bool_coprime)
+    GetGCD_Degree(fx,gx,deg_limits)
 % GetGCD_Degree(fx,gx)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
@@ -37,8 +37,14 @@ n = GetDegree(gx);
 lower_lim = deg_limits(1);
 upper_lim = deg_limits(2);
 
+% Set upper and lower limit for computing the degree of the GCD. Note may
+% be best to set to degree limits or may be best to set to 1 & min(m,n)
+lower_lim_comp = 1;
+upper_lim_comp = min(m,n);
+deg_limits_comp = [lower_lim_comp upper_lim_comp];
+
 % Get the number of subresultants which must be constructed.
-nSubresultants = upper_lim - lower_lim +1 ;
+nSubresultants = upper_lim_comp - lower_lim_comp +1 ;
 
 % %
 % Initialisation stage
@@ -69,9 +75,9 @@ Data_DiagNorm   = [];
 
 
 % For each subresultant $S_{k}$
-for k = lower_lim:1:upper_lim
+for k = lower_lim_comp:1:upper_lim_comp
     
-    i = k - lower_lim + 1;
+    i = k - lower_lim_comp + 1;
     
     [vGM_fx(i), vGM_gx(i),vAlpha(i),vTheta(i)] = Preprocess(fx,gx,k);
     
@@ -130,30 +136,11 @@ for k = lower_lim:1:upper_lim
     
 end % End of for
 
-global SETTINGS
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure()
-        hold on
-        plot((vGM_fx))
-        plot((vGM_gx))
-        hold off
-        
-        figure()
-        hold on
-        plot(log10(vTheta))
-        plot(log10(vAlpha))
-        hold off
-    case 'n'
-    otherwise
-        error('err');
-end
-
 % %
 % %
 % %
 % Choose a metric to determine the degree of the GCD.
-
+global SETTINGS
 switch SETTINGS.METRIC
     case 'Row Norms'
         metric = vMaxRowNormR1./vMinRowNormR1;
@@ -168,26 +155,20 @@ end
 
 % % Analysis of Minimum Singular values
 
-if (upper_lim == lower_lim && bool_coprime == false)
+if (upper_lim_comp == lower_lim_comp && bool_coprime == false)
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);
     GM_gx = vGM_gx(1);
-    t = upper_lim;
+    t = upper_lim_comp;
     
     return;
 end
 
-if (lower_lim == 1)
-    can_be_coprime = true;
-else
-    can_be_coprime = false;
-end
 
 % If only one subresultant exists, use an alternative method.
-if (upper_lim - lower_lim == 0 )
+if (upper_lim_comp - lower_lim_comp == 0 )
     
-    if (can_be_coprime)
         t = GetGCDDegree_OneSubresultant(vSingularValues);
         alpha = vAlpha(1);
         theta = vTheta(1);
@@ -195,22 +176,11 @@ if (upper_lim - lower_lim == 0 )
         GM_gx = vGM_gx(1);
         return;
         
-    else
-        t = lower_lim;
-        alpha = vAlpha(1);
-        theta = vTheta(1);
-        GM_fx = vGM_fx(1);
-        GM_gx = vGM_gx(1);
-        display([mfilename ' : ' sprintf('Only One Subresultant\n')])
-        display([mfilename ' : ' sprintf('Polynomials not coprime\n')])
-        display([mfilename ' : ' sprintf('t = %i \n',t) ] );
-        return;
-        
-    end
+    
     
 else
     
-    [t] = GetGCDDegree_MultipleSubresultants(metric,lower_lim);
+    [t] = GetGCDDegree_MultipleSubresultants(metric,deg_limits_comp);
     
     
     % % Graph Plotting
@@ -221,10 +191,10 @@ else
     
     % Output all subresultants, all optimal alphas, all optimal thetas and all
     % geometric means for each subresultant S_{k} where k = 1,...,min(m,n)
-    alpha                   = vAlpha(t-lower_lim+1);
-    theta                   = vTheta(t-lower_lim+1);
-    GM_fx                   = vGM_fx(t-lower_lim+1);
-    GM_gx                   = vGM_gx(t-lower_lim+1);
+    alpha                   = vAlpha(t);
+    theta                   = vTheta(t);
+    GM_fx                   = vGM_fx(t);
+    GM_gx                   = vGM_gx(t);
     
 end
 

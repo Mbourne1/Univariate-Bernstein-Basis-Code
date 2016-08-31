@@ -12,7 +12,10 @@ function [root_mult_array] = o_roots_mymethod(fx)
 % root_mult_array : The Calculated roots of the polynomial f(x) and their
 % corresponding multiplicities.
 
-% Initialise an iteration counter
+
+global SETTINGS
+
+% Initialise an iteration counter for looping through GCD computations.
 ite = 1;
 
 % Initialise an array 'q' which stores the gcd outputs from each gcd
@@ -21,66 +24,68 @@ arr_fx{1,1} = fx;
 
 % let degree_vector store the degrees corresponding to the array of
 % GCDs stored in q.
-M(1) = GetDegree(arr_fx{1});
+vDeg_arr_fx(1) = GetDegree(arr_fx{1});
 
 % Let theta_vec store all theta values used in each iteration.
 vTheta(1) = 1;
 
 % Get the number of distinct roots of f_{1}. Since this is unknown at this
 % time, set number of distinct roots to be m_{1} = deg(f_{1}).
-nDistinctRoots(1) = GetDegree(arr_fx{1});
+vNum_Distinct_Roots(1) = GetDegree(arr_fx{1});
 
 
 % Whilst the most recently calculated GCD has a degree greater than
 % zero. ie is not a constant, perform a gcd calculation on it and its
 % derivative.
-while M(ite) > 0
+while vDeg_arr_fx(ite) > 0
     
    
     % if degree of f_{i} is greater than one
-    if M(ite) > 1
+    if vDeg_arr_fx(ite) > 1
         
         
-        fprintf('Compute GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite);
+        fprintf([mfilename ' : ' sprintf('Compute f_{%i} the GCD of f_{%i} and derivative f_{%i}\n\n',ite,ite-1,ite-1)]);
         
         % Get upper and lower bounds of the GCD Computation.
         % M_{i+1} > M_{i} - d_{i-1}
         try
-            lower_lim = M(ite)-nDistinctRoots(ite-1);
-            upper_lim = M(ite)-1;
-            fprintf('Minimum degree of f_{%i}: %i \n', ite+1, lower_lim);
-            fprintf('Maximum degree of f_{%i}: %i \n\n', ite+1, upper_lim);
+            lower_lim = vDeg_arr_fx(ite)-vNum_Distinct_Roots(ite-1);
+            upper_lim = vDeg_arr_fx(ite)-1;
+            fprintf([mfilename ' : ' sprintf('Minimum degree of f_{%i}: %i \n', ite, lower_lim)]);
+            fprintf([mfilename ' : ' sprintf('Maximum degree of f_{%i}: %i \n\n', ite, upper_lim)]);
         catch
             lower_lim = 1;
-            upper_lim = M(ite)-1;
+            upper_lim = vDeg_arr_fx(ite)-1;
         end
     
         
-        bool_canbe_coprime = false;
+        
         
         % Get GCD of f(x) and f'(x)
-        [arr_fx{ite,1},~,arr_fx{ite+1,1}, arr_hx{ite,1} ,~,~,vTheta(ite+1,1), M(ite+1)] = o_gcd_mymethod( arr_fx{ite},...
-            Bernstein_Differentiate(arr_fx{ite}), [lower_lim, upper_lim],bool_canbe_coprime);
+        [arr_fx{ite,1},~,arr_fx{ite+1,1}, arr_ux{ite,1} ,~,~,vTheta(ite+1,1), vDeg_arr_fx(ite+1)] = o_gcd_mymethod( arr_fx{ite},...
+            Bernstein_Differentiate(arr_fx{ite}), [lower_lim, upper_lim]);
         
         % Get number of distinct roots of f(ite)
-        nDistinctRoots(ite) = M(ite) - M(ite+1);
+        vNum_Distinct_Roots(ite) = vDeg_arr_fx(ite) - vDeg_arr_fx(ite+1);
         
-        fprintf('Degree of f_{%i} : %i \n',ite + 1, M(ite+1))
-        fprintf('Number of distinct roots in f_{%i} : %i \n',ite,nDistinctRoots(ite))
+        fprintf([mfilename ' : ' sprintf('Degree of f_{%i} : %i \n',ite, vDeg_arr_fx(ite+1))]);
+        fprintf([mfilename ' : ' sprintf('Number of distinct roots in f_{%i} : %i \n',ite,vNum_Distinct_Roots(ite))]);
 
         % increment iteration number.
         ite = ite+1;
         
         
-    elseif M(ite) == 1
+    elseif vDeg_arr_fx(ite) == 1
+        
         % if m=1, then n = 0, GCD has maximum degree 0.
         fprintf([mfilename ' : ' 'Only one subresultant exists \n'])
         dx = 1;
         %theta_vec(ite_num+1) = 1;
-        M(ite+1) = length(dx)-1;
+        vDeg_arr_fx(ite+1) = length(dx)-1;
         arr_fx{ite+1} = dx;
-        arr_hx{ite} = arr_fx{ite};
+        arr_ux{ite} = arr_fx{ite};
         ite = ite+1;
+        
         break;
         
         
@@ -89,12 +94,12 @@ end
 
 
 % Get the degree structure of the polynomials h_{i}
-deg_struct_h = diff([M]);
+vDeg_arr_hx = diff([vDeg_arr_fx]);
 
 % Get the degree structure of the polynomials w_{i}
-deg_struct_w = diff([deg_struct_h 0]);
+vDeg_arr_wx = diff([vDeg_arr_hx 0]);
 
-vMultiplicities = find(deg_struct_w~=0);
+vMultiplicities = find(vDeg_arr_wx~=0);
 
 
 % #########################################################################
@@ -106,22 +111,26 @@ vMultiplicities = find(deg_struct_w~=0);
 % end
 
 % Deconvolve the first set of polynomials.
-
-global SETTINGS
-
 switch SETTINGS.GET_HX_METHOD
     case 'From Deconvolution'
+        
+        fprintf([mfilename ' : ' sprintf('Deconvolving f_{i}(x) : %s \n',SETTINGS.DECONVOLVE_METHOD_HX_FX)])
         arr_hx = Deconvolve_Set(arr_fx,SETTINGS.DECONVOLVE_METHOD_HX_FX);
+        
     case 'From ux'
-        arr_hx = arr_hx;
+        
+        arr_hx = arr_ux;
+        
     otherwise
+        
         error('err');
+        
 end
 
 % Get number of polynomials in the array h_{i}(x)
-[nEntries_h] = size(arr_hx,1);
+[nPolys_arr_hx] = size(arr_hx,1);
 
-if nEntries_h == 1
+if nPolys_arr_hx == 1
     
     % if number of cols in h1 is only 1, then do not perform second set of
     % deconvolutions, since only one entry in h1.
@@ -130,16 +139,16 @@ if nEntries_h == 1
     arr_roots = [];
     
     % Get the polynomial a(w)
-    aw = arr_hx{1};
+    wx = arr_hx{1};
     
     % Normalise the coefficients of a(w)
-    aw = aw./aw(1);
+    wx = wx./wx(1);
     
     % Get the degree of a(w)
     deg_aw = GetDegree(arr_hx{1});
     
     % get aw including its binomial coefficients.
-    aw_bi = GetWithBinomials(aw);
+    aw_bi = GetWithBinomials(wx);
     
     % get the roots in terms of z^{i} where z^{i} =(\frac{y}{(1-y)})^{i}.
     % Note we must flip the coefficients to conform with input format of
@@ -189,17 +198,17 @@ else
 
             % Get the polynomial a(w), whose simple roots have multiplicty 
             % i in the polynomial f which we started with.
-            aw = arr_wx{i};
+            wx = arr_wx{i};
             
             % Normalise the polynomial coefficients
-            aw = aw./aw(1);
+            wx = wx./wx(1);
             
             % Convert to power form, so that coefficients are in terms of y^{i}
             % rather than (1-y)^{m-i}y^{i}.
-            a_pwr = [aw(1,:) ; aw(2,:)-aw(1,:)];
+            wx_pwr = [wx(1,:) ; wx(2,:)-wx(1,:)];
             
             % Obtain the root in terms of y, and set multiplicity to one.
-            a_rt = [-a_pwr(1,:)./a_pwr(2,:) a_pwr(2,:)./a_pwr(2,:)];
+            a_rt = [-wx_pwr(1,:)./wx_pwr(2,:) wx_pwr(2,:)./wx_pwr(2,:)];
             
             % Add the root to the [root, mult] matrix
             arr_roots = [arr_roots ; a_rt];
@@ -212,16 +221,13 @@ else
             
             % get the polynomial a(w), whose roots have multiplicity i, in bernstein
             % form.
-            aw = arr_wx{i};
+            wx = arr_wx{i};
             
             % Normalise the polynomial coefficients
-            aw = aw./aw(1);
-            
-            % get the degree of a(w)
-            n = GetDegree(arr_wx{i});
-            
+            wx = wx./wx(1);
+                       
             % get aw including its binomial coefficients.
-            aw_bi = GetWithBinomials(aw);
+            aw_bi = GetWithBinomials(wx);
             
             % get the roots in terms of z^{i} where z^{i} =(\frac{y}{(1-y)})^{i}.
             rt_wrt_z = roots(flipud(aw_bi));
@@ -246,8 +252,8 @@ end
 % Obtaining multiplicities of the calculated roots
 % create a matrix where the first column contains the multiplicities, and
 % the second column contains the number of roots of that multiplicity
-nPolys_wi = length(deg_struct_w);
-mat = [(1:1:nPolys_wi)' deg_struct_w'];
+nPolys_wi = length(vDeg_arr_wx);
+mat = [(1:1:nPolys_wi)' vDeg_arr_wx'];
 
 count = 1;
 root_mult_array = [];
@@ -264,3 +270,5 @@ end
 % Print the calculated roots and the corresponding multiplicities.
 PrintoutRoots('MY METHOD',root_mult_array);
 
+
+end

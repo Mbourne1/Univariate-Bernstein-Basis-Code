@@ -1,5 +1,5 @@
 
-function [t] = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,lower_lim)
+function [t] = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,deg_limits)
 % Get the problem type, dependent on the vector of singular values from the
 % series s_{k}
 %
@@ -16,6 +16,12 @@ global SETTINGS
 % Get the function which called this function.
 [St,~] = dbstack();
 calling_function = St(2).name;
+
+lower_lim = deg_limits(1);
+upper_lim = deg_limits(2);
+
+
+
 
 % Get the upper bound of the degree of the GCD
 min_mn = lower_lim + length(vMinimumSingularValues) - 1;
@@ -39,15 +45,17 @@ if  abs(maxChangeSingularValues) < SETTINGS.THRESHOLD
     % %
     switch SETTINGS.PLOT_GRAPHS
         case 'y'
-        
-    figure_name = sprintf([mfilename ' : ' calling_function ': Singular Values']);
-    figure('name',figure_name)
-    plot(log10(vMinimumSingularValues));
-    hold on
-    mu = avgMinSingularValue;
-    hline = refline([0 mu]);
-    hline.Color = 'r';  
-    hold off
+            figure_name = sprintf([mfilename ' : ' calling_function ': Singular Values']);
+            figure('name',figure_name)
+            plot(log10(vMinimumSingularValues));
+            hold on
+            mu = avgMinSingularValue;
+            hline = refline([0 mu]);
+            hline.Color = 'r';  
+            vline(lower_lim,'b','');
+            vline(lower_lim,'b','');
+            hold off
+            
         case 'n'
     end
     

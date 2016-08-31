@@ -176,12 +176,15 @@ switch SETTINGS.PLOT_GRAPHS
         figure_name = sprintf('%s : Plot Calculated Roots',mfilename);
         figure('name',figure_name)
         hold on;
-        scatter( real(arr_root_mult_MyMethod(:,1)), imag(arr_root_mult_MyMethod(:,2)),'yellow','*','DisplayName','My Method');
-        scatter( real(arr_root_mult_MatlabMethod(:,1)), imag(arr_root_mult_MatlabMethod(:,2)),'red','DisplayName','Matlab Roots');
-        scatter( real(arr_root_mult_Multroot(:,1)), imag(arr_root_mult_Multroot(:,2)),'green','s','filled','DisplayName','MultRoots');
+        scatter( real(arr_root_mult_MyMethod(:,1)), imag(arr_root_mult_MyMethod(:,1)),'yellow','*','DisplayName','My Method');
+        scatter( real(arr_root_mult_MatlabMethod(:,1)), imag(arr_root_mult_MatlabMethod(:,1)),'red','DisplayName','Matlab Roots');
+        scatter( real(arr_root_mult_Multroot(:,1)), imag(arr_root_mult_Multroot(:,1)),'green','s','filled','DisplayName','MultRoots');
+        
+       
         xlabel('Real');
         ylabel('Imaginary');
         legend(gca,'show')
+        ylim()
         str = sprintf('Plot of Calculated Roots of Polynomial f(y). \n componentwise noise = %g',emin);
         title(str);
         hold off
@@ -199,46 +202,12 @@ PrintToFile(comp_roots,errors,time)
 end
 
 
-function [nondistinctRoots_mymthd] = GetRepeatedRoots(mat_Root_Mult) 
-% Given the matrix whose columns are a [root,multiplicity] pair, get a
-% vector which contains each root r_{i} m_{i} times, where m_{i} is the
-% multiplicity of r_{i}.
-
-
-% Let sum_rt_mult_mymthd be the sum of all of the multiplicities of all of the
-% roots obtained by my method
-sum_rt_mult_mymthd = sum(mat_Root_Mult(:,2));
-
-% Initialise a vector to store the nondistinct roots
-nondistinctRoots_mymthd = zeros(sum_rt_mult_mymthd,1);
-
-% Initialise a count
-count = 1;
-
-% for each unique root i
-for i = 1:1:size(mat_Root_Mult,1)
-    
-    % Get multiplicty of root i
-    m = mat_Root_Mult(i,2);
-    
-    % for each of the m roots at r_{i}
-    for j = 1:1:m
-        
-        % Add the root to a vector of nondistinct roots
-        nondistinctRoots_mymthd(count,1) = mat_Root_Mult(i,1);
-        
-        % Increment the counter
-        count = count + 1;
-    end
-end
-end
-
 
 function []= PrintToFile(comp_roots,error,time)
 
 global SETTINGS
 
-fullFileName = 'Results_o_roots.txt';
+fullFileName = 'Results/Results_o_roots.txt';
 
 if exist(fullFileName, 'file')
     fileID = fopen(fullFileName,'a');
@@ -266,7 +235,7 @@ if exist(fullFileName, 'file')
         SETTINGS.BOOL_Q,...
         SETTINGS.DECONVOLVE_METHOD_HX_FX,...
         SETTINGS.BOOL_LOG,...
-        SETTINGS.DECONVOLVE_METHOD_HX_FX,...
+        SETTINGS.DECONVOLVE_METHOD_WX_HX,...
         comp_roots.MyMethod...
     );
     fclose(fileID);

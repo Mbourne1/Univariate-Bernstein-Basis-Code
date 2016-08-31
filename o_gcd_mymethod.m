@@ -1,5 +1,5 @@
 function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
-    o_gcd_mymethod(fx,gx,deg_limits,bool_canBeCoprime)
+    o_gcd_mymethod(fx,gx,deg_limits)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
 %                             Inputs:
@@ -11,7 +11,6 @@ function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
 % deg_limits : Upper and lower limits for GCD degree may be defined here
 % otherwise set to [0,min(m,n)]
 %
-% bool_canBeCoprime : 'y' polynomials may be coprime
 %
 %
 % Outputs:
@@ -25,9 +24,9 @@ function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
 % ux : Coefficients of polynomial u(x) where u(x) = f(x)/d(x)
 %
 % vx : Coefficeints of polynomial v(x) where v(x) = g(x)/d(x)
-% 
+%
 % alpha : Optimal \alpha
-% 
+%
 % theta : Optimal \theta
 
 
@@ -42,35 +41,29 @@ m = GetDegree(fx) ;
 
 % Get degree of GCD by first method
 
-% Method 1 - 'From Scratch' Build each subresultant from scratch
-% EDIT 03/05/2016 - GetGCD_Degree is the same as GetGCD_Degree2 but without
-% limits on degree
-
-% % Get degree by original method - no limits
-% [t1, alpha1, theta1, gm_fx1, gm_gx1] = ...
-%      GetGCD_Degree(fx,gx);
-% display(t1)
-% LineBreakMedium();
-
-
-figure('name','svd')
-hold on
-
-plot((svd(BuildSubresultant(fx,gx,1))),'-s');
-hold off
+switch SETTINGS.PLOT_GRAPHS
+    case 'y'
+        figure('name','svd')
+        hold on
+        plot((svd(BuildSubresultant(fx,gx,1))),'-s');
+        hold off
+    case 'n'
+    otherwise
+        error('err');
+end
 
 %Get degree by original method - limits
 [t2, alpha2, theta2, gm_fx2, gm_gx2] = ...
-    GetGCD_Degree(fx,gx,deg_limits,bool_canBeCoprime);
+    GetGCD_Degree(fx,gx,deg_limits);
 %display(t2)
 LineBreakMedium();
-% 
+%
 % % % Get Degree by new method - no limits
 % [t3, alpha3, theta3, gm_fx3, gm_gx3] = ...
 %     GetGCD_DegreeByNewMethod(fx,gx);
 % display(t3)
 % LineBreakMedium();
-% 
+%
 % % Get degree by new method - limits
 % [t4, alpha4, theta4, gm_fx4, gm_gx5] = ...
 %     GetGCD_DegreeByNewMethod2(fx,gx,deg_limits);

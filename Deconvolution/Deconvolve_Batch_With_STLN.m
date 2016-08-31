@@ -151,7 +151,7 @@ F = eye(N+M1);
 
 G = [DT_fwQ (DYU)-P];
 
-s = [v_hw ; v_zw];
+
 
 condition(ite) = norm(res_vec)./ norm(vRHS_fw);
 
@@ -163,6 +163,7 @@ start_point = ...
 
 yy = start_point;
 
+s = -(yy - start_point);
 % Perform iteration to obtain perturbations
 
 while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...

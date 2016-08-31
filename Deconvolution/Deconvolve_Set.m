@@ -31,7 +31,7 @@ switch DECONVOLVE_METHOD
         % Deconvolve Batch Method
         arr_hx = Deconvolve_Batch(arr_fx);
         
-    case 'Batch STLN'
+    case 'Batch With STLN'
         
         arr_hx = Deconvolve_Batch_With_STLN(arr_fx);
         
@@ -56,7 +56,7 @@ switch DECONVOLVE_METHOD
         vMult = find(vDeg_wx~=0);
         arr_hx = Deconvolve_Batch_Constrained(arr_fx,vMult);
         
-    case 'Batch Constrained STLN'
+    case 'Batch Constrained With STLN'
         
         % Get number of polynomials in batch
         nPolys_fx = size(arr_fx,1);

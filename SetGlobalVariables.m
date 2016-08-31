@@ -25,7 +25,7 @@ SETTINGS.PROBLEM_TYPE = problemType;
 SETTINGS.SEED = 1024;
 
 % Outputs
-SETTINGS.PLOT_GRAPHS = 'n';
+SETTINGS.PLOT_GRAPHS = 'y';
 
 %
 % 'y' : include the matrix Q in the Sylvester matrix S = D^{-1}T(f,g)Q
@@ -175,19 +175,18 @@ SETTINGS.GET_HX_METHOD = 'From Deconvolution';
 % Batch Constrained
 % Batch Constrained With STLN
 
-SETTINGS.DECONVOLVE_METHOD_HX_FX = 'Batch Constrained STLN';
-SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-16;
-SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 100;
-SETTINGS.PREPROC_DECONVOLUTIONS = 'y';
+deconvolve_method_hx = 'Batch Constrained With STLN';
+SETTINGS.DECONVOLVE_METHOD_HX_FX = deconvolve_method_hx;
 
 % Separate
 % Batch
-SETTINGS.DECONVOLVE_METHOD_WX_HX = 'Separate';
+deconvolve_method_wx = 'Separate';
+SETTINGS.DECONVOLVE_METHOD_WX_HX = deconvolve_method_wx;
 
 
-% Get Global variables for Deconvolve
-SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-12;
-SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;
+SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-15;
+SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 100;
+SETTINGS.PREPROC_DECONVOLUTIONS = 'y';
 
 end
 

@@ -20,7 +20,7 @@ function [] = Test_Deconvolution(ex_num,noise,bool_preproc)
 global SETTINGS
 SETTINGS.PLOT_GRAPHS = 'y';
 SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-15;
-SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 100;
+SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 20;
 SETTINGS.BOOL_LOG = 'n';
 SETTINGS.BOOL_DENOM_SYL = 'y';
 SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
@@ -29,70 +29,7 @@ SETTINGS.SEED = 1024;
 
 
 
-
-% Input f_{i} polynomials
-x = sym('x');
-
-% Set example number
-
-switch ex_num
-    case '1'
-        
-        % Create set of factors whose multiplicities are defined in vMult
-        factor(1,1) = (x+1.0177);
-        factor(2,1) = (x-0.5296);
-        
-        % Set multiplicity of each factor
-        vMult = [9 ; 14];
-        
-    case '2'
-        
-        % Create set of factors whose multiplicities are defined in vMult
-        factor(1,1) = (x-2);
-        factor(2,1) = (x-3.2789);
-        factor(3,1) = (x-1.589);
-        factor(4,1) = (x-0.7213);
-        factor(5,1) = (x-1.5432);
-        factor(6,1) = (x+5.72);
-        
-        % Set multiplicitiy of each factor
-        vMult = [ 1; 3; 4; 4; 5; 12 ];
-        
-    case '3'
-        factor(1,1) = (x-2);
-        factor(2,1) = (x-3.2789);
-        factor(3,1) = (x-1.589);
-        vMult = [2; 4; 12 ];
-        
-    case '4'
-        factor(1,1) = (x-0.56897);
-        factor(2,1) = (x+1.24672);
-        factor(3,1) = (x+0.56921);
-        vMult = [3; 6; 9];
-        
-    case '5'
-        
-        % Create set of factors whose multiplicities are defined in vMult
-        factor(1) = (x - 0.246512);
-        factor(2) = (x - 1.214654);
-        factor(3) = (x + 0.567890);
-        factor(4) = (x + 0.214654);
-        % Set multiplicity of each factor
-        vMult = [2, 5 , 7 , 12];
-        
-    case '6'
-        
-        % Create set of factors whose multiplicities are defined in vMult
-        factor(1) = (x-2);
-        factor(2) = (x-3.2789);
-        factor(3) = (x-1.589);
-        factor(4) = (x-0.7213);
-        factor(5) = (x-1.5432);
-        factor(6) = (x+5.72);
-        
-        % Set multiplicitiy of each factor
-        vMult = [ 1 3 4 4 5 12 ];
-end
+[vFactors,vMult] = Examples_Deconvolution(ex_num);
 
 % Get highest power of any factor
 highest_pwr = max(vMult);
@@ -101,22 +38,60 @@ highest_pwr = max(vMult);
 % %
 % Generate polynomials f_{0}(x) ,..., f_{m}(x) = 1. Where each f_{i+1}(x) is
 % the f_{i+1} = GCD(f_{i},f'_{i}).
+
+% Initialise the matrix to store multiplicity of each root across its
+% columns, for each f_{i}(x).
+mult_mat_arr_fx = zeros(highest_pwr+1,length(vMult));
+
 for i = 0:1:highest_pwr
     
     % Get the multiplicities of the roots of f_{i+1}
     mults = ((vMult - i) + abs(vMult-i)) ./2;
     
+    % Add the multiplicity structure to the matrix of multiplicities.
+    mult_mat_arr_fx(i+1,:) = mults';
+    
     % Get the symbolic polynomial f_{i+1}
-    arr_sym_f{i+1} = prod(factor.^(mults));
+    arr_sym_fx{i+1,1} = prod(vFactors.^(mults));
     
     % Get the degree of polynomial f_{i+1}(x)
-    vDeg_f(i+1) = double(feval(symengine, 'degree', (arr_sym_f{i+1})));
+    vDeg_arr_fx(i+1) = double(feval(symengine, 'degree', (arr_sym_fx{i+1})));
 end
+
+display(arr_sym_fx{1});
+
+% Get the number of polynomials f_{i}(x)
+nPolys_arr_fx = size(arr_sym_fx,1);
+
+% Get the number of polynomials h_{i}(x)
+nPolys_arr_hx = nPolys_arr_fx - 1;
+
+
+% %
+% %
+% Get coefficients vectors of h_{i}(x)
+
+% Get multiplicity of the factors of h_{i}(x)
+mult_mat_arr_hx = abs(diff(mult_mat_arr_fx));
+
+% Initialise a cell array to store polynomials h_{i}(x)
+arr_sym_h = cell(nPolys_arr_hx,1);
+
+for i = 1:1:nPolys_arr_hx
+
+    % Get multiplicity structure of h_{i}(x)
+    mults = mult_mat_arr_hx(i,:)';
+   
+    % Get symbolic polynomial h_{i}(x)
+    arr_sym_h{i} = prod(vFactors.^(mults));
+   
+end
+
 
 
 % Get the degree structure of the polynomials h_{i} where h_{i} =
 % f_{i-1}(x)/f_{i}(x)
-vDeg_arr_hx = diff(vDeg_f);
+vDeg_arr_hx = diff(vDeg_arr_fx);
 
 % Get the degree structure of the polynomials w_{i} where w_{i} =
 % h_{i-1}/h_{i}
@@ -125,38 +100,29 @@ vDeg_arr_wx = diff([vDeg_arr_hx 0]);
 % Get the multiplicities of the roots.
 vMultiplicities = find(vDeg_arr_wx~=0);
 
-% Get the sequence of polynomials h_{i}(x) in symbolic form
-sym_arr_h = cell(length(arr_sym_f)-1,1);
-for i = 1:1:length(arr_sym_f)-1
-    sym_arr_h{i} = arr_sym_f{i} / arr_sym_f{i+1};
-end
-
-% %
-% %
-% Get coefficients vectors of f_{i}(x) and h_{i}(x)
-nPolys_arr_fx = length(arr_sym_f);
-nPolys_arr_hx = length(arr_sym_f) - 1;
 
 arr_fx = cell(nPolys_arr_fx,1);
 arr_hx = cell(nPolys_arr_hx,1);
 
 for i = 1:1:nPolys_arr_fx
     if i <= nPolys_arr_hx
-        arr_fx{i,1} = sym2poly(arr_sym_f{i})';
-        arr_hx{i,1} = sym2poly(sym_arr_h{i})';
+        arr_fx{i,1} = sym2poly(arr_sym_fx{i})';
+        arr_hx{i,1} = sym2poly(arr_sym_h{i})';
     else
         arr_fx{i,1} = 1;
     end
     
 end
 
+
 % %
 % %
-% Convert to Bernstein Basis
+% Convert the polynomials f_{i}(x) to Bernstein Basis
 for i = 1:1:length(arr_fx)
     arr_fx{i,1} = PowerToBernstein(arr_fx{i,1});
 end
 
+% Convert the polynomials h_{i}(x) to Bernstein Basis
 for i = 1:1:length(arr_hx)
     arr_hx{i,1} = PowerToBernstein(arr_hx{i,1});
 end
@@ -168,12 +134,12 @@ end
 % %
 % Add noise to the coefficients of f_{i}(x)
 
+% Initialise a cell array to store noisy polynomials f_{i}(x)
 arr_fx_noisy = cell(nPolys_arr_fx,1);
 
-% Set upper and lower noise levels
-
+% Get noisy polynomials f_{i}(x)
 for i = 1:1:nPolys_arr_fx
-    arr_fx_noisy{i,1} = Noise(arr_fx{i},noise,noise);
+    arr_fx_noisy{i,1} = Noise(arr_fx{i},noise);
 end
 
 
@@ -238,8 +204,8 @@ arr_hx_BatchConstrainedSTLN = Deconvolve_Batch_Constrained_With_STLN(arr_fx_nois
 vError_BatchConstrainedSTLN = GetErrors(arr_hx_BatchConstrainedSTLN,arr_hx);
 % -------------------------------------------------------------------------
 
+% Plotting
 nPolys_hx = size(arr_hx,1);
-
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure()
@@ -259,6 +225,19 @@ switch SETTINGS.PLOT_GRAPHS
         error('err');
 end
 
+%--------------------------------------------------------------------------
+% Console writing
+
+
+
+display([mfilename ' : ' sprintf('Error Separate : %e',norm(vError_Separate))]);
+display([mfilename ' : ' sprintf('Error Batch : %e', norm(vError_Batch))]);
+display([mfilename ' : ' sprintf('Error Batch STLN: %e', norm(vError_BatchSTLN))]);
+display([mfilename ' : ' sprintf('Error Batch Constrained : %e', norm(vError_BatchConstrained))]);
+display([mfilename ' : ' sprintf('Error Batch Constrained STLN : %e', norm(vError_BatchConstrainedSTLN))]);
+
+%--------------------------------------------------------------------------
+% Writing outputs to file
 A = ...
     [
     norm(vError_Separate),...

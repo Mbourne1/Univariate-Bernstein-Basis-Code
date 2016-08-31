@@ -2,14 +2,18 @@ global SETTINGS
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
         
-        x = lower_lim:1:upper_lim;
+        x = lower_lim_comp:1:upper_lim_comp;
         
         
         % Plot Graph of ratio of max : min element of the diagonal elements of R1 from the QR decompositions.
         figure_name = sprintf('%s : Max:min Row Diagonals',mfilename);
         figure('name',figure_name)
         vRatio_MaxMin_Diagonals_R = vMaxDiagR1./vMinDiagR1;
+        
         plot(x,log10(vRatio_MaxMin_Diagonals_R),'red-s');
+        xlim([1 upper_lim_comp]);
+        vline(lower_lim,'b','');
+        vline(upper_lim,'b','');
         hold on
         legend('Max:Min diag element of subresultant S_{k}');
         title('Max:Min diagonal elements of R1 from the QR decomposition of S_{k} (Original)');
@@ -25,6 +29,9 @@ switch SETTINGS.PLOT_GRAPHS
         hold on
         legend('Max:Min Row Norms of Rows in R1 from the QR decomposition of S_{k}');
         title('Max:Min Row Norms of Rows in R1 from the QR Decomposition of S_{k} (Original)');
+         xlim([1 upper_lim_comp]);
+        vline(lower_lim,'b','');
+        vline(upper_lim,'b','');
         hold off
         
         
@@ -36,6 +43,9 @@ switch SETTINGS.PLOT_GRAPHS
         ylabel('Normalised Row Sums of R1 in S_{k}')
         title(['Normalised Row Sums of R1 fom the QR decomposition of each subresultant S_{k} \newline '...
             'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
+         xlim([1 upper_lim_comp]);
+        vline(lower_lim,'b','');
+        vline(upper_lim,'b','');
         hold off
         
         
@@ -47,6 +57,9 @@ switch SETTINGS.PLOT_GRAPHS
         ylabel('Normalised Diagonals of R1 in S_{k}')
         title(['Normalised Diagonals in R1 matrix from the QR decomposition of each subresultant S_{k} \newline '...
             'm = ' int2str(m) ', n = ' int2str(n) '(Original)']);
+         xlim([1 upper_lim_comp]);
+        vline(lower_lim,'b','');
+        vline(upper_lim,'b','');
         hold off
         
     case 'n'

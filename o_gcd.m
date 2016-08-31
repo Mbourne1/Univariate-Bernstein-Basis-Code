@@ -41,7 +41,17 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 
 % Set the problem type to a GCD problem
 problemType = 'GCD';
-addpath('Examples','GCDDegree','Low Rank Approx' , 'APF')
+addpath(...
+    'Examples',...
+    'Formatting',...
+    'GCDDegree',...
+    'GetCofactorCoefficients',...
+    'GetGCDCoefficients',...
+    'Low Rank Approx',...
+    'Plotting',...
+    'Preprocessing',...
+    'Results',...
+    'APF')
 
 % Consistency of input parameters.
 
@@ -91,8 +101,7 @@ lower_lim = 1;
 upper_lim = min(GetDegree(fx),GetDegree(gx));
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-bool_CanBeCoprime = true;
-[~,~,dx_calc,ux_calc,vx_calc] = o_gcd_mymethod(fx,gx,[lower_lim,upper_lim],bool_CanBeCoprime);
+[~,~,dx_calc,ux_calc,vx_calc] = o_gcd_mymethod(fx,gx,[lower_lim,upper_lim]);
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
@@ -164,11 +173,11 @@ function [] = PrintToFile(m,n,t,error_dx)
 
 global SETTINGS
 
-fullFileName = 'Results_o_gcd.txt';
+fullFileName = 'Results/Results_o_gcd.txt';
 
 
-if exist('Results_o_gcd.txt', 'file')
-    fileID = fopen('Results_o_gcd.txt','a');
+if exist(fullFileName, 'file')
+    fileID = fopen(fullFileName,'a');
     fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
         datetime('now'),...
         SETTINGS.PROBLEM_TYPE,...
