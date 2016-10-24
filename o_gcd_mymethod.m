@@ -43,9 +43,12 @@ m = GetDegree(fx) ;
 
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
+        figure_name = fprintf('%s : Singular Values',mfilename);
+        
         figure('name','svd')
         hold on
-        plot((svd(BuildSubresultant(fx,gx,1))),'-s');
+        title('Singular values of S_{1}')
+        plot(log10(svd(BuildSubresultant(fx,gx,1))),'-s');
         hold off
     case 'n'
     otherwise

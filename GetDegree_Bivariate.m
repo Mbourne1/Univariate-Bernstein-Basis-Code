@@ -5,12 +5,12 @@ function [m1,m2] = GetDegree_Bivariate(fxy)
 % a matrix.
 
 % Get number of rows and number of columns in matrix of coefficients of f(x,y)
-[r,c] = size(fxy);
+[nRows,nCols] = size(fxy);
 
 % Get degree m1 of f(x,y) with respect to x
-m1 = r - 1;
+m1 = nRows - 1;
 
 % Get degree m2 of f(x,y) with respect to y
-m2 = c - 1;
+m2 = nCols - 1;
 
 end

@@ -1,6 +1,6 @@
 function [fx_exact] = Examples_Roots(ex_num)
 
-global Example_Type
+Example_Type = 'From Coefficients';
 
 switch Example_Type
     case 'From Roots'

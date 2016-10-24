@@ -63,7 +63,8 @@ vMinRowNormR1 = zeros(nSubresultants,1);
 
 % Initialise a vector to store minimal residuals obtained by QR
 % decomposition of each subresultant S_{k} for k=1,...,min(m,n)
-vMinimumResidual             =   zeros(nSubresultants,1);
+vMinimumResidual_QR  = zeros(nSubresultants,1);
+vMinimumResidual_SVD = zeros(nSubresultants,1);
 
 % Initialise a vector to store the minimum singular values \sigma_{i} of each
 % subresultant S_{i}(f,g), where i is between the upper and lower bound.
@@ -131,7 +132,8 @@ for k = lower_lim_comp:1:upper_lim_comp
     vMinRowNormR1(i) = min(vR1_RowNorms);
     
     % Get the minimal residuals for each subresultant S_{k}.
-    vMinimumResidual(i) = GetMinimalDistance(Sk);
+    vMinimumResidual_QR(i) = GetMinimalDistance(Sk,'QR');
+    vMinimumResidual_SVD(i) = GetMinimalDistance(Sk,'SVD');
     
     
 end % End of for

@@ -68,12 +68,12 @@ x_ls = SolveAx_b(At+Bt,ct+ht);
 res_vec = (ct + ht) - (At+Bt)*x_ls;
 
 % Get the vector x with a zero included in the x_ls solution.
-x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
+vec_x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
 
 % Seperate the component parts of x into x_v and x_u, where x_v is an
 % approximation of v(x) and x_u is an approximation u(x).
-xv = x(1:n-t+1);
-xu = x(n-t+2:end);
+xv = vec_x(1:n-t+1);
+xu = vec_x(n-t+2:end);
 
 % Build the matrix Y_{t}
 DY = BuildDY(xu,xv,t,1,1);
@@ -144,17 +144,17 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     ht = DBQ(:,colIndex);
     
     % Get the vector x_ls
-    x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
+    vec_x = [x_ls(1:colIndex-1) ; 0 ; x_ls(colIndex:end)];
     
     % Seperate the component parts of x into x_v and x_u, where x_v is an
     % approximation of v(x) and x_u is an approximation u(x).
-    xv = x(1:n-t+1);
-    xu = x(n-t+2:end);
+    xv = vec_x(1:n-t+1);
+    xu = vec_x(n-t+2:end);
     
     DY = BuildDY(xu,xv,t,1,1);
     
     % Get updated residual vector
-    res_vec = (ct+ht) - ((At+Bt)*x_ls);
+    res_vec = (ct + ht) - ((At + Bt)*x_ls);
     
     % Update the matrix C
     H_z = DY - Pt;
@@ -165,7 +165,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     f = -(yy-start_point);
     
     % Update the termination criterion.
-    condition(ite) = norm(res_vec) ./ norm(ct+ht) ;
+    condition(ite) = norm(res_vec) ./ norm(ct + ht) ;
     
 end
 

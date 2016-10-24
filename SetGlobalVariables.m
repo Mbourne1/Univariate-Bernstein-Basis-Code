@@ -74,7 +74,7 @@ SETTINGS.GCD_COEFFICIENT_METHOD = 'ux and vx';
 
 % Structuring the Sylvester Matrix
 SETTINGS.BOOL_DENOM_SYL = 'y';
-SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
+SETTINGS.SYLVESTER_BUILD_METHOD = 'Rearranged';
 
 % Standard : D*T*Q
 %
