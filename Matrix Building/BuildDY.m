@@ -41,9 +41,7 @@ switch SETTINGS.BOOL_LOG
                 
     case 'y' % Use Logs method
         
-        m = m_t + t;
-        n = n_t + t;
-                
+                       
         DY = BuildDY_log(xu,xv,t,alpha,theta);
         
         

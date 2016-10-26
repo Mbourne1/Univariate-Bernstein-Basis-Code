@@ -2,7 +2,7 @@ function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
     o_gcd_mymethod(fx,gx,deg_limits)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
-%                             Inputs:
+% Inputs:
 %
 % fx : Coefficients of the polynomial f(x)
 %
@@ -30,11 +30,18 @@ function [fx, gx, dx, ux, vx, alpha, theta, t ] = ...
 % theta : Optimal \theta
 
 
-%
-%                       GLOBAL VARIABLES
-
-
 global SETTINGS
+
+% Add relevant Paths
+
+
+addpath 'APF'
+addpath 'Formatting'
+addpath 'Get GCD Coefficients'
+addpath 'Get GCD Degree'
+addpath 'Get Cofactor Coefficients'
+addpath 'Matrix Building'
+addpath 'Low Rank Approx'
 
 % Get the degree m of polynomial f
 m = GetDegree(fx) ;
@@ -43,9 +50,9 @@ m = GetDegree(fx) ;
 
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
-        figure_name = fprintf('%s : Singular Values',mfilename);
+        figure_name = sprintf('%s : Singular Values',mfilename);
         
-        figure('name','svd')
+        figure('name',figure_name)
         hold on
         title('Singular values of S_{1}')
         plot(log10(svd(BuildSubresultant(fx,gx,1))),'-s');

@@ -12,6 +12,7 @@ function [px] = Bernstein_Multiply(fx,gx)
 %
 % px : Column vector of coefficients of the Bernstein Polynomial p(x)
 
+addpath 'Matrix Building'
 
 % Get the degree of polynomial g(x)
 n = GetDegree(gx);

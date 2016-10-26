@@ -27,6 +27,7 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 % deg_limits :
 
+addpath 'Preprocessing'
 
 % Get degree of polynomail f(x)
 m = GetDegree(fx);
@@ -157,7 +158,7 @@ end
 
 % % Analysis of Minimum Singular values
 
-if (upper_lim_comp == lower_lim_comp && bool_coprime == false)
+if (upper_lim_comp == lower_lim_comp)
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);

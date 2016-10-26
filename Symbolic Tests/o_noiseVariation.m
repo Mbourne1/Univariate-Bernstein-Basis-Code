@@ -107,7 +107,7 @@ end
 f_exact = poly(my_roots);
 
 % Get length of polynomial.
-m = length(f_exact)-1;
+m = GetDegree(f_exact);
 
 % Add varying levels of noise to the polynomial coefficients.
 fx10 = VariableNoise(f_exact,1e-10,1e-10);

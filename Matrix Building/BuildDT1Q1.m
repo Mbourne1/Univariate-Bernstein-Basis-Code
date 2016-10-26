@@ -87,9 +87,10 @@ m = GetDegree(fx);
 DT1Q1 = zeros(m+n_k+1,n_k+1);
 
 
-% for each column
+% For each column of the matrix D*T_{n-k}(f)*Q
 for j=0:1:n_k
-    % for each entry in the vector f.
+    
+    % for each coefficient in the vector of coefficients of f(x).
     for i = j:1:j+m
         
         % Get the two binomial coefficients in the numerator in terms of

@@ -21,11 +21,12 @@ switch SETTINGS.APF_BUILD_METHOD
         % Build the matrix H
         H1 = BuildH1(m);
         
+        
         % Build the matrix C1
         C1 = BuildT1(uw,t);
         
         % Build the matrix G
-        G  = BuildG(t);
+        G  = BuildQ(t);
         
         % Build the matrix H*C*G
         H1C1G = H1*C1*G;

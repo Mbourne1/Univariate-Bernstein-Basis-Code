@@ -1,4 +1,4 @@
-function [f] = EvaluateFunction_BernsteinBasis(a,b,inc,fx)
+function [f] = Bernstein_Evaluate_Set(a,b,inc,fx)
 % Evaluate the function f(x) over interval [a,b].
 %
 %
@@ -26,7 +26,7 @@ f = zeros(1,length(x));
 
 for c = a:inc:b
     i = i+1;
-    f(i) = Bernstein_Eval(fx,c);
+    f(i) = Bernstein_Evaluate(fx,c);
 end
 
 end

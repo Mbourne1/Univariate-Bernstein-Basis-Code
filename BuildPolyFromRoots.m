@@ -47,7 +47,7 @@ f_bi = f_bi';
 end
 
 
-function [t]=B_conv(root,mult)
+function [t] = B_conv(root,mult)
 % This function convolves the vector [-r 1-r] with itself m times.
 %
 % Inputs:

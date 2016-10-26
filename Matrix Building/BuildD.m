@@ -6,13 +6,11 @@ function D = BuildD(m,n_k)
 %
 % Input
 %
-% m : Degree of polynomial f.
+% m : Degree of polynomial f(x)
 %
-% n_k : Degree of polynomial v.
+% n_k : Degree of polynomial v(x)
 %
-% n : Degree of polynomial g.
-%
-% k : Index of subresultant.
+% n : Degree of polynomial g(x)
 
 
 % Produce a vector of elements of D, then diagonalise it to form a matrix.

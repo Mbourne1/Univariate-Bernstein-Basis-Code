@@ -2,8 +2,8 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 % O_ROOTS(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Given an example number, and a set of input parameters, calculate the
-% roots r_{i} of the polynomial f(x) and the corresponding multiplicities 
-% m_{i}. 
+% roots r_{i} of the polynomial f(x) and the corresponding multiplicities
+% m_{i}.
 %
 % % Inputs
 %
@@ -18,7 +18,7 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %               'None' - No mean
 %               'Geometric Mean Matlab Method'
 %               'Geometric Mean My Method'
-%              
+%
 %
 % bool_alpha_theta : (string) {'y,'n''}
 %
@@ -32,6 +32,13 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %
 % >> O_ROOTS('Custom:m=10 low=-1 high=1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
 
+
+% add paths
+restoredefaultpath
+
+addpath 'Examples'
+addpath 'Formatting'
+addpath 'Root Finding Methods'
 
 % Set the problem type to a roots type problem.
 ProblemType = 'Roots';
@@ -51,7 +58,7 @@ SetGlobalVariables(ProblemType, ex_num, emin, emax,...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method)
 
 % Use the examples from a set of given roots
-global Example_Type 
+global Example_Type
 Example_Type = 'From Roots'; % fromRoots/fromCoefficients
 
 % Print Settings to console
@@ -69,8 +76,6 @@ end
 
 
 
-% Add subdirectories
-addpath 'Root Finding Methods'
 
 % Get the polynomial f(x) as a column vector of coefficients.
 [fx_exact] = Examples_Roots(ex_num);
@@ -84,26 +89,26 @@ fx = VariableNoise(fx_exact,emin,emax);
 % %
 % Calculate roots by mymethod.
 %try
-    % Start timer
-    myMethodStart = tic;
-    
-    % Get roots by my method
-    arr_root_mult_MyMethod = o_roots_mymethod(fx);
-    
-    % End timer
-    time.MyMethod = toc(myMethodStart);
-    
-    % Get error
-    errors.MyMethod = GetErrorMeasure(arr_root_mult_MyMethod,fx_exact);
-    LineBreakLarge()
-    comp_roots.MyMethod = mat2str(arr_root_mult_MyMethod(:,1));
+% Start timer
+myMethodStart = tic;
+
+% Get roots by my method
+arr_root_mult_MyMethod = o_roots_mymethod(fx);
+
+% End timer
+time.MyMethod = toc(myMethodStart);
+
+% Get error
+errors.MyMethod = GetErrorMeasure(arr_root_mult_MyMethod,fx_exact);
+LineBreakLarge()
+comp_roots.MyMethod = mat2str(arr_root_mult_MyMethod(:,1));
 %catch err
- %   fprintf([mfilename ' : ' 'Error computing Roots by My Method \n' ])
+%   fprintf([mfilename ' : ' 'Error computing Roots by My Method \n' ])
 %
- %   fprintf(err.message);
-  %  errors.MyMethod = 999999999;
-   % time.MyMethod   = 999999999;
-  %  comp_roots.MyMethod = mat2str([0 0 0 0 0 0]);
+%   fprintf(err.message);
+%  errors.MyMethod = 999999999;
+% time.MyMethod   = 999999999;
+%  comp_roots.MyMethod = mat2str([0 0 0 0 0 0]);
 %end
 
 % %
@@ -121,7 +126,7 @@ catch err
     
     fprintf([mfilename ' : ' 'Error computing Roots by Musser Method \n' ])
     fprintf(err.message);
-    errors.MusserMethod = 9999999;  
+    errors.MusserMethod = 9999999;
     time.MusserMethod = 9999999;
 end
 
@@ -140,11 +145,11 @@ LineBreakLarge()
 % %
 % Calculate roots by 'multroot' function.
 try
-arr_root_mult_Multroot = o_roots_multroot(fx);
-errors.MultrootMethod = GetErrorMeasure(arr_root_mult_Multroot,fx_exact);
-LineBreakLarge()
+    arr_root_mult_Multroot = o_roots_multroot(fx);
+    errors.MultrootMethod = GetErrorMeasure(arr_root_mult_Multroot,fx_exact);
+    LineBreakLarge()
 catch
-errors.MultrootMethod = 9999999;    
+    errors.MultrootMethod = 9999999;
 end
 
 
@@ -180,7 +185,7 @@ switch SETTINGS.PLOT_GRAPHS
         scatter( real(arr_root_mult_MatlabMethod(:,1)), imag(arr_root_mult_MatlabMethod(:,1)),'red','DisplayName','Matlab Roots');
         scatter( real(arr_root_mult_Multroot(:,1)), imag(arr_root_mult_Multroot(:,1)),'green','s','filled','DisplayName','MultRoots');
         
-       
+        
         xlabel('Real');
         ylabel('Imaginary');
         legend(gca,'show')
@@ -237,12 +242,12 @@ if exist(fullFileName, 'file')
         SETTINGS.BOOL_LOG,...
         SETTINGS.DECONVOLVE_METHOD_WX_HX,...
         comp_roots.MyMethod...
-    );
+        );
     fclose(fileID);
 else
-  % File does not exist.
-  warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
-  uiwait(msgbox(warningMessage));
+    % File does not exist.
+    warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
+    uiwait(msgbox(warningMessage));
 end
 
 
@@ -254,7 +259,7 @@ function [error] = GetErrorMeasure(arr_root_mult,fx_exact)
 %
 % Inputs.
 %
-% arr_root_mult : Matrix whose rows contain a computed root of f(x) and 
+% arr_root_mult : Matrix whose rows contain a computed root of f(x) and
 %                 its corresponding multiplicitiy.
 %
 % fx_exact : Coefficients of exact Polynomial f(x)

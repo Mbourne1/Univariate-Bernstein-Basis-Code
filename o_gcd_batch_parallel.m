@@ -1,4 +1,4 @@
-function [] = o_gcd_batch_p()
+function [] = o_gcd_batch_parallel()
 
 
 ex_num_arr = ...

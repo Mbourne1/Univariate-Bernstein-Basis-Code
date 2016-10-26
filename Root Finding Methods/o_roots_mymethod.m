@@ -12,6 +12,7 @@ function [root_mult_array] = o_roots_mymethod(fx)
 % root_mult_array : The Calculated roots of the polynomial f(x) and their
 % corresponding multiplicities.
 
+addpath 'Deconvolution'
 
 global SETTINGS
 
@@ -98,8 +99,6 @@ vDeg_arr_hx = diff([vDeg_arr_fx]);
 
 % Get the degree structure of the polynomials w_{i}
 vDeg_arr_wx = diff([vDeg_arr_hx 0]);
-
-vMultiplicities = find(vDeg_arr_wx~=0);
 
 
 % #########################################################################

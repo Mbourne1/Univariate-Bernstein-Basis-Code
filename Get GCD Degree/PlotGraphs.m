@@ -3,6 +3,7 @@
 %
 % 4. Diagonals of R1
 
+addpath 'Plotting'
 
 global SETTINGS
 switch SETTINGS.PLOT_GRAPHS

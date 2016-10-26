@@ -3,6 +3,8 @@ function [DTQ] = BuildDTQ(fx,gx,k)
 %
 % Build the matrix DTQ = D^{-1}T(f,g)*Q.
 %
+% Inputs.
+%
 % fx : Coefficients of polynomial f(x)
 %
 % gx : Coefficients of polynomial g(x)

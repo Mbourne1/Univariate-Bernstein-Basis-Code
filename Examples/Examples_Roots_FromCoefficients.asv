@@ -27,9 +27,7 @@ function [fx] = GetCoefficients(f_roots_mult_array)
 % Each factor is given as a symbolic expression.
 
 
-addpath 'Basis Conversion'
-addpath 'Bernstein Methods'
-
+addpath 
 syms x
 
 % Get the number of factors
@@ -61,7 +59,7 @@ poly = arr_factors_brn{1};
 
 for i = 2:1:nFactors
     
-    poly = Bernstein_Multiply(poly,arr_factors_brn{i});
+    poly = Bernstein_Multiply(poly,arr_factors_brn);
     
 end
 

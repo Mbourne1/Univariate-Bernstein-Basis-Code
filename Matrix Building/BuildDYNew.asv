@@ -1,4 +1,18 @@
 function Y = BuildDYNew(m,n,t,mincol,x_ls_wrt_w,alpha,theta)
+%
+% Inputs.
+%
+% m : Degree of polynomial f(x)
+%
+% n : Degree of polynomial g(x)
+%
+% t : Degree of polynomial d(x)
+%
+% mincol : Index of minimum 
+%
+%
+%
+%
 
 xa = x_ls_wrt_w(1:mincol-1) ;
 xb = x_ls_wrt_w(mincol:end) ;

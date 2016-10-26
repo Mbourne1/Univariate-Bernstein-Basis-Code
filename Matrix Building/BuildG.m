@@ -9,6 +9,8 @@ function G = BuildG(t)
 % t :   Degree of GCD
 
 % Build G
+
+
 G = diag(GetBinomials(t));
 
 end

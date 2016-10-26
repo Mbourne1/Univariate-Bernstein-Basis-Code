@@ -96,7 +96,7 @@ Partial_vw_wrt_theta = Differentiate_wrt_theta(vw,th(ite));
 bk = [fw ; alpha(ite).*gw];
 
 % Get initial residual
-res_vec = bk-((HCG)*dw);
+res_vec = bk - ((HCG)*dw);
 
 % Set some initial values
 residual(ite)   = norm(res_vec);
@@ -208,7 +208,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G with respect to
     % theta
-    [~,H1C1G_wrt_theta, H2C2G_wrt_theta] = BuildHCG(uw_wrt_theta,vw_wrt_theta,m,n,t);
+    [~,H1C1G_wrt_theta, H2C2G_wrt_theta] = BuildHCG(uw_wrt_theta,vw_wrt_theta,t);
     
     % Get perturbation vector, and seperate in to perturbations of f,
     % z1 and perturbations of g, z2
@@ -224,11 +224,11 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     z1w_wrt_theta = Differentiate_wrt_theta(z1w,th(ite));
     
     % Build Matrices H_{1}E_{1}(z1)G and H_{2}E_{2}(z2)G
-    [~,H1E1G,H2E2G] = BuildHCG(z1w,z2w,m,n,t);
+    [~,H1E1G,H2E2G] = BuildHCG(z1w,z2w,t);
     
     % Calculate Partial derivatives of Matrices H_{1}E_{1}(z1)G and
     % H_{2}E_{2}(z2)G with respect to theta
-    [~,H1E1G_wrt_theta,H2E2G_wrt_theta] = BuildHCG(z1w_wrt_theta,z2w_wrt_theta,m,n,t);
+    [~,H1E1G_wrt_theta,H2E2G_wrt_theta] = BuildHCG(z1w_wrt_theta,z2w_wrt_theta,t);
     
     % Obtain structured perturbations sw of fw, and tw of gw
     sw = GetWithThetas(p,th(ite));
@@ -284,7 +284,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     C = [H_z , C_temp];
     
     % Calculate Matrix H(C+E)G
-    [HCEG,~,~] = BuildHCG(uw+z1w,vw+z2w,m,n,t);
+    [HCEG,~,~] = BuildHCG(uw+z1w,vw+z2w,t);
     
     % Calculate the new residual
     res_vec = [fw + sw ;(alpha(ite)*(gw + tw))]-((HCEG)*dw);

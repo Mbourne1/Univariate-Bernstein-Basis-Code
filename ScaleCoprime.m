@@ -4,32 +4,31 @@ function [resid_u,resid_v] = ScaleCoprime(u,v,f,g,t)
 % This function scales the coprime polynomials u and v in order to
 % minimise the residual of the equations (u)(d)=f and (v)(d)=g,
 % where d is the 
-
-
+%
+%
 % Input:
-
+%
 % u :- the quotient polynomial, expressed in the Bernstein basis or
 %      the modified Bernstein basis.
-
+%
 % v :- the quotient polynomial, expressed in the Bernstein basis or
 %      the modified Bernstein basis.
-
+%
 % f :- the coefficients of f, expressed in the Bernstein basis or
 %      the modified Bernstein basis.
-
+%
 % g :- the coefficients of g, expressed in the Bernstein basis or
 %      the modified Bernstein basis.
-
+%
 % t :- the degree of the AGCD.
-
-
+%
+%
 % Output
-
-
+%
+%
 % resid_u :- the normalised residual of (lambda * u)(d) = f.
-
+%
 % resid_x :- the normalised residual of (mu * v)(d) = g.
-
 
 % The following expression is required
 
