@@ -80,7 +80,7 @@ root_mult = [c 1];
 root_mult_array = root_mult;
 
 % Convert to polynomial in scaled bernstein form
-gx_bi = B_poly(root_mult);
+gx_bi = BuildPolyFromRoots(root_mult);
 
 % Build polynomial of the removed root
 gx = GetWithoutBinomials(gx_bi);
@@ -144,7 +144,7 @@ while GetDegree(f2) >=1
     root_mult_array = [root_mult_array ;root_mult];
     
     % Convert to polynomial in scaled bernstein form
-    gx_bi = B_poly(root_mult);
+    gx_bi = BuildPolyFromRoots(root_mult);
     
     % Build polynomial of removed root
     gx = GetWithoutBinomials(gx_bi);

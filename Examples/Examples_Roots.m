@@ -16,7 +16,7 @@ switch Example_Type
         fprintf('%30.15f %30.15f \t \t\n',[f_roots_exact(:,1),f_roots_exact(:,2)]');
         fprintf('\n');
         
-        fx_bi = B_poly(f_roots_exact);
+        fx_bi = BuildPolyFromRoots(f_roots_exact);
         fx_exact = GetWithoutBinomials(fx_bi);
         
         % Get degree of f

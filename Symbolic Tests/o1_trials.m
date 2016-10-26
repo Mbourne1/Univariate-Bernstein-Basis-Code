@@ -60,7 +60,7 @@ function [roots_calc] = o_roots_matlab(ex_num,emin,emax)
 f_roots_exact = Private_Examples(ex_num);
 
 % Get coefficients of exact polynomial f in scaled bernstein basis.
-f_exact_bi = B_poly(f_roots_exact);
+f_exact_bi = BuildPolyFromRoots(f_roots_exact);
 
 % Get degree of polynomial f.
 m = length(f_exact_bi) - 1;
@@ -105,10 +105,10 @@ function [roots_calc] = o_roots_multroot(ex_num,emin,emax)
 addpath 'multroot/multroot'
 
 % Get exact roots of polynomial f
-f_roots_exact = Private_Examples(ex_num);
+f_root_mult_arr_exact = Private_Examples(ex_num);
 
 % Get coefficients of exact polynomial f in scaled bernstein basis.
-f_exact_bi = B_poly(f_roots_exact);
+f_exact_bi = BuildPolyFromRoots(f_root_mult_arr_exact);
 
 % Get degree of polynomial f.
 m = length(f_exact_bi) - 1;

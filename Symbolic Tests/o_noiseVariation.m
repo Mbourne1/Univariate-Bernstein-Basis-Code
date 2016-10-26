@@ -25,12 +25,12 @@ o_noiseVariation_Power(f_roots,a,b,inc);
 end
 
 
-function [] = o_noiseVariation_Bernstein(f_roots,a,b,inc)
+function [] = o_noiseVariation_Bernstein(f_root_mult_arr,a,b,inc)
 %% Trial varying levels of noise on the coefficients of f in the Bernstein Basis.
 % Graph the noisy polynomial, which are perturbed forms of f.
 
 % Get polynomial f in scaled Bernstein Basis.
-f_exact_bi = B_poly(f_roots);
+f_exact_bi = BuildPolyFromRoots(f_root_mult_arr);
 
 % Get degree of polynomial f
 m = length(f_exact_bi)-1;

@@ -2,17 +2,17 @@ function [] = Bisection_method(example_number,emin)
     
     addpath 'Examples'
 
-    [f_roots_exact,~] = Root_Examples(example_number);
-    f_exact_bi = B_poly(f_roots_exact);
-    m = length(f_exact_bi) - 1;
+    [f_root_mult_arr_exact,~] = Root_Examples(example_number);
+    
+    % Get Coefficients of f(x) in scaled Bernstein form
+    f_exact_bi = BuildPolyFromRoots(f_root_mult_arr_exact);
+    
+    % Get the degree of f(x)
+    m = GetDegree(f_exact_bi)
+    
+    % Get f(x) without binomials, in standard Bernstein form
+    f_exact = GetWithoutBinomials(f_exact_bi);
 
-    Bi_m = zeros(1,m+1);
-    for i = 0:1:m
-        Bi_m(i+1) = nchoosek(m,i);
-    end
-
-    % Obtain exact coefficients of polynomial f
-    f_exact = f_exact_bi./Bi_m;
     
     % Set signal noise ratio, note only min is specified, so we have
     % constant signal/noise ratio

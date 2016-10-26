@@ -73,7 +73,7 @@ end
 roots = [real(t(:,1)), ones(length(t),1)];
 root_mult_array = roots;
 % Get coefficients of polynomial r1 in the scaled bernstein form
-r1_bi = B_poly(roots);
+r1_bi = BuildPolyFromRoots(roots);
 
 % Divide by binomial coefficients to obtain r1 in standard bernstein basis.
 r1_x = GetWithoutBinomials(r1_bi);
@@ -114,7 +114,7 @@ while GetDegree(f2) >= 1
     roots = [real(t_new(:,1)), ones(length(t_new),1)];
 
     % Get polynomial coefficients of r1 in scaled bernstien basis
-    r1_bi = B_poly(roots);
+    r1_bi = BuildPolyFromRoots(roots);
     
     % Get r1 in standard bernstein basis.
     r1_x = GetWithoutBinomials(r1_bi);
