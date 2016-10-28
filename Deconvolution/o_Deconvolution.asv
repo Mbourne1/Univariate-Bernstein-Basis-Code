@@ -1,4 +1,4 @@
-function [] = Test_Deconvolution(ex_num,noise,bool_preproc)
+function [] = o_Deconvolution(ex_num,noise,bool_preproc)
 % Test the different methods of deconvolving the polynomials f_{i}(x), to
 % form the set of polynomials h_{i} where h_{i} = f{i}/f_{i+1}
 %
@@ -27,9 +27,15 @@ SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
 SETTINGS.PREPROC_DECONVOLUTIONS = bool_preproc;
 SETTINGS.SEED = 1024;
 
+addpath (...
+    'Basis Conversion',...
+    '../Examples',...
+    'Matrix Building'...
+    )
 
+syms x y;
 
-[vFactors,vMult] = Examples_Deconvolution(ex_num);
+[vFactors,vMult] = Univariate_Deconvolution_Examples(ex_num);
 
 % Get highest power of any factor
 highest_pwr = max(vMult);
@@ -45,7 +51,7 @@ mult_mat_arr_fx = zeros(highest_pwr+1,length(vMult));
 
 for i = 0:1:highest_pwr
     
-    % Get the multiplicities of the roots of f_{i+1}
+    % Get the multiplicities of the factors of f_{i+1}
     mults = ((vMult - i) + abs(vMult-i)) ./2;
     
     % Add the multiplicity structure to the matrix of multiplicities.
@@ -53,6 +59,8 @@ for i = 0:1:highest_pwr
     
     % Get the symbolic polynomial f_{i+1}
     arr_sym_fx{i+1,1} = prod(vFactors.^(mults));
+    
+    
     
     % Get the degree of polynomial f_{i+1}(x)
     vDeg_arr_fx(i+1) = double(feval(symengine, 'degree', (arr_sym_fx{i+1})));
