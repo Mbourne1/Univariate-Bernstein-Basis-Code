@@ -1,7 +1,16 @@
-function t = GetGCDDegree_OneSubresultant(vSingularValues)
+function t = Get_GCD_Degree_OneSubresultant(vSingularValues)
 % Given the vector of values from either minimum singular values or max:min
 % R diagonals.
 % Get the rank, where only one subresultant exists.
+%
+% Inputs 
+%
+% vSingularValues : Vector of Singular Values.
+%
+%
+% Outputs.
+%
+% t : Computed degree of the GCD
 
 
 global SETTINGS
@@ -15,7 +24,7 @@ calling_function = St(2).name;
 % Only one subresultant
 fprintf([calling_function ' : ' mfilename ' : ' 'Only one subresultant exists. \n'])
 
-
+% Plot the singular values
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure_name = sprintf([calling_function ' : Singular values of S_{1}']);

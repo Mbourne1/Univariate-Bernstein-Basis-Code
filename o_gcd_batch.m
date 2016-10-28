@@ -2,31 +2,31 @@ function [] = o_gcd_batch()
 
 ex_num_arr = ...
     {
-    %'1',...
-    %'2',...
-    'Custom:m=15 n=9.t=7 low=-1 high=1'
+    '1',...
+    '2',...
+    %'Custom:m=15 n=9.t=7 low=-1 high=1'
     };
 
-
-% Build a custom array of examples
-count = 1;
-for i = 3:1:14
-    for j = 3:1:7
-        for k = 1:1:min(i,j)
-            %
-            m = i
-            n = j
-            t = k
-            
-            ex_num_arr{count} = sprintf('Custom:m=%i n=%i t=%i low=-1 high=1',m,n,t);
-            
-            count = count + 1;
-            
-        end
-        
-        
-    end
-end
+% 
+% % Build a custom array of examples
+% count = 1;
+% for i = 3:1:14
+%     for j = 3:1:7
+%         for k = 1:1:min(i,j)
+%             %
+%             m = i;
+%             n = j;
+%             t = k;
+%             
+%             ex_num_arr{count} = sprintf('Custom:m=%i n=%i t=%i low=-1 high=1',m,n,t);
+%             
+%             count = count + 1;
+%             
+%         end
+%         
+%         
+%     end
+% end
 
 
 bool_alpha_theta_arr = {'y','n'};

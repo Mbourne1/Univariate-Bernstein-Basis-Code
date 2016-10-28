@@ -1,4 +1,4 @@
-function [f_noisy]=Noise(f,el,eu)
+function [f_noisy] = AddNoiseToPoly(f,el,eu)
 % Add noise to the coefficients of polynomial f(x)
 %
 %                           Inputs
@@ -11,7 +11,7 @@ function [f_noisy]=Noise(f,el,eu)
 %
 
 
-% get the degree of input polynomial f
+% Get the degree of input polynomial f
 m = GetDegree(f);
 
 

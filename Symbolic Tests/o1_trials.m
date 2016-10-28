@@ -78,7 +78,7 @@ f_exact = f_exact_bi./Bi_m;
 
 % Add noise to the coefficients of polynomial f in the regular bernstein
 % basis.
-fx = VariableNoise(f_exact,emin,emax);
+fx = AddVariableNoiseToPoly(f_exact,emin,emax);
 
 % Get roots wrt to y using MATLAB method.
 roots_calc = roots(fx.*Bi_m);
@@ -126,7 +126,7 @@ f_exact = f_exact_bi./Bi_m;
 
 % Add noise to the coefficients of polynomial f in the regular bernstein
 % basis.
-fx = Noise(f_exact,emin);
+fx = AddNoiseToPoly(f_exact,emin);
 
 % Get roots wrt to y
 roots_calc = multroot(fx.*Bi_m);

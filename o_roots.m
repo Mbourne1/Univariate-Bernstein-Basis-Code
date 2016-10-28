@@ -82,7 +82,7 @@ end
 
 % Add Noise to coefficients of exact polynomial f_exact, to obtain noisy
 % polynomial fx.
-fx = VariableNoise(fx_exact,emin,emax);
+fx = AddVariableNoiseToPoly(fx_exact,emin,emax);
 
 % %
 % %

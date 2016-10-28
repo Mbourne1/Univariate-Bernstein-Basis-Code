@@ -16,7 +16,7 @@ function [] = Bisection_method(example_number,emin)
     
     % Set signal noise ratio, note only min is specified, so we have
     % constant signal/noise ratio
-    fx = Noise(f_exact,emin);
+    fx = AddNoiseToPoly(f_exact,emin);
     
     index = 0;
     for i = 0:0.05:1

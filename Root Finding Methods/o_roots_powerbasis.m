@@ -1,4 +1,4 @@
-function [] = o_roots_powerbasis(example_number)
+function [] = o_roots_Powerbasis(example_number)
 % o_roots_powerbasis, takes the polynomial roots, and converts to a
 % polynomail in standard power basis, then obtains the roots.
 

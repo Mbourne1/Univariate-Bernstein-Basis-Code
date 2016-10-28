@@ -1,5 +1,5 @@
 
-function [t] = GetGCDDegree_MultipleSubresultants(vMinimumSingularValues,deg_limits)
+function [t] = Get_GCD_Degree_MultipleSubresultants(vMinimumSingularValues,deg_limits)
 % Get the problem type, dependent on the vector of singular values from the
 % series s_{k}
 %

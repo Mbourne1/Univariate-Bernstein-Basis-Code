@@ -50,7 +50,7 @@ addpath(...
     'Plotting',...
     'Preprocessing',...
     'Results',...
-    'Sylvester Matrix'
+    'Sylvester Matrix',...
     'APF')
 
 % Consistency of input parameters.
@@ -96,8 +96,8 @@ display(d_exact)
 %PrintCoefficients_Bivariate_Bernstein(g_exact,'g')
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
-fx = VariableNoise(f_exact,emin,emax);
-gx = VariableNoise(g_exact,emin,emax);
+fx = AddVariableNoiseToPoly(f_exact,emin,emax);
+gx = AddVariableNoiseToPoly(g_exact,emin,emax);
 
 % set upper and lower limit of the degree of the GCD
 lower_lim = 1;

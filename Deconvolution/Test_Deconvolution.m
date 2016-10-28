@@ -139,7 +139,7 @@ arr_fx_noisy = cell(nPolys_arr_fx,1);
 
 % Get noisy polynomials f_{i}(x)
 for i = 1:1:nPolys_arr_fx
-    arr_fx_noisy{i,1} = Noise(arr_fx{i},noise);
+    arr_fx_noisy{i,1} = AddNoiseToPoly(arr_fx{i},noise);
 end
 
 

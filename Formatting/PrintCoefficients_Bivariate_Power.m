@@ -1,4 +1,4 @@
-function [] = PrintCoefficientsBivariate_Power(fxy,f)
+function [] = PrintCoefficients_Bivariate_Power(fxy,f)
 % Given the polynomial f(x,y) print out the polynomial.
 
 % Get degree of polynomial f(x,y)

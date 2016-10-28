@@ -33,24 +33,20 @@ function [] = o_noiseVariation_Bernstein(f_root_mult_arr,a,b,inc)
 f_exact_bi = BuildPolyFromRoots(f_root_mult_arr);
 
 % Get degree of polynomial f
-m = length(f_exact_bi)-1;
+m = GetDegree(f_exact_bi);
 
 % Calculate binomial coefficients corresponding to polynomial f.
-Bi_m = zeros(1,m+1);
-for i=1:1:m+1
-    Bi_m(i) = nchoosek(m,i-1);
-end
+Bi_m = GetBinomials(m);
 
 % Get polynomial f in standard Bernstein Basis.
-f_exact = f_exact_bi./Bi_m;
-
+f_exact = GetWithoutBinomials(f_exact_bi);
 
 %% Add varying levels of noise to f.
-fx10 = VariableNoise(f_exact,1e-10,1e-10);
-fx9  = VariableNoise(f_exact,1e-9,1e-9);
-fx8  = VariableNoise(f_exact,1e-8,1e-8);
-fx2  = VariableNoise(f_exact,1e-2,1e-2);
-fx1  = VariableNoise(f_exact,1e-1,1e-1);
+fx10 = AddVariableNoiseToPoly(f_exact,1e-10,1e-10);
+fx9  = AddVariableNoiseToPoly(f_exact,1e-9,1e-9);
+fx8  = AddVariableNoiseToPoly(f_exact,1e-8,1e-8);
+fx2  = AddVariableNoiseToPoly(f_exact,1e-2,1e-2);
+fx1  = AddVariableNoiseToPoly(f_exact,1e-1,1e-1);
 fx   = f_exact;
 
 

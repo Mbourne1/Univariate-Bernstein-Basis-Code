@@ -64,19 +64,19 @@ end
 
 %Get degree by original method - limits
 [t2, alpha2, theta2, gm_fx2, gm_gx2] = ...
-    GetGCD_Degree(fx,gx,deg_limits);
+    Get_GCD_Degree(fx,gx,deg_limits);
 %display(t2)
 LineBreakMedium();
 %
 % % % Get Degree by new method - no limits
 % [t3, alpha3, theta3, gm_fx3, gm_gx3] = ...
-%     GetGCD_DegreeByNewMethod(fx,gx);
+%     Get_GCD_DegreeByNewMethod(fx,gx);
 % display(t3)
 % LineBreakMedium();
 %
 % % Get degree by new method - limits
 % [t4, alpha4, theta4, gm_fx4, gm_gx5] = ...
-%     GetGCD_DegreeByNewMethod2(fx,gx,deg_limits);
+%     Get_GCD_DegreeByNewMethod2(fx,gx,deg_limits);
 % display(t4)
 % LineBreakMedium();
 
