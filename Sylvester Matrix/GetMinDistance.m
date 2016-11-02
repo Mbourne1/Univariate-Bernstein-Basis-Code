@@ -1,12 +1,25 @@
-function [res,index] = GetMinDistance(Sk)
-% Given a sylvester matrix get the minimum distance for the removal of a
-% column
+function [residual,idx_col] = GetMinDistance(Sk)
+% Given a Sylvester matrix remove each column in turn, and compute the
+% distance between it and a vector which lies in the column space of the
+% remaining columns.
+% 
+% Inputs.
+%
+% Sk : Sylvester subresultant matrix S_{k}(f,g)
+%
+% Outputs.
+%
+% residual : Residual obtained by removing the column ck. r = ck - Ax
+%
+% idx_col : Index of column removed where residual is minimal.
 
-[~,c] = size(Sk);
+% Get the number of columns in the Sylvester matrix S_{k}(f,g)
+[nCols] = size(Sk,2);
 
-residual_vec = zeros(c,1);
+% Initialise a vector to store residuals
+residual_vec = zeros(nCols,1);
 
-for i = 1:1:c
+for i = 1:1:nCols
     
     % Get Ak, Sk with ck removed
     Ak = Sk;
@@ -24,6 +37,6 @@ for i = 1:1:c
 end
 
 % Get the minimal residual and the index of the corresponding column ck
-[res,index] = min(residual_vec);
+[residual,idx_col] = min(residual_vec);
 
 end

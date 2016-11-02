@@ -188,7 +188,7 @@ else
     
     
     % % Graph Plotting
-    PlotGraphs()
+    PlotGraphs_GCDDegree()
     
     % %
     % Outputs

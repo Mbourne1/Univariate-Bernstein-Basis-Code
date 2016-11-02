@@ -12,14 +12,14 @@ n = GetDegree(gx);
 St = BuildSubresultant(fx,gx,t);
 
 % Get the optimal column for removal
-[opt_col] = GetOptimalColumn(St);
+[~,idx_col] = GetMinDistance(St);
 
 % Remove optimal column
 At = St;
-At(:,opt_col) = [];
+At(:,idx_col) = [];
 
 % Get the optimal column c_{t} removed from S_{k}
-ct = St(:,opt_col);
+ct = St(:,idx_col);
 
 % Obtain the solution vector x = [-v;u]
 x_ls = SolveAx_b(At,ct);
@@ -27,9 +27,9 @@ x_ls = SolveAx_b(At,ct);
 % Insert a zero into the position corresponding to the index of the optimal
 % column so that S(f,g)*vec_x = 0.
 vec_x =[
-    x_ls(1:(opt_col)-1);
+    x_ls(1:(idx_col)-1);
     -1;
-    x_ls(opt_col:end);
+    x_ls(idx_col:end);
     ]  ;
 
 % Obtain values for quotient polynomials u and v. still expressed in the

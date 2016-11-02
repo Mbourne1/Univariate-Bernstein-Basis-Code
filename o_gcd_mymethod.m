@@ -35,13 +35,13 @@ global SETTINGS
 % Add relevant Paths
 
 
-addpath 'APF'
-addpath 'Formatting'
-addpath 'Get GCD Coefficients'
-addpath 'Get GCD Degree'
-addpath 'Get Cofactor Coefficients'
-addpath 'Matrix Building'
-addpath 'Low Rank Approx'
+addpath (...
+    'APF',...
+    'Formatting',...
+    'Get GCD Coefficients',...
+    'Get GCD Degree',....
+    'Get Cofactor Coefficients',...
+    'Low Rank Approx');
 
 % Get the degree m of polynomial f
 m = GetDegree(fx) ;
@@ -120,12 +120,12 @@ St_preproc = BuildSubresultant(fw,alpha.*gw,t);
 %
 % Get the optimal column of the sylvester matrix to be removed. Where
 % removal of the optimal column gives the minmal residual in (Ak x = ck)
-[opt_col] = GetOptimalColumn(St_preproc);
+[~,idx_col] = GetMinDistance(St_preproc);
 
 % %
 % % Perform SNTLN
 % Apply / Don't Apply structured perturbations.
-[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,opt_col,gm_fx,gm_gx);
+[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,idx_col,gm_fx,gm_gx);
 
 
 % %
@@ -243,6 +243,7 @@ switch SETTINGS.PLOT_GRAPHS
         end
         legend(gca,'show');
         xlabel('i')
+        xlim([1 +inf]);
         title('Ordered Singular Values of The Sylvester Matrix S{(f,g)}')
         ylabel('log_{10} Minimal Singular Values ')
         hold off

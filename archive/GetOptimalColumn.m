@@ -7,14 +7,13 @@ function opt_col = GetOptimalColumn(Sk)
 %
 %
 %
-%                               Input:
+% Input:
 %
 % Sk :- Sylvester matrix
 %
-%                              Output
+% Output
 %
 % opt_col :- The optimal column c_{k}
-%
 
 % Get number of columns in Sylvester Matrix
 [~,nColsSk] = size(Sk);

@@ -44,6 +44,7 @@ problemType = 'GCD';
 
 restoredefaultpath
 addpath(...
+    'Build Matrices',...
     'Examples',...
     'Formatting',...
     'Low Rank Approx',...
@@ -110,40 +111,12 @@ upper_lim = min(GetDegree(fx),GetDegree(gx));
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
-%PrintCoefficients('u',u_exact, ux_calc);
-%PrintCoefficients('v',v_exact, vx_calc);
-PrintCoefficients('d',d_exact, dx_calc);
 
+LineBreakMedium();
 error_dx = GetError('d',d_exact,dx_calc);
 
 PrintToFile(GetDegree(fx),GetDegree(gx),GetDegree(dx_calc),error_dx)
 
-
-end
-
-
-function [] = PrintRoots(f,f_roots)
-
-% print out the exact roots of f,g and d
-fprintf('\nRoots of %s \n',f);
-fprintf('\t Root \t \t \t \t\t \t \t   Multiplicity \n')
-fprintf('%30.15f \t \t \t %30.15f   \t \t \n',[f_roots(:,1),f_roots(:,2)]');
-fprintf('\n');
-
-end
-
-function [] = PrintCoefficients(name,u_exact,u_calc)
-
-% Normalise quotient polynomial u
-u_calc  = Normalise(u_calc);
-u_exact = Normalise(u_exact);
-
-fprintf('\nCoefficients of %s \n\n',name);
-fprintf('\t Exact \t \t \t \t\t \t \t   Computed \n')
-mat = [real(u_exact(:,1))';  real(u_calc(:,1))' ];
-fprintf('%30.15f \t \t \t %30.15f   \t \t \n', mat);
-fprintf('\n');
-GetError(name,u_calc,u_exact);
 
 end
 
@@ -153,7 +126,7 @@ function [error] = GetError(name,f_calc,f_exact)
 % Get the angle between the two vectors
 angle = dot(f_calc,f_exact) ./ (norm(f_calc) * norm(f_exact));
 angle_error = 1 - angle;
-fprintf('Calculated angle error : %8.2e \n', angle_error)
+fprintf('\tCalculated angle error : %8.2e \n', angle_error)
 
 f_calc  = Normalise(f_calc);
 f_exact = Normalise(f_exact);
