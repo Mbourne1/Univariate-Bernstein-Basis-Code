@@ -1,4 +1,4 @@
-function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,Sylvester_Build_Method)
 % o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
@@ -30,13 +30,21 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %           'Standard APF'
 %           'None'
 %
+% Sylvester_Build_Method : 
+%           'T'
+%           'DT'
+%           'DTQ'
+%           'TQ'
+%           'DTQ Rearranged Denom Removed'
+%           'DTQ Rearranged'
+%
 % % Example
-% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None')
+% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None','DTQ')
 % 
 % % Custom Example
 %
 % ex_num = 'Custom:m=10 n=10 t=5 low=0 high=1'
-% >> o_gcd(ex_num,1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None')
+% >> o_gcd(ex_num,1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None','DTQ')
 
 
 % Set the problem type to a GCD problem
@@ -45,16 +53,16 @@ problemType = 'GCD';
 restoredefaultpath
 addpath(...
     'Build Matrices',...
-    'Examples',...
     'Formatting',...
-    'Low Rank Approx',...
-    'Low Rank Approx/SNTLN',...
-    'Low Rank APprox/STLN',...
+    'Measures',...
     'Plotting',...
     'Preprocessing',...
     'Results',...
     'Sylvester Matrix',...
     'APF')
+
+addpath(genpath('Examples'));
+addpath(genpath('Low Rank Approx'));
 
 % Consistency of input parameters.
 
@@ -66,26 +74,41 @@ addpath(...
 % end
 
 % Set the global variables
-global SETTINGS
-if isempty(SETTINGS)
-    fprintf('Set Q and log')
-    SETTINGS.BOOL_Q = 'y';
-    SETTINGS.BOOL_LOG = 'n';
-    SETTINGS.GCD_COEFFICIENT_METHOD = 'ux';
-end
-
-SetGlobalVariables(problemType,ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+SetGlobalVariables(problemType,...
+    ex_num,...
+    emin,...
+    emax,...
+    mean_method,...
+    bool_alpha_theta,...
+    low_rank_approx_method,...
+    apf_method,...
+    Sylvester_Build_Method);
 
 % Print the parameters.
 PrintGlobalVariables()
+global SETTINGS
+
+fprintf('PARAMETERS:\n\n')
+fprintf('\tmin noise : %2.4e \n\tmax noise : %2.4e \n',emin,emax)
+fprintf('INPUT VARIABLES\n')
+
+LineBreakLarge()
+fprintf('\t EXAMPLE NUMBER : %s \n',ex_num)
+fprintf('\t MEAN METHOD : %s \n',SETTINGS.MEAN_METHOD)
+fprintf('\t ALPHA_THETA : %s \n',SETTINGS.BOOL_ALPHA_THETA)
+fprintf('\t Low Rank Approximation Method : %s \n',SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
+fprintf('\t APF Method : %s \n ',SETTINGS.APF_METHOD)
+fprintf('\t LOG: %s \n',SETTINGS.BOOL_LOG)
+fprintf('\t Sylvester Build Method : %s \n',SETTINGS.SYLVESTER_BUILD_METHOD)
+fprintf('')
+LineBreakLarge()
 
 % o - gcd - Calculate GCD of two Arbitrary polynomials
 % Given two sets of polynomial roots, form polynomials f and g, expressed
 % in the Bernstein Basis. Add noise, and calculate the GCD of the two
 % polynomails
 
-% Add neccesary paths.
-addpath 'Measures'
+
 
 % Get roots from example file
 [f_exact, g_exact,d_exact] = Examples_GCD(ex_num);
@@ -113,8 +136,11 @@ upper_lim = min(GetDegree(fx),GetDegree(gx));
 % exact polynomials.
 
 LineBreakMedium();
+try
 error_dx = GetError('d',d_exact,dx_calc);
-
+catch
+    error_dx = 1000;
+end
 PrintToFile(GetDegree(fx),GetDegree(gx),GetDegree(dx_calc),error_dx)
 
 
@@ -171,7 +197,7 @@ if exist(fullFileName, 'file')
         SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
         SETTINGS.APF_METHOD,...
         SETTINGS.BOOL_LOG,...
-        SETTINGS.BOOL_Q,...
+        SETTINGS.SYLVESTER_BUILD_METHOD,...
         SETTINGS.GCD_COEFFICIENT_METHOD...
     );
     fclose(fileID);

@@ -63,28 +63,8 @@ switch SETTINGS.PLOT_GRAPHS
 end
 
 %Get degree by original method - limits
-[t2, alpha2, theta2, gm_fx2, gm_gx2] = ...
-    Get_GCD_Degree(fx,gx,deg_limits);
-%display(t2)
+[t, alpha, theta, gm_fx, gm_gx] = Get_GCD_Degree(fx,gx,deg_limits);
 LineBreakMedium();
-%
-% % % Get Degree by new method - no limits
-% [t3, alpha3, theta3, gm_fx3, gm_gx3] = ...
-%     Get_GCD_DegreeByNewMethod(fx,gx);
-% display(t3)
-% LineBreakMedium();
-%
-% % Get degree by new method - limits
-% [t4, alpha4, theta4, gm_fx4, gm_gx5] = ...
-%     Get_GCD_DegreeByNewMethod2(fx,gx,deg_limits);
-% display(t4)
-% LineBreakMedium();
-
-t = t2;
-alpha = alpha2;
-theta = theta2;
-gm_fx = gm_fx2;
-gm_gx = gm_gx2;
 
 if t == 0
     % If the two polynomials f(x) and g(x) are coprime, set GCD to be 1,
@@ -125,7 +105,7 @@ St_preproc = BuildSubresultant(fw,alpha.*gw,t);
 % %
 % % Perform SNTLN
 % Apply / Don't Apply structured perturbations.
-[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,idx_col,gm_fx,gm_gx);
+[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,idx_col);
 
 
 % %
@@ -165,6 +145,7 @@ dx = GetGCDCoefficients(ux,vx,fx_n,gx_n,t,alpha,theta);
 % Factorisation such that approximation becomes equality.
 switch SETTINGS.APF_METHOD
     case 'Root Specific APF'
+    
         % Use root method which has added constraints.
         
         [APF_fx, APF_gx, APF_dx, APF_uk, APF_vk, APF_theta] = ...
@@ -187,6 +168,7 @@ switch SETTINGS.APF_METHOD
         gx = APF_gx;
         
     case 'Standard APF'
+        
         [APF_fx, APF_gx, APF_dx, APF_uk, APF_vk, APF_theta] = ...
             APF(fx_n,gx_n,ux,vx,alpha,theta,dx,t);
         
@@ -198,8 +180,10 @@ switch SETTINGS.APF_METHOD
         % Edit 20/07/2015
         fx = APF_fx;
         gx = APF_gx;
+    
     case 'None'
         % Do Nothing
+    
     otherwise
         error('SETTINGS.APF_METHOD IS either Standard APF, Root Specific APF or None')
 end

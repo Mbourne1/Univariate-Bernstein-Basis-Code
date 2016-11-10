@@ -1,5 +1,6 @@
 function [] = SetGlobalVariables(problemType, ex_num, emin, emax, ...
-    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method)
+    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,...
+    Sylvester_Build_Method)
 % Set the global variables
 %
 % Inputs.
@@ -20,18 +21,11 @@ SETTINGS.EMAX = emax;
 % Set the problem Type
 SETTINGS.PROBLEM_TYPE = problemType;
 
-
 % Noise SEED for random numbers
 SETTINGS.SEED = 1024;
 
 % Outputs
-SETTINGS.PLOT_GRAPHS = 'y';
-
-%
-% 'y' : include the matrix Q in the Sylvester matrix S = D^{-1}T(f,g)Q
-% 'n' : Sylvester matrix excludes Q, S = D^{-1}T(f,g)
-%
-SETTINGS.BOOL_Q = 'y';
+SETTINGS.PLOT_GRAPHS = 'n';
 
 %
 % 'y' : Use Logs
@@ -39,7 +33,13 @@ SETTINGS.BOOL_Q = 'y';
 %
 SETTINGS.BOOL_LOG = 'n';
 
-
+%--------------------------------------------------------------------------
+%               
+%                            Preprocessing
+%
+%
+SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
+SETTINGS.MEAN_METHOD = mean_method;
 
 % -------------------------------------------------------------------------
 % 
@@ -73,14 +73,17 @@ SETTINGS.GCD_COEFFICIENT_METHOD = 'ux and vx';
 %--------------------------------------------------------------------------
 
 % Structuring the Sylvester Matrix
-SETTINGS.BOOL_DENOM_SYL = 'y';
-SETTINGS.SYLVESTER_BUILD_METHOD = 'Rearranged';
+SETTINGS.SYLVESTER_BUILD_METHOD = Sylvester_Build_Method;
 
-% Standard : D*T*Q
-%
-% Rearranged : In a format where the entries of the sylvester matrix
-% partition C(f) have a common divisor, and the entries of C(g) have a
-% common divisor
+% T : 
+% DT :
+% DTQ :
+% TQ : 
+% DTQ Rearranged Denom Removed :
+% DTQ Rearranged :
+
+
+%--------------------------------------------------------------------------
 
 
 % Structuring the matrix [C(f) | C(g)]
@@ -88,13 +91,7 @@ SETTINGS.APF_METHOD = apf_method;
 SETTINGS.BOOL_DENOM_APF = 'y';
 SETTINGS.APF_BUILD_METHOD = 'Rearranged';
 
-%--------------------------------------------------------------------------
-%               
-%                            Preprocessing
-%
-%
-SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
-SETTINGS.MEAN_METHOD = mean_method;
+
 
 %-------------------------------------------------------------------------
 %
@@ -137,12 +134,6 @@ SETTINGS.MAX_ITERATIONS_APF = 50;
 
 
 
-if (SETTINGS.BOOL_Q == 'n')
-    SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
-    SETTINGS.LOW_RANK_APPROXIMATION_METHOD = 'None';
-    SETTINGS.APF_METHOD = 'None'; % Does not work with code block APF (Addition of structured perturbation code doesnt exist for exclusion of Q from coefficient matrix).
-    SETTINGS.BOOL_DENOM_SYL = 'y';
-end
 
 
 if ( strcmp(SETTINGS.PROBLEM_TYPE,'GCD') && strcmp(SETTINGS.LOW_RANK_APPROXIMATION_METHOD, 'Root Specific SNTLN'))

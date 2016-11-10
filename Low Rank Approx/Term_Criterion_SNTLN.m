@@ -49,12 +49,6 @@ function [resid_ux,resid_vx,resid_uw,resid_vw] = ...
 % Note: This function is only called if BOOL_Q = 1, that is, Q is
 % included in the Sylvester matrix.
 
-% Define some vectors to be used later.
-vecm = (0:1:m)';
-vecn = (0:1:n)';
-vecnk = (0:1:n-t)';
-vecmk = (0:1:m-t)';
-
 % Calculate the updated polynomials fx and gx.
 fx_output = fx + zk(1:m+1);
 gx_output = gx + zk(m+2:end);
@@ -65,16 +59,16 @@ vecx = [X(1:opt_col-1); -1 ; X(opt_col:end)];
         
 % Transform the polynomials fx_output and gx_output to their forms
 % in the modified Bernstein basis.
-fw_n = fx_output.*(theta.^vecm);
-gw_n = gx_output.*(theta.^vecn);
+fw_n = GetWithThetas(fx_output,theta);
+gw_n = GetWithThetas(gx_output,theta);
 
 % Calculate the coprime polynomials vx and ux. Remove the theta^i
 % to transform them to the x variable.
 vw = vecx(1:n-t+1);  % the w variable (modified Bernstein basis)
 uw = -vecx(n-t+2:end);  % the w variable (modified Bernstein basis)
 
-ux = uw./(theta.^vecmk);  % the x variable (Bernstein basis)
-vx = vw./(theta.^vecnk);  % the x variable (Bernstein basis)
+ux = GetWithoutThetas(uw,theta);
+vx = GetWithoutThetas(vw,theta);
 
 % The polynomials fx_output, gx_output, ux and vx are expressed in the
 % Bernstein basis. Scale the polynomials ux and vx to minimise the

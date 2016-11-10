@@ -1,4 +1,13 @@
 function [W] = BuildW(m,n,k)
+% Build the matrix W.
+%
+% % Inputs
+% 
+% m : Degree of polynomial f(x)
+%
+% n : Degree of polynomial g(x)
+%
+% k : Degree of polynomial d(x)
 
 W1 = BuildWPartition(n-k);
 W2 = BuildWPartition(m-k);

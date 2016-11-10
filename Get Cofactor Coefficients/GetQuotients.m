@@ -7,7 +7,6 @@ global SETTINGS
 % Get degree of input polynomial g(x)
 n = GetDegree(gx);
 
-
 % Build the t^th subresultant
 St = BuildSubresultant(fx,gx,t);
 
@@ -34,18 +33,40 @@ vec_x =[
 
 % Obtain values for quotient polynomials u and v. still expressed in the
 % scaled bernstein basis, including theta.
-vx = vec_x(1:n-t+1);
-ux = -vec_x(n-t+2:end);
 
-% If Q is not included in Sylvester matrix, then binomials are included in
-% x. Remove binomials
 
-switch SETTINGS.BOOL_Q
-    case 'y'
-    case 'n'
-        % Remove binomials from the coefficients.
-        vx = GetWithoutBinomials(vx);
-        ux = GetWithoutBinomials(ux);
+switch SETTINGS.SYLVESTER_BUILD_METHOD
+    case 'T'
+        
+        vx = vec_x(1:n-t+1);
+        ux = -vec_x(n-t+2:end);
+        
+    case 'DT'
+        
+        vx_bi = vec_x(1:n-t+1);
+        ux_bi = -vec_x(n-t+2:end);
+        ux = GetWithoutBinomials(ux_bi);
+        vx = GetWithoutBinomials(vx_bi);
+        
+    case 'DTQ'
+        
+        vx = vec_x(1:n-t+1);
+        ux = -vec_x(n-t+2:end);
+        
+    case 'TQ'
+        
+        vx = vec_x(1:n-t+1);
+        ux = -vec_x(n-t+2:end);
+        
+    case 'DTQ Rearranged Denom Removed'
+        
+        vx = vec_x(1:n-t+1);
+        ux = -vec_x(n-t+2:end);
+        
+    case 'DTQ Rearranged'
+        
+        vx = vec_x(1:n-t+1);
+        ux = -vec_x(n-t+2:end);
         
     otherwise 
         error('err')
