@@ -1,4 +1,4 @@
-function [fx_lr,gx_lr] = STLN(fx,gx,k,idx_col)
+function [fx_lr,gx_lr,ux_lr,vx_lr] = STLN(fx,gx,k,idx_col)
 % Perform STLN with no refinement of alpha or theta to compute the low rank
 % approximation of the Sylvester subresultant matrix S_{k}(f,g)
 %
@@ -17,6 +17,10 @@ function [fx_lr,gx_lr] = STLN(fx,gx,k,idx_col)
 % fx_lr : Coefficients of f(x) after addition of structured perturbations
 %
 % gx_lr : Coefficients of g(x) after addition of strucutred perturbations
+%
+% ux_lr : Coefficients of u(x)
+%
+% vx_lr : Coefficients of v(x)
 
 global SETTINGS
 
@@ -173,9 +177,20 @@ fx_lr = fx + z_fx;
 % Get polynomial g(x) + \delta g(x)
 gx_lr = gx + z_gx;
 
+% %
+% Get u(x) and v(x) from x_ls
+vec_vxux = [x_ls(1:idx_col-1) ; -1 ; x_ls(idx_col:end)];
 
+% Get polynomial u(x)
+nCoeff_vx = n-k+1;
+vx_lr = vec_vxux(1:nCoeff_vx);
+
+% Get polynomial v(x)
+ux_lr = -1.*(vec_vxux(nCoeff_vx + 1:end));
+
+% % 
+% Plot Graphs
 Plot_STLN()
-
 fprintf([mfilename ' : ' sprintf('Required number of iterations : %i \n',ite)]);
 
 end

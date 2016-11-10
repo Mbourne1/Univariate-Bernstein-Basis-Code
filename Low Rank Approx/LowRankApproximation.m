@@ -1,4 +1,4 @@
-function [fx_lr,gx_lr,alpha_lr,theta_lr] = LowRankApproximation(fx,gx,alpha,theta,k,idx_col)
+function [fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = LowRankApproximation(fx,gx,alpha,theta,k,idx_col)
 % Get the low rank approximation of the Sylvester subresultant matrix
 % S_{k}(f,g)
 %
@@ -15,7 +15,20 @@ function [fx_lr,gx_lr,alpha_lr,theta_lr] = LowRankApproximation(fx,gx,alpha,thet
 % k : Degree of GCD of f(x) and g(x)
 %
 % idx_col : Index of optimal column for removal from S_{k}(f,g)
-
+%
+% % Outputs
+%
+% fx_lr : 
+%
+% gx_lr : 
+%
+% ux_lr :
+%
+% vx_lr :
+%
+% alpha :
+%
+% theta :
 
 global SETTINGS
 
@@ -26,22 +39,28 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gw = GetWithThetas(gx,theta);
         
         % Performe STLN
-        [fw_lr,a_gw_lr] = STLN(fw,alpha.*gw,k,idx_col);
+        [fw_lr,a_gw_lr,uw,vw] = STLN(fw,alpha.*gw,k,idx_col);
         
         % Get f(x) and g(x) from low rank approximation.
         fx_lr = GetWithoutThetas(fw_lr,theta);
         gx_lr = GetWithoutThetas(a_gw_lr,theta) ./ alpha;
         
+        % Get u(x) and v(x)
+        ux_lr = GetWithoutThetas(uw,theta);
+        vx_lr = GetWithoutThetas(vw,theta);
+        
         alpha_lr = alpha;
         theta_lr = theta;
+        
+        
         
     case 'Standard SNTLN' % Structured Non-Linear Total Least Norm
         
         % Perform Structured non-linear total least norm SNTLN
-        [fx_lr,gx_lr,alpha_lr,theta_lr,~] = SNTLN(fx,gx,alpha,theta,k,idx_col);
+        [fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = SNTLN(fx,gx,alpha,theta,k,idx_col);
         
-        fw = GetWithThetas(fx,theta);
-        a_gw = alpha.* GetWithThetas(gx,theta);
+        fw = GetWithThetas(fx,theta_lr);
+        a_gw = alpha_lr.* GetWithThetas(gx,theta_lr);
         fw_lr = GetWithThetas(fx_lr,theta_lr);
         a_gw_lr = alpha_lr .* GetWithThetas(gx_lr,theta_lr);
         
@@ -79,6 +98,16 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gx_lr = gx;
         alpha_lr = alpha;
         theta_lr = theta;
+        
+        fw = GetWithThetas(fx,theta);
+        gw = GetWithThetas(gx,theta);
+        
+        % Get quotient polynomials u(x) and v(x)
+        [uw,vw] = GetQuotients(fw,alpha.*gw,k);
+
+        % Divide v(w) and u(w) to obtain u(x) and v(x)
+        vx_lr = GetWithoutThetas(vw,theta);
+        ux_lr = GetWithoutThetas(uw,theta);
         
     otherwise
         error('SETTINGS.LOW_RANK_APPROXIMATION_METHOD must be valid')

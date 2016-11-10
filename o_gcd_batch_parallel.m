@@ -26,6 +26,11 @@ low_rank_approx_method_arr = ...
     'None'...
     };
 
+apf_method_arr = ...
+    {
+    'Standard APF NonLinear',...
+    'None'
+    };
 
 mean_method_arr = ...
     {
@@ -60,13 +65,13 @@ global SETTINGS
 
 
 
-for i7 = 1:1:length(bool_log_arr)
+for i8 = 1:1:length(bool_log_arr)
     
-    SETTINGS.BOOL_LOG = bool_log_arr{i7};
+    SETTINGS.BOOL_LOG = bool_log_arr{i8};
     
-    for i8 = 1:1:length(gcd_coefficient_method_arr)
+    for i9 = 1:1:length(gcd_coefficient_method_arr)
         
-        SETTINGS.GCD_COEFFICIENT_METHOD = gcd_coefficient_method_arr{i8};
+        SETTINGS.GCD_COEFFICIENT_METHOD = gcd_coefficient_method_arr{i9};
         
         % Changing example number
         parfor i1 = 1:1:length(ex_num_arr)
@@ -96,11 +101,15 @@ for i7 = 1:1:length(bool_log_arr)
                                 
                                 sylvester_build_method = Sylvester_Build_Method_arr{i6};
                                 
-                                apf_method = 'None';
+                                for i7 = 1:1:length(apf_method_arr)
                                 
-                                close all; clc
-                                o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
+                                    apf_method = apf_method_arr{i7};
+
+                                    close all; 
+                                    clc;
+                                    o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
                                 
+                                end
                             end
                         end
                     end

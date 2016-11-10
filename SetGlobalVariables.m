@@ -83,14 +83,6 @@ SETTINGS.SYLVESTER_BUILD_METHOD = Sylvester_Build_Method;
 % DTQ Rearranged :
 
 
-%--------------------------------------------------------------------------
-
-
-% Structuring the matrix [C(f) | C(g)]
-SETTINGS.APF_METHOD = apf_method;
-SETTINGS.BOOL_DENOM_APF = 'y';
-SETTINGS.APF_BUILD_METHOD = 'Rearranged';
-
 
 
 %-------------------------------------------------------------------------
@@ -114,6 +106,17 @@ SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 SETTINGS.MAX_ERROR_SNTLN = 1e-13;
 SETTINGS.MAX_ITERATIONS_SNTLN = 75;
 
+%--------------------------------------------------------------------------
+%
+%           APF RELATED SETTINGS.
+%
+%
+
+% Structuring the matrix [C(f) | C(g)]
+SETTINGS.APF_METHOD = apf_method;
+SETTINGS.BOOL_DENOM_APF = 'y';
+SETTINGS.APF_BUILD_METHOD = 'Rearranged';
+
 % Regarding the computation of the low rank approximation of the 
 % C = [C(u) ; C(v)] matrix
 SETTINGS.MAX_ERROR_APF = 1e-14;
@@ -121,7 +124,7 @@ SETTINGS.MAX_ITERATIONS_APF = 50;
 
 %-------------------------------------------------------------------------
 %
-% INPUT VALIDATION
+%           INPUT VALIDATION
 %
 %
 

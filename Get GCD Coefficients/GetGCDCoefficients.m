@@ -1,27 +1,30 @@
-function [dx] = GetGCDCoefficients(ux,vx,fx_n,gx_n,t,alpha,theta)
+function [dx] = GetGCDCoefficients(ux,vx,fx,gx,t,alpha,theta)
 % Get The Coefficients of the approximate GCD using Quotient Polynomials.
 %
-% Inputs
+% % Inputs
 %
 %
-% uw    : Quotient of f where uw is in the form u_{i}\theta^{i}.
+% ux : Quotient of f where uw is in the form u_{i}\theta^{i}.
 %
-% vw    : Quotient of g where vw is in the form v_{i}\theta^{i}.
+% vx : Quotient of g where vw is in the form v_{i}\theta^{i}.
 %
-% fw_n  : Coefficients of polynomial f in modified bernstein basis.
+% fx : Coefficients of polynomial f in the Bernstein basis.
 %
-% gw_n  : Coefficients of polynomial g in modified bernstein basis.
+% gx : Coefficients of polynomial g in the Bernstein basis.
 %
-% t     : Degree of AGCD.
+% k : Degree of common divisor.
 %
+% alpha : Optimal value of alpha
+%
+% theta : Optimal value of \theta
 
 
 % Global variables
 global SETTINGS
 
 % Get f(w) and g(w)
-fw = GetWithThetas(fx_n,theta);
-gw = GetWithThetas(gx_n,theta);
+fw = GetWithThetas(fx,theta);
+gw = GetWithThetas(gx,theta);
 
 % Get u(w) and v(w)
 uw = GetWithThetas(ux,theta);

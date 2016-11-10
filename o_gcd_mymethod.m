@@ -42,7 +42,6 @@ addpath (...
     'Get GCD Degree',....
     'Get Cofactor Coefficients',...
     'Low Rank Approx');
-
 % Get the degree m of polynomial f
 m = GetDegree(fx) ;
 
@@ -103,95 +102,29 @@ St_preproc = BuildSubresultant(fw,alpha.*gw,t);
 [~,idx_col] = GetMinDistance(St_preproc);
 
 % %
-% % Perform SNTLN
-% Apply / Don't Apply structured perturbations.
-[fx_n,gx_n,alpha,theta] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,idx_col);
+% % Get Low rank approximation of the Sylvester matrix S_{t}
+% 
+[fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,idx_col);
 
 
-% %
-% % Get u(x) and v(x)
-% %
-% %
-fw = GetWithThetas(fx_n,theta);
-gw = GetWithThetas(gx_n,theta);
-
-% Get quotient polynomials u(x) and v(x)
-[uw,vw] = GetQuotients(fw,alpha.*gw,t);
-
-% Divide v(w) and u(w) to obtain u(x) and v(x)
-vx = GetWithoutThetas(vw,theta);
-ux = GetWithoutThetas(uw,theta);
-
-
-% %
-% %
-% %
 % %
 % Build Sylvester Matrix for normalised, refined coefficients, used in
 % comparing singular values.
-
-fw = GetWithThetas(fx_n,theta);
-gw = GetWithThetas(gx_n,theta);
-
+fw = GetWithThetas(fx_lr,theta_lr);
+gw = GetWithThetas(gx_lr,theta_lr);
 St_low_rank = BuildSubresultant(fw,alpha.*gw,t);
 
-% % Get the coefficients of the GCD
-dx = GetGCDCoefficients(ux,vx,fx_n,gx_n,t,alpha,theta);
+% % 
+% Get the coefficients of the GCD by APF or other method.
+[fx_alr, gx_alr, dx_alr, ux_alr, vx_alr, alpha_alr, theta_alr] = APF(fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr,t);
 
-
-
-% %
-% Apply/Don't Apply structured perturbations to Approximate Polynomial
-% Factorisation such that approximation becomes equality.
-switch SETTINGS.APF_METHOD
-    case 'Root Specific APF'
-    
-        % Use root method which has added constraints.
-        
-        [APF_fx, APF_gx, APF_dx, APF_uk, APF_vk, APF_theta] = ...
-            APF_Roots(fx_n,ux,vx,theta,dx,t);
-        
-        % Build Post APF_gx
-        APF_gx = zeros(m,1);
-        
-        for i = 0:1:m-1
-            APF_gx(i+1) = m.*(gm_fx./ gm_gx) .* (APF_fx(i+2) - APF_fx(i+1));
-        end
-        
-        % update ux,vx,dx values
-        dx = APF_dx;
-        vx = APF_vk;
-        ux = APF_uk;
-        
-        % Edit 20/07/2015
-        fx = APF_fx;
-        gx = APF_gx;
-        
-    case 'Standard APF'
-        
-        [APF_fx, APF_gx, APF_dx, APF_uk, APF_vk, APF_theta] = ...
-            APF(fx_n,gx_n,ux,vx,alpha,theta,dx,t);
-        
-        % update ux,vx,dx values
-        dx = APF_dx;
-        vx = APF_vk;
-        ux = APF_uk;
-        
-        % Edit 20/07/2015
-        fx = APF_fx;
-        gx = APF_gx;
-    
-    case 'None'
-        % Do Nothing
-    
-    otherwise
-        error('SETTINGS.APF_METHOD IS either Standard APF, Root Specific APF or None')
-end
-
-
-
-
-
+fx = fx_alr;
+gx = gx_alr;
+dx = dx_alr;
+ux = ux_alr;
+vx = vx_alr;
+alpha = alpha_alr;
+theta = theta_alr;
 
 % %
 % Assesment of the Sylvester Matrix before processing, post processing, and
@@ -215,12 +148,12 @@ vSingVals_St_LowRank = vSingVals_St_LowRank./norm(vSingVals_St_LowRank);
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
         figure('name','Singaular values of Sylvester Matrix');
-        plot(1:1:length(vSingVals_St_unproc),log10(vSingVals_St_unproc),'red-s','DisplayName','Before Preprocessing')
+        plot(log10(vSingVals_St_unproc),'red-s','DisplayName','Before Preprocessing')
         hold on
-        plot(1:1:length(vSingVals_St_preproc),log10(vSingVals_St_preproc),'blue-s','DisplayName','After Preprocessing')
+        plot(log10(vSingVals_St_preproc),'blue-s','DisplayName','After Preprocessing')
         switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
             case {'Standard STLN', 'Standard SNTLN','Root Specific SNTLN'}
-                plot(1:1:length(vSingVals_St_LowRank),log10(vSingVals_St_LowRank),'green-s','DisplayName','Low Rank Approximation')
+                plot(log10(vSingVals_St_LowRank),'green-s','DisplayName','Low Rank Approximation')
             case 'None'
             otherwise
                 error('error : Low rank approximation method must be valid')

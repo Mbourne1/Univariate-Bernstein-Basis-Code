@@ -1,4 +1,4 @@
-function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
+function [ fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = ...
     SNTLN( fx, gx, i_alpha, i_th, k, idx_col)
 % Given the polynomials f(x) and g(x) (normalised by geometric mean),
 % obtain the low rank approximation of the Syvlester subresultant matrix 
@@ -21,18 +21,19 @@ function [ fx_output,gx_output,alpha_output,theta_output,X_output] = ...
 %
 % % Outputs.
 %
-% fx_output :- Coefficients of fx on output, in standard bernstein basis,
+% fx_lr : Coefficients of fx on output, in standard bernstein basis,
 % including added structured perturbations.
 %
-% gx_output :- Coefficients of fx on output, in standard bernstein basis,
+% gx_lr : Coefficients of fx on output, in standard bernstein basis,
 % including added structured perturbations.
 %
-% alpha_output :-
+% alpha_lr :
 %
-% theta_output :-
+% theta_lr :
 %
-% X_output :-
+% ux_lr :
 %
+% vx_lr :
 
 % %
 % Global Inputs
@@ -43,7 +44,7 @@ global SETTINGS
 ite = 1;
 
 % Set initial values of alpha and theta
-th(ite) = i_th;
+theta(ite) = i_th;
 alpha(ite) = i_alpha;
 
 % Get degree of polynomials f.
@@ -67,8 +68,8 @@ e = I(:,idx_col);
 
 % Obtain polynomials in Modified Bernstein Basis, using initial values of
 % alpha and theta.
-fw = GetWithThetas(fx,th(ite));
-gw = GetWithThetas(gx,th(ite));
+fw = GetWithThetas(fx,theta(ite));
+gw = GetWithThetas(gx,theta(ite));
 
 % Form the Coefficient Matrix DTQ such that DTQ * x = [col]
 DTQ = BuildDTQ(fw,alpha.*gw,k);
@@ -78,8 +79,8 @@ fw_wrt_alpha            = zeros(m+1,1);
 alpha_gw_wrt_alpha      = gw;
 
 % Calculate the partial derivatives of fw and gw with respect to theta
-fw_wrt_theta    = Differentiate_wrt_theta(fw,th(ite));
-gw_wrt_theta    = Differentiate_wrt_theta(gw,th(ite));
+fw_wrt_theta    = Differentiate_wrt_theta(fw,theta(ite));
+gw_wrt_theta    = Differentiate_wrt_theta(gw,theta(ite));
 
 % Calculate derivative of D_{k}T(f,g)Q_{k} with respect to alpha
 DTQ_wrt_alpha = BuildDTQ(fw_wrt_alpha,alpha_gw_wrt_alpha,k);
@@ -104,7 +105,7 @@ ht_wrt_alpha     = DNQ_wrt_alpha*e;
 ht_wrt_theta     = DNQ_wrt_theta*e;
 
 %Calculate the matrix P.
-DP = BuildDP_SNTLN(m,n,alpha(ite),th(ite),idx_col,k);
+DP = BuildDP_SNTLN(m,n,alpha(ite),theta(ite),idx_col,k);
 
 % Calculate the column of DTQ that is moved to the right hand side.
 ct = (DTQ)*e;
@@ -128,7 +129,7 @@ x1 = x_ls(1:idx_col-1) ;
 x2 = x_ls(idx_col:end) ;
 xk = [x1; 0 ;x2] ;% Insert zero into vector
 
-DYQ = BuildDYQ_SNTLN(xk,m,n,k,alpha(ite),th(ite));
+DYQ = BuildDYQ_SNTLN(xk,m,n,k,alpha(ite),theta(ite));
 
 % Calculate the initial residual r = ck - (Ak*x)
 res_vec = ct - (DTQ*M*x_ls);
@@ -165,7 +166,7 @@ start_point     =   ...
         zk;...
         x_ls;...
         alpha(ite);...
-        th(ite)
+        theta(ite)
     ];
 
 yy              =   start_point;
@@ -212,16 +213,16 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     alpha(ite) = alpha(ite-1) + delta_alpha;
     
     % Update \theta
-    th(ite) = th(ite-1) + delta_theta;
+    theta(ite) = theta(ite-1) + delta_theta;
     
     % %
     % 
     
     % Get f(\omega) from f(x)
-    fw = GetWithThetas(fx,th(ite));
+    fw = GetWithThetas(fx,theta(ite));
     
     % Get g(\omega) from g(x)
-    gw = GetWithThetas(gx,th(ite));
+    gw = GetWithThetas(gx,theta(ite));
     
     % Construct the subresultant matrix of DTQ.
     DTQ = BuildDTQ(fw,alpha(ite).*gw,k);
@@ -233,10 +234,10 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     gw_wrt_alpha    = gw;
     
     % Get the partial derivative of f(\omega) with respect to \theta 
-    fw_wrt_theta    = Differentiate_wrt_theta(fw,th(ite));
+    fw_wrt_theta    = Differentiate_wrt_theta(fw,theta(ite));
     
     % Get the partial derivative of g(\omega) with respect to \theta
-    gw_wrt_theta    = Differentiate_wrt_theta(gw,th(ite));
+    gw_wrt_theta    = Differentiate_wrt_theta(gw,theta(ite));
     
     % Calculate the partial derivative of DTQ with respect to alpha.
     DTQ_wrt_alpha = BuildDTQ(fw_wrt_alpha, gw_wrt_alpha,k);
@@ -258,18 +259,18 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     z_gx      = zk(m+2:end);
     
     % Get z_{f}(\omega) from z_{f}(x)
-    z_fw = GetWithThetas(z_fx,th(ite));
+    z_fw = GetWithThetas(z_fx,theta(ite));
     
     % Get z_{g}(\omega) from z_{g}(x)
-    z_gw = GetWithThetas(z_gx,th(ite));
+    z_gw = GetWithThetas(z_gx,theta(ite));
     
     % Calculate the derivatives of z_fw and z_gw with repect to alpha.
     zfw_wrt_alpha    = zeros(m+1,1);
     zgw_wrt_alpha    = z_gw;
     
     % Calculate the derivatives of z_fw and z_gw with respect to theta.
-    zfw_wrt_theta    = Differentiate_wrt_theta(z_fw,th(ite));
-    zgw_wrt_theta    = Differentiate_wrt_theta(z_gw,th(ite));
+    zfw_wrt_theta    = Differentiate_wrt_theta(z_fw,theta(ite));
+    zgw_wrt_theta    = Differentiate_wrt_theta(z_gw,theta(ite));
     
     % Build the Coefficient Matrix DNQ, of structured perturbations, with
     % same structure as DTQ.
@@ -317,10 +318,10 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     xk = [x1; 0 ;x2]; 
     
     % Build the matrix DY
-    DYQ = BuildDYQ_SNTLN(xk,m,n,k,alpha(ite),th(ite));
+    DYQ = BuildDYQ_SNTLN(xk,m,n,k,alpha(ite),theta(ite));
     
     % Calculate the matrix DP where P is the matrix such that c = P[f;g]
-    DP = BuildDP_SNTLN(m,n,alpha(ite),th(ite),idx_col,k);
+    DP = BuildDP_SNTLN(m,n,alpha(ite),theta(ite),idx_col,k);
     
     % Calculate the residual q and vector p.
     res_vec = (ct+hk) - (DTNQ * M * x_ls);
@@ -364,27 +365,29 @@ switch SETTINGS.PLOT_GRAPHS
         error('PLOT_GRAPHS must be either y or n');
 end
 
-if condition(ite) > condition(1)
-    fprintf('SNTLN Failed to converge, default to input values\n')
-    fx_output = fx;
-    gx_output = gx;
-    alpha_output = i_alpha;
-    theta_output = i_th;
-    X_output = x_ls;
-    return;
-end
 
 % Once iterations are complete, assign fx output, gx output, solution X
 % output, alpha output and theta output.
-fx_output = fx + z_fx;
+fx_lr = fx + z_fx;
 
-gx_output = gx + z_gx;
+gx_lr = gx + z_gx;
 
-X_output  = x_ls;
+% %
+% Get u(x) and v(x) from x_ls
+vec_vxux = [x_ls(1:idx_col-1) ; -1 ; x_ls(idx_col:end)];
 
-alpha_output = alpha(ite);
+% Get polynomial u(x)
+nCoeff_vx = n-k+1;
+vw_lr = vec_vxux(1:nCoeff_vx);
+vx_lr = GetWithoutThetas(vw_lr,theta(ite));
 
-theta_output = th(ite);
+% Get polynomial v(x)
+uw_lr = -1.*(vec_vxux(nCoeff_vx + 1:end));
+ux_lr = GetWithoutThetas(uw_lr,theta(ite));
+
+alpha_lr = alpha(ite);
+
+theta_lr = theta(ite);
 
 
 

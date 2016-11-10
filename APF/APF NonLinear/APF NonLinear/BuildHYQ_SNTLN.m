@@ -19,15 +19,17 @@ function HYQ = BuildHYQ1(dx,m,n,theta)
 %
 % Inputs
 %
-% dw:
+% dx: Coefficients of the polynomial d(x)
 %
-% m -
+% m : Degree of polynomial f(x)
 %
-% n -
+% n : Degree of polynomial g(x)
 %
-% theta -
+% theta : Optimal value of \theta
 %
+% % Outputs
 %
+% HYQ : Matrix HYQ
 
 %                       Global Variables
 
@@ -61,7 +63,7 @@ function A = BuildHYPartition_nchoosek(dx,m,theta)
 %
 % Inputs.
 %
-% dw -
+% dx -
 %
 % m
 %
@@ -107,7 +109,7 @@ function A = BuildHYPartition_log(dx,m,theta)
 % Inputs
 %
 %
-% dw -
+% dx -
 %
 % m : degree of polynomial f(x)
 %

@@ -8,12 +8,17 @@ addpath('../Examples')
 
 % Get the coefficients of the polynomials f(x), g(x) and d(x).
 fx = BuildPolyFromRootsSymbolic(f_root_mult_arr);
-
 gx = BuildPolyFromRootsSymbolic(g_root_mult_arr);
-
 dx = BuildPolyFromRootsSymbolic(d_root_mult_arr);
 
+% Get the symbolic polynomials
+fx_sym = BuildSymbolicPolyFromSymbolicRoots(f_root_mult_arr);
+gx_sym = BuildSymbolicPolyFromSymbolicRoots(g_root_mult_arr);
+dx_sym = BuildSymbolicPolyFromSymbolicRoots(d_root_mult_arr);
 
+display(fx_sym)
+display(gx_sym)
+display(dx_sym)
 
 end
 

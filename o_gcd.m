@@ -27,7 +27,8 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %           'None'
 %
 % apf_method :
-%           'Standard APF'
+%           'Standard APF NonLinear'
+%           'Standard APF Linear'
 %           'None'
 %
 % Sylvester_Build_Method : 
@@ -39,7 +40,7 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %           'DTQ Rearranged'
 %
 % % Example
-% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None','DTQ')
+% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','Standard APF NonLinear','DTQ')
 % 
 % % Custom Example
 %
@@ -58,9 +59,9 @@ addpath(...
     'Plotting',...
     'Preprocessing',...
     'Results',...
-    'Sylvester Matrix',...
-    'APF')
+    'Sylvester Matrix')
 
+addpath(genpath('APF'));
 addpath(genpath('Examples'));
 addpath(genpath('Low Rank Approx'));
 
@@ -113,10 +114,6 @@ LineBreakLarge()
 % Get roots from example file
 [f_exact, g_exact,d_exact] = Examples_GCD(ex_num);
 
-display(f_exact)
-display(g_exact)
-display(d_exact)
-
 % Print the coefficients of f(x) and g(x)
 %PrintCoefficients_Bivariate_Bernstein(f_exact,'f')
 %PrintCoefficients_Bivariate_Bernstein(g_exact,'g')
@@ -142,7 +139,7 @@ catch
     error_dx = 1000;
 end
 PrintToFile(GetDegree(fx),GetDegree(gx),GetDegree(dx_calc),error_dx)
-
+LineBreakMedium();
 
 end
 
@@ -150,9 +147,9 @@ function [error] = GetError(name,f_calc,f_exact)
 % Get distance between f(x) and the calulated f(x)
 
 % Get the angle between the two vectors
-angle = dot(f_calc,f_exact) ./ (norm(f_calc) * norm(f_exact));
-angle_error = 1 - angle;
-fprintf('\tCalculated angle error : %8.2e \n', angle_error)
+% angle = dot(f_calc,f_exact) ./ (norm(f_calc) * norm(f_exact));
+% angle_error = 1 - angle;
+% fprintf('\tCalculated angle error : %8.2e \n', angle_error)
 
 f_calc  = Normalise(f_calc);
 f_exact = Normalise(f_exact);
