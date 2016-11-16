@@ -1,5 +1,5 @@
 function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
-    APF_NonLinear(fx,gx,ux,vx,i_alpha,i_theta,k)
+    APF_Nonlinear(fx, gx, ux, vx, i_alpha, i_theta, k)
 % Refine Approximate Polynomial Factorisation by APF
 %
 %
@@ -11,13 +11,13 @@ function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
 %
 % ux : coefficients of the quotient polynomial u(x) in the Bernstein basis
 %
-% vx - Coefficients of the quotient polynomial v(x) in the Bernstein basis
+% vx : Coefficients of the quotient polynomial v(x) in the Bernstein basis
 %
-% i_alpha - input \alpha
+% i_alpha
 %
-% i_theta - input \theta
+% i_theta
 %
-% t : Calculated degree of GCD
+% k : Calculated degree of d(x)
 %
 % % Outputs
 %
@@ -26,14 +26,10 @@ function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
 % gx_lr :
 %
 % dx_lr :
-% 
+%
 % ux_lr :
 %
 % vx_lr :
-%
-% alpha_lr
-%
-% theta_lr
 
 
 
@@ -44,61 +40,59 @@ global SETTINGS
 % Initialise iteration index
 ite = 1;
 
+alpha(1) = i_alpha;
+theta(1) = i_theta;
 
-res_uw = zeros(1,1);
-res_vw = zeros(1,1);
-res_ux = zeros(1,1);
-res_vx = zeros(1,1);
-residual = zeros(1,1);
-
-% Set initial values of alpha and theta
-th(ite) = i_theta;
-alpha(ite) = i_alpha;
-
-% Get degree of polynomial f
+% Get degree of polynomial f(x)
 m = GetDegree(fx);
 
-% Get degree of polynomial g
+% Get degree of polynomial g(x)
 n = GetDegree(gx);
+
+% Get number of coefficients in u(x)
+nCoeffs_ux = m-k+1;
+nCoeffs_vx = n-k+1;
+nCoeffs_fx = m+1;
+nCoeffs_gx = n+1;
 
 % Initialise some useful vectors
 vecm    = (0:1:m)';
 vecn    = (0:1:n)';
 veck    = (0:1:k)';
 
+% Initialise zk - Structured perturbations of u(x) and v(x)
+zk = zeros(nCoeffs_ux + nCoeffs_vx,1);
+
 % Convert f and g to modified bernstein basis, excluding binomial
 % coefficient
-fw = GetWithThetas(fx,th);
-gw = GetWithThetas(gx,th);
+fw = GetWithThetas(fx,theta);
+gw = GetWithThetas(gx,theta);
 
 % Convert u and v to modified bernstein basis, excluding binomial
 % coefficient
-uw = GetWithThetas(ux,th);
-vw = GetWithThetas(vx,th);
+uw = GetWithThetas(ux,theta);
+vw = GetWithThetas(vx,theta);
 
-% Initialise S, such that sk = S * pt
-S = (diag(th(ite).^vecm));
+% Initialise S = th_f, the vector of thetas corresponding to coefficients 
+% of f(x), such that s_{k} = S * p_{k}
+th_f = (diag(theta(ite).^vecm));
 
 % Initialise T - Matrix such that tk = T * qt
-T = (diag(th(ite).^vecn));
+th_g = (diag(theta(ite).^vecn));
 
 % Initialise zk - Structured perturbations of u and v
 zk = zeros(m+n-2*k+2,1);
 
-% Get partial derivatives of fw and gw with respect to theta
-fw_wrt_theta = Differentiate_wrt_theta(fw,th(ite));
-gw_wrt_theta = Differentiate_wrt_theta(gw,th(ite));
-
-
+% Get partial derivatives of f(\omega) and g(\omega) with respect to theta
+fw_wrt_theta = Differentiate_wrt_theta(fw,theta(ite));
+gw_wrt_theta = Differentiate_wrt_theta(gw,theta(ite));
 
 % Get partial derivatives of uw and vw with respect to theta.
-Partial_uw_wrt_theta = Differentiate_wrt_theta(uw,th(ite));
-Partial_vw_wrt_theta = Differentiate_wrt_theta(vw,th(ite));
+Partial_uw_wrt_theta = Differentiate_wrt_theta(uw,theta(ite));
+Partial_vw_wrt_theta = Differentiate_wrt_theta(vw,theta(ite));
 
 % Get H^{-1} * C(u,v) * G
 [HCG,H1C1G,H2C2G] = BuildHCG(uw,vw,k);
-
-
 
 
 % Build HCG with respect to theta
@@ -109,23 +103,23 @@ Partial_vw_wrt_theta = Differentiate_wrt_theta(vw,th(ite));
 bk = [fw ; alpha(ite).*gw];
 
 dw = SolveAx_b(HCG,bk);
-dx = GetWithoutThetas(dw,th(1));
+dx = GetWithoutThetas(dw,theta(1));
 
 % Get partial derivative of dw with respect to theta
-dw_wrt_theta = Differentiate_wrt_theta(dw,th(ite));
+dw_wrt_theta = Differentiate_wrt_theta(dw,theta(ite));
 
 % Get initial residual
 res_vec = bk - ((HCG)*dw);
 
 % Set some initial values
 residual(ite)   = norm(res_vec);
-zf               = zeros(m+1,1);
-zg               = zeros(n+1,1);
+z_fx = zeros(nCoeffs_fx,1);
+z_gx = zeros(nCoeffs_gx,1);
 
 % Values of LHS Perturbations
 % Obtain structured perturbations sw of fw, and tw of gw
-z_fw = GetWithThetas(zf,th);
-z_gw = GetWithThetas(zg,th);
+z_fw = GetWithThetas(z_fx,theta);
+z_gw = GetWithThetas(z_gx,theta);
 
 % Set initial values for the iterative process
 z1_ux = zeros(length(uw),1);
@@ -133,15 +127,15 @@ z2_vx = zeros(length(vw),1);
 
 % Construct the coefficient matrix in the equation that defines
 % the constraint for the LSE problem.
-HYk         = BuildHYQ_SNTLN(dx,m,n,th(ite));
+HYk         = BuildHYQ_SNTLN(dx,m,n,theta(ite));
 
 
 % % Build the matrix C given by Hz Hp Hq Halpha Htheta1 Htheta2
 H_z         = HYk;
 
-H_p         = (-1)*S;
+H_p         = (-1)*th_f;
 
-H_q         = -(alpha(ite))*T;
+H_q         = -(alpha(ite))*th_g;
 
 H_alpha     = -(gw + z_gw);
 
@@ -163,22 +157,21 @@ C       = [H_z , C_temp];
 
 E       = eye(2*m+2*n-2*k+6);
 
-fnew    = zeros(2*m+2*n-2*k+6,1);
-
-
 ek = bk;
 
 % Get the condition
 condition(ite) = norm(res_vec)/norm(ek);
 
-startpoint = [...
+start_point = [...
     zk;...
-    zf;...
-    zg;...
+    z_fx;...
+    z_gx;...
     alpha;...
-    th];
+    theta];
 
-yy = startpoint;
+yy = start_point;
+
+f = -(yy-start_point);
 
 % Start the iterative procedure for the solution of the LSE problem.
 
@@ -186,7 +179,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     
     % Use the QR decomposition to solve the LSE problem.
     % min |y-p| subject to Cy=q
-    y = LSE(E,fnew,C,res_vec);
+    y = LSE(E,f,C,res_vec);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -194,36 +187,63 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     % Add the small changes found in LSE problem to existing values
     yy = yy + y;
     
-    % obtain the small changes.
-    delta_zk        = y(1:m+n-2*k+2);
-    delta_zf_k        = y(m+n-2*k+3:2*m+n-2*k+3);
-    delta_zg_k        = y(2*m+n-2*k+4:2*m+2*n-2*k+4);
+    % % obtain the small changes.
+    
+    % Get change in z_{k} = [z_{u} z_{v}]
+    delta_zk = y(1:nCoeffs_ux + nCoeffs_vx);
+    
+    % Get change in z_{f}(x)
+    %     delta_zf_k = y(m+n-2*k+3:2*m+n-2*k+3);
+    delta_zf_k = y(nCoeffs_ux + nCoeffs_vx + 1: nCoeffs_ux + nCoeffs_vx + nCoeffs_fx );
+    
+    % Get change in z_{g}(x)
+    delta_zg_k = y(2*m+n-2*k+4:2*m+2*n-2*k+4);
+    
+    % Get change in \alpha
     delta_alpha     = y(end-1);
+    
+    % Get change in \theta
     delta_theta     = y(end);
     
     % Update variables zk, pk, qk, beta, theta
-    zk          = zk + delta_zk;
-    zf           = zf  + delta_zf_k;
-    zg           = zg  + delta_zg_k;
-    alpha(ite)  = alpha(ite-1) + delta_alpha;
-    th(ite)     = th(ite-1) + delta_theta;
     
-    % Update the iterative value of f and g
+    % Update z_{k}
+    zk = zk + delta_zk;
+    
+    % Update z_{f}(x)
+    z_fx = z_fx  + delta_zf_k;
+    
+    % Update z_{g}(x)
+    z_gx = z_gx  + delta_zg_k;
+    
+    % Update \alpha
+    alpha(ite) = alpha(ite-1) + delta_alpha;
+    
+    % Update \theta
+    th(ite) = th(ite-1) + delta_theta;
+    
+    % %
+    % Update the polynomial f(\omega)
     fw = GetWithThetas(fx,th(ite));
+    
+    % Update the polynomial g(\omega)
     gw = GetWithThetas(gx,th(ite));
     
-    % Update matrices S and T
-    S = diag(th(ite).^vecm);
-    T = diag(th(ite).^vecn);
+    % Update matrices S = th_f and T = th_g
+    th_f = diag(th(ite).^vecm);
+    th_g = diag(th(ite).^vecn);
     
-    % Update the iterative value of GCD dw
+    % Update the polynomial d(\omega)
     dw = GetWithThetas(dx,th(ite));
     
-    % Update the iterative value of quotients uw and vw
+    % Update the polynomial u(\omega)
     uw = GetWithThetas(ux,th(ite));
+    
+    % Update the polynomial v(\omega)
     vw = GetWithThetas(vx,th(ite));
     
-    % Obtain partial derivatives of uw and vw with respect to theta
+    % Obtain partial derivatives of u(\omega) and v(\omega) with respect to
+    % \theta
     uw_wrt_theta = Differentiate_wrt_theta(uw,th(ite));
     vw_wrt_theta = Differentiate_wrt_theta(vw,th(ite));
     
@@ -255,8 +275,8 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     [~,H1E1G_wrt_theta,H2E2G_wrt_theta] = BuildHCG(z1w_wrt_theta,z2w_wrt_theta,k);
     
     % Obtain structured perturbations sw of fw, and tw of gw
-    z_fw = GetWithThetas(zf,th(ite));
-    z_gw = GetWithThetas(zg,th(ite));
+    z_fw = GetWithThetas(z_fx,th(ite));
+    z_gw = GetWithThetas(z_gx,th(ite));
     
     % Calculate partial derivatives of sw and tw with respect to theta
     s_wrt_theta = Differentiate_wrt_theta(z_fw,th(ite));
@@ -278,10 +298,10 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     H_z = HYk;
     
     % Calculate H_p
-    H_p = (-1)*S;
+    H_p = (-1)*th_f;
     
     % Calculate H_q
-    H_q = -(alpha(ite))*T;
+    H_q = -(alpha(ite))*th_g;
     
     % Calculate H_beta
     H_alpha = -(gw + z_gw);
@@ -324,7 +344,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     condition(ite) = norm(res_vec)/norm(ek);
     
     % Update fnew
-    fnew = -(yy - startpoint);
+    f = -(yy - start_point);
     
     % Edit 01/06/2015 16:30:00
     
@@ -359,7 +379,7 @@ switch SETTINGS.PLOT_GRAPHS
     case 'y'
         % Plot the normalised residuals res_ux, res_vx, res_uw and res_vw.
         plotgraphs3(res_ux,res_vx,res_uw,res_vw);
-
+        
         % Write out the number of iterations required and plot the values of
         % alpha, theta and the residual.
         plotgraphs4(alpha,th,residual);
@@ -378,30 +398,19 @@ ux_lr = ux + z1_ux;
 vx_lr = vx + z2_vx;
 
 % Update value of theta
-theta_lr = th(ite);
+theta_lr = theta(ite);
 alpha_lr = alpha(ite);
 
 % Update value of common divisor dx
-dx_lr = GetWithoutThetas(dw,th(ite));
+dx_lr = GetWithoutThetas(dw,theta(ite));
 
 % Edit 20/07/2015
-fx_lr = GetWithoutThetas((fw + z_fw),th(ite));
-gx_lr = GetWithoutThetas((gw + z_gw),th(ite));
+fx_lr = GetWithoutThetas((fw + z_fw),theta(ite));
+gx_lr = GetWithoutThetas((gw + z_gw),theta(ite));
 
 
+Plot_APF()
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'        
-        figure_name = sprintf('%s : Residuals',mfilename);
-        figure('name',figure_name)
-        title('plotting residual')
-        hold on
-        plot(1:1:length(residual),(residual));
-        
-    case 'n'
-    otherwise
-        error('err')
-end
 
 end
 

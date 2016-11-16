@@ -5,27 +5,27 @@ function [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_th
 % Refine Approximate Polynomial Factorisation by newton raphson method iteration
 %
 %
-%                               Inputs
+% % Inputs
 %
-% fx - polynomial coefficients in bernstein basis
+% fx : Coefficients of the polynomial f(x) in the Bernstein basis
 %
-% gx - polynomial coefficients in bernstein basis
+% gx : Coefficients of the polynomial g(x) in the Bernstein basis
 %
-% ux - quotient polynomial coefficients
+% ux : Coefficients of the polynomial u(x) in the Bernstein basis
 %
-% vx - quotient polynomial coefficients
+% vx : Coefficients of the polynomial v(x) in the Bernstein basis
 %
-% alpha -
+% alpha - Optimal value of \alpha
 %
-% i_theta -
+% i_theta : Optimal value of \theta
 %
-% dx - initial approximation of GCD(fx,gx)
+% dx : initial approximation of GCD(fx,gx)
 %
-% t - Calculated degree of GCD
+% t : Calculated degree of GCD
 %
+% % Outputs
 %
-
-
+% 
 
 global SETTINGS
 
@@ -33,42 +33,41 @@ global SETTINGS
 % Initialise iteration index
 ite = 1;
 
-% Set initial value of theta.
+% Set initial value of \theta.
 th(ite) = i_theta;
 
-% Set the initial value of alpha.
+% Set the initial value of \alpha.
 %alpha(ite) = initial_alpha;
 
-% Get degree of polynomial f
+% Get degree of polynomial f(x)
 m = GetDegree(fx);
 
 % Initialise some useful vectors
 vecm  = (0:1:m)';
 
-% Convert f and g to modified bernstein basis, excluding binomial
-% coefficient
+% Get coefficients of the polynomial f(\omega)
 fw_n = GetWithThetas(fx,th(ite));
 
-% Convert u to modified bernstein basis.
+% Get coefficients of the polynomial g(\omega)
 uw = GetWithThetas(ux,th(ite));
 
-% Convert d to modified bernstein basis.
+% Get coefficients of the polynomail d(\omega)
 dw = GetWithThetas(dx,th(ite));
 
 % Initialise S, such that sk = S * p_{t}, where p_{t} is a vector of
 % perturbations applied to u
 S = (diag(th(ite).^vecm));
 
-% Initialise zk - Structured perturbations of u and v
-zk = zeros(m-t+1,1);
+% Initialise z_{u}(x), the perturbations of u(x)
+v_zu = zeros(m-t+1,1);
 
-% Get partial derivatives of fw and gw with respect to theta
+% Get partial derivatives of f(\omega) and g(\omega) with respect to \theta
 fw_wrt_theta = Differentiate_wrt_theta(fw_n,th(ite));
 
-% Get partial derivative of dw with respect to theta
+% Get partial derivative of d(\omega) with respect to \theta
 dw_wrt_theta = Differentiate_wrt_theta(dw,th(ite));
 
-% Get partial derivatives of uw and vw with respect to theta.
+% Get partial derivatives of u(\omega) and v(\omega) with respect to \theta
 uw_wrt_theta = Differentiate_wrt_theta(uw,th(ite));
 
 % Build H_{t}C(f,g)G_{t}
@@ -81,19 +80,21 @@ H1C1G_wrt_theta = BuildH1C1G(uw_wrt_theta,t);
 bk = fw_n;
 
 % Get initial residual vector
-res_vec = bk-((H1C1G)*dw);
+res_vec = bk - ((H1C1G)*dw);
 
+% %
 % Set some initial values
+
 % The initial residual vector
-residual(ite)   = norm(res_vec);       % the initial normalized residual
-p               = zeros(m+1,1);     % Perturbations to polynomial f
+residual(ite) = norm(res_vec);
 
-% Values of LHS Perturbations
+% Initialise vector z_{f}(x), perturbations to polynomial f(x)
+v_zf               = zeros(m+1,1);     
 
-% Set initial values for the iterative process
-z1x = zeros(length(uw),1);
+% Initialise vector z_{u}(x), perturbations of polynomial u(x)
+v_zu = zeros(length(uw),1);
 
-
+% %
 % Construct the coefficient matrix in the equation that defines
 % the constraint for the LSE problem.
 
@@ -119,7 +120,7 @@ ek = bk;
 
 condition = norm(res_vec)/norm(ek);
 
-startpoint = [zk;p;th];
+startpoint = [v_zu;v_zf;th];
 
 yy = startpoint;
 
@@ -137,16 +138,20 @@ while condition > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     % Add the small changes found in LSE problem to existing values
     yy = yy + y;
     
-    % % obtain the small changes.
-    
-    delta_zk    = y(1:m-t+1);
-    delta_pk    = y(m-t+2:2*m-t+2);
+    % %
+    % Obtain the small changes
+    delta_zu    = y(1:m-t+1);
+    delta_zf    = y(m-t+2:2*m-t+2);
     delta_theta = y(end);
     
-    % % Update variables zk, pk, qk, beta, theta
+    % % 
+    % Update
     
-    zk          = zk + delta_zk;
-    p           = p  + delta_pk;
+    % Update the vector z_{u}(x)
+    v_zu = v_zu + delta_zu;
+    
+    % Update the vector of z_{f}(x)
+    v_zf = v_zf  + delta_zf;
     
     th(ite)  = th(ite-1) + delta_theta;
     
@@ -172,12 +177,11 @@ while condition > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     % theta
     H1C1G_wrt_theta = BuildH1C1G(uw_wrt_theta,t);
     
-    % Get perturbation vector, and seperate in to perturbations of f,
-    % z1 and perturbations of g, z2
-    z1x = zk(1:m-t+1);
+    % Get perturbations of polynomial f
+    v_zu = v_zu(1:m-t+1);
     
     % Obtain z1 and z2 in the modified bernstein basis.
-    z1w = GetWithThetas(z1x,th(ite));
+    z1w = GetWithThetas(v_zu,th(ite));
     
     % obtain partial derivatives of z1 and z2 with respect to theta
     z1w_wrt_theta = Differentiate_wrt_theta(z1w,th(ite));
@@ -190,7 +194,7 @@ while condition > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     H1E1G_wrt_theta = BuildH1C1G(z1w_wrt_theta,t);
     
     % Obtain structured perturbations sw of fw, and tw of gw
-    sw   = GetWithThetas(p,th(ite));
+    sw   = GetWithThetas(v_zf,th(ite));
     
     % Calculate partial derivatives of sw and tw with respect to theta
     s_wrt_theta = Differentiate_wrt_theta(sw,th(ite));
@@ -203,9 +207,9 @@ while condition > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     
     % Calculate H_z
     
-    HYk_new         = BuildHYQ_Roots(dx,m,th(ite));
+    HYk         = BuildHYQ_Roots(dx,m,th(ite));
     
-    H_z = HYk_new;
+    H_z = HYk;
     
     % Calculate H_p
     H_p = (-1)*S;
@@ -258,16 +262,16 @@ end
 
 
 % Display number of iterations
-fprintf('--------------------------------------------------------------------------- \n')
+LineBreakLarge()
 fprintf('Iterations over approximate polynomial factorisation : %i \n', ite+1);
-fprintf('--------------------------------------------------------------------------- \n')
+LineBreakLarge()
 
-% Update values of quotients u and v,
-PostAPF_uk = ux + z1x;
+% Update values of quotients u(x) and v(x)
+PostAPF_uk = ux + v_zu;
 
 PostAPF_vk = vx;
 
-% Update value of theta
+% Update value of \theta
 PostAPF_theta = th(ite);
 
 % Update value of common divisor dx

@@ -67,16 +67,16 @@ hk = DBQ(:,idx_col);
 DPQ = BuildDP_SNTLN(m,n,1,1,idx_col,k);
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-x_ls = SolveAx_b(Ak+Bk,ck+hk);
+xk = SolveAx_b(Ak+Bk,ck+hk);
 
 % Get residual vector
-res_vec = (ck + hk) - (Ak+Bk)*x_ls;
+res_vec = (ck + hk) - (Ak+Bk)*xk;
 
 % Get the vector x with a zero included in the x_ls solution.
-xk = [x_ls(1:idx_col-1) ; 0 ; x_ls(idx_col:end)];
+x = [xk(1:idx_col-1) ; 0 ; xk(idx_col:end)];
 
 % Build the matrix Y_{t}
-DYQ = BuildDYQ_SNTLN(xk,m,n,k,1,1);
+DYQ = BuildDYQ_SNTLN(x,m,n,k,1,1);
 
 % Build the Matrx C for LSE problem
 
@@ -93,7 +93,7 @@ E = blkdiag(eye(m+n+2),zeros(m+n-2*k+1,m+n-2*k+1));
 start_point     =   ...
     [...
     z;...
-    x_ls;
+    xk;
     ];
 
 
@@ -128,7 +128,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     
     % Update z and x
     z = z + delta_zk;
-    x_ls = x_ls + delta_xk;
+    xk = xk + delta_xk;
     
     % Split z into z_f and z_g
     z_fx = z(1:m+1);
@@ -144,15 +144,15 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     % Get h_{t}, the optimal column removed from BDQ
     hk = DBQ(:,idx_col);
     
-    % Get the vector x_ls
-    xk = [x_ls(1:idx_col-1) ; 0 ; x_ls(idx_col:end)];
+    % Get the vector x
+    x = [xk(1:idx_col-1) ; 0 ; xk(idx_col:end)];
     
     % Seperate the component parts of x into x_v and x_u, where x_v is an
     % approximation of v(x) and x_u is an approximation u(x).
-    DYQ = BuildDYQ_SNTLN(xk,m,n,k,1,1);
+    DYQ = BuildDYQ_SNTLN(x,m,n,k,1,1);
     
     % Get updated residual vector
-    res_vec = (ck + hk) - ((Ak + Bk)*x_ls);
+    res_vec = (ck + hk) - ((Ak + Bk)*xk);
     
     % Update the matrix C
     H_z = DYQ - DPQ;
@@ -179,20 +179,22 @@ gx_lr = gx + z_gx;
 
 % %
 % Get u(x) and v(x) from x_ls
-vec_vxux = [x_ls(1:idx_col-1) ; -1 ; x_ls(idx_col:end)];
+x = [xk(1:idx_col-1) ; -1 ; xk(idx_col:end)];
 
 % Get polynomial u(x)
 nCoeff_vx = n-k+1;
-vx_lr = vec_vxux(1:nCoeff_vx);
+vx_lr = x(1:nCoeff_vx);
 
 % Get polynomial v(x)
-ux_lr = -1.*(vec_vxux(nCoeff_vx + 1:end));
+ux_lr = -1.* x(nCoeff_vx + 1:end) ;
 
 % % 
 % Plot Graphs
 Plot_STLN()
-fprintf([mfilename ' : ' sprintf('Required number of iterations : %i \n',ite)]);
 
+LineBreakLarge()
+fprintf([mfilename ' : ' sprintf('Required number of iterations : %i \n',ite)]);
+LineBreakLarge()
 end
 
 

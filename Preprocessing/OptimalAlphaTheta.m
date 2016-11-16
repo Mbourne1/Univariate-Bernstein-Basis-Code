@@ -52,8 +52,9 @@ b= -[
 % Solve the linear programming problem and extract alpha and theta
 % from the solution vector x.
 
-
+    warning('off')
     x = linprog(f,A,b);
+    warning('on')
     
     if numel(x) == 4
         

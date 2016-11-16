@@ -109,7 +109,8 @@ vDeg_arr_wx = diff([vDeg_arr_hx 0]);
 %     q{i}
 % end
 
-% Deconvolve the first set of polynomials.
+% Deconvolve the first set of polynomials to get the set of polynomials
+% h_{i}(x)
 switch SETTINGS.GET_HX_METHOD
     case 'From Deconvolution'
         

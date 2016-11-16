@@ -106,6 +106,11 @@ St_preproc = BuildSubresultant(fw,alpha.*gw,t);
 % 
 [fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = LowRankApproximation(fx_n,gx_n,alpha,theta,t,idx_col);
 
+% Get distance between f(x) and f(x)_lr
+dist_fx = norm(fx_n - fx_lr);
+dist_gx = norm(gx_n - gx_lr);
+disp(dist_fx)
+disp(dist_gx)
 
 % %
 % Build Sylvester Matrix for normalised, refined coefficients, used in
@@ -118,8 +123,15 @@ St_low_rank = BuildSubresultant(fw,alpha.*gw,t);
 % Get the coefficients of the GCD by APF or other method.
 [fx_alr, gx_alr, dx_alr, ux_alr, vx_alr, alpha_alr, theta_alr] = APF(fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr,t);
 
-fx = fx_alr;
-gx = gx_alr;
+
+% Get distance between input f(x) and output f(x)_alr
+dist_fx = norm(fx_n - fx_alr);
+dist_gx = norm(gx_n - gx_alr);
+disp(dist_fx)
+disp(dist_gx)
+
+%fx = fx_alr;
+%gx = gx_alr;
 dx = dx_alr;
 ux = ux_alr;
 vx = vx_alr;

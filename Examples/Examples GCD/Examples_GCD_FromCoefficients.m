@@ -1,5 +1,20 @@
-function [fx,gx,dx] = Examples_GCD_FromCoefficients(ex_num)
-
+function [fx,gx,dx,ux,vx] = Examples_GCD_FromCoefficients(ex_num)
+%
+% % Inputs
+%
+% ex_num : Example number
+%
+% % Outputs
+%
+% fx : Coefficients of the polynomial f(x)
+%
+% gx : Coefficients of the polynomial g(x)
+%
+% dx : Coefficients of the GCD d(x)
+%
+% ux : Coefficients of the polynomial u(x) given by f(x)/d(x)
+%
+% vx : Coefficients of the polynomial v(x) given by g(x)/d(x)
 
 addpath('../Examples')
 
@@ -10,15 +25,21 @@ addpath('../Examples')
 fx = BuildPolyFromRootsSymbolic(f_root_mult_arr);
 gx = BuildPolyFromRootsSymbolic(g_root_mult_arr);
 dx = BuildPolyFromRootsSymbolic(d_root_mult_arr);
+ux = BuildPolyFromRootsSymbolic(u_root_mult_arr);
+vx = BuildPolyFromRootsSymbolic(v_root_mult_arr);
 
 % Get the symbolic polynomials
 fx_sym = BuildSymbolicPolyFromSymbolicRoots(f_root_mult_arr);
 gx_sym = BuildSymbolicPolyFromSymbolicRoots(g_root_mult_arr);
 dx_sym = BuildSymbolicPolyFromSymbolicRoots(d_root_mult_arr);
+ux_sym = BuildSymbolicPolyFromSymbolicRoots(u_root_mult_arr);
+vx_sym = BuildSymbolicPolyFromSymbolicRoots(v_root_mult_arr);
 
 display(fx_sym)
 display(gx_sym)
 display(dx_sym)
+display(ux_sym)
+display(vx_sym)
 
 end
 

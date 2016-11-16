@@ -1,26 +1,26 @@
-function [f_exact,g_exact,d_exact]=Examples_GCD(ex_num)
-% Inputs.
+function [fx,gx,dx,ux,vx] = Examples_GCD(ex_num)
+% Inputs. 
 %
-% n - Index of example to be used
+% ex_num : Example number
 %
 % Outputs.
 %
-% a - Roots and multiplicities of polynomial f.
+% fx : Coefficients of the polynomial f(x)
 %
-% b - Roots and multiplicities of polynomial g.
+% gx : Coefficients of the polynomial g(x)
 %
-% c - Roots and multiplicities of polynomial d, the GCD of f and g.
+% dx : Coefficients of the polynomial d(x), the GCD of f(x) and g(x)
 %
-% u - Roots and multiplicities of quotient polynomial f/u = d.
+% ux : Coefficients of the polynomial u(x), given by f(x)/d(x)
 %
-% v - Roots and multiplicities of quotient polynomial g/v = d.
+% vx : Coefficients of the polynomial v(x), given by g(x)/d(x)
 
 EXAMPLE_TYPE = 'From Coefficients';
 
 switch EXAMPLE_TYPE
     case 'From Coefficients'
         
-        [f_exact,g_exact,d_exact] = Examples_GCD_FromCoefficients(ex_num);
+        [fx,gx,dx,ux,vx] = Examples_GCD_FromCoefficients(ex_num);
         
         
     case 'From Roots'
@@ -32,9 +32,9 @@ switch EXAMPLE_TYPE
 
         % Get exact coefficients of a_{i},b_{i},u_{i},v_{i} and d_{i} of
         % polynomials f, g, u, v and d in standard bernstein form.
-        f_exact = GetWithoutBinomials(f_exact_bi);
-        g_exact = GetWithoutBinomials(g_exact_bi);
-        d_exact = GetWithoutBinomials(d_exact_bi);
+        fx = GetWithoutBinomials(f_exact_bi);
+        gx = GetWithoutBinomials(g_exact_bi);
+        dx = GetWithoutBinomials(d_exact_bi);
 
     otherwise
         error('err')

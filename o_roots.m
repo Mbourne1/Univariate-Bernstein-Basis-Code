@@ -1,4 +1,4 @@
-function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
 % O_ROOTS(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Given an example number, and a set of input parameters, calculate the
@@ -15,30 +15,61 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %
 % mean_method : (string) method used to compute the mean of entries in C_{n-k}(f)
 %               and C_{m-k}(g)
-%               'None' - No mean
-%               'Geometric Mean Matlab Method'
-%               'Geometric Mean My Method'
+%           'None' - No mean
+%           'Geometric Mean Matlab Method'
+%           'Geometric Mean My Method'
 %
 %
-% bool_alpha_theta : (string) {'y,'n''}
+% bool_alpha_theta : (string) 
+%           'y'
+%           'n'
 %
-% low_rank_approx_method : (string) {'None','Standard STLN', 'Standard SNTLN'}
+% low_rank_approx_method : (string)
+%           'None'
+%           'Standard STLN'
+%           'Standard SNTLN'
+%           'Root Specific SNTLN'
 %
-% apf_method ('string') {'None', 'Standard APF', 'Root Specific APF'}
+% apf_method ('string') 
+%           'None'
+%           'Standard APF NonLinear'
+%           'Standard APF Linear'
 %
-% % Example
+% Sylvester_Build_Method 
+%           'T'
+%           'DT'
+%           'DTQ'
+%           'TQ'
+%           'DTQ Rearranged Denom Removed'
+%           'DTQ Rearranged'
 %
-% >> O_ROOTS('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
+% % Example 
 %
-% >> O_ROOTS('Custom:m=10 low=-1 high=1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF')
+% >> O_ROOTS('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF NonLinear','DTQ')
+%
+% >> O_ROOTS('Custom:m=10 low=-1 high=1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF','DTQ')
 
 
 % add paths
 restoredefaultpath
 
-addpath 'Examples'
-addpath 'Formatting'
-addpath 'Root Finding Methods'
+restoredefaultpath
+
+
+addpath(...
+    'Build Matrices',...
+    'Formatting',...
+    'Measures',...
+    'Plotting',...
+    'Preprocessing',...
+    'Results',...
+    'Sylvester Matrix')
+
+addpath(genpath('APF'));
+addpath(genpath('Deconvolution'));
+addpath(genpath('Examples'));
+addpath(genpath('Low Rank Approx'));
+addpath(genpath('Root Finding Methods'));
 
 % Set the problem type to a roots type problem.
 ProblemType = 'Roots';
@@ -47,7 +78,6 @@ ProblemType = 'Roots';
 global SETTINGS
 if isempty(SETTINGS)
     fprintf('Set Q and log \n');
-    SETTINGS.BOOL_Q = 'y';
     SETTINGS.BOOL_LOG = 'n';
     SETTINGS.ROOTS_HX = 'From Deconvolutions';
     
@@ -55,7 +85,7 @@ if isempty(SETTINGS)
 end
 
 SetGlobalVariables(ProblemType, ex_num, emin, emax,...
-    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method)
+    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,sylvester_build_method)
 
 % Use the examples from a set of given roots
 global Example_Type
@@ -111,6 +141,8 @@ comp_roots.MyMethod = mat2str(arr_root_mult_MyMethod(:,1));
 %  comp_roots.MyMethod = mat2str([0 0 0 0 0 0]);
 %end
 
+
+
 % %
 % %
 % %
@@ -135,7 +167,7 @@ end
 % %
 % %
 % Calculate roots by matlab 'roots' function.
-arr_root_mult_MatlabMethod = o_roots_matlab(fx);
+arr_root_mult_MatlabMethod = o_roots_Matlab(fx);
 errors.MatlabMethod = GetErrorMeasure(arr_root_mult_MatlabMethod,fx_exact);
 LineBreakLarge()
 
@@ -237,7 +269,7 @@ if exist(fullFileName, 'file')
         SETTINGS.BOOL_ALPHA_THETA, ...
         SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
         SETTINGS.APF_METHOD, ...
-        SETTINGS.BOOL_Q,...
+        SETTINGS.SYLVESTER_BUILD_METHOD,...
         SETTINGS.DECONVOLVE_METHOD_HX_FX,...
         SETTINGS.BOOL_LOG,...
         SETTINGS.DECONVOLVE_METHOD_WX_HX,...
@@ -254,19 +286,23 @@ end
 end
 
 
-function [error] = GetErrorMeasure(arr_root_mult,fx_exact)
+function [error] = GetErrorMeasure(root_mult_arr,fx_exact)
 % Get the distance between the polynomial f_{comp} and f_{exact}
 %
 % Inputs.
 %
-% arr_root_mult : Matrix whose rows contain a computed root of f(x) and
+% root_mult_arr : Matrix whose rows contain a computed root of f(x) and
 %                 its corresponding multiplicitiy.
 %
 % fx_exact : Coefficients of exact Polynomial f(x)
 %
+% % Outputs 
+%
+% Error : Measure of error between the exact polynomial f(x) and the
+% polynomial f(x) computed by the root finding method.
 
 % Get coefficients of computed polynomial f(x)
-fx_comp = GetWithoutBinomials(B_poly(arr_root_mult));
+fx_comp = GetWithoutBinomials(BuildPolyFromRoots(root_mult_arr));
 
 % Get distance between f_{comp}(x) and f_{exact}(x)
 error  = norm(Normalise(fx_comp) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));

@@ -6,13 +6,15 @@ function [f_bi] = BuildPolyFromRoots(root_mult_array)
 % m_{i} of each r_{i}.
 % 
 %
-% Inputs.
+% % Inputs
 %
 % root_mult_array : Matrix of roots of f(x) and corresponding
 %                   multiplicities. where each row consists of a root r_{i}
 %                   and its multiplicity m_{i}
-
-
+%
+% % Outputs
+%
+% f_bi : Coefficients of polynomial f(x) in scaled Bernstein basis.
 
 % Calculate the number of distinct roots of the polynomial.
 nRoots = size(root_mult_array,1);
@@ -50,13 +52,13 @@ end
 function [t] = B_conv(root,mult)
 % This function convolves the vector [-r 1-r] with itself m times.
 %
-% Inputs:
+% % Inputs
 %
 % root : root
 %
 % mult : multiplicity of root
 %
-% Outputs:
+% % Outputs
 %
 % t : vector which stores the result from this convolution.
 %

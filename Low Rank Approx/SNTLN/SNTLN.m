@@ -92,6 +92,8 @@ DTQ_wrt_theta = BuildDTQ(fw_wrt_theta,alpha(ite).*gw_wrt_theta,k);
 % if we are working with strictly the roots problem, the number of entries
 % in z can be reduced.
 zk = zeros(m+n+2,1);
+z_fx      = zk(1:m+1);
+z_gx      = zk(m+2:end);
 
 % Initilaise the derivative of D_{k}NQ_{k} wrt alpha.
 DNQ_wrt_alpha   = zeros(m+n-k+1,m+n-(2*k)+2);

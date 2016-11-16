@@ -52,6 +52,7 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 problemType = 'GCD';
 
 restoredefaultpath
+
 addpath(...
     'Build Matrices',...
     'Formatting',...
@@ -112,15 +113,11 @@ LineBreakLarge()
 
 
 % Get roots from example file
-[f_exact, g_exact,d_exact] = Examples_GCD(ex_num);
-
-% Print the coefficients of f(x) and g(x)
-%PrintCoefficients_Bivariate_Bernstein(f_exact,'f')
-%PrintCoefficients_Bivariate_Bernstein(g_exact,'g')
+[fx_exact, gx_exact, dx_exact, ux_exact, vx_exact] = Examples_GCD(ex_num);
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
-fx = AddVariableNoiseToPoly(f_exact,emin,emax);
-gx = AddVariableNoiseToPoly(g_exact,emin,emax);
+fx = AddVariableNoiseToPoly(fx_exact,emin,emax);
+gx = AddVariableNoiseToPoly(gx_exact,emin,emax);
 
 % set upper and lower limit of the degree of the GCD
 lower_lim = 1;
@@ -134,11 +131,20 @@ upper_lim = min(GetDegree(fx),GetDegree(gx));
 
 LineBreakMedium();
 try
-error_dx = GetError('d',d_exact,dx_calc);
+    
+    error.dx = GetError('d',dx_exact,dx_calc);
+    error.ux = GetError('u',ux_exact,ux_calc);
+    error.vx = GetError('v',vx_exact,vx_calc);
+    
 catch
-    error_dx = 1000;
+    
+    error.dx = 1000;
+    error.ux = 1000;
+    error.vx = 1000;
+    
 end
-PrintToFile(GetDegree(fx),GetDegree(gx),GetDegree(dx_calc),error_dx)
+
+PrintToFile(GetDegree(fx),GetDegree(gx),GetDegree(dx_calc),error)
 LineBreakMedium();
 
 end
@@ -169,7 +175,21 @@ end
 
 
 
-function [] = PrintToFile(m,n,t,error_dx)
+function [] = PrintToFile(m,n,t,error)
+%
+%
+% % Inputs
+%
+% m : Degree of polynomial f(x)
+%
+% n : Degree of polynomial g(x)
+%
+% t : Computed degree of the GCD d(x)
+%
+% error : array of errors e
+%   error.dx
+%   error.ux
+%   error.vx
 
 
 global SETTINGS
@@ -179,14 +199,16 @@ fullFileName = 'Results/Results_o_gcd.txt';
 
 if exist(fullFileName, 'file')
     fileID = fopen(fullFileName,'a');
-    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
+    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
         datetime('now'),...
         SETTINGS.PROBLEM_TYPE,...
         SETTINGS.EX_NUM,...
         int2str(m),...
         int2str(n),...
         int2str(t),...
-        num2str(error_dx),...
+        num2str(error.ux),...
+        num2str(error.vx),...
+        num2str(error.dx),...
         SETTINGS.MEAN_METHOD,...
         SETTINGS.BOOL_ALPHA_THETA,...
         SETTINGS.EMIN,...
