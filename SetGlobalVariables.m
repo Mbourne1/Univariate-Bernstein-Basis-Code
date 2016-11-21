@@ -25,7 +25,7 @@ SETTINGS.PROBLEM_TYPE = problemType;
 SETTINGS.SEED = 1024;
 
 % Outputs
-SETTINGS.PLOT_GRAPHS = 'n';
+SETTINGS.PLOT_GRAPHS = 'y';
 
 %
 % 'y' : Use Logs
@@ -134,9 +134,6 @@ SETTINGS.MAX_ITERATIONS_APF = 50;
 % applicable, and the common denominators can not be removed.
 % Simplest method, no structure added.
 % Override users input options if incompatable.
-
-
-
 
 
 if ( strcmp(SETTINGS.PROBLEM_TYPE,'GCD') && strcmp(SETTINGS.LOW_RANK_APPROXIMATION_METHOD, 'Root Specific SNTLN'))

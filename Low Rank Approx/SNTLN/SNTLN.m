@@ -6,9 +6,9 @@ function [ fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = ...
 %
 % % Inputs.
 %
-% fx : Coefficients of polynomial f(x,y), in bernstein basis.
+% fx : Coefficients of polynomial f(x), in bernstein basis.
 %
-% gx : Coefficients of polynomial g(x,y), in bernstein basis.
+% gx : Coefficients of polynomial g(x), in bernstein basis.
 %
 % i_alpha : Initial value of \alpha
 %
@@ -21,7 +21,7 @@ function [ fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = ...
 %
 % % Outputs.
 %
-% fx_lr : Coefficients of fx on output, in standard bernstein basis,
+% fx_lr : Coefficients of f(x) on output, in standard bernstein basis,
 % including added structured perturbations.
 %
 % gx_lr : Coefficients of fx on output, in standard bernstein basis,
@@ -31,12 +31,10 @@ function [ fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = ...
 %
 % theta_lr :
 %
-% ux_lr :
+% ux_lr : 
 %
 % vx_lr :
 
-% %
-% Global Inputs
 
 global SETTINGS
 
@@ -47,10 +45,10 @@ ite = 1;
 theta(ite) = i_th;
 alpha(ite) = i_alpha;
 
-% Get degree of polynomials f.
+% Get degree of polynomials f(x)
 m = GetDegree(fx);
 
-% Get degree of polynomial g.
+% Get degree of polynomial g(x)
 n = GetDegree(gx);
    
 % Create the identity matrix I, the matrix M formed from I by removing the
@@ -103,38 +101,38 @@ DNQ_wrt_theta   = zeros(m+n-k+1,m+n-(2*k)+2);
 
 % Calculate the derivatives wrt alpha and theta of the column of DNQ
 % that is moved to the right hand side.
-ht_wrt_alpha     = DNQ_wrt_alpha*e;
-ht_wrt_theta     = DNQ_wrt_theta*e;
+hk_wrt_alpha     = DNQ_wrt_alpha*e;
+hk_wrt_theta     = DNQ_wrt_theta*e;
 
 %Calculate the matrix P.
-DP = BuildDP_SNTLN(m,n,alpha(ite),theta(ite),idx_col,k);
+DPQ = BuildDPG_SNTLN(m,n,k,alpha(ite),theta(ite),idx_col);
 
 % Calculate the column of DTQ that is moved to the right hand side.
-ct = (DTQ)*e;
+ck = (DTQ)*e;
 
 % Calculate the remaining columns of the matrix.
 At = (DTQ)*M;
 
 % Calculate the derivatives wrt alpha and theta of the removed column.
-ct_wrt_alpha     = DTQ_wrt_alpha*e;
-ct_wrt_theta     = DTQ_wrt_theta*e;
+ck_wrt_alpha     = DTQ_wrt_alpha*e;
+ck_wrt_theta     = DTQ_wrt_theta*e;
 
 % Calculate the initial estimate of x - the vector whcih contains the
 % coefficients of the quotient polynomials u and v.
-x_ls = SolveAx_b(At,ct);
+xk = SolveAx_b(At,ck);
 
 % %
 % Build Matrix Y
 
 % Get vector x_{k}
-x1 = x_ls(1:idx_col-1) ;
-x2 = x_ls(idx_col:end) ;
-xk = [x1; 0 ;x2] ;% Insert zero into vector
+x1 = xk(1:idx_col-1) ;
+x2 = xk(idx_col:end) ;
+x = [x1; 0 ;x2] ;% Insert zero into vector
 
-DYQ = BuildDYQ_SNTLN(xk,m,n,k,alpha(ite),theta(ite));
+DYQ = BuildDYQ_SNTLN(x,m,n,k,alpha(ite),theta(ite));
 
 % Calculate the initial residual r = ck - (Ak*x)
-res_vec = ct - (DTQ*M*x_ls);
+res_vec = ck - (DTQ*M*xk);
 
 % Set the intial value of E to the identity matrix
 E = eye(2*m+2*n-2*k+5);
@@ -150,15 +148,15 @@ DTNQ_wrt_theta = BuildDTQ(fw_wrt_theta, alpha(ite).*gw_wrt_theta,k);
 
 % Create the matrix C for input into iteration
 
-H_z     = DYQ - DP;
+H_z     = DYQ - DPQ;
 
 H_x     = DTNQ*M;
 
-H_alpha  = DTNQ_wrt_alpha*M*x_ls - ...
-    (ct_wrt_alpha + ht_wrt_alpha);
+H_alpha  = DTNQ_wrt_alpha*M*xk - ...
+    (ck_wrt_alpha + hk_wrt_alpha);
 
-H_theta = DTNQ_wrt_theta*M*x_ls - ...
-    (ct_wrt_theta + ht_wrt_theta);
+H_theta = DTNQ_wrt_theta*M*xk - ...
+    (ck_wrt_theta + hk_wrt_theta);
 
 C       = [H_z H_x H_alpha H_theta];
 
@@ -166,7 +164,7 @@ C       = [H_z H_x H_alpha H_theta];
 start_point     =   ...
     [...
         zk;...
-        x_ls;...
+        xk;...
         alpha(ite);...
         theta(ite)
     ];
@@ -179,7 +177,7 @@ f = zeros(2*m+2*n-2*k+5,1);
 
 % Set the termination criterion to a large value. It will be
 % over written later.
-condition(ite) = norm(res_vec)/norm(ct);
+condition(ite) = norm(res_vec)/norm(ck);
 
 while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
    
@@ -209,7 +207,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     zk   = zk   + delta_zk;
     
     % Update least squares solution
-    x_ls = x_ls + delta_xk;
+    xk = xk + delta_xk;
         
     % Update \alpha 
     alpha(ite) = alpha(ite-1) + delta_alpha;
@@ -249,11 +247,11 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
                 alpha(ite).*gw_wrt_theta,k);
         
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
-    ct = DTQ*e;
+    ck = DTQ*e;
     
     % Calculate the derivatives of c_{k} with respect to \alpha and \theta
-    ct_wrt_alpha     = DTQ_wrt_alpha*e;
-    ct_wrt_theta     = DTQ_wrt_theta*e;
+    ck_wrt_alpha     = DTQ_wrt_alpha*e;
+    ck_wrt_theta     = DTQ_wrt_theta*e;
     
     % Create the vector of structured perturbations zf(x) and zg(x) applied
     % to F and G.
@@ -315,34 +313,34 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
 
     % %  
     % Build Matrix DY
-    x1 = x_ls(1:idx_col-1) ;
-    x2 = x_ls(idx_col:end) ;
-    xk = [x1; 0 ;x2]; 
+    x1 = xk(1:idx_col-1) ;
+    x2 = xk(idx_col:end) ;
+    x = [x1; 0 ;x2]; 
     
     % Build the matrix DY
-    DYQ = BuildDYQ_SNTLN(xk,m,n,k,alpha(ite),theta(ite));
+    DYQ = BuildDYQ_SNTLN(x,m,n,k,alpha(ite),theta(ite));
     
     % Calculate the matrix DP where P is the matrix such that c = P[f;g]
-    DP = BuildDP_SNTLN(m,n,alpha(ite),theta(ite),idx_col,k);
+    DPQ = BuildDPG_SNTLN(m,n,k,alpha(ite),theta(ite),idx_col);
     
     % Calculate the residual q and vector p.
-    res_vec = (ct+hk) - (DTNQ * M * x_ls);
+    res_vec = (ck+hk) - (DTNQ * M * xk);
     
     % Create the matrix C. This is made up of four submatrices, HZ, Hx,
     % H_alpha and H_theta.
     
-    Hz      = DYQ - DP;
+    Hz      = DYQ - DPQ;
     
     Hx      = DTNQ*M;
     
-    H_alpha = DTNQ_alpha*M*x_ls - (ct_wrt_alpha + hk_alpha);
+    H_alpha = DTNQ_alpha*M*xk - (ck_wrt_alpha + hk_alpha);
     
-    H_theta = DTNQ_theta*M*x_ls - (ct_wrt_theta + hk_theta);
+    H_theta = DTNQ_theta*M*xk - (ck_wrt_theta + hk_theta);
     
     C = [Hz,Hx,H_alpha,H_theta];  % the matrix C
        
     % Calculate the normalised residual of the solution.
-    condition(ite) = norm(res_vec)./ norm(ct + hk) ;
+    condition(ite) = norm(res_vec)./ norm(ck + hk) ;
     
     % Update fnew - used in LSE Problem.
     f = -(yy-start_point);
@@ -351,61 +349,87 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
 end
 
+% Plot graphs
+Plot_STLN()
+PlotThetas(theta)
+PlotAlphas(alpha)
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure_name = sprintf('%s : Residuals',mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Residuals in SNTLN without constraints')
-        xlabel('Iterations')
-        ylabel('log_{10} Residuals')
-        plot(log10(condition),'-s')
-        hold off
-    case 'n'
-    otherwise
-        error('PLOT_GRAPHS must be either y or n');
-end
-
-
-% Once iterations are complete, assign fx output, gx output, solution X
-% output, alpha output and theta output.
-fx_lr = fx + z_fx;
-
-gx_lr = gx + z_gx;
+% Print the number of iterations required
+LineBreakLarge()
+fprintf([mfilename ' : ' sprintf('Iterations required for STLN : %i \n', ite)]);
+LineBreakLarge()
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
 
 % %
-% Get u(x) and v(x) from x_ls
-vec_vxux = [x_ls(1:idx_col-1) ; -1 ; x_ls(idx_col:end)];
+% Get polynomials for output
 
-% Get polynomial u(x)
+% Get the polynomial f(x) + \delta f(x)
+fx_lr = fx + z_fx;
+
+% Get the polynomial g(x) + \delta g(x)
+gx_lr = gx + z_gx;
+
+% % Get polynomials u(x) and v(x)
+
+% Get u(x) and v(x) from x_ls
+x = [xk(1:idx_col-1) ; -1 ; xk(idx_col:end)];
+
+% Get the number of coefficients in v(x)
 nCoeff_vx = n-k+1;
-vw_lr = vec_vxux(1:nCoeff_vx);
+
+% Get coefficients of v(\omega) from the vector x
+vw_lr = x(1:nCoeff_vx);
+
+% Get v(x) from v(\omega)
 vx_lr = GetWithoutThetas(vw_lr,theta(ite));
 
-% Get polynomial v(x)
-uw_lr = -1.*(vec_vxux(nCoeff_vx + 1:end));
+% Get polynomial coefficients v(\omega) from the vector x
+uw_lr = -1.*(x(nCoeff_vx + 1:end));
+
+% Get u(x) from u(\omega)
 ux_lr = GetWithoutThetas(uw_lr,theta(ite));
 
+% Get \alpha and \theta
 alpha_lr = alpha(ite);
-
 theta_lr = theta(ite);
 
-
-
-% Print the number of iterations
-
-fprintf([mfilename ' : ' sprintf('Iterations required for STLN : %i \n', ite)]);
+fprintf('Change in theta \n')
+display(theta(ite) - theta(1));
+fprintf('Change in alpha \n')
+display(alpha(ite) - alpha(1));
 
 end
 
 
 
+function PlotThetas(vTheta)
+%
+% % Inputs
+%
+% vTheta : vector of theta values for each iteration
+
+figure_name = sprintf([mfilename ' : Theta variation over SNTLN']);
+figure('name',figure_name)
+hold on
+plot(log10(vTheta),'-s','DisplayName','\theta')
+xlabel('Iteration');
+ylabel('log_{10}');
+hold off
+
+end
+
+function PlotAlphas(vAlpha)
 
 
+figure_name = sprintf([mfilename ' : Alpha variation over SNTLN']);
+figure('name',figure_name)
+hold on
+plot(log10(vAlpha),'-s','DisplayName','\alpha')
+xlabel('Iteration');
+ylabel('log_{10}');
+hold off
 
-
-
+end
 
 
 

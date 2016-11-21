@@ -1,13 +1,30 @@
-function Partial_fw_wrt_theta = Differentiate_wrt_theta(fw,th)
+function Partial_fw_wrt_theta = Differentiate_wrt_theta(fw,theta)
 % Differentiate f(\omega,\theta) with respect to theta
+%
+% % Inputs
+%
+% fw : Polynomial f(\omega)
+%
+% theta : Optimal value of \theta
 
-% Get the degree of polynomial f(\omega)
-m = GetDegree(fw);
 
-% Initialise the multiplication vector.
-vecm = (0:1:m)';
+bool_diff_method = 'power basis';
+bool_diff_method = 'Bernstein basis';
 
-% Get the partial derivative of f with respect to theta
-Partial_fw_wrt_theta = vecm .*fw ./ th;
+switch bool_diff_method
+    case 'power basis'
+        
+        Partial_fw_wrt_theta = Differentiate_wrt_theta_powerbasis(fw,theta);
+        
+    case 'Bernstein basis'
+        
+        Partial_fw_wrt_theta = Differentiate_wrt_theta_Bernsteinbasis(fw,theta);
+        
+    otherwise
+        
+        error('err')
+        
+end
+
 
 end

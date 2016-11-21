@@ -221,6 +221,8 @@ end
 LineBreakLarge();
 fprintf('Iterations over Nonlinear approximate polynomial factorisation : %i \n', ite+1);
 LineBreakLarge();
+SETTINGS.APF_REQ_ITE = ite;
+
 
 % Update values of quotients u and v,
 ux_lr = ux + z1_ux;

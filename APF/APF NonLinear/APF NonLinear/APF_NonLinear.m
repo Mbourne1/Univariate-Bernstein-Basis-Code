@@ -220,32 +220,32 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     alpha(ite) = alpha(ite-1) + delta_alpha;
     
     % Update \theta
-    th(ite) = th(ite-1) + delta_theta;
+    theta(ite) = theta(ite-1) + delta_theta;
     
     % %
     % Update the polynomial f(\omega)
-    fw = GetWithThetas(fx,th(ite));
+    fw = GetWithThetas(fx,theta(ite));
     
     % Update the polynomial g(\omega)
-    gw = GetWithThetas(gx,th(ite));
+    gw = GetWithThetas(gx,theta(ite));
     
     % Update matrices S = th_f and T = th_g
-    th_f = diag(th(ite).^vecm);
-    th_g = diag(th(ite).^vecn);
+    th_f = diag(theta(ite).^vecm);
+    th_g = diag(theta(ite).^vecn);
     
     % Update the polynomial d(\omega)
-    dw = GetWithThetas(dx,th(ite));
+    dw = GetWithThetas(dx,theta(ite));
     
     % Update the polynomial u(\omega)
-    uw = GetWithThetas(ux,th(ite));
+    uw = GetWithThetas(ux,theta(ite));
     
     % Update the polynomial v(\omega)
-    vw = GetWithThetas(vx,th(ite));
+    vw = GetWithThetas(vx,theta(ite));
     
     % Obtain partial derivatives of u(\omega) and v(\omega) with respect to
     % \theta
-    uw_wrt_theta = Differentiate_wrt_theta(uw,th(ite));
-    vw_wrt_theta = Differentiate_wrt_theta(vw,th(ite));
+    uw_wrt_theta = Differentiate_wrt_theta(uw,theta(ite));
+    vw_wrt_theta = Differentiate_wrt_theta(vw,theta(ite));
     
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G
     [~,H1C1G,H2C2G] = BuildHCG(uw,vw,k);
@@ -260,12 +260,12 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     z2_vx = zk(m-k+2:m+n-2*k+2);
     
     % Obtain z1 and z2 in the modified bernstein basis.
-    z_uw = GetWithThetas(z1_ux,th(ite));
-    z_vw = GetWithThetas(z2_vx,th(ite));
+    z_uw = GetWithThetas(z1_ux,theta(ite));
+    z_vw = GetWithThetas(z2_vx,theta(ite));
     
     % obtain partial derivatives of z1 and z2 with respect to theta
-    z2w_wrt_theta = Differentiate_wrt_theta(z_vw,th(ite));
-    z1w_wrt_theta = Differentiate_wrt_theta(z_uw,th(ite));
+    z2w_wrt_theta = Differentiate_wrt_theta(z_vw,theta(ite));
+    z1w_wrt_theta = Differentiate_wrt_theta(z_uw,theta(ite));
     
     % Build Matrices H_{1}E_{1}(z1)G and H_{2}E_{2}(z2)G
     [~,H1E1G,H2E2G] = BuildHCG(z_uw,z_vw,k);
@@ -275,24 +275,24 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     [~,H1E1G_wrt_theta,H2E2G_wrt_theta] = BuildHCG(z1w_wrt_theta,z2w_wrt_theta,k);
     
     % Obtain structured perturbations sw of fw, and tw of gw
-    z_fw = GetWithThetas(z_fx,th(ite));
-    z_gw = GetWithThetas(z_gx,th(ite));
+    z_fw = GetWithThetas(z_fx,theta(ite));
+    z_gw = GetWithThetas(z_gx,theta(ite));
     
     % Calculate partial derivatives of sw and tw with respect to theta
-    s_wrt_theta = Differentiate_wrt_theta(z_fw,th(ite));
-    t_wrt_theta = Differentiate_wrt_theta(z_gw,th(ite));
+    s_wrt_theta = Differentiate_wrt_theta(z_fw,theta(ite));
+    t_wrt_theta = Differentiate_wrt_theta(z_gw,theta(ite));
     
     % Calculate partial derivatives of fw and gw with respect to theta
-    fw_wrt_theta = Differentiate_wrt_theta(fw,th(ite));
-    gw_wrt_theta = Differentiate_wrt_theta(gx,th(ite));
+    fw_wrt_theta = Differentiate_wrt_theta(fw,theta(ite));
+    gw_wrt_theta = Differentiate_wrt_theta(gx,theta(ite));
     
     % Calculate partial derivative of dw with respect to theta
-    dw_wrt_theta = Differentiate_wrt_theta(dw,th(ite));
+    dw_wrt_theta = Differentiate_wrt_theta(dw,theta(ite));
     
     % Build Matrix C
     
     % Calculate H_z
-    HYk = BuildHYQ_SNTLN(dx,m,n,th(ite));
+    HYk = BuildHYQ_SNTLN(dx,m,n,theta(ite));
     
     % Build H_z
     H_z = HYk;
@@ -357,13 +357,13 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     % variables from the modified Bernstein basis to the Bernstein
     % basis.
     
-    fx_p = GetWithoutThetas(fw,th(ite));
-    sx_p = GetWithoutThetas(z_fw,th(ite));
-    gx_p = GetWithoutThetas(gw,th(ite));
-    tx_p = GetWithoutThetas(z_gw,th(ite));
+    fx_p = GetWithoutThetas(fw,theta(ite));
+    sx_p = GetWithoutThetas(z_fw,theta(ite));
+    gx_p = GetWithoutThetas(gw,theta(ite));
+    tx_p = GetWithoutThetas(z_gw,theta(ite));
     ukx = ux + z1_ux;
     vkx = vx + z2_vx;
-    dkx = dw./(th(ite).^veck);
+    dkx = dw./(theta(ite).^veck);
     
     [res_ux(ite),res_vx(ite)] = Term_Criterion_APF(fx_p,gx_p,sx_p,...
         tx_p,ukx,vkx,dkx,k,1.0);
@@ -371,8 +371,14 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     
 end
 
+% Plot graphs
+Plot_APF()
 
-
+% Display number of iterations
+LineBreakLarge();
+fprintf('Iterations over approximate polynomial factorisation : %i \n', ite+1);
+LineBreakLarge();
+SETTINGS.APF_REQ_ITE = ite;
 
 
 switch SETTINGS.PLOT_GRAPHS
@@ -382,16 +388,13 @@ switch SETTINGS.PLOT_GRAPHS
         
         % Write out the number of iterations required and plot the values of
         % alpha, theta and the residual.
-        plotgraphs4(alpha,th,residual);
+        plotgraphs4(alpha,theta,residual);
     case 'n'
     otherwise
         error('err')
 end
 
-% Display number of iterations
-LineBreakLarge();
-fprintf('Iterations over approximate polynomial factorisation : %i \n', ite+1);
-LineBreakLarge();
+
 
 % Update values of quotients u and v,
 ux_lr = ux + z1_ux;

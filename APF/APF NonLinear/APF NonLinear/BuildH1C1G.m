@@ -31,7 +31,9 @@ switch SETTINGS.APF_BUILD_METHOD
         % Build the matrix H*C*G
         H1C1G = H1*C1*G;
     case 'Rearranged'
+        
         H1C1G = BuildH1C1G_Rearranged(uw,t);
+        
     otherwise
         error('SETTINGS.APF_BUILD_METHOD must be either standard or Rearranged')
 end

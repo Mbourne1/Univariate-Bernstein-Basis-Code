@@ -1,4 +1,4 @@
-function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,Sylvester_Build_Method)
+function [] = o_gcd(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method)
 % o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
@@ -31,7 +31,7 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %           'Standard APF Linear'
 %           'None'
 %
-% Sylvester_Build_Method : 
+% Sylvester_Build_Method :
 %           'T'
 %           'DT'
 %           'DTQ'
@@ -40,22 +40,26 @@ function [] = o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_appro
 %           'DTQ Rearranged'
 %
 % % Example
-% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','Standard APF NonLinear','DTQ')
-% 
+% >> o_gcd('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','Standard APF Nonlinear','DTQ')
+%
 % % Custom Example
 %
 % ex_num = 'Custom:m=10 n=10 t=5 low=0 high=1'
 % >> o_gcd(ex_num,1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None','DTQ')
 
+global SETTINGS
 
 % Set the problem type to a GCD problem
 problemType = 'GCD';
 
+% Add subfolders
 restoredefaultpath
-
 addpath(...
     'Build Matrices',...
     'Formatting',...
+    'Get Cofactor Coefficients',...
+    'Get GCD Coefficients',...
+    'Get GCD Degree',...
     'Measures',...
     'Plotting',...
     'Preprocessing',...
@@ -66,16 +70,15 @@ addpath(genpath('APF'));
 addpath(genpath('Examples'));
 addpath(genpath('Low Rank Approx'));
 
-% Consistency of input parameters.
 
-% Check that max and min signal to noise ratio are the correct way around.
-% If not, rearrange min and max.
-% if emin > emax
-%     fprintf('minimum noise greater than maximum noise \n swapping values...\n')
-%     [emin,emax] = swap(emin,emax);
-% end
+% % Ensure that minimum noise level is less than maximum noise level
+if emin > emax
+    temp = emin;
+    emin = emax;
+    emax = temp;
+end
 
-% Set the global variables
+% % Set global variables.
 SetGlobalVariables(problemType,...
     ex_num,...
     emin,...
@@ -87,22 +90,17 @@ SetGlobalVariables(problemType,...
     Sylvester_Build_Method);
 
 % Print the parameters.
-PrintGlobalVariables()
-global SETTINGS
-
-fprintf('PARAMETERS:\n\n')
-fprintf('\tmin noise : %2.4e \n\tmax noise : %2.4e \n',emin,emax)
-fprintf('INPUT VARIABLES\n')
-
 LineBreakLarge()
+fprintf('INPUT VARIABLES\n')
 fprintf('\t EXAMPLE NUMBER : %s \n',ex_num)
+fprintf('\t EMIN : %s \n' , num2str(SETTINGS.EMIN))
+fprintf('\t EMAX : %s \n' , num2str(SETTINGS.EMAX))
 fprintf('\t MEAN METHOD : %s \n',SETTINGS.MEAN_METHOD)
 fprintf('\t ALPHA_THETA : %s \n',SETTINGS.BOOL_ALPHA_THETA)
-fprintf('\t Low Rank Approximation Method : %s \n',SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
-fprintf('\t APF Method : %s \n ',SETTINGS.APF_METHOD)
+fprintf('\t LOW RANK APPROX METHOD : %s \n',SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
+fprintf('\t APF METHOD : %s \n ',SETTINGS.APF_METHOD)
 fprintf('\t LOG: %s \n',SETTINGS.BOOL_LOG)
-fprintf('\t Sylvester Build Method : %s \n',SETTINGS.SYLVESTER_BUILD_METHOD)
-fprintf('')
+fprintf('\t SYLVESTER BUILD METHOD: %s \n',SETTINGS.SYLVESTER_BUILD_METHOD)
 LineBreakLarge()
 
 % o - gcd - Calculate GCD of two Arbitrary polynomials
@@ -194,39 +192,54 @@ function [] = PrintToFile(m,n,t,error)
 
 global SETTINGS
 
-fullFileName = 'Results/Results_o_gcd.txt';
+fullFileName = sprintf('Results/Results_o_gcd%s.txt',datetime('today'));
 
-
+% If file already exists append a line
 if exist(fullFileName, 'file')
+    
     fileID = fopen(fullFileName,'a');
-    fprintf(fileID,'%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s \n',...
-        datetime('now'),...
-        SETTINGS.PROBLEM_TYPE,...
-        SETTINGS.EX_NUM,...
-        int2str(m),...
-        int2str(n),...
-        int2str(t),...
-        num2str(error.ux),...
-        num2str(error.vx),...
-        num2str(error.dx),...
-        SETTINGS.MEAN_METHOD,...
-        SETTINGS.BOOL_ALPHA_THETA,...
-        SETTINGS.EMIN,...
-        SETTINGS.EMAX,...
-        SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
-        SETTINGS.APF_METHOD,...
-        SETTINGS.BOOL_LOG,...
-        SETTINGS.SYLVESTER_BUILD_METHOD,...
-        SETTINGS.GCD_COEFFICIENT_METHOD...
-    );
+    WriteNewLine()
     fclose(fileID);
-else
-    % File does not exist.
-    warningMessage = sprintf('Warning: file does not exist:\n%s', fullFileName);
-    uiwait(msgbox(warningMessage));
+    
+else % File doesnt exist so create it
+    
+    fileID = fopen( fullFileName, 'wt' );
+    WriteHeader()
+    WriteNewLine()
+    fclose(fileID);
+    
 end
 
 
+
+    function WriteNewLine()
+        
+        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+            datetime('now'),...
+            SETTINGS.EX_NUM,...
+            int2str(m),...
+            int2str(n),...
+            int2str(t),...
+            num2str(error.ux),...
+            num2str(error.vx),...
+            num2str(error.dx),...
+            SETTINGS.MEAN_METHOD,...
+            SETTINGS.BOOL_ALPHA_THETA,...
+            SETTINGS.EMIN,...
+            SETTINGS.EMAX,...
+            SETTINGS.LOW_RANK_APPROXIMATION_METHOD,...
+            num2str(SETTINGS.LOW_RANK_APPROX_REQ_ITE),...
+            SETTINGS.APF_METHOD,...
+            num2str(SETTINGS.APF_REQ_ITE),...
+            SETTINGS.BOOL_LOG,...
+            SETTINGS.SYLVESTER_BUILD_METHOD,...
+            SETTINGS.GCD_COEFFICIENT_METHOD...
+            );
+    end
+
+    function WriteHeader()
+        fprintf(fileID,'DATE,EX_NUM,m,n,t,ERROR_UX,ERROR_VX,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,BOOL_LOG,SYLVESTER_BUILD_METHOD,GCD_METHOD\n');
+    end
 
 
 end

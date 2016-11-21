@@ -79,9 +79,10 @@ switch SETTINGS.APF_METHOD
         dx_lr = GetGCDCoefficients(ux,vx,fx,gx,k,alpha,theta);
         alpha_lr = alpha;
         theta_lr = theta;
+        SETTINGS.APF_REQ_ITE = 0;
         
     otherwise
-        error([mfilename ' : error'])
+        error([mfilename sprintf(' : Error : %s is not a valide APF Method',SETTINGS.APF_METHOD)])
 end
 
 

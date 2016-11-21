@@ -1,7 +1,7 @@
 function DYQ = BuildDYQ_SNTLN(xk,m,n,k,alpha,theta)
 % USED IN SNTLN function
 %
-% Construct Matrix DY, such that E_{k}(z)x = D^{-1}Y_{k}(x)z, where E_{k}(z) is a
+% Construct Matrix DYQ, such that E_{k}(z)x = D^{-1}Y_{k}(x)Qz, where E_{k}(z) is a
 % matrix of structured perturbations applied to S_{k}, where S_{k} = DTQ.
 %
 % Inputs
@@ -18,22 +18,31 @@ function DYQ = BuildDYQ_SNTLN(xk,m,n,k,alpha,theta)
 %
 % theta : The optimal value of \theta
 
+% Get the number of coefficients in x1
+nCoeffs_x1 = n-k+1;
+
 % Split the vector x_{k} = [x_{1} x_{2}]
-x1 = xk(1:n-k+1);
-x2 = xk(n-k+2:end);
+x1 = xk(1 : nCoeffs_x1);
+x2 = xk(nCoeffs_x1+1:end);
 
-% Get preprocessed forms
+% Build the matrix D^{-1}_{m+n-k}
+D = BuildD(m,n-k);
 
-% Build the matrices
-DY1Q1 = BuildDT1Q1(x1,m);
-DY2Q2 = BuildDT1Q1(x2,n);
+% Build the matrices Y_{1} and Y_{2}
+Y1 = BuildT1(x1,m);
+Y2 = BuildT1(x2,n);
 
-% Get a diagonal matrix of thetas corresponding to polynomials f(x) and
+% Build the matrices Q_{m} and Q_{n}
+Qm = BuildQ1(m);
+Qn = BuildQ1(n);
+
+% Get a diagonal matrices of thetas corresponding to polynomials f(x) and
 % g(x).
-th_mat = diag([theta.^(0:1:m) alpha.*(theta.^(0:1:n))]);
+th_f = diag(theta.^(0:1:m));
+th_g = diag(theta.^(0:1:n));
 
-
-DYQ = [DY1Q1,DY2Q2] * th_mat;
+% Build DYQ
+DYQ = D*[Y1*Qm*th_f  alpha.*Y2*Qn*th_g] ;
 
 
 end

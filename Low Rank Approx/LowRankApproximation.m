@@ -18,27 +18,29 @@ function [fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = LowRankApproximation(fx,g
 %
 % % Outputs
 %
-% fx_lr :
+% fx_lr : Outputs polynomial f(x) 
 %
-% gx_lr :
+% gx_lr : Output polynomial g(x)
 %
-% ux_lr :
+% ux_lr : Output polynomial u(x)
 %
-% vx_lr :
+% vx_lr : Output polynomial v(x)
 %
-% alpha :
+% alpha : optimal value of \alpha
 %
-% theta :
+% theta : Optimal value of \theta
 
 global SETTINGS
 
 switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
+    
     case 'Standard STLN'
         
+        % Get f(\omega) and g(\omega)
         fw = GetWithThetas(fx,theta);
         gw = GetWithThetas(gx,theta);
         
-        % Performe STLN
+        % Performe STLN to get low rank approximation of S(f,g)
         [fw_lr,a_gw_lr,uw,vw] = STLN(fw,alpha.*gw,k,idx_col);
         
         % Get f(x) and g(x) from low rank approximation.
@@ -49,17 +51,20 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         ux_lr = GetWithoutThetas(uw,theta);
         vx_lr = GetWithoutThetas(vw,theta);
         
+        % \alpha and \theta are same as input, as they are unchanged by
+        % STLN
         alpha_lr = alpha;
         theta_lr = theta;
         
+        % 
         Plot_LowRank_SingularValues(fx, gx, fx_lr, gx_lr,...
-            fw, alpha.*gw, fw_lr, a_gw_lr);
+            fw, alpha.*gw, fw_lr, a_gw_lr,k);
         
         
         
     case 'Standard SNTLN' % Structured Non-Linear Total Least Norm
         
-        % Perform Structured non-linear total least norm SNTLN
+        % Perform SNTLN to get low rank approximation of S_{k}(f,g)
         [fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = SNTLN(fx,gx,alpha,theta,k,idx_col);
         
         % Get f(\omega)
@@ -76,16 +81,11 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         % Plot the Singular values of the Sylvester subresultants S_{k}
         Plot_LowRank_SingularValues(fx, gx, fx_lr, gx_lr,...
-            fw, a_gw, fw_lr, a_gw_lr)
+            fw, a_gw, fw_lr, a_gw_lr,k)
         
     case 'None'
         
-        fx_lr = fx;
-        gx_lr = gx;
-        
-        alpha_lr = alpha;
-        theta_lr = theta;
-        
+      
         % Get f(\omega) and g(\omega)
         fw = GetWithThetas(fx,theta);
         gw = GetWithThetas(gx,theta);
@@ -93,10 +93,18 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         % Get quotient polynomials u(\omega) and v(\omega)
         [uw,vw] = GetQuotients(fw,alpha.*gw,k);
         
-        % Get polynomials u(x) and v(x)
+        % f(x) and g(x) are unchanged from input
+        fx_lr = fx;
+        gx_lr = gx;
+        
+        % \alpha and \theta are unchanged from input
+        alpha_lr = alpha;
+        theta_lr = theta;
+        
+        % Get polynomials u(x) and v(x) from u(\omega) and v(\omega)
         vx_lr = GetWithoutThetas(vw,theta);
         ux_lr = GetWithoutThetas(uw,theta);
-        
+        SETTINGS.LOW_RANK_APPROX_REQ_ITE = 0;
     otherwise
         
         error('SETTINGS.LOW_RANK_APPROXIMATION_METHOD must be valid')
@@ -106,7 +114,7 @@ end
 end
 
 
-function Plot_LowRank_SingularValues(fx,gx,fx_lr,gx_lr,fw,a_gw, fw_lr,a_gw_lr)
+function Plot_LowRank_SingularValues(fx,gx,fx_lr,gx_lr,fw,a_gw, fw_lr,a_gw_lr,k)
 %
 % % Inputs
 %

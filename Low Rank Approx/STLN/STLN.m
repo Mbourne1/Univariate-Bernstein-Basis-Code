@@ -64,7 +64,7 @@ Bk(:,idx_col) = [];
 hk = DBQ(:,idx_col);
 
 % Build DP
-DPQ = BuildDP_SNTLN(m,n,1,1,idx_col,k);
+DPQ = BuildDPG_STLN(m,n,k,idx_col);
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
 xk = SolveAx_b(Ak+Bk,ck+hk);
@@ -76,7 +76,7 @@ res_vec = (ck + hk) - (Ak+Bk)*xk;
 x = [xk(1:idx_col-1) ; 0 ; xk(idx_col:end)];
 
 % Build the matrix Y_{t}
-DYQ = BuildDYQ_SNTLN(x,m,n,k,1,1);
+DYQ = BuildDYQ_STLN(x,m,n,k);
 
 % Build the Matrx C for LSE problem
 
@@ -168,6 +168,15 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
 end
 
 
+% Plot graphs
+Plot_STLN()
+
+% Print the number of iterations required
+LineBreakLarge()
+fprintf([mfilename ' : ' sprintf('Required number of iterations : %i \n',ite)]);
+LineBreakLarge()
+SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
+
 % %
 % Get polynomials for output.
 
@@ -177,24 +186,21 @@ fx_lr = fx + z_fx;
 % Get polynomial g(x) + \delta g(x)
 gx_lr = gx + z_gx;
 
-% %
+% % Get polynomials u(x) and v(x)
+
 % Get u(x) and v(x) from x_ls
 x = [xk(1:idx_col-1) ; -1 ; xk(idx_col:end)];
 
-% Get polynomial u(x)
+% Get the number of coefficients in v(x)
 nCoeff_vx = n-k+1;
+
+% Get the polynomial v(x) from the vector x
 vx_lr = x(1:nCoeff_vx);
 
-% Get polynomial v(x)
+% Get the polynomial u(x) from the vector x
 ux_lr = -1.* x(nCoeff_vx + 1:end) ;
 
-% % 
-% Plot Graphs
-Plot_STLN()
 
-LineBreakLarge()
-fprintf([mfilename ' : ' sprintf('Required number of iterations : %i \n',ite)]);
-LineBreakLarge()
 end
 
 

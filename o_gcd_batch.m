@@ -1,24 +1,18 @@
 function [] = o_gcd_batch()
 
 
-ex_num_arr = {  '1','2','3','4'};
-
+ex_num_arr = {  '1','2','3','4','5'};
+%ex_num_arr = {  '1'};
 bool_alpha_theta_arr = {'y','n'};
-
-emin_arr = {1e-08,1e-10,1e-12};
-
+%emin_arr = {1e-08,1e-10,1e-12};
+emin_arr = {1e-08,1e-10};
 low_rank_approx_method_arr = {'Standard SNTLN','Standard STLN','None'};
-
-apf_method_arr = ...
-    {'Standard APF NonLinear','None'};
-
+apf_method_arr = {'Standard APF Nonlinear','None'};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
-
 bool_log_arr = {'n'};
-
 gcd_coefficient_method_arr = {'ux and vx'};
-
-Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ','DTQ Rearranged Denom Removed','DTQ Rearranged'};
+%Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ','DTQ Rearranged Denom Removed','DTQ Rearranged'};
+Sylvester_Build_Method_arr = {'DTQ'};
 
 
 global SETTINGS
@@ -62,13 +56,20 @@ for i1 = 1:1:length(bool_log_arr)
                                 sylvester_build_method = Sylvester_Build_Method_arr{i8};
                                 
                                 for i9 = 1:1:length(apf_method_arr)
-                                
+                                    
                                     apf_method = apf_method_arr{i9};
-
-                                    close all; 
-                                    clc;
-                                    o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
-                                
+                                    try
+                                        close all;
+                                        clc;
+                                        o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
+                                        fileId = fopen('log.txt','a')
+                                        fprintf(fileId,'%s \n','success');
+                                        fclose(fileId);
+                                    catch err
+                                        fileId = fopen('log.txt','a')
+                                        fprintf(fileId,'%s \n\n\n',getReport(err));
+                                        fclose(fileId);
+                                    end
                                 end
                             end
                         end

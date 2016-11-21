@@ -1,11 +1,11 @@
 
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
-        figure_name = sprintf('%s : Residuals',mfilename);
+        figure_name = sprintf('%s : Condition APF',mfilename);
         figure('name',figure_name)
-        title('plotting residual')
+        title('Plotting condition')
         hold on
-        plot(1:1:length(residual),(residual));
+        plot(1:1:length(condition),(condition));
         
     case 'n'
     otherwise

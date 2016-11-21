@@ -1,4 +1,4 @@
-function [] = o_Deconvolution(ex_num,noise,bool_preproc)
+function [] = o_Deconvolution(ex_num,emin,bool_preproc)
 % Test the different methods of deconvolving the polynomials f_{i}(x), to
 % form the set of polynomials h_{i} where h_{i} = f{i}/f_{i+1}
 %
@@ -10,13 +10,16 @@ function [] = o_Deconvolution(ex_num,noise,bool_preproc)
 %
 % bool_preproc : Bool determining whether to include preprocessing
 %
+% % Outputs
+% 
+% Results are printed to a file
 %
 % % Example
 %
-% >> Test_Deconvolution('1',1e-12,'y')
+% >> o_Deconvolution('1',1e-12,'y')
 
-% Set settings pertaining to this test
 
+% Set global settings
 global SETTINGS
 SETTINGS.PLOT_GRAPHS = 'y';
 SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-15;
@@ -27,15 +30,27 @@ SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
 SETTINGS.PREPROC_DECONVOLUTIONS = bool_preproc;
 SETTINGS.SEED = 1024;
 
+
+restoredefaultpath();
+% add path for example file
+addpath(genpath('../Examples'));
+
 addpath (...
     'Basis Conversion',...
-    '../Examples',...
-    'Matrix Building'...
+    'Bernstein Methods',...
+    'Build Matrices',...
+    'Deconvolution',...
+    'Formatting',...
+    'Preprocessing',...
+    'Sylvester Matrix'...
     )
 
 syms x y;
 
-[vFactors,vMult] = Univariate_Deconvolution_Examples(ex_num);
+[factor_mult_arr] = Univariate_Deconvolution_Examples(ex_num);
+
+vFactors = factor_mult_arr(:,1);
+vMult = double(factor_mult_arr(:,2));
 
 % Get highest power of any factor
 highest_pwr = max(vMult);
@@ -147,7 +162,7 @@ arr_fx_noisy = cell(nPolys_arr_fx,1);
 
 % Get noisy polynomials f_{i}(x)
 for i = 1:1:nPolys_arr_fx
-    arr_fx_noisy{i,1} = AddNoiseToPoly(arr_fx{i},noise);
+    arr_fx_noisy{i,1} = AddNoiseToPoly(arr_fx{i},emin);
 end
 
 
@@ -255,12 +270,62 @@ A = ...
     norm(vError_BatchConstrainedSTLN)
     ];
 
-fileID = fopen('Deconvolution/Test_Deconvolution.txt','a');
-fprintf(fileID,'%s %s %6.2e %6.2e %6.2e %6.2e %6.2e %6.2e\n',ex_num,bool_preproc,noise,A);
-fclose(fileID);
+my_error.separate = norm(vError_Separate);
+my_error.batch = norm(vError_Batch);
+my_error.batchSTLN = norm(vError_BatchSTLN);
+my_error.batchConstrained = norm(vError_BatchConstrained);
+my_error.batchConstrainedSTLN = norm(vError_BatchConstrainedSTLN);
+
+PrintToResultsFile(ex_num,bool_preproc,emin,my_error);
 
 end
 
+function [] = PrintToResultsFile(ex_num,bool_preproc,noise,my_error)
+
+
+fullFileName = sprintf('Deconvolution/Results/Results_o_deconvolutions%s.txt',datetime('today'));
+
+% If file already exists append a line
+if exist(fullFileName, 'file')
+    
+    fileID = fopen(fullFileName,'a');
+    WriteNewLine()
+    fclose(fileID);
+    
+else % File doesnt exist so create it
+    
+    fileID = fopen( fullFileName, 'wt' );
+    WriteHeader()
+    WriteNewLine()
+    fclose(fileID);
+    
+end
+
+    function WriteNewLine()
+        
+        %
+        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+            datetime('now'),...
+            ex_num,...
+            bool_preproc,...
+            noise,...
+            my_error.separate,...
+            my_error.batch,...
+            my_error.batchSTLN ,...
+            my_error.batchConstrained ,...
+            my_error.batchConstrainedSTLN....
+            );
+        
+    end
+
+    function WriteHeader()
+        
+        fprintf(fileID,'DATE,EX_NUM,BOOL_PREPROC,NOISE,err_separate,err_batch,err_batch_STLN,err_constrained,err_constrained_STLN \n');
+        
+    end
+
+
+end
 
 function vErrors = GetErrors(arr_hx_comp,arr_hx_exact)
 % Compare each computed h{i} with actual h_{i}
