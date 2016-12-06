@@ -9,7 +9,7 @@ function Partial_fw_wrt_theta = Differentiate_wrt_theta(fw,theta)
 
 
 bool_diff_method = 'power basis';
-bool_diff_method = 'Bernstein basis';
+%bool_diff_method = 'Bernstein basis';
 
 switch bool_diff_method
     case 'power basis'

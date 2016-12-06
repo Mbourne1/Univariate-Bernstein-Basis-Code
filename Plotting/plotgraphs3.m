@@ -22,19 +22,15 @@ function [] = plotgraphs3(res_ux,res_vx,res_uw,res_vw)
 
 % res_vw
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%                       Global Variables
-
-global fignum
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 % Graph 1
 % The graph of res_ux
 
-figure(fignum);
-
+figure_name = sprintf([mfilename ' : Residual u(x)']);
+figure('name',figure_name);
 x = 1:length(res_ux);  % the graph of res_ux
 plot(x,log10(res_ux),'-rs','LineWidth',1, 'MarkerEdgeColor',...
     'r','MarkerFaceColor','r','MarkerSize',10);          
@@ -43,14 +39,12 @@ xlabel('iteration','FontSize',16);
 ylabel('log_{10} residual','FontSize',16);
 title('Residuals from u(y)d(y)=f(y)','FontSize',12);
 
-% Increment the figure number.
-fignum = fignum+1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Graph 2: The graph of res_vx
-
-figure(fignum);
+figure_name = sprintf([mfilename ' : Residual v(x)']);
+figure('name',figure_name);
 
 x = 1:length(res_vx);  % the graph of res_ux
 plot(x,log10(res_vx),'-bs','LineWidth',1, 'MarkerEdgeColor',...
@@ -60,14 +54,15 @@ xlabel('iteration','FontSize',16);
 ylabel('log_{10} residual','FontSize',16);
 title('Residuals from v(y)d(y)=g(y)','FontSize',12);
 
-% Increment the figure number.
-fignum=fignum+1;
-      
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Graph 3: The residuals res_ux and res_vx on the same graph.
 
-figure(fignum);
+% Graph 2: The graph of res_vx
+figure_name = sprintf([mfilename ' : Residual u(x) and v(x)']);
+figure('name',figure_name);
+
 
 x = 1:length(res_ux);  % the graph of res_ux
 plot(x,log10(res_ux),'-rs','LineWidth',1, 'MarkerEdgeColor',...
@@ -84,14 +79,15 @@ plot(x,log10(res_vx),'-bo','LineWidth',1, 'MarkerEdgeColor',...
     'b','MarkerFaceColor','b','MarkerSize',10);     
 hold off
         
-% Increment the figure number.
-fignum=fignum+1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Graph 4: The residuals res_uw and res_vw.
 
-figure(fignum);
+% Graph 2: The graph of res_vx
+figure_name = sprintf([mfilename ' : Residual u(\omega) and v(\omega)']);
+figure('name',figure_name);
+
 
 x = 1:length(res_uw);  % the graph of res_ux
 plot(x,log10(res_uw),'-rs','LineWidth',1, 'MarkerEdgeColor',...
@@ -108,8 +104,7 @@ plot(x,log10(res_vw),'-bo','LineWidth',1, 'MarkerEdgeColor',...
     'b','MarkerFaceColor','b','MarkerSize',10);     
 hold off
         
-% Increment the figure number.
-fignum=fignum+1;
+
 
 end     
 

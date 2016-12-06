@@ -29,11 +29,11 @@ ux = BuildPolyFromRootsSymbolic(u_root_mult_arr);
 vx = BuildPolyFromRootsSymbolic(v_root_mult_arr);
 
 % Get the symbolic polynomials
-fx_sym = BuildSymbolicPolyFromSymbolicRoots(f_root_mult_arr);
-gx_sym = BuildSymbolicPolyFromSymbolicRoots(g_root_mult_arr);
-dx_sym = BuildSymbolicPolyFromSymbolicRoots(d_root_mult_arr);
-ux_sym = BuildSymbolicPolyFromSymbolicRoots(u_root_mult_arr);
-vx_sym = BuildSymbolicPolyFromSymbolicRoots(v_root_mult_arr);
+fx_sym = GetSymbolicPolyFromSymbolicRoots(f_root_mult_arr);
+gx_sym = GetSymbolicPolyFromSymbolicRoots(g_root_mult_arr);
+dx_sym = GetSymbolicPolyFromSymbolicRoots(d_root_mult_arr);
+ux_sym = GetSymbolicPolyFromSymbolicRoots(u_root_mult_arr);
+vx_sym = GetSymbolicPolyFromSymbolicRoots(v_root_mult_arr);
 
 display(fx_sym)
 display(gx_sym)

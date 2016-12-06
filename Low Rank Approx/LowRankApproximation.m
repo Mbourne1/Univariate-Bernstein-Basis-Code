@@ -1,4 +1,5 @@
-function [fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = LowRankApproximation(fx,gx,alpha,theta,k,idx_col)
+function [fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
+    LowRankApproximation(fx, gx, alpha, theta, k, idx_col)
 % Get the low rank approximation of the Sylvester subresultant matrix
 % S_{k}(f,g)
 %
@@ -41,7 +42,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gw = GetWithThetas(gx,theta);
         
         % Performe STLN to get low rank approximation of S(f,g)
-        [fw_lr,a_gw_lr,uw,vw] = STLN(fw,alpha.*gw,k,idx_col);
+        [fw_lr, a_gw_lr, uw, vw] = STLN(fw, alpha.*gw, k, idx_col);
         
         % Get f(x) and g(x) from low rank approximation.
         fx_lr = GetWithoutThetas(fw_lr,theta);

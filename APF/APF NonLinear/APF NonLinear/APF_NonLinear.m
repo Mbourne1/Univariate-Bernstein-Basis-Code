@@ -73,7 +73,7 @@ gw = GetWithThetas(gx,theta);
 uw = GetWithThetas(ux,theta);
 vw = GetWithThetas(vx,theta);
 
-% Initialise S = th_f, the vector of thetas corresponding to coefficients 
+% Initialise S = th_f, the vector of thetas corresponding to coefficients
 % of f(x), such that s_{k} = S * p_{k}
 th_f = (diag(theta(ite).^vecm));
 
@@ -383,12 +383,15 @@ SETTINGS.APF_REQ_ITE = ite;
 
 switch SETTINGS.PLOT_GRAPHS
     case 'y'
-        % Plot the normalised residuals res_ux, res_vx, res_uw and res_vw.
-        plotgraphs3(res_ux,res_vx,res_uw,res_vw);
         
-        % Write out the number of iterations required and plot the values of
-        % alpha, theta and the residual.
-        plotgraphs4(alpha,theta,residual);
+        % Plot the normalised residuals res_ux, res_vx, res_uw and res_vw.
+        if(ite > 1)
+            plotgraphs3(res_ux,res_vx,res_uw,res_vw);
+            % Write out the number of iterations required and plot the values of
+            % alpha, theta and the residual.
+            plotgraphs4(alpha,theta,residual);
+        end
+        
     case 'n'
     otherwise
         error('err')
@@ -412,7 +415,6 @@ fx_lr = GetWithoutThetas((fw + z_fw),theta(ite));
 gx_lr = GetWithoutThetas((gw + z_gw),theta(ite));
 
 
-Plot_APF()
 
 
 end

@@ -2,10 +2,10 @@ function [] = o_gcd_batch()
 
 
 ex_num_arr = {  '1','2','3','4','5'};
-%ex_num_arr = {  '1'};
+%ex_num_arr = {  '2'};
 bool_alpha_theta_arr = {'y','n'};
-%emin_arr = {1e-08,1e-10,1e-12};
-emin_arr = {1e-08,1e-10};
+emin_arr = {1e-08,1e-10,1e-12};
+%emin_arr = {1e-08,1e-10};
 low_rank_approx_method_arr = {'Standard SNTLN','Standard STLN','None'};
 apf_method_arr = {'Standard APF Nonlinear','None'};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};

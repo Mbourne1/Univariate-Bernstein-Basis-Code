@@ -142,6 +142,7 @@ catch
     
 end
 
+% Print results to results file
 PrintToFile(GetDegree(fx),GetDegree(gx),GetDegree(dx_calc),error)
 LineBreakMedium();
 

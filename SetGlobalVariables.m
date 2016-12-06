@@ -104,7 +104,7 @@ SETTINGS.SYLVESTER_BUILD_METHOD = Sylvester_Build_Method;
 
 SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
 SETTINGS.MAX_ERROR_SNTLN = 1e-13;
-SETTINGS.MAX_ITERATIONS_SNTLN = 75;
+SETTINGS.MAX_ITERATIONS_SNTLN = 10;
 
 %--------------------------------------------------------------------------
 %

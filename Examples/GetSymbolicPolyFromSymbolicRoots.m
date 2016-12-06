@@ -1,5 +1,5 @@
 
-function fx = BuildSymbolicPolyFromSymbolicRoots(f_factor_mult_array)
+function fx = GetSymbolicPolyFromSymbolicRoots(f_factor_mult_array)
 
 addpath 'Basis Conversion'
 addpath 'Bernstein Methods'
