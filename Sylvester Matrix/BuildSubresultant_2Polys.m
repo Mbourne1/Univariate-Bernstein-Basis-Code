@@ -1,8 +1,8 @@
-function [Sk] = BuildSubresultant(fx,gx,k)
-% BuildSubresultant(fw,gw,k,alpha)
+function [Sk] = BuildSubresultant_2Polys(fx,gx,k)
+% BuildSubresultant_2Polys(fx,gx,k)
 %
-% This function builds the k-th subresultant matrix S_{k}, in the
-% Bernstein Basis.
+% This function builds the k-th Sylvester subresultant matrix S_{k}(f,g), 
+% in the Bernstein Basis.
 %
 %
 % % Inputs
@@ -33,26 +33,26 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
     
     case 'T'
         
-        T = BuildT(fx,gx,k);
+        T = BuildT_2Polys(fx,gx,k);
         Sk = T;
         
     case 'DT'
         
-        D = BuildD(m,n-k);
-        T = BuildT(fx,gx,k);
+        D = BuildD_2Polys(m,n-k);
+        T = BuildT_2Polys(fx,gx,k);
         Sk = D*T;
         
     case 'DTQ'
         
-        D = BuildD(m,n-k);
-        T = BuildT(fx,gx,k);
-        Q = BuildQ(m,n,k);
+        D = BuildD_2Polys(m,n-k);
+        T = BuildT_2Polys(fx,gx,k);
+        Q = BuildQ_2Polys(m,n,k);
         Sk = D*T*Q;
         
     case 'TQ'
         
-        T = BuildT(fx,gx,k);
-        Q = BuildQ(m,n,k);
+        T = BuildT_2Polys(fx,gx,k);
+        Q = BuildQ_2Polys(m,n,k);
         
         Sk = T*Q;
         

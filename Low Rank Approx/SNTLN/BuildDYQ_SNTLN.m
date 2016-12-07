@@ -26,7 +26,7 @@ x1 = xk(1 : nCoeffs_x1);
 x2 = xk(nCoeffs_x1+1:end);
 
 % Build the matrix D^{-1}_{m+n-k}
-D = BuildD(m,n-k);
+D = BuildD_2Polys(m,n-k);
 
 % Build the matrices Y_{1} and Y_{2}
 Y1 = BuildT1(x1,m);
@@ -67,7 +67,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         n_t = GetDegree(xv);
         
         % Get the diagonal matrix D^{-1}
-        D = BuildD(n_t,m);
+        D = BuildD_2Polys(n_t,m);
         
         % Get the binomials corresponding to f(x)
         Bi_m = GetBinomials(m);

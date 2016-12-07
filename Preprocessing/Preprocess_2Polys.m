@@ -1,5 +1,5 @@
-function [lambda, mu, alpha, theta] = Preprocess(fx,gx,k)
-% Preprocess(fx,gx,k)
+function [lambda, mu, alpha, theta] = Preprocess_2Polys(fx,gx,k)
+% Preprocess_2Polys(fx,gx,k)
 % Get the optimal values of lamdba, mu, alpha and theta.
 %
 % Inputs.

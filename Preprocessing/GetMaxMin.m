@@ -28,7 +28,7 @@ vMax_ai = zeros(m+1,1);
 vMin_ai = zeros(m+1,1);
 
 % Build the matrix C_{n-k}(f)
-Cf = BuildSubresultant_Partition(fx,n_k);
+Cf = BuildSubresultant_Partition_2Polys(fx,n_k);
 nRows_Cf = n_k+1;
 
 % For each coefficient a_{i} of polynomial f(x)

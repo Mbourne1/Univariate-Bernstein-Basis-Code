@@ -1,5 +1,5 @@
 function [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_theta] = ...
-    APF_Roots(fx,ux,vx,i_theta,dx,t)
+    APF_Roots_2Polys(fx,ux,vx,i_theta,dx,t)
 % APF_Roots(fx,ux,vx,initial_theta,dx,t)
 %
 % Refine Approximate Polynomial Factorisation by newton raphson method iteration

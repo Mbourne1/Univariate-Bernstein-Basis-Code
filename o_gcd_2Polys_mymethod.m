@@ -1,5 +1,5 @@
 function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t ] = ...
-    o_gcd_mymethod(fx,gx,deg_limits)
+    o_gcd_2Polys_mymethod(fx,gx,deg_limits)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
 % Inputs:
@@ -31,8 +31,11 @@ function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t ] = ...
 %
 % theta : Optimal \theta
 
+
+
+
 % % Get the degree of the GCD
-[t, alpha, theta, gm_fx, gm_gx] = Get_GCD_Degree(fx,gx,deg_limits);
+[t, alpha, theta, gm_fx, gm_gx] = Get_GCD_Degree_2Polys(fx,gx,deg_limits);
 LineBreakLarge();
 
 
@@ -67,7 +70,7 @@ fw = GetWithThetas(fx_n,theta);
 a_gw = alpha.*GetWithThetas(gx_n,theta);
 
 % Build S_{t}(f,g)
-St_preproc = BuildSubresultant(fw,a_gw,t);
+St_preproc = BuildSubresultant_2Polys(fw,a_gw,t);
 
 % Get index of optimal column for removal
 [~,idx_col] = GetMinDistance(St_preproc);
@@ -78,7 +81,7 @@ St_preproc = BuildSubresultant(fw,a_gw,t);
 
 % Get the coefficients of the GCD by APF or other method.
 [fx_alr, gx_alr, dx_alr, ux_alr, vx_alr, alpha_alr, theta_alr] = ...
-    APF(fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr, t);
+    APF_2Polys(fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr, t);
 
 % Get outputs
 fx_o = fx_alr;

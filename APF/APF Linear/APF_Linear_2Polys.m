@@ -1,31 +1,23 @@
 function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr] = ...
-    APF_Linear(fx, gx, ux, vx, k)
+    APF_Linear_2Polys(fx, gx, ux, vx, k)
 % Refine Approximate Polynomial Factorisation by APF
 %
 %
 % % Inputs
 %
-% fx : Coefficients of the polynomial f(x) in the Bernstein basis
+% [fx, gx] : Coefficients of the polynomial f(x) in the Bernstein basis
 %
-% gx : Coefficients of the polynomial g(x) in the Bernstein basis
-%
-% ux : coefficients of the quotient polynomial u(x) in the Bernstein basis
-%
-% vx - Coefficients of the quotient polynomial v(x) in the Bernstein basis
+% [ux, vx] : coefficients of the quotient polynomial u(x) in the Bernstein basis
 %
 % k : Calculated degree of d(x)
 %
 % % Outputs
 %
-% fx_lr :
-%
-% gx_lr :
+% [fx_lr, gx_lr] :
 %
 % dx_lr :
 %
-% ux_lr :
-%
-% vx_lr :
+% [ux_lr, vx_lr] :
 
 % Global Variables
 

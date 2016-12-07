@@ -26,7 +26,7 @@ x1 = xk(1 : nCoeffs_x1);
 x2 = xk(nCoeffs_x1+1:end);
 
 % Build the matrix D^{-1}_{m+n-k}
-D = BuildD(m,n-k);
+D = BuildD_2Polys(m,n-k);
 
 % Build the matrices Y_{1} and Y_{2}
 Y1 = BuildT1(x1,m);

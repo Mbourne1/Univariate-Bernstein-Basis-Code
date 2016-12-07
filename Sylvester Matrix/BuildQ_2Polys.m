@@ -1,4 +1,4 @@
-function Q = BuildQ(m,n,k)
+function Q = BuildQ_2Polys(m,n,k)
 % Build the diagonal matrix Q corresponding to the binomial coefficients
 % of coprime polynomials u and v.
 %
@@ -6,9 +6,9 @@ function Q = BuildQ(m,n,k)
 %
 % Inputs
 %
-% m : Degree of polynomial f.
+% m : Degree of polynomial f(x)
 %
-% n : Degree of polynomial g.
+% n : Degree of polynomial g(x)
 %
 % k : Index of subresultant S_{k} to be formed.
 %

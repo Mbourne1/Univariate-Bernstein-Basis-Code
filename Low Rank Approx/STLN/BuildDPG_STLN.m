@@ -29,7 +29,7 @@ function DPQ = BuildDPG_STLN(m,n,k,idx_col)
 nCols_Tf = n-k+1;
 
 % Build the matrix D^{-1}_{m+n-k}
-D = BuildD(m,n-k);
+D = BuildD_2Polys(m,n-k);
     
 % Build the matrices P_{1} and P_{2}
 

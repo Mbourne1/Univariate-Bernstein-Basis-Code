@@ -1,15 +1,12 @@
-function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = APF(fx,gx,ux,vx,alpha,theta,k)
+function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = APF_2Polys(fx,gx,ux,vx,alpha,theta,k)
 %
 % % Inputs
 %
-% fx : Coefficients of polynomial f(x)
+% [fx, gx] : Coefficients of polynomials f(x) and g(x) in the Bernstein
+% basis
 %
-% gx : Coefficients of polynomial g(x) in the Bernstein basis
-%
-% ux : Coefficients of the polynomial u(x) in the Bernstein basis
+% [ux, vx] : Coefficients of the polynomials u(x) and v(x) in the Bernstein basis
 % 
-% vx : Coefficients of the polynomial v(x) in the Bernstein basis
-%
 % alpha : Optimal value of \alpha
 %
 % theta : Optimal value of \theta
@@ -18,15 +15,11 @@ function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = APF(fx,gx,ux,
 %
 % % Outputs
 %
-% fx_lr
-%
-% gx_lr 
+% [fx_lr, gx_lr] : Coefficients of the polynomials f(x) and g(x)
 %
 % dx_lr
 %
-% ux_lr
-%
-% vx_lr
+% [ux_lr, vx_lr] : Coefficients of the polynomials u(x) and v(x)
 
 
 
@@ -40,7 +33,7 @@ switch SETTINGS.APF_METHOD
     case 'Standard APF Nonlinear'
         
         [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
-            APF_Nonlinear(fx,gx,ux,vx,alpha,theta,k);
+            APF_Nonlinear_2Polys(fx,gx,ux,vx,alpha,theta,k);
  
 
     case 'Standard APF Linear'
@@ -54,7 +47,7 @@ switch SETTINGS.APF_METHOD
         vw = GetWithThetas(vx,theta);
         
         % Get APF and d(\omega)
-        [fw_lr, a_gw_lr, dw_lr, uw_lr, vw_lr] = APF_Linear(fw,a_gw,uw,vw,k);
+        [fw_lr, a_gw_lr, dw_lr, uw_lr, vw_lr] = APF_Linear_2Polys(fw,a_gw,uw,vw,k);
         
         % Get f(x) and g(x) after linear APF function
         fx_lr = GetWithoutThetas(fw_lr,theta);
@@ -76,7 +69,7 @@ switch SETTINGS.APF_METHOD
         gx_lr = gx;
         ux_lr = ux;
         vx_lr = vx;
-        dx_lr = GetGCDCoefficients(ux,vx,fx,gx,k,alpha,theta);
+        dx_lr = GetGCDCoefficients_2Polys(ux,vx,fx,gx,k,alpha,theta);
         alpha_lr = alpha;
         theta_lr = theta;
         SETTINGS.APF_REQ_ITE = 0;

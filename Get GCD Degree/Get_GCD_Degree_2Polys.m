@@ -1,6 +1,6 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    Get_GCD_Degree(fx,gx,deg_limits)
-% GetGCD_Degree(fx,gx)
+    Get_GCD_Degree_2Polys(fx,gx,deg_limits)
+% GetGCD_Degree_2Polys(fx,gx)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
 %
@@ -82,7 +82,7 @@ for k = lower_lim_comp:1:upper_lim_comp
     
     i = k - lower_lim_comp + 1;
     
-    [vGM_fx(i), vGM_gx(i),vAlpha(i),vTheta(i)] = Preprocess(fx,gx,k);
+    [vGM_fx(i), vGM_gx(i),vAlpha(i),vTheta(i)] = Preprocess_2Polys(fx,gx,k);
     
     % 18/04/2016
     % Given the previous geometric mean of f(x) calculate the new geometric
@@ -101,7 +101,7 @@ for k = lower_lim_comp:1:upper_lim_comp
     gw = GetWithThetas(gx_n,vTheta(i));
     
     % Build the k-th subresultant
-    Sk = BuildSubresultant(fw,vAlpha(i).*gw,k);
+    Sk = BuildSubresultant_2Polys(fw,vAlpha(i).*gw,k);
     
     % Get singular values of S_{k}
     vSingularValues = svd(Sk);

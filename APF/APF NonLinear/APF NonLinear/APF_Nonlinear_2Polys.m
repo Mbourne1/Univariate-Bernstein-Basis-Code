@@ -1,17 +1,13 @@
 function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
-    APF_Nonlinear(fx, gx, ux, vx, i_alpha, i_theta, k)
+    APF_Nonlinear_2Polys(fx, gx, ux, vx, i_alpha, i_theta, k)
 % Refine Approximate Polynomial Factorisation by APF
 %
 %
 % % Inputs
 %
-% fx : Coefficients of the polynomial f(x) in the Bernstein basis
+% [fx, gx] : Coefficients of the polynomials f(x) and g(x) in the Bernstein basis
 %
-% gx : Coefficients of the polynomial g(x) in the Bernstein basis
-%
-% ux : coefficients of the quotient polynomial u(x) in the Bernstein basis
-%
-% vx : Coefficients of the quotient polynomial v(x) in the Bernstein basis
+% [ux, vx] : Coefficients of the quotient polynomials u(x) and v(x) in the Bernstein basis
 %
 % i_alpha
 %
@@ -21,15 +17,11 @@ function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
 %
 % % Outputs
 %
-% fx_lr :
-%
-% gx_lr :
+% [fx_lr, gx_lr] :
 %
 % dx_lr :
 %
-% ux_lr :
-%
-% vx_lr :
+% [ux_lr, vx_lr] :
 
 
 

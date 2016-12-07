@@ -1,8 +1,8 @@
-function [Cf] = BuildSubresultant_Partition(fx,n_k)
-% BuildSubresultant(fw,gw,k,alpha)
+function [Cf] = BuildSubresultant_Partition_2Polys(fx,n_k)
+% BuildSubresultant_Partition_2Polys(fx, n_k)
 %
-% This function builds the k-th subresultant matrix S_{k}, in the
-% Bernstein Basis.
+% This function builds a partition of the kth subresultant matrix S_{k}(f,g)
+% where f(x) is in the Bernstein Basis.
 %
 %
 % % Inputs
@@ -42,7 +42,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
     case 'DTQ'
         
-        D = BuildD(m,n_k);
+        D = BuildD_2Polys(m,n_k);
         T1 = BuildT1(fx,n_k);
         Q1 = BuildQ1(n_k);
         Cf = D*T1*Q1;

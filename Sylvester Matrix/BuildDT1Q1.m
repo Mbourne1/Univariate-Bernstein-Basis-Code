@@ -14,7 +14,7 @@ function DT1Q1 = BuildDT1Q1(fx,n_k)
 m = GetDegree(fx);
 
 % Build matrices D^{-1}
-D = BuildD(m,n_k);
+D = BuildD_2Polys(m,n_k);
 
 % Build the matrix T1
 T1 = BuildT1(fx,n_k);

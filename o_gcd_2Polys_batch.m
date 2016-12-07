@@ -61,7 +61,7 @@ for i1 = 1:1:length(bool_log_arr)
                                     try
                                         close all;
                                         clc;
-                                        o_gcd(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
+                                        o_gcd_2Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
                                         fileId = fopen('log.txt','a')
                                         fprintf(fileId,'%s \n','success');
                                         fclose(fileId);
