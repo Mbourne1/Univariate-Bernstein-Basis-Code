@@ -11,15 +11,16 @@ global SETTINGS
 % If Q is included, use the rearrangment such that each Toeplitz
 % matrix has a common divisor in each element.
 
-switch SETTINGS.BOOL_LOG
-    case 'n'
-        % Build Toeplitz Matrix using nchoosek
-        DT1Q1 = BuildDT1Q1_Rearranged_nchoosek(fx,n_k);
-    case 'y'
-        % Build Toeplitz Matrix using log version of nchoosek.
-        DT1Q1 = BuildDT1Q1_Rearranged_log(fx,n_k);
-    otherwise
-        error('error : bool_log must be either (y) or (n)')
+if(SETTINGS.BOOL_LOG)
+    
+    % Build Toeplitz Matrix using log version of nchoosek.
+    DT1Q1 = BuildDT1Q1_Rearranged_log(fx,n_k);
+    
+else
+    
+    % Build Toeplitz Matrix using nchoosek
+    DT1Q1 = BuildDT1Q1_Rearranged_nchoosek(fx,n_k);
+    
 end
 end
 

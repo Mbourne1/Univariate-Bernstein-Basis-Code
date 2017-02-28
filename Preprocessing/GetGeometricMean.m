@@ -1,66 +1,50 @@
-function [gm]=GetGeometricMean(fx,n_k)
+function [gm] = GetGeometricMean(fx, n_k)
 % This function calculates the geometric mean gm of the terms that
 % contain the coefficients of the polynomial c in the kth subresultant
 % matrix S(c,d). The integer n is the degree of the polynomial d.
 %
-% Inputs
+% % Inputs
 %
-% fx    :  The coefficients of one of the Bernstein basis polynomials,
-%            f or g.
+% fx : The coefficients of one of the polynomial f(x)
 %
-% n     :  The degree of the other polynomial.
-%
-% k     :  The order of the subresultant matrix.
+% n_k : The degree of the polynomial v(x)
 %
 %
-% Outputs
+% % Outputs
 %
 % gm :  The geometric mean of the terms in the modified Sylvester
 %            Sylvester matrix S(f,g)Q.
-
 %
-%                       Global Variables.
 
 
-global SETTINGS
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%S
-
-% Get previous state of logs
-previous_log_state = SETTINGS.BOOL_LOG;
-%BOOL_LOG = 'y';
 
 % Dependent on which method is used, 1 - use logs, 0 - use nchoosek
+global SETTINGS
 
-switch SETTINGS.BOOL_LOG
-    case 'y' % Calculate GM using logs
-        gm = GMlog(fx,n_k);
-        
-    case 'n' % Calculate GM without logs
-        gm = GMnchoosek(fx,n_k);
-    otherwise
-        error('SETTINGS.BOOL_LOG is either y or n')
-end
-
-% reset log method
-BOOL_LOG = previous_log_state;
-
+if SETTINGS.BOOL_LOG
+    
+    gm = GMlog(fx,n_k);
+    
+else
+    gm = GMnchoosek(fx,n_k);
+    
 end
 
 
-function gm = GMlog(fx,n_k)
+end
+
+
+function GM_fx = GMlog(fx, n_k)
 % Calculate the Geometric mean of the entries of the Coefficient matrix $C_{f}$
 % which may or may not contain Q. may or may not contain denominator.#
 %
-% Inputs.
+% % Inputs.
 %
 % fx :  Polynomial coefficients of fx
 %
-% n :   Degree of polynomial gx
+% n-k :   Degree of polynomial v(x)
 %
-% k :   Index of subresultants S_{k}
-%
-% Outputs.
+% % Outputs.
 %
 % gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
 
@@ -71,8 +55,16 @@ global SETTINGS
 
 
 
-switch SETTINGS.BOOL_Q
-    case 'y'
+switch SETTINGS.SYLVESTER_BUILD_METHOD
+    
+    % T :
+    % DT :
+    % DTQ :
+    % TQ :
+    % DTQ Rearranged Denom Removed :
+    % DTQ Rearranged :
+    
+    case 'DTQ'
         % Compute Geometric Mean of D^{-1}T(f,g)Q, which contains three
         % binomial coefficients
         
@@ -122,18 +114,13 @@ switch SETTINGS.BOOL_Q
         
         
         
-        switch SETTINGS.BOOL_DENOM_SYL
-            case 'y' % if denominator is included
-                p4_log = lnnchoosek(m+n_k,m);
-            case 'n' % if denominator is not included
-                p4_log = 0;
-            otherwise
-                error('SETTINGS.BOOL_DENOM_SYL must be set to either (y) or (n)')
-        end
         
-        gm = 10.^(p1_log + p3_log + p3_log - p4_log);
+        p4_log = lnnchoosek(m+n_k,m);
         
-    case 'n'
+        
+        GM_fx = 10.^(p1_log + p3_log + p3_log - p4_log);
+        
+    case 'DT'
         % Exclude Q from Geometric mean calculations.
         % Split this calculation in to three parts, Numerator_A, the
         % coefficients of fx, Numerator_B : the binomial coefficients
@@ -184,32 +171,36 @@ switch SETTINGS.BOOL_Q
         
         GM_Denominator = 10.^GM_Denominator_LOG;
         
-        gm = GM_Numerator./GM_Denominator;
+        GM_fx = GM_Numerator./GM_Denominator;
+        
+    case 'T'
+        error([mfilename ' : ' 'Code Not Developed']);
+        
+    case 'TQ'
+        error([mfilename ' : ' 'Code Not Developed']);
         
     otherwise
-        error('SETTINGS.BOOL_Q must either be set to (y) or (n)')
+        error('SETTINGS.SYLVESTER_BUILD_METHOD not valid');
         
 end
 
 end
 
 
-function gm = GMnchoosek(fx,n_k)
+function GM_fx = GMnchoosek(fx, n_k)
 % Get geometric mean of the entries of f(x) in the matrix DTQ using
 % nchoosek
 %
 % Inputs.
 %
 %
-% fx :  Polynomial coefficients of fx
+% fx :  Polynomial coefficients of f(x)
 %
-% n :   Degree of polynomial gx
-%
-% k :   Index of subresultants S_{k}
+% n_k :   Degree of polynomial v_{k}(x), determines number of columns in
+% T_{n-k}(f(x))
 %
 %
 % Outputs.
-%
 %
 % gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
 %
@@ -218,9 +209,39 @@ function gm = GMnchoosek(fx,n_k)
 global SETTINGS
 
 
-switch SETTINGS.BOOL_Q
-    
-    case 'y' % Include Q
+switch SETTINGS.SYLVESTER_BUILD_METHOD
+    % T :
+    % DT :
+    % DTQ :
+    % TQ :
+    % DTQ Rearranged Denom Removed :
+    % DTQ Rearranged :
+    case 'T'
+        
+    case 'DT'
+        
+        % Calculate the degree of the polynomial f.
+        m = GetDegree(fx);
+        
+        % Get the product of the numerators
+        prod_numerator = prod(fx.*GetBinomials(m));
+        
+        
+        % Initialise the product of the denominator at 1.
+        prod_denom =1 ;
+        
+        for i = 0:1:m
+            for j = 0:1:n_k
+                prod_denom = prod_denom * nchoosek(m+n_k,i+j);
+            end
+        end
+        
+        num =prod_numerator .^(1./(m+1));
+        denom = prod_denom .^(1./((m+1)*(n_k+1)));
+        
+        GM_fx = num/denom;
+        
+    case 'DTQ'
         
         % Split geometric mean into four parts
         
@@ -247,44 +268,25 @@ switch SETTINGS.BOOL_Q
         end
         p2 = temp_prod.^(1./((m+1)*(n_k+1)));
         
-        switch SETTINGS.BOOL_DENOM_SYL
-            case 'y'
-                % Denominator is included
-                p3 = nchoosek(m+n_k,n_k);
-            case 'n'
-                % Denominator is not included
-                p3 = 1;
-            otherwise
-                error('SETTINGS.BOOL_DENOM_SYL is either y or n')
-        end
+       
+        % Denominator is included
+        p3 = nchoosek(m+n_k,n_k);
+          
         
-        gm = (p1.*p2.*p2) ./ p3;
+        GM_fx = (p1.*p2.*p2) ./ p3;
         
         
-    case 'n' % exclude Q
         
-        % Calculate the degree of the polynomial f.
-        m = GetDegree(fx);
+    case 'TQ'
+        error('err')
+    case 'DTQ Rearranged Denom Removed'
+        error('err')
+    case 'DTQ Rearranged'
+        error('err')
         
-        % Get the product of the numerators
-        prod_numerator = prod(fx.*GetBinomials(m));
         
-        
-        % Initialise the product of the denominator at 1.
-        prod_denom =1 ;
-        
-        for i = 0:1:m
-            for j = 0:1:n_k
-                prod_denom = prod_denom * nchoosek(m+n_k,i+j);
-            end
-        end
-        
-        num =prod_numerator .^(1./(m+1));
-        denom = prod_denom .^(1./((m+1)*(n_k+1)));
-        
-        gm = num/denom;
     otherwise
-        error('SETTINGS.BOOL_Q is either y or n')
+        error('SETTINGS.SYLVESTER_BUILD_METHOD is not valid')
 end
 end
 

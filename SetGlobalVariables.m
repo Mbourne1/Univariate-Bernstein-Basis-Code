@@ -25,13 +25,13 @@ SETTINGS.PROBLEM_TYPE = problemType;
 SETTINGS.SEED = 1024;
 
 % Outputs
-SETTINGS.PLOT_GRAPHS = 'y';
+SETTINGS.PLOT_GRAPHS = true;
 
 %
 % 'y' : Use Logs
 % 'n'
 %
-SETTINGS.BOOL_LOG = 'n';
+SETTINGS.BOOL_LOG = false;
 
 %--------------------------------------------------------------------------
 %               
@@ -47,7 +47,14 @@ SETTINGS.MEAN_METHOD = mean_method;
 %
 
 % Set the metric for measuring the degree of the GCD.
-SETTINGS.METRIC = 'Singular Values';
+%
+%   * Singular Values
+%   * R1 Row Norms
+%   * R1 Row Diagonals
+%   * Residuals
+%
+%SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
+SETTINGS.RANK_REVEALING_METRIC = 'Residuals';
 
 % Set the threshold for measuring the degree of the GCD. If max change in
 % metric is less than this value, then all subresultants are full rank or

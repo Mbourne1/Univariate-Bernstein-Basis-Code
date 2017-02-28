@@ -292,14 +292,13 @@ end
 function Y1 = BuildD0Y1U1(hx,m1)
 global SETTINGS
 
-switch SETTINGS.BOOL_LOG
-    case 'y' % use logs
-        Y1 = BuildD0Y1U1_log(hx,m1);
-        
-    case 'n' % use nchoosek
-        Y1 = BuildD0Y1U1_nchoosek(hx,m1);
-    otherwise
-        error([mfilename ' : ' 'BOOL_LOG is either (y) or (n)'])
+if( SETTINGS.BOOL_LOG)
+    
+    Y1 = BuildD0Y1U1_log(hx,m1);
+    
+else
+    Y1 = BuildD0Y1U1_nchoosek(hx,m1);
+    
 end
 end
 
@@ -312,8 +311,6 @@ function Y1 = BuildD0Y1U1_nchoosek(hx,m1)
 % hx : Coefficients of polynomial h_{i}(x)
 %
 % m1 : Degree of polynomial f_{i}
-
-global SETTINGS
 
 % Get degree of polynomial h(x) where deg(h_{1}) = n_{1} = m_{0} - m_{1}
 n1 = GetDegree(hx);
@@ -331,13 +328,9 @@ for j = 0:1:m1
     end
 end
 
-switch SETTINGS.BOOL_DENOM_SYL
-    case 'y'
-        Y1 = Y1 ./  nchoosek(n1+m1,m1);
-    case 'n'
-    otherwise
-        error('err')
-end
+
+Y1 = Y1 ./  nchoosek(n1+m1,m1);
+
 end
 
 
@@ -357,9 +350,9 @@ n1 = GetDegree(hx);
 m0 = n1+m1;
 
 
-Y1 = [];
 % for each column i = 1:1:m0-m1+1
 for k = 0:1:m1
+    
     % for each row j = 1:1:m1+1
     for j = k:1:k+n1
         BinomsEval_Log = lnnchoosek(j,k) + lnnchoosek(m0-j,m1-(j-k));
@@ -367,21 +360,15 @@ for k = 0:1:m1
         Y1(j+1,k+1) = hx(j-k+1) .* BinomsEval_Exp;
     end
 end
-switch SETTINGS.BOOL_DENOM_SYL
-    case 'y'
-        % Include the denominator
-        Denom_Log = lnnchoosek(n1+m1,m1);
-        Denom_Exp = 10.^Denom_Log;
-        
-        Y1 = Y1 ./  Denom_Exp;
-    case 'n'
-        % Exclude the denominator
-    otherwise
-        error('err')
-end
 
+% Include the denominator
+Denom_Log = lnnchoosek(n1+m1,m1);
+Denom_Exp = 10.^Denom_Log;
+
+Y1 = Y1 ./  Denom_Exp;
 
 end
+
 
 
 
@@ -400,7 +387,9 @@ f = [];
 % for each vector f f_{0},...,f_{n-1} in fw_array, add to right hand
 % side vector
 for i=1:1:length(fw_array)-1
+    
     f = [f;fw_array{i}];
+    
 end
 
 end
@@ -418,6 +407,8 @@ function DCQ = BuildDTQ(arr_fx)
 nPolys_arr_fx = size(arr_fx,1);
 
 % For each of the polynomials f_{i}(x), excluding the final polynomial
+arr_DT1Q1 = cell(nPolys_arr_fx -1);
+
 for i = 2:1:nPolys_arr_fx
     
     % Get the polynomial f_{i} = set_f{i+1}
@@ -436,17 +427,19 @@ for i = 2:1:nPolys_arr_fx
     deg_hw = deg_fw_prev - deg_fw;
     
     % Build the Matrix T(f)
-    T1 = BuildT1(fw,deg_hw);
+    T1 = BuildT1(fw, deg_hw);
     
-    D = BuildD(deg_fw,deg_hw);
+    D = BuildD_2Polys(deg_fw, deg_hw);
     Q1 = BuildQ1(deg_hw);
-    DT1Q1{i-1}  = D*T1*Q1;
+    
+    arr_DT1Q1{i-1}  = D*T1*Q1;
+    
 end
 
 
 
 %Build the Coefficient Matrix C of all matrices c
-DCQ = blkdiag(DT1Q1{1:length(DT1Q1)});
+DCQ = blkdiag(arr_DT1Q1{1:length(arr_DT1Q1)});
 
 end
 

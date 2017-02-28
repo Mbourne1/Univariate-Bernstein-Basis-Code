@@ -3,7 +3,7 @@ function [] = o_Deconvolution(ex_num,emin,bool_preproc)
 % form the set of polynomials h_{i} where h_{i} = f{i}/f_{i+1}
 %
 % % Inputs
-% 
+%
 % ex_num : Example number (String)
 %
 % noise : noise level
@@ -11,7 +11,7 @@ function [] = o_Deconvolution(ex_num,emin,bool_preproc)
 % bool_preproc : Bool determining whether to include preprocessing
 %
 % % Outputs
-% 
+%
 % Results are printed to a file
 %
 % % Example
@@ -21,12 +21,10 @@ function [] = o_Deconvolution(ex_num,emin,bool_preproc)
 
 % Set global settings
 global SETTINGS
-SETTINGS.PLOT_GRAPHS = 'y';
+SETTINGS.PLOT_GRAPHS = true;
 SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-15;
 SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 20;
-SETTINGS.BOOL_LOG = 'n';
-SETTINGS.BOOL_DENOM_SYL = 'y';
-SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard';
+SETTINGS.BOOL_LOG = false;
 SETTINGS.PREPROC_DECONVOLUTIONS = bool_preproc;
 SETTINGS.SEED = 1024;
 
@@ -47,7 +45,7 @@ addpath (...
 
 syms x y;
 
-[factor_mult_arr] = Univariate_Deconvolution_Examples(ex_num);
+[factor_mult_arr] = Deconvolution_Examples_Univariate(ex_num);
 
 vFactors = factor_mult_arr(:,1);
 vMult = double(factor_mult_arr(:,2));
@@ -101,13 +99,13 @@ mult_mat_arr_hx = abs(diff(mult_mat_arr_fx));
 arr_sym_h = cell(nPolys_arr_hx,1);
 
 for i = 1:1:nPolys_arr_hx
-
+    
     % Get multiplicity structure of h_{i}(x)
     mults = mult_mat_arr_hx(i,:)';
-   
+    
     % Get symbolic polynomial h_{i}(x)
     arr_sym_h{i} = prod(vFactors.^(mults));
-   
+    
 end
 
 
@@ -229,23 +227,22 @@ vError_BatchConstrainedSTLN = GetErrors(arr_hx_BatchConstrainedSTLN,arr_hx);
 
 % Plotting
 nPolys_hx = size(arr_hx,1);
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure()
-        hold on
-        plot(log10(vError_Separate),'-o','DisplayName','Separate')
-        plot(log10(vError_Batch),'-s','DisplayName','Batch')
-        plot(log10(vError_BatchSTLN),'-s','DisplayName','Batch STLN')
-        plot(log10(vError_BatchConstrained),'-s','DisplayName','Batch Constrained')
-        plot(log10(vError_BatchConstrainedSTLN),'-s','DisplayName','Batch Constrained STLN')
-        legend(gca,'show');
-        xlim([1 nPolys_hx]);
-        xlabel('Factor')
-        ylabel('log_{10} error')
-        hold off
-    case 'n'
-    otherwise
-        error('err');
+if(SETTINGS.PLOT_GRAPHS)
+    
+    figure_name = sprintf([mfilename ':' 'Deconvolution Methods Error']);
+    figure('name',figure_name)
+    hold on
+    plot(log10(vError_Separate), '-o', 'DisplayName', 'Separate')
+    plot(log10(vError_Batch), '-s', 'DisplayName', 'Batch')
+    plot(log10(vError_BatchSTLN), '-s', 'DisplayName', 'Batch STLN')
+    plot(log10(vError_BatchConstrained), '-s', 'DisplayName', 'Batch Constrained')
+    plot(log10(vError_BatchConstrainedSTLN), '-s', 'DisplayName', 'Batch Constrained STLN')
+    legend(gca,'show');
+    xlim([1 nPolys_hx]);
+    xlabel('Factor')
+    ylabel('log_{10} error')
+    hold off
+    
 end
 
 %--------------------------------------------------------------------------
@@ -253,7 +250,7 @@ end
 
 
 
-display([mfilename ' : ' sprintf('Error Separate : %e',norm(vError_Separate))]);
+display([mfilename ' : ' sprintf('Error Separate : %e', norm(vError_Separate))]);
 display([mfilename ' : ' sprintf('Error Batch : %e', norm(vError_Batch))]);
 display([mfilename ' : ' sprintf('Error Batch STLN: %e', norm(vError_BatchSTLN))]);
 display([mfilename ' : ' sprintf('Error Batch Constrained : %e', norm(vError_BatchConstrained))]);

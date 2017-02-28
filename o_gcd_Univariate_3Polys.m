@@ -1,4 +1,4 @@
-function [] = o_gcd_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method)
+function [] = o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method)
 % o_gcd_3Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
@@ -40,6 +40,7 @@ function [] = o_gcd_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, lo
 %           'DTQ Rearranged'
 %
 % % Example
+% >> o_gcd_3Polys('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','None','None','DTQ')
 % >> o_gcd_3Polys('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','Standard APF Nonlinear','DTQ')
 %
 % % Custom Example
@@ -57,6 +58,7 @@ restoredefaultpath
 addpath(...
     'Build Matrices',...
     'Formatting',...
+    'GCD Methods',...
     'Get Cofactor Coefficients',...
     'Get GCD Coefficients',...
     'Get GCD Degree',...
@@ -95,12 +97,12 @@ fprintf('INPUT VARIABLES\n')
 fprintf('\t EXAMPLE NUMBER : %s \n',ex_num)
 fprintf('\t EMIN : %s \n' , num2str(SETTINGS.EMIN))
 fprintf('\t EMAX : %s \n' , num2str(SETTINGS.EMAX))
-fprintf('\t MEAN METHOD : %s \n',SETTINGS.MEAN_METHOD)
-fprintf('\t ALPHA_THETA : %s \n',SETTINGS.BOOL_ALPHA_THETA)
-fprintf('\t LOW RANK APPROX METHOD : %s \n',SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
-fprintf('\t APF METHOD : %s \n ',SETTINGS.APF_METHOD)
-fprintf('\t LOG: %s \n',SETTINGS.BOOL_LOG)
-fprintf('\t SYLVESTER BUILD METHOD: %s \n',SETTINGS.SYLVESTER_BUILD_METHOD)
+fprintf('\t MEAN METHOD : %s \n', SETTINGS.MEAN_METHOD)
+fprintf('\t ALPHA_THETA : %s \n', SETTINGS.BOOL_ALPHA_THETA)
+fprintf('\t LOW RANK APPROX METHOD : %s \n', SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
+fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD)
+fprintf('\t LOG: %s \n', SETTINGS.BOOL_LOG)
+fprintf('\t SYLVESTER BUILD METHOD: %s \n', SETTINGS.SYLVESTER_BUILD_METHOD)
 LineBreakLarge()
 
 % o - gcd - Calculate GCD of two Arbitrary polynomials
@@ -146,7 +148,7 @@ catch
 end
 
 % Print results to results file
-PrintToFile(GetDegree(fx),GetDegree(gx),GetDegree(hx),GetDegree(dx_calc),error)
+PrintToFile(GetDegree(fx), GetDegree(gx), GetDegree(hx), GetDegree(dx_calc), error)
 LineBreakMedium();
 
 end
@@ -178,7 +180,7 @@ end
 
 
 function [] = PrintToFile(m,n,o,t,error)
-%
+% Print Results to file
 %
 % % Inputs
 %
@@ -199,6 +201,7 @@ function [] = PrintToFile(m,n,o,t,error)
 
 global SETTINGS
 
+% Specify file name
 fullFileName = sprintf('Results/Results_o_gcd_3Polys%s.txt',datetime('today'));
 
 % If file already exists append a line
@@ -221,7 +224,7 @@ end
 
     function WriteNewLine()
         
-        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+        fprintf(fileID,'%s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s, %s,%s,%s \n',...
             datetime('now'),...
             SETTINGS.EX_NUM,...
             int2str(m),...
@@ -244,6 +247,8 @@ end
             SETTINGS.SYLVESTER_BUILD_METHOD,...
             SETTINGS.GCD_COEFFICIENT_METHOD...
             );
+        % 21 inputs
+        
     end
 
     function WriteHeader()

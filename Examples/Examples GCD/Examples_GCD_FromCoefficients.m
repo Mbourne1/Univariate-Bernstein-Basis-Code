@@ -16,10 +16,10 @@ function [fx,gx,dx,ux,vx] = Examples_GCD_FromCoefficients(ex_num)
 %
 % vx : Coefficients of the polynomial v(x) given by g(x)/d(x)
 
-addpath('../Examples')
+addpath(genpath('../Examples'));
 
 % Get roots and multiplicities from example file
-[f_root_mult_arr,g_root_mult_arr,d_root_mult_arr,u_root_mult_arr,v_root_mult_arr] = Univariate_GCD_Examples(ex_num);
+[f_root_mult_arr,g_root_mult_arr,d_root_mult_arr,u_root_mult_arr,v_root_mult_arr] = GCD_Examples_Univariate_2Polys(ex_num);
 
 % Get the coefficients of the polynomials f(x), g(x) and d(x).
 fx = BuildPolyFromRootsSymbolic(f_root_mult_arr);

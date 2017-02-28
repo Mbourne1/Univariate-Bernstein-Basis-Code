@@ -11,7 +11,7 @@ function [r] = CalculateResidualSVD(ck,Ak)
 x = pinv(Ak)*ck;
 
 % Calculate residual
-r=ck-(Ak*x);
+r = ck-(Ak*x);
 
 % Normalise the residual
-r=norm(r);
+r = norm(r);

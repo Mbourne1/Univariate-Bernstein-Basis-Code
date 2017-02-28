@@ -8,25 +8,25 @@ function [] = o_roots_batch
 
 ex_num_arr = ...
     {
-     '1','2','3'
-%      '4'
-%      '5'
-%      '6'
-%      '7'
-%      '8'
-%      '9'
-%      '10'
-%      '11'
-%      '12'
-%      '13'
-%      'Example Zeng'
+    '1','2','3'
+    %      '4'
+    %      '5'
+    %      '6'
+    %      '7'
+    %      '8'
+    %      '9'
+    %      '10'
+    %      '11'
+    %      '12'
+    %      '13'
+    %      'Example Zeng'
     };
 
 
 emin_arr = ...
     {
     1e-12,...
-     %1e-11,...
+    %1e-11,...
     % 1e-10,...
     % 1e-9,...
     };
@@ -54,16 +54,18 @@ low_rank_approx_method_arr = ...
 
 apf_method_arr = {'None'};
 
-bool_q_arr = ...
+arr_sylvester_build_method =...
     {
-    'y',...
-    'n'...
+        'DTQ',...
+        'TQ',...
+        'DT',...
+        'T'
     };
 
 bool_log_arr = ...
     {
-    'y',...
-    'n'
+    true,...
+    false
     };
 
 % Deconvolution method
@@ -104,47 +106,46 @@ global SETTINGS
 
 SETTINGS.GCD_COEFFICIENT_METHOD = 'ux';
 
-for i7 = 1:1:length(bool_q_arr)
+
+
+
+
+for i8 = 1:1:length(bool_log_arr)
     
-    SETTINGS.BOOL_Q = bool_q_arr{i7};
+    SETTINGS.BOOL_LOG = bool_log_arr{i8};
     
-    for i8 = 1:1:length(bool_log_arr)
+    for i9 = 1:1:length(roots_hx_arr)
         
-        SETTINGS.BOOL_LOG = bool_log_arr{i8};
+        SETTINGS.ROOTS_HX = roots_hx_arr{i9};
         
-        for i9 = 1:1:length(roots_hx_arr)
+        for i10 = 1:1:length(DECONVOLVE_METHOD_arr)
             
-            SETTINGS.ROOTS_HX = roots_hx_arr{i9};
+            SETTINGS.DECONVOLVE_METHOD = DECONVOLVE_METHOD_arr{i10};
             
-            for i10 = 1:1:length(DECONVOLVE_METHOD_arr)
+            for i=1:1:size(var_arr,1)
                 
-                SETTINGS.DECONVOLVE_METHOD = DECONVOLVE_METHOD_arr{i10};
+                var = var_arr(i,:) ;
+                ex_num = ex_num_arr{var(1)};
+                emin = emin_arr{var(2)};
+                mean_method = mean_method_arr{var(3)};
+                bool_alpha_theta = bool_alpha_theta_arr{var(4)};
+                low_rank_approx_method = low_rank_approx_method_arr{var(5)};
+                apf_method = apf_method_arr{var(6)};
                 
-                for i=1:1:size(var_arr,1)
-                    
-                    var = var_arr(i,:) ;
-                    ex_num = ex_num_arr{var(1)};
-                    emin = emin_arr{var(2)};
-                    mean_method = mean_method_arr{var(3)};
-                    bool_alpha_theta = bool_alpha_theta_arr{var(4)};
-                    low_rank_approx_method = low_rank_approx_method_arr{var(5)};
-                    apf_method = apf_method_arr{var(6)};
-                    
-                    try
-                        o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
-                    catch err
-                        fprintf(err.message);
-                    end
-                    
+                try
+                    o_roots(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method)
+                catch err
+                    fprintf(err.message);
                 end
                 
-                
-                
             end
+            
+            
+            
         end
     end
-    
 end
+
 
 
 

@@ -104,8 +104,8 @@ DTQ_alpha = BuildDTQ(fw_wrt_alpha,alpha_gw_wrt_alpha,k);
 DTQ_theta = BuildDTQ(fw_wrt_theta,alpha(ite).*gw_wrt_theta,k);
 
 % Initialise the vector z of structured perturbations
-% When working with the roots problem, the number of entries in z is equal 
-% The number of coefficients of f(x), The perturbations of g(x) are the 
+% When working with the roots problem, the number of entries in z is equal
+% The number of coefficients of f(x), The perturbations of g(x) are the
 % derivative of those from f(x).
 zk   = zeros(m+1,1);
 z_fx = zeros(m+1,1);
@@ -162,7 +162,7 @@ DTNQ_wrt_alpha = BuildDTQ(fw_wrt_alpha, alpha_gw_wrt_alpha,k);
 
 % Create The matrix D(T+N)Q with respect to theta
 DTNQ_wrt_theta = BuildDTQ(fw_wrt_theta, alpha(ite).*gw_wrt_theta,k);
-        
+
 
 % Create the matrix C for input into iteration
 
@@ -208,8 +208,8 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     yy = yy + y;
     
     % obtain the small chages
-    delta_zk        = y(1:m+1,1);               
-    delta_xk        = y((m+2):(2*m+n-2*k+2),1); 
+    delta_zk        = y(1:m+1,1);
+    delta_xk        = y((m+2):(2*m+n-2*k+2),1);
     delta_alpha     = y(2*m+n-2*k+3);
     delta_theta     = y(2*m+n-2*k+4);
     
@@ -238,10 +238,10 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     % Calculate the Partial derivative of DTQ with respect to alpha.
     Partial_DTQ_wrt_alpha = BuildDTQ(fw_wrt_alpha, Partial_gw_wrt_alpha,k);
-                
+    
     % Calculate the partial derivative of DTQ with respect to theta.
     Partial_DTQ_wrt_theta = BuildDTQ(fw_wrt_theta, alpha(ite).*gw_wrt_theta,k);
-        
+    
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
     ct = DTQ*e;
     
@@ -259,7 +259,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     for i = 1:1:length(z_fx)-1
         z_gx(i) = m.*ratio.*(z_fx(i+1) - z_fx(i))  ;
     end
-
+    
     % Calculate the subresultant matrix of the structured perturbations.
     z_fw = GetWithThetas(z_fx,th(ite));
     z_gw = GetWithThetas(z_gx,th(ite));
@@ -278,7 +278,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     % Calculate the derivatives of DNQ with respect to alpha
     DNQ_wrt_alpha = BuildDTQ(Partial_zfw_wrt_alpha, Partial_zgw_wrt_alpha,k);
-       
+    
     % Calculate the derivatives of DNQ with respect to theta
     DNQ_wrt_theta = BuildDTQ(Partial_zfw_wrt_theta, alpha(ite).*Partial_zgw_wrt_theta,k);
     
@@ -294,19 +294,19 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     % Build the matrix D_{k}(T+N)Q_{k}
     DTNQ = BuildDTQ(fw + z_fw , alpha(ite).*(gw + z_gw),k);
-        
+    
     % Calculate the paritial derivative of D_{k}(T+N)Q_{k} with respect to
     % alpha
     DTNQ_alpha = BuildDTQ(fw_wrt_alpha + Partial_zfw_wrt_alpha,...
         Partial_gw_wrt_alpha + Partial_zgw_wrt_alpha,k);
-        
+    
     % Calculate the paritial derivative of D_{k}(T+N)Q_{k} with respect to
     % theta
     
     DTNQ_theta = BuildDTQ(fw_wrt_theta + Partial_zfw_wrt_theta,...
         alpha(ite).*(gw_wrt_theta + Partial_zgw_wrt_theta) ...
         ,k);
-            
+    
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
     DY = BuildDY_Roots(m,n,k,idx_col,x_ls,alpha(ite),th(ite),ratio);
     
@@ -334,7 +334,7 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
     % Calculate the new right hand vector
     ek = ct + h;
-        
+    
     % Calculate the normalised residual of the solution.
     condition(ite) = norm(res_vec) / norm(ek);
     
@@ -345,20 +345,17 @@ while condition(ite) >(SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIO
     
 end
 
-global SETTINGS
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure_name = sprintf('%s : SNTLN Residuals',mfilename);
-        figure('name',figure_name)
-        hold on
-        title('Residuals over SNTLN iterations')
-        plot(log10(condition),'-s')
-        xlabel('iterations')
-        ylabel('Residuals')
-        hold off
-    case 'n'
-    otherwise
-        error('err')
+if(SETTINGS.PLOT_GRAPHS)
+    
+    figure_name = sprintf('%s : SNTLN Residuals',mfilename);
+    figure('name',figure_name)
+    hold on
+    title('Residuals over SNTLN iterations')
+    plot(log10(condition),'-s')
+    xlabel('iterations')
+    ylabel('Residuals')
+    hold off
+    
 end
 
 if ite == SETTINGS.MAX_ITERATIONS_SNTLN
@@ -400,8 +397,8 @@ hold on
 plot(1:1:length(condition),log10(condition));
 xlabel('Iteration Number')
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
+if(SETTINGS.PLOT_GRAPHS0
+    
         figure_name = sprintf('%s : Condition',mfilename);
         figure('name',figure_name)
         title('Residual at each Iteration of SNTLN')
@@ -422,9 +419,6 @@ switch SETTINGS.PLOT_GRAPHS
         title('Alpha at each iteration of SNTLN');
         hold on
         plot(1:1:length(alpha),log10(alpha));
-    case 'n'
-    otherwise 
-        error('err')
 end
 
 

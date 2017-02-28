@@ -176,10 +176,10 @@ start_point = ...
     v_zw;
     ];
 
-%Get the iterated value 
+%Get the iterated value
 yy = start_point;
 
-% Get 
+% Get
 s = -(yy - start_point);
 
 
@@ -208,16 +208,16 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     arr_pw = GetArray(v_pw, vDeg_arr_px);
     
     arr_zw = GetArray(v_zw, vDeg_arr_fx);
-
+    
     arr_hw = Get_hx(arr_pw,unique_vMult);
-
+    
     s = -(yy-start_point);
-
+    
     DY_hQ = BuildDYQ(arr_hw,vDeg_arr_fx);
-
+    
     % Build the matrix C(f)
-    DT_fwQ = BuildDTQ(arr_fw,vMult); 
-
+    DT_fwQ = BuildDTQ(arr_fw,vMult);
+    
     % Build the matrix C(z)
     DT_zwQ = BuildDTQ(arr_zw,vMult);
     
@@ -298,7 +298,7 @@ for i = 1:1:nDistinct_hx
         % Build the Cauchy like matrix T_{m_{i} - m_{i-1}}(f_{i})
         Tf{j} = BuildT1(fx, deg_hx);
         
-        D{j} = BuildD(deg_fx,deg_hx);
+        D{j} = BuildD_2Polys(deg_fx, deg_hx);
         
         % Stack beneath all other T_{f} which are multiplied by [_{i}(x)
         Cf{i} = [Cf{i} ; D{j}*Tf{j}];
@@ -437,14 +437,13 @@ end
 function Y1 = BuildD0Y1U1(hx,m1)
 global SETTINGS
 
-switch SETTINGS.BOOL_LOG
-    case 'y' % use logs
-        Y1 = BuildD0Y1U1_log(hx,m1);
-        
-    case 'n' % use nchoosek
-        Y1 = BuildD0Y1U1_nchoosek(hx,m1);
-    otherwise
-        error([mfilename ' : ' 'BOOL_LOG is either (y) or (n)'])
+if( SETTINGS.BOOL_LOG)
+    
+    Y1 = BuildD0Y1U1_log(hx,m1);
+    
+else
+    Y1 = BuildD0Y1U1_nchoosek(hx,m1);
+    
 end
 end
 
@@ -458,7 +457,7 @@ function Y1 = BuildD0Y1U1_nchoosek(hx,m1)
 %
 % m1 : Degree of polynomial f_{i}
 
-global SETTINGS
+
 
 % Get degree of polynomial h(x) where deg(h_{1}) = n_{1} = m_{0} - m_{1}
 n1 = GetDegree(hx);
@@ -476,13 +475,9 @@ for j = 0:1:m1
     end
 end
 
-switch SETTINGS.BOOL_DENOM_SYL
-    case 'y'
-        Y1 = Y1 ./  nchoosek(n1+m1,m1);
-    case 'n'
-    otherwise
-        error('err')
-end
+
+Y1 = Y1 ./  nchoosek(n1+m1,m1);
+
 end
 
 
@@ -492,9 +487,6 @@ function Y1 = BuildD0Y1U1_log(hx,m1)
 % m0 = degree of previous polynomial
 % m1 = degree of current polynomial
 
-global SETTINGS
-
-% Y1 = zeros(m0+1,m1+1);
 
 % Get Degree of polynomial deg(h_{x}) = n_{1} = m_{0}-m_{1}
 n1 = GetDegree(hx);
@@ -512,18 +504,12 @@ for k = 0:1:m1
         Y1(j+1,k+1) = hx(j-k+1) .* BinomsEval_Exp;
     end
 end
-switch SETTINGS.BOOL_DENOM_SYL
-    case 'y'
-        % Include the denominator
-        Denom_Log = lnnchoosek(n1+m1,m1);
-        Denom_Exp = 10.^Denom_Log;
-        
-        Y1 = Y1 ./  Denom_Exp;
-    case 'n'
-        % Exclude the denominator
-    otherwise
-        error('err')
-end
+
+% Include the denominator
+Denom_Log = lnnchoosek(n1+m1,m1);
+Denom_Exp = 10.^Denom_Log;
+
+Y1 = Y1 ./  Denom_Exp;
 
 
 end

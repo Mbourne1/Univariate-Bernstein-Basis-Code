@@ -1,20 +1,21 @@
-
 function fx = Examples_Roots_FromCoefficients(ex_num)
 %
 % % Inputs
 %
-% ex_num : Example Number
+% ex_num : (String) Example Number
 %
 %
 % % Outputs
 %
-% fx : Coefficients of the polynomial f(x) in the Bernstein form.
+% fx : (Column vector) Coefficients of the polynomial f(x) in the Bernstein form.
+%
+% >> Examples_Roots_FromCoefficients('1')
 
-addpath('../Examples');
+% Add path to examples folder
+addpath(genpath('../Examples'));
 
 % Get the factors and corresponding multiplicities of f(x)
-f_root_mult_array = Univariate_Roots_Examples(ex_num);
-
+f_root_mult_array = Roots_Examples_Univariate(ex_num);
 
 % Get the coefficients of f(x) in Bernstein form
 fx = BuildPolyFromRootsSymbolic(f_root_mult_array);

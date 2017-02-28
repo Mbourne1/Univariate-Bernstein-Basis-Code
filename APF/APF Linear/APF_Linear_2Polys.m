@@ -27,27 +27,20 @@ global SETTINGS
 ite = 1;
 
 % Initialise
-res_uw = zeros(1,1);
-res_vw = zeros(1,1);
-res_ux = zeros(1,1);
-res_vx = zeros(1,1);
-residual = zeros(1,1);
 
-
-% Get degree of polynomial f
+% Get degree of polynomial f(x)
 m = GetDegree(fx);
 
-% Get degree of polynomial g
+% Get degree of polynomial g(x)
 n = GetDegree(gx);
 
 % Get number of coefficients in u(x)
-nCoeffs_ux = m-k+1;
-nCoeffs_vx = n-k+1;
-nCoeffs_fx = m+1;
-nCoeffs_gx = n+1;
+nCoefficients_ux = m-k+1;
+nCoefficients_vx = n-k+1;
+nCoefficients_fx = m+1;
+nCoefficients_gx = n+1;
 
-% Initialise some useful vectors
-veck    = (0:1:k)';
+
 
 % Initialise S, the vector of thetas corresponding to coefficients of f(x),
 % such that s_{k} = S * p_{k}
@@ -60,7 +53,7 @@ th_g = eye(n+1);
 zk = zeros(m+n-2*k+2,1);
 
 % Get H^{-1} * C(u,v) * G
-[HCG,H1C1G,H2C2G] = BuildHCG(ux,vx,k);
+[HCG, ~, ~] = BuildHCG_2Polys(ux,vx,k);
 
 %Build the RHS vector b = [fx; gx]
 bk = [fx ; gx];
@@ -72,16 +65,16 @@ dx = SolveAx_b(HCG,bk);
 res_vec = bk - ((HCG)*dx);
 
 % Set some initial values
-z_fx = zeros(nCoeffs_fx,1);
-z_gx = zeros(nCoeffs_gx,1);
+z_fx = zeros(nCoefficients_fx, 1);
+z_gx = zeros(nCoefficients_gx, 1);
 
 % Set initial values for the iterative process
-z1_ux = zeros(nCoeffs_ux,1);
-z2_vx = zeros(nCoeffs_vx,1);
+z1_ux = zeros(nCoefficients_ux, 1);
+z2_vx = zeros(nCoefficients_vx, 1);
 
 % Construct the coefficient matrix in the equation that defines
 % the constraint for the LSE problem.
-HYk         = BuildHYQ_SNTLN(dx,m,n,1);
+HYk         = BuildHYQ_SNTLN(dx, m, n, 1);
 
 
 % % Build the matrix C given by Hz Hp Hq
@@ -106,7 +99,7 @@ C_temp      = ...
 C = [H_z , C_temp];
 
 %
-E = eye(nCoeffs_fx + nCoeffs_gx + nCoeffs_ux + nCoeffs_vx);
+E = eye(nCoefficients_fx + nCoefficients_gx + nCoefficients_ux + nCoefficients_vx);
 
 %
 ek = bk;
@@ -142,11 +135,11 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     % % obtain the small changes.
     
     % Get change in z_{k} = [z_{u} z_{v}]
-    delta_zk = y(1:nCoeffs_ux + nCoeffs_vx);
+    delta_zk = y(1:nCoefficients_ux + nCoefficients_vx);
     
     % Get change in z_{f}(x)
     %     delta_zf_k = y(m+n-2*k+3:2*m+n-2*k+3);
-    delta_zf_k = y(nCoeffs_ux + nCoeffs_vx + 1: nCoeffs_ux + nCoeffs_vx + nCoeffs_fx );
+    delta_zf_k = y(nCoefficients_ux + nCoefficients_vx + 1: nCoefficients_ux + nCoefficients_vx + nCoefficients_fx );
     
     % Get change in z_{g}(x)
     delta_zg_k = y(2*m+n-2*k+4:2*m+2*n-2*k+4);
@@ -172,7 +165,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     % % Build the components of the matrix C
     
     % Calculate H_z
-    HYk = BuildHYQ_SNTLN(dx,m,n,1);
+    HYk = BuildHYQ_SNTLN(dx, m, n, 1);
     
     % Build H_z
     H_z = HYk;
@@ -192,7 +185,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     C = [H_z , C_temp];
     
     % Calculate Matrix H(C+E)G
-    [HCEG,~,~] = BuildHCG(ux + z_ux, vx + z_vx,k);
+    [HCEG,~,~] = BuildHCG_2Polys(ux + z1_ux, vx + z2_vx,k);
     
     % Calculate the new residual
     res_vec = [(fx + z_fx) ; (gx + z_gx)] - ((HCEG)*dx);
@@ -211,7 +204,7 @@ end
 
 % Display number of iterations
 LineBreakLarge();
-fprintf('Iterations over Nonlinear approximate polynomial factorisation : %i \n', ite+1);
+fprintf('Iterations over Nonlinear approximate polynomial factorisation : %i \n', ite);
 LineBreakLarge();
 SETTINGS.APF_REQ_ITE = ite;
 

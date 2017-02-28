@@ -33,6 +33,7 @@ addpath 'Sylvester Matrix'
 % Get degree of polynomail f(x)
 m = GetDegree(fx);
 n = GetDegree(gx);
+o = GetDegree(hx);
 
 % If the number of distinct roots in f(x) is one, then the degree of the
 % GCD of f(x) and f'(x) = m-1 = n.
@@ -42,7 +43,7 @@ upper_lim = deg_limits(2);
 % Set upper and lower limit for computing the degree of the GCD. Note may
 % be best to set to degree limits or may be best to set to 1 & min(m,n)
 lower_lim_comp = 1;
-upper_lim_comp = min(m,n);
+upper_lim_comp = min([m,n,o]);
 deg_limits_comp = [lower_lim_comp upper_lim_comp];
 
 % Get the number of subresultants which must be constructed.
@@ -84,7 +85,7 @@ for k = lower_lim_comp:1:upper_lim_comp
     
     i = k - lower_lim_comp + 1;
     
-    %[vGM_fx(i), vGM_gx(i),vAlpha(i),vTheta(i)] = Preprocess_3Polys(fx,gx,hx,k);
+    [vGM_fx(i), vGM_gx(i), vGM_hx(i), vAlpha(i), vTheta(i)] = Preprocess_3Polys(fx, gx, hx, k);
     
     % Temporary Measure until preproc() developed for sylvester matrix of
     % three polynomials.
@@ -161,8 +162,14 @@ end % End of for
 % %
 % %
 % Choose a metric to determine the degree of the GCD.
+% R1 Row Norms
+% R1 Row Diagonals
+% Singular Values
+% Residuals
 global SETTINGS
-switch SETTINGS.METRIC
+fprintf(sprintf('Metric used to compute degree of GCD : %s \n',SETTINGS.RANK_REVEALING_METRIC));
+
+switch SETTINGS.RANK_REVEALING_METRIC
     case 'Row Norms'
         metric = vMaxRowNormR1./vMinRowNormR1;
         
@@ -171,6 +178,11 @@ switch SETTINGS.METRIC
         
     case 'Singular Values'
         metric = vMinimumSingularValues;
+        
+    case 'Residauals'
+        error('Code not developed')
+    otherwise
+        errror('err')
 end
 
 

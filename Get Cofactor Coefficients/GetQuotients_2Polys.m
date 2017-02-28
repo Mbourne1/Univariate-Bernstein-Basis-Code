@@ -17,6 +17,7 @@ function [ux, vx] = GetQuotients_2Polys(fx, gx, k)
 global SETTINGS
 
 % Get degree of input polynomial g(x)
+m = GetDegree(fx);
 n = GetDegree(gx);
 
 % Build the t^th subresultant
@@ -51,8 +52,11 @@ nCoeffs_vx = n-k+1;
 switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'T'
         
-        vx = vec_x(1:nCoeffs_vx);
-        ux = -vec_x(nCoeffs_vx + 1:end);
+        vx_bi = vec_x(1:nCoeffs_vx);
+        ux_bi = -vec_x(nCoeffs_vx + 1:end);
+        
+        ux = GetWithoutBinomials(ux_bi);
+        vx = GetWithoutBinomials(vx_bi);
         
     case 'DT'
         
@@ -68,8 +72,11 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
     case 'TQ'
         
+        
+        
         vx = vec_x(1:nCoeffs_vx);
         ux = -vec_x(nCoeffs_vx + 1:end);
+        
         
     case 'DTQ Rearranged Denom Removed'
         

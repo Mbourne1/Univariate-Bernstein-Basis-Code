@@ -1,4 +1,4 @@
-function D = BuildD(m,n_k)
+function D = BuildD_2Polys(m,n_k)
 % Build the matrix D^{-1} which is the diagonal matrix of binomial 
 % coefficients. Used to construct the Sylvester Subresultant matrices in 
 % format D_{k}^{-1}*T_{k}(f,g)*Q.
@@ -12,8 +12,8 @@ function D = BuildD(m,n_k)
 %
 % n : Degree of polynomial g(x)
 
-
+warning('off')
 % Produce a vector of elements of D, then diagonalise it to form a matrix.
 D = diag(1./GetBinomials(m+n_k));
-
+warning('on')
 end

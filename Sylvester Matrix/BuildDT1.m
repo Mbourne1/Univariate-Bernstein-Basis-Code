@@ -9,17 +9,13 @@ function DT1 = BuildDT1(fx,n_k)
 
 global SETTINGS
 
-switch SETTINGS.BOOL_LOG
-    case 'n'
-        % Build Toeplitz Matrix using nchoosek
-        DT1 = BuildDT1_nchoosek(fx,n_k);
-        
-    case 'y'
-        % Build Toeplitz Matrix using log version of nchoosek.
-        DT1 = BuildDT1_log(fx,n_k);
-        
-    otherwise
-        error('error : bool_log must be either (y) or (n)')
+if( SETTINGS.BOOL_LOG)
+    DT1 = BuildDT1_log(fx,n_k);
+else
+    
+    % Build Toeplitz Matrix using nchoosek
+    DT1 = BuildDT1_nchoosek(fx,n_k);
+    
 end
 
 end

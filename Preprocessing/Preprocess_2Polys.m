@@ -1,4 +1,4 @@
-function [lambda, mu, alpha, theta] = Preprocess_2Polys(fx,gx,k)
+function [GM_fx, GM_gx, alpha, theta] = Preprocess_2Polys(fx,gx,k)
 % Preprocess_2Polys(fx,gx,k)
 % Get the optimal values of lamdba, mu, alpha and theta.
 %
@@ -32,17 +32,17 @@ m = GetDegree(fx);
 n = GetDegree(gx);
 
 % Get the mean of the entries.
-lambda = GetMean(fx,n-k);
+GM_fx = GetMean(fx,n-k);
 
-mu = GetMean(gx,m-k);
+GM_gx = GetMean(gx,m-k);
 
 % Normalize f(x) and g(x) by geometric means
-fx_n = fx./ lambda;
-gx_n = gx./ mu;
+fx_n = fx./ GM_fx;
+gx_n = gx./ GM_gx;
 
 
-switch SETTINGS.BOOL_ALPHA_THETA
-    case 'y'
+if(SETTINGS.BOOL_ALPHA_THETA)
+    
         
         % For each coefficient ai of F, obtain the max and min such that F_max =
         % [max a0, max a1,...] and similarly for F_min, G_max, G_min
@@ -51,41 +51,39 @@ switch SETTINGS.BOOL_ALPHA_THETA
         [v_F_max,v_F_min] = GetMaxMin(fx_n,n-k);
         [v_G_max,v_G_min] = GetMaxMin(gx_n,m-k);
         
-        print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
+        %print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
         
         % Calculate the optimal value of alpha and theta for the kth
         % subresultant matrix.
-        [alpha,theta] = OptimalAlphaTheta(v_F_max,v_F_min,v_G_max,v_G_min);
+        [alpha,theta] = OptimalAlphaTheta(v_F_max, v_F_min, v_G_max, v_G_min);
         
         % Having calculated optimal values of alpha and theta, get the max
         % and min entries in C(f) and C(g)
-        fx_n = fx ./ lambda;
-        gx_n = gx ./ mu;
+        fx_n = fx ./ GM_fx;
+        gx_n = gx ./ GM_gx;
         
         fw = GetWithThetas(fx_n,theta);
         gw = GetWithThetas(gx_n,theta);
         
         % Get max and min values;
-        [v_F_max,v_F_min] = GetMaxMin(fw,n-k);
-        [v_G_max,v_G_min] = GetMaxMin(alpha.*gw,m-k);
+        [v_F_max, v_F_min] = GetMaxMin(fw,n-k);
+        [v_G_max, v_G_min] = GetMaxMin(alpha.*gw,m-k);
         
-        print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
+        %print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
         
         % Testing to see if preprocessing lowers condition number
         %fprintf([mfilename ' : ' sprintf('Condition S(f(x),g(x)) : %2.4e \n', cond(BuildDTQ(fx,gx,k)))]);
         %fprintf([mfilename ' : ' sprintf('Conditon S(f(w),alpha g(w)) : %2.4e \n', cond(BuildDTQ(fw,alpha.*gw,k)))]);
-        
-    case 'n'
-        alpha = 1;
-        theta = 1;
-        
-    otherwise
-        error('err : Preprocess()');
+else
+    alpha = 1;
+    theta = 1;
+    GM_fx = 1;
+    GM_gx = 1;
 end
 
 end
 
-function [] = PrintToFile(F_max,F_min,G_max,G_min,m,n,k,alpha,theta)
+function [] = PrintToFile(F_max, F_min, G_max, G_min, m, n, k, alpha, theta)
 
 global SETTINGS
 
@@ -118,7 +116,8 @@ end
 
 end
 
-function [] = print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k)
+function [] = print(v_F_max, v_F_min, v_G_max, v_G_min, m, n, k)
+
 % Get maximum entry of all entries of T_{n-k}(f)
 f_max = max(v_F_max);
 
@@ -132,5 +131,5 @@ g_max = max(v_G_max);
 g_min = min(v_G_min);
 
 % Print max and minimum entries
-PrintToFile(f_max,f_min,g_max,g_min,m,n,k,1,1)
+PrintToFile(f_max, f_min, g_max, g_min, m, n, k, 1, 1)
 end

@@ -1,4 +1,5 @@
-function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
+function [] = o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+    low_rank_approx_method, apf_method, sylvester_build_method)
 % O_ROOTS(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Given an example number, and a set of input parameters, calculate the
@@ -20,7 +21,7 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %           'Geometric Mean My Method'
 %
 %
-% bool_alpha_theta : (string) 
+% bool_alpha_theta : (string)
 %           'y'
 %           'n'
 %
@@ -30,12 +31,12 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %           'Standard SNTLN'
 %           'Root Specific SNTLN'
 %
-% apf_method ('string') 
+% apf_method ('string')
 %           'None'
 %           'Standard APF NonLinear'
 %           'Standard APF Linear'
 %
-% Sylvester_Build_Method 
+% Sylvester_Build_Method
 %           'T'
 %           'DT'
 %           'DTQ'
@@ -43,16 +44,14 @@ function [] = o_roots(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_app
 %           'DTQ Rearranged Denom Removed'
 %           'DTQ Rearranged'
 %
-% % Example 
+% % Example
+% >> O_ROOTS_UNIVARIATE('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')
+% >> O_ROOTS_UNIVARIATE('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard SNTLN', 'Standard APF NonLinear','DTQ')
 %
-% >> O_ROOTS('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF NonLinear','DTQ')
-%
-% >> O_ROOTS('Custom:m=10 low=-1 high=1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard SNTLN','Standard APF','DTQ')
+% >> O_ROOTS_UNIVARIATE('Custom:m=10 low=-1 high=1',1e-12,1e-10,'Geometric Mean Matlab Method',true,'Standard SNTLN','Standard APF','DTQ')
 
 
 % add paths
-restoredefaultpath
-
 restoredefaultpath
 
 
@@ -68,6 +67,10 @@ addpath(...
 addpath(genpath('APF'));
 addpath(genpath('Deconvolution'));
 addpath(genpath('Examples'));
+addpath(genpath('GCD Methods'));
+addpath(genpath('Get Cofactor Coefficients'));
+addpath(genpath('Get GCD Coefficients'));
+addpath(genpath('Get GCD Degree'));
 addpath(genpath('Low Rank Approx'));
 addpath(genpath('Root Finding Methods'));
 
@@ -77,11 +80,12 @@ ProblemType = 'Roots';
 % Set the global variables
 global SETTINGS
 if isempty(SETTINGS)
-    fprintf('Set Q and log \n');
-    SETTINGS.BOOL_LOG = 'n';
-    SETTINGS.ROOTS_HX = 'From Deconvolutions';
     
+    fprintf('Set Q and log \n');
+    SETTINGS.BOOL_LOG = false;
+    SETTINGS.ROOTS_HX = 'From Deconvolutions';
     SETTINGS.GCD_COEFFICIENT_METHOD = 'ux';
+    
 end
 
 SetGlobalVariables(ProblemType, ex_num, emin, emax,...
@@ -132,6 +136,7 @@ time.MyMethod = toc(myMethodStart);
 errors.MyMethod = GetErrorMeasure(arr_root_mult_MyMethod,fx_exact);
 LineBreakLarge()
 comp_roots.MyMethod = mat2str(arr_root_mult_MyMethod(:,1));
+
 %catch err
 %   fprintf([mfilename ' : ' 'Error computing Roots by My Method \n' ])
 %
@@ -208,27 +213,24 @@ end
 %
 % Plot the graph real (x) imaginary (y) components of the nondistinct roots
 % obtained by the root calculating methods.
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        figure_name = sprintf('%s : Plot Calculated Roots',mfilename);
-        figure('name',figure_name)
-        hold on;
-        scatter( real(arr_root_mult_MyMethod(:,1)), imag(arr_root_mult_MyMethod(:,1)),'yellow','*','DisplayName','My Method');
-        scatter( real(arr_root_mult_MatlabMethod(:,1)), imag(arr_root_mult_MatlabMethod(:,1)),'red','DisplayName','Matlab Roots');
-        scatter( real(arr_root_mult_Multroot(:,1)), imag(arr_root_mult_Multroot(:,1)),'green','s','filled','DisplayName','MultRoots');
-        
-        
-        xlabel('Real');
-        ylabel('Imaginary');
-        legend(gca,'show')
-        ylim()
-        str = sprintf('Plot of Calculated Roots of Polynomial f(y). \n componentwise noise = %g',emin);
-        title(str);
-        hold off
-    case 'n'
-        % Dont plot graph
-    otherwise
-        error('error: plot_graphs is either y or n')
+if(SETTINGS.PLOT_GRAPHS)
+    
+    figure_name = sprintf('%s : Plot Calculated Roots',mfilename);
+    figure('name',figure_name)
+    hold on;
+    scatter( real(arr_root_mult_MyMethod(:,1)), imag(arr_root_mult_MyMethod(:,1)),'yellow','*','DisplayName','My Method');
+    scatter( real(arr_root_mult_MatlabMethod(:,1)), imag(arr_root_mult_MatlabMethod(:,1)),'red','DisplayName','Matlab Roots');
+%    scatter( real(arr_root_mult_Multroot(:,1)), imag(arr_root_mult_Multroot(:,1)),'green','s','filled','DisplayName','MultRoots');
+    grid on
+    
+    xlabel('Real');
+    ylabel('Imaginary');
+    legend(gca,'show')
+    ylim()
+    str = sprintf('Plot of Calculated Roots of Polynomial f(y). \n componentwise noise = %g',emin);
+    title(str);
+    hold off
+    
 end
 
 % %
@@ -286,7 +288,7 @@ end
 end
 
 
-function [error] = GetErrorMeasure(root_mult_arr,fx_exact)
+function [my_error] = GetErrorMeasure(root_mult_arr, fx_exact)
 % Get the distance between the polynomial f_{comp} and f_{exact}
 %
 % Inputs.
@@ -296,16 +298,16 @@ function [error] = GetErrorMeasure(root_mult_arr,fx_exact)
 %
 % fx_exact : Coefficients of exact Polynomial f(x)
 %
-% % Outputs 
+% % Outputs
 %
 % Error : Measure of error between the exact polynomial f(x) and the
 % polynomial f(x) computed by the root finding method.
 
 % Get coefficients of computed polynomial f(x)
-fx_comp = GetWithoutBinomials(BuildPolyFromRoots(root_mult_arr));
+fx_comp = GetWithoutBinomials( BuildPolyFromRoots( root_mult_arr));
 
 % Get distance between f_{comp}(x) and f_{exact}(x)
-error  = norm(Normalise(fx_comp) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
-display(error);
+my_error  = norm(Normalise(fx_comp) - Normalise(fx_exact)) ./ norm(Normalise(fx_exact));
+display(my_error);
 
 end

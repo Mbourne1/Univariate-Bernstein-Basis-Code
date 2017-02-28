@@ -131,9 +131,9 @@ for i = 1:1:length(set_fx)-1
     deg_hw = deg_fw_prev - deg_fw;
     
     % Build the Matrix T(f)
-    T1 = BuildT1(fw,deg_hw);
+    T1 = BuildT1(fw, deg_hw);
 
-    D = BuildD(deg_fw,deg_hw);
+    D = BuildD_2Polys(deg_fw, deg_hw);
     Q1 = BuildQ1(deg_hw);
     DT1Q1{i}  = D*T1*Q1;
 end

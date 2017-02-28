@@ -1,4 +1,4 @@
-function h1 = Deconvolve(fx,gx)
+function h1 = Deconvolve(fx, gx)
 % Given two polynomials, f(x) and g(x) of degrees m and n, perform
 % deconvolution to obtain h = f(x)/g(x), 
 %

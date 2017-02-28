@@ -1,5 +1,5 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    Get_GCD_Degree_2Polys(fx,gx,deg_limits)
+    Get_GCD_Degree_2Polys(fx, gx, k_limits)
 % GetGCD_Degree_2Polys(fx,gx)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
@@ -11,7 +11,7 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 % gx : coefficients of polynomail g, expressed in Bernstein Basis
 %
-% deg_limits : set the upper and lower bound of the degree of the
+% k_limits : set the upper and lower bound of the degree of the
 % GCD of polynomials f(x) and g(x). Usually used when using o_roots() where
 % prior information is known about the upper and lower bound due to number
 % of distinct roots.
@@ -29,169 +29,247 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 
 addpath 'Preprocessing'
 addpath 'Sylvester Matrix'
+global SETTINGS
 
-% Get degree of polynomail f(x)
+% Get degree of polynomail f(x) and g(x)
 m = GetDegree(fx);
 n = GetDegree(gx);
 
+% Set my limits to either be equal to the precalculated limits, or an
+% extended range.
+my_limits = [1 min(m,n)];
+
 % If the number of distinct roots in f(x) is one, then the degree of the
 % GCD of f(x) and f'(x) = m-1 = n.
-lower_lim = deg_limits(1);
-upper_lim = deg_limits(2);
+lowerLimit = my_limits(1);
+upperLimit = my_limits(2);
 
-% Set upper and lower limit for computing the degree of the GCD. Note may
-% be best to set to degree limits or may be best to set to 1 & min(m,n)
-lower_lim_comp = 1;
-upper_lim_comp = min(m,n);
-deg_limits_comp = [lower_lim_comp upper_lim_comp];
+
 
 % Get the number of subresultants which must be constructed.
-nSubresultants = upper_lim_comp - lower_lim_comp +1 ;
+nSubresultants = upperLimit - lowerLimit +1 ;
 
 % %
 % Initialisation stage
 
 % Initialise vectors to store all optimal alphas and theta, and each
 % geometric mean for f and g in each S_{k} for k = 1,...,min(m,n)
-vAlpha    =   zeros(nSubresultants,1);
-vTheta    =   zeros(nSubresultants,1);
-vGM_fx    =   zeros(nSubresultants,1);
-vGM_gx    =   zeros(nSubresultants,1);
-
-vMaxDiagR1 = zeros(nSubresultants,1);
-vMinDiagR1 = zeros(nSubresultants,1);
-vMaxRowNormR1 = zeros(nSubresultants,1);
-vMinRowNormR1 = zeros(nSubresultants,1);
-
-% Initialise a vector to store minimal residuals obtained by QR
-% decomposition of each subresultant S_{k} for k=1,...,min(m,n)
-vMinimumResidual_QR  = zeros(nSubresultants,1);
-vMinimumResidual_SVD = zeros(nSubresultants,1);
-
-% Initialise a vector to store the minimum singular values \sigma_{i} of each
-% subresultant S_{i}(f,g), where i is between the upper and lower bound.
-vMinimumSingularValues = zeros(nSubresultants,1);
-
-% Stores Data from QR decomposition.
-Data_RowNorm    = [];
-Data_DiagNorm   = [];
+vAlpha    =   zeros(nSubresultants, 1);
+vTheta    =   zeros(nSubresultants, 1);
+vGM_fx    =   zeros(nSubresultants, 1);
+vGM_gx    =   zeros(nSubresultants, 1);
 
 
-% For each subresultant $S_{k}$
-for k = lower_lim_comp:1:upper_lim_comp
+% Initialise some cell arrays
+arr_SingularValues = cell(nSubresultants, 1);
+arr_Sk = cell(nSubresultants, 1);
+arr_R = cell(nSubresultants, 1);
+arr_R1 = cell(nSubresultants, 1);
+
+% For each subresultant $S_{k} k = lowerLimt ... upperLimit$
+for k = lowerLimit : 1 : upperLimit
     
-    i = k - lower_lim_comp + 1;
+    i = k - lowerLimit + 1;
     
-    [vGM_fx(i), vGM_gx(i),vAlpha(i),vTheta(i)] = Preprocess_2Polys(fx,gx,k);
+    [vGM_fx(i), vGM_gx(i), vAlpha(i), vTheta(i)] = Preprocess_2Polys(fx, gx, k);
     
     % 18/04/2016
     % Given the previous geometric mean of f(x) calculate the new geometric
     % mean by my new method
-    if i>1
-        %GM_fx = GetGeometricMeanFromPrevious(fx , vGM_fx(i-1) , m , n-k);
-        %GM_gx = GetGeometricMeanFromPrevious(gx , vGM_gx(i-1) , n , m-k);
+    
+    if (i>1)
+        GM_fx_test = GetGeometricMeanFromPrevious(fx , vGM_fx(i-1) , m , n-k);
+        GM_gx_test = GetGeometricMeanFromPrevious(gx , vGM_gx(i-1) , n , m-k);
     end
     
     % Divide f(x) and g(x) by geometric means
-    fx_n = fx./vGM_fx(i);
-    gx_n = gx./vGM_gx(i);
+    fx_n = fx./ vGM_fx(i);
+    gx_n = gx./ vGM_gx(i);
     
     % Construct the kth subresultant matrix S_{k}(f(\theta),g(\theta))
-    fw = GetWithThetas(fx_n,vTheta(i));
-    gw = GetWithThetas(gx_n,vTheta(i));
+    fw = GetWithThetas(fx_n, vTheta(i));
+    gw = GetWithThetas(gx_n, vTheta(i));
     
     % Build the k-th subresultant
-    Sk = BuildSubresultant_2Polys(fw,vAlpha(i).*gw,k);
+    arr_Sk{i} = BuildSubresultant_2Polys(fw, vAlpha(i).*gw, k);
     
     % Get singular values of S_{k}
-    vSingularValues = svd(Sk);
+    arr_SingularValues{i} = svd(arr_Sk{i});
     
-    % Get the minimal singular value from S_{k}
-    vMinimumSingularValues(i) = min(vSingularValues);
+    % Get the QR decomposition
+    [~, arr_R{i}] = qr(arr_Sk{i});
+    [~,c] = size(arr_R{i});
+    arr_R1{i} = arr_R{i}(1:c,1:c);
     
-    % Get the matrix R1 from the QR Decomposition of S
-    R1 = GetR1(Sk);
-    
-    % Get Norms of each row in the matrix R1
-    vR1_RowNorms = sqrt(sum(R1.^2,2))./norm(R1);
-    
-    % Get Norms of diagonal eleements of R1
-    vDiagsR1 = diag(R1);
-    vDiagsR1_norm = vDiagsR1 ./ norm(vDiagsR1);
-    
-    % Insert Row Norm data into a matrix
-    Data_RowNorm = AddToResults(Data_RowNorm,vR1_RowNorms,k);
-    
-    % Insert diagonals data into a matrix
-    Data_DiagNorm = AddToResults(Data_DiagNorm,vDiagsR1_norm,k);
-    
-    % Get maximum and minimum row diagonals of R1
-    vMaxDiagR1(i) = max(vDiagsR1);
-    vMinDiagR1(i) = min(vDiagsR1);
-    
-    % Get maximum and minimum row norms of rows of R1.
-    vMaxRowNormR1(i) = max(vR1_RowNorms);
-    vMinRowNormR1(i) = min(vR1_RowNorms);
-    
-    % Get the minimal residuals for each subresultant S_{k}.
-    vMinimumResidual_QR(i) = GetMinimalDistance(Sk,'QR');
-    vMinimumResidual_SVD(i) = GetMinimalDistance(Sk,'SVD');
-    
-    
-end % End of for
 
-% %
-% %
-% %
-% Choose a metric to determine the degree of the GCD.
-global SETTINGS
-switch SETTINGS.METRIC
-    case 'Row Norms'
-        metric = vMaxRowNormR1./vMinRowNormR1;
-        
-    case 'Row Diagonals'
-        metric = vMaxDiagR1./vMinDiagR1;
-        
-    case 'Singular Values'
-        metric = vMinimumSingularValues;
+    
 end
 
 
-% % Analysis of Minimum Singular values
-
-if (upper_lim_comp == lower_lim_comp)
-    alpha = vAlpha(1);
-    theta = vTheta(1);
-    GM_fx = vGM_fx(1);
-    GM_gx = vGM_gx(1);
-    t = upper_lim_comp;
+if(SETTINGS.PLOT_GRAPHS)
     
-    return;
+    x_vec = lowerLimit:1:upperLimit;
+    
+    figure_name = sprintf('Geometric Mean of f(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+    figure('name',figure_name)
+    hold on
+    plot(x_vec,log10(vGM_fx), '-s')
+    xlabel('k')
+    ylabel('log_{10} lamda_{k}')
+    %xlabel('$\alpha$','Interpreter','LaTex')
+    title(figure_name)
+    hold off
+    
+    figure_name = sprintf('Geometric Mean of g(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+    figure('name',figure_name)
+    hold on
+    plot(x_vec,log10(vGM_gx), '-s')
+    xlabel('k')
+    ylabel('log_{10} mu')
+    title(figure_name)
+    hold off
+    
+    figure_name = sprintf('Theta values in %s',SETTINGS.SYLVESTER_BUILD_METHOD);
+    figure('name',figure_name)
+    hold on
+    plot(x_vec,log10(vTheta), '-s');
+    xlabel('k')
+    ylabel('log_{10} theta')
+    title(figure_name)
+    hold off
+    
+    figure_name = sprintf('Alpha values in %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+    title(figure_name)
+    figure('name',figure_name)
+    hold on
+    plot(x_vec,log10(vAlpha), '-s')
+    xlabel('k')
+    ylabel('log_{10} alpha')
+    title(figure_name)
+    hold off
+    
+end
+
+
+
+fprintf(sprintf('Metric used to compute degree of GCD : %s \n',SETTINGS.RANK_REVEALING_METRIC));
+
+% R1 Row Norms
+% R1 Row Diagonals
+% Singular Values
+% Residuals
+
+switch SETTINGS.RANK_REVEALING_METRIC
+    
+    case 'R1 Row Norms'
+        
+        % Preallocate vectors
+        vMaxRowNormR1 = zeros(nSubresultants, 1);
+        vMinRowNormR1 = zeros(nSubresultants, 1);
+        arr_R1_RowNorms = cell(nSubresultants, 1);
+        
+        % Get maximum and minimum row norms of rows of R1.
+        for i = 1:1: nSubresultants
+            
+            arr_R1_RowNorms{k} = sqrt(sum(arr_R1{i}.^2,2))./norm(arr_R1{i});
+            
+            vMaxRowNormR1(i) = max(arr_R1_RowNorms{i});
+            vMinRowNormR1(i) = min(arr_R1_RowNorms{i});
+        end
+        
+        % Plot graphs
+        plotRowNorms(arr_R1_RowNorms, my_limitsm, k_limits);
+        plotMaxMinRowSum(vMaxRowNormR1, vMinRowNormR1, my_limits, k_limits)
+        
+        metric = vMinRowNormR1./vMaxRowNormR1;
+        
+    case 'R1 Row Diagonals'
+        
+        % Initialise vectors to store max and min diagonal entries of R1
+        vMaxDiagR1 = zeros(nSubresultants, 1);
+        vMinDiagR1 = zeros(nSubresultants, 1);
+        arr_DiagsR1 = cell(nSubresultants, 1);
+        
+        % Get maximum and minimum row diagonals of R1
+        for i = 1:1:nSubresultants
+            arr_DiagsR1{k} = diag(abs(arr_R1{i}));
+            
+            vMaxDiagR1(i) = max(arr_DiagsR1{i});
+            vMinDiagR1(i) = min(arr_DiagsR1{i});
+            
+        end
+        
+        % Plot Graphs
+        plotRowDiagonals(arr_DiagsR1, k_limits);
+        plotMaxMinRowDiagonals(vMaxDiagR1,vMinDiagR1, k_limits);
+        
+        metric = vMinDiagR1./vMaxDiagR1;
+        
+    case 'Singular Values'
+        
+        % Get the minimal singular value from S_{k}
+        
+        % Initialise a vector to store minimimum singular value of each
+        % S_{k}
+        vMinimumSingularValues = zeros(nSubresultants,1);
+        
+        for i = 1:1:nSubresultants
+            
+            % Get minimum Singular value of S_{k}
+            vMinimumSingularValues(i) = min(arr_SingularValues{i});
+        end
+        
+        metric = vMinimumSingularValues;
+        
+        % Plot Graphs
+        plotSingularValues(arr_SingularValues, k_limits);
+        plotMinimumSingularValues(vMinimumSingularValues, k_limits)
+        
+    case 'Residuals'
+        
+        % Initialise vectors to store residuals
+        vMinimumResidual_QR  = zeros(nSubresultants,1);
+        vMinimumResidual_SVD = zeros(nSubresultants,1);
+        
+        % Get the minimal residuals for each subresultant S_{k} by QR and
+        % SVD
+        
+        for i = 1:1:nSubresultants
+        
+            vMinimumResidual_QR(i) = GetMinimalDistance(arr_Sk{i},'QR');
+            vMinimumResidual_SVD(i) = GetMinimalDistance(arr_Sk{i},'SVD');
+        end
+        
+        % Plot Graphs
+        plotResiduals(vMinimumResidual_QR, my_limits, k_limits);
+        %plotResiduals(vMinimumResidual_SVD, k_limits);
+        
+        metric = vMinimumResidual_QR;
+        
 end
 
 
 % If only one subresultant exists, use an alternative method.
-if (upper_lim_comp - lower_lim_comp == 0 )
+if (upperLimit - lowerLimit == 0 )
     
-        t = Get_GCD_Degree_OneSubresultant(vSingularValues);
-        alpha = vAlpha(1);
-        theta = vTheta(1);
-        GM_fx = vGM_fx(1);
-        GM_gx = vGM_gx(1);
-        return;
-        
+    % Get the metric to compute the degree of the GCD using only one
+    % subresultant matrix.
+    metric_OneSubresultants = arr_SingularValues{1};
     
+    % Compute the degree of the GCD.
+    t = Get_GCD_Degree_OneSubresultant_2Polys(metric_OneSubresultants);
+    
+    alpha = vAlpha(1);
+    theta = vTheta(1);
+    GM_fx = vGM_fx(1);
+    GM_gx = vGM_gx(1);
+    
+   
     
 else
     
-    [t] = Get_GCD_Degree_MultipleSubresultants(metric,deg_limits_comp);
+    [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(metric, my_limits);
     
-    
-    % % Graph Plotting
-    PlotGraphs_GCDDegree()
-    
-    % %
-    % Outputs
     
     % Output all subresultants, all optimal alphas, all optimal thetas and all
     % geometric means for each subresultant S_{k} where k = 1,...,min(m,n)
@@ -208,28 +286,6 @@ end
 end
 
 
-function data = AddToResults(data,vector,k)
-% Given the vector of data, it is necessary to include in a 3 columned
-% matrix, along with the corresponding value k to indicate that the value
-% came from the k-th subresultant, and an index 1:1:nEntries.
-
-
-% Get Number of entries in vector
-nEntries = size(vector,1);
-
-% Get a vector of k
-v_k = k.* ones(nEntries,1);
-
-% Get a vector of 1:1:n
-vec_n = 1:1:nEntries;
-
-% Form a triple of [ks, the value of QR_RowNorm, and the index of the value of
-% the row of R1 corresponding to QR_RowNorm].
-
-temp_data = [v_k vector vec_n'];
-data = [data; temp_data];
-
-end
 
 
 

@@ -30,6 +30,10 @@ global SETTINGS;
 
 switch SETTINGS.APF_METHOD
 
+    % Standard APF Nonlinear
+    % Standard APF Linear
+    % None
+    
     case 'Standard APF Nonlinear'
         
         [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...

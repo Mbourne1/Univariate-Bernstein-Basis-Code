@@ -156,7 +156,7 @@ for i = 1:1:nDistinct_hx
         % Build the Cauchy like matrix T_{m_{i} - m_{i-1}}(f_{i})
         Tf{j} = BuildT1(fx, deg_hx);
         
-        D{j} = BuildD(deg_fx,deg_hx);
+        D{j} = BuildD_2Polys(deg_fx,deg_hx);
         
         % Stack beneath all other T_{f} which are multiplied by [_{i}(x)
         Cf{i} = [Cf{i} ; D{j}*Tf{j}];

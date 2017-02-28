@@ -25,7 +25,7 @@ function [PostAPF_fx, PostAPF_gx, PostAPF_dx, PostAPF_uk, PostAPF_vk, PostAPF_th
 %
 % % Outputs
 %
-% 
+%
 
 global SETTINGS
 
@@ -86,10 +86,10 @@ res_vec = bk - ((H1C1G)*dw);
 % Set some initial values
 
 % The initial residual vector
-residual(ite) = norm(res_vec);
+vResidual(ite) = norm(res_vec);
 
 % Initialise vector z_{f}(x), perturbations to polynomial f(x)
-v_zf               = zeros(m+1,1);     
+v_zf               = zeros(m+1,1);
 
 % Initialise vector z_{u}(x), perturbations of polynomial u(x)
 v_zu = zeros(length(uw),1);
@@ -144,7 +144,7 @@ while condition > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     delta_zf    = y(m-t+2:2*m-t+2);
     delta_theta = y(end);
     
-    % % 
+    % %
     % Update
     
     % Update the vector z_{u}(x)
@@ -185,7 +185,7 @@ while condition > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     
     % obtain partial derivatives of z1 and z2 with respect to theta
     z1w_wrt_theta = Differentiate_wrt_theta(z1w,th(ite));
-        
+    
     % Build the matrix H1*E1*G
     H1E1G = BuildH1C1G(z1w,t);
     
@@ -236,7 +236,7 @@ while condition > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     ek = fw + sw;
     
     % update vector of residual
-    residual(ite) = norm(res_vec);
+    vResidual(ite) = norm(res_vec);
     
     % Update Condition scalar.
     condition = norm(res_vec)/norm(ek);
@@ -288,14 +288,13 @@ PostAPF_gx = zeros(m,1);
 % end
 
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        
-        figure(100)
-        title('plotting residual')
-        hold on
-        plot(1:1:length(residual),(residual));
-        
+if(SETTINGS.PLOT_GRAPHS)
+    figure_name = sprintf([mfilename 'Plot Residuals']);
+    figure('name',figure_name)
+    title('plotting residual')
+    hold on
+    plot(1:1:length(vResidual),(vResidual));
+    hold off
 end
 
 end

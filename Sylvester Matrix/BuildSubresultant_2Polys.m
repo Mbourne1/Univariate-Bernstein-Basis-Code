@@ -1,4 +1,4 @@
-function [Sk] = BuildSubresultant_2Polys(fx,gx,k)
+function [Sk] = BuildSubresultant_2Polys(fx, gx, k)
 % BuildSubresultant_2Polys(fx,gx,k)
 %
 % This function builds the k-th Sylvester subresultant matrix S_{k}(f,g), 
@@ -77,7 +77,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         Sk = [D1T1Q D2T2Q];
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD is either standard or rearranged')
+        error('SETTINGS.SYLVESTER_BUILD_METHOD must be one of the following \n T \n DT \n DTQ \n TQ \n DTQ Rearranged Denom Removed \n DTQ Rearranged')
 end
 
 end

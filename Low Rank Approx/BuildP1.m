@@ -1,4 +1,4 @@
-function P1 = BuildP1(m,n_k,idx_col)
+function P1 = BuildP1(m, n_k, idx_col)
 % Build the matrix P1, a partition of P, where P*[f;g] gives a column of
 % the Sylvester subresultant matrix S_{k}(f,g)
 %
@@ -18,9 +18,9 @@ function P1 = BuildP1(m,n_k,idx_col)
 P1 = zeros(m+n_k+1,m+1);
 
 % Get with binomials corresponding to v(x)
-mat = eye(m+1) .* nchoosek(n_k,idx_col-1);
+mat = eye(m+1) .* nchoosek(n_k, idx_col-1);
 
 % 
-P1(idx_col:idx_col+m,:) = mat;
+P1(idx_col:idx_col+m, :) = mat;
 
 end

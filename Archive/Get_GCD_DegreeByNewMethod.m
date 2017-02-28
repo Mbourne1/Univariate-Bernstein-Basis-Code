@@ -175,16 +175,26 @@ end % End of for
 % %
 % %
 % Choose a metric to determine the degree of the GCD.
+% R1 Row Norms
+% R1 Row Diagonals
+% Singular Values
+% Residuals
 global SETTINGS
-switch SETTINGS.METRIC
-    case 'Row Norms'
+switch SETTINGS.RANK_REVEALING_METRIC
+    
+    case 'R1 Row Norms'
+        
         metric = vMaxRowNormR1./vMinRowNormR1;
         
-    case 'Row Diagonals'
+    case 'R1 Row Diagonals'
+        
         metric = vMaxDiagR1./vMinDiagR1;
         
     case 'Singular Values'
         metric = vMinimumSingularValues;
+        
+    case 'Residuals'
+        error('Code not developed')
 end
 
 

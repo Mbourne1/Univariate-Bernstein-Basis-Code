@@ -66,15 +66,15 @@ vRoots = o_roots_matlab(poly);
 %%
 % Define the global variables for my root finder.
 global SETTINGS
-SETTINGS.PLOT_GRAPHS = 'y';
-SETTINGS.BOOL_Q = 'y';
-SETTINGS.BOOL_LOG = 'y';
-SETTINGS.BOOL_DENOM_SYL = 'y';
-SETTINGS.BOOL_ALPHA_THETA = 'y';
+SETTINGS.PLOT_GRAPHS = true;
+SETTINGS.BOOL_LOG = false;
+SETTINGS.BOOL_ALPHA_THETA = true;
 SETTINGS.MEAN_METHOD = 'Geometric Mean Matlab Method';
-SETTINGS.SYLVESTER_BUILD_METHOD = 'Standard STLN';
-SETTINGS.SNTLN_METHOD = 'y';
-SETTINGS.APF_METHOD = 'n';
+SETTINGS.SYLVESTER_BUILD_METHOD = 'DTQ';
+
+SETTINGS.SNTLN_METHOD = 'None';
+SETTINGS.APF_METHOD = 'None';
+
 SETTINGS.APF_BUILD_METHOD = 'Standard APF' ;
 SETTINGS.DECONVOLVE_METHOD = 'single';
 
@@ -91,9 +91,9 @@ for i = 1:1:num_roots
     fprintf('Root : %2.4f \n', r)
     
     % Get the x coordinate
-    x_ord = BernsteinEvaluate(C2_xt,r);
+    x_ord = BernsteinEvaluate(C2_xt, r);
     % Get the y coordinate
-    y_ord = BernsteinEvaluate(C2_yt,r);
+    y_ord = BernsteinEvaluate(C2_yt, r);
     fprintf('Intersection Point : (%2.4f, %2.4f) \n',x_ord,y_ord)
     
 end

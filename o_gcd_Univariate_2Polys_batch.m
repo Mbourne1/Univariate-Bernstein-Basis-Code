@@ -1,18 +1,17 @@
-function [] = o_gcd_batch()
+function [] = o_gcd_Univariate_2Polys_batch()
 
 
-ex_num_arr = {  '1','2','3','4','5'};
+ex_num_arr = {'1'};
 %ex_num_arr = {  '2'};
-bool_alpha_theta_arr = {'y','n'};
-emin_arr = {1e-08,1e-10,1e-12};
+bool_alpha_theta_arr = {true, false};
+emin_arr = {1e-08};
 %emin_arr = {1e-08,1e-10};
 low_rank_approx_method_arr = {'Standard SNTLN','Standard STLN','None'};
-apf_method_arr = {'Standard APF Nonlinear','None'};
+apf_method_arr = {'Standard APF Nonlinear','Standard APF Linear','None'};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
-bool_log_arr = {'n'};
+bool_log_arr = {false};
 gcd_coefficient_method_arr = {'ux and vx'};
-%Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ','DTQ Rearranged Denom Removed','DTQ Rearranged'};
-Sylvester_Build_Method_arr = {'DTQ'};
+Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ','DTQ Rearranged Denom Removed','DTQ Rearranged'};
 
 
 global SETTINGS
@@ -61,7 +60,7 @@ for i1 = 1:1:length(bool_log_arr)
                                     try
                                         close all;
                                         clc;
-                                        o_gcd_2Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
+                                        o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
                                         fileId = fopen('log.txt','a')
                                         fprintf(fileId,'%s \n','success');
                                         fclose(fileId);

@@ -36,7 +36,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
     case 'DT'
         
-        D = BuildD(m,n_k);
+        D = BuildD_2Polys(m,n_k);
         T1 = BuildT1(fx,n_k);
         Cf = D*T1;
         
@@ -51,7 +51,6 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
         T1 = BuildT1(fx,n_k);
         Q1 = BuildQ1(n_k);
-        
         Cf = T1*Q1;
         
     case 'DTQ Rearranged Denom Removed'

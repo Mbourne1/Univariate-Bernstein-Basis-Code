@@ -13,6 +13,9 @@ function x = SolveAx_b(A,b)
 % %
 % %
 % %
+
+warning('off')
+
 [~,n2] = size(A);
 [Q,R] = qr(A);
 R1 = R(1:n2,:);
@@ -39,5 +42,7 @@ if (res_QR < res_SVD)
 else
     x = x_ls_SVD;
 end
+
+warning('on')
 
 end

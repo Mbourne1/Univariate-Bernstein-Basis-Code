@@ -26,7 +26,7 @@ switch SETTINGS.APF_BUILD_METHOD
         C1 = BuildT1(uw,t);
         
         % Build the matrix G
-        G  = BuildQ(t);
+        G  = BuildQ1(t);
         
         % Build the matrix H*C*G
         H1C1G = H1*C1*G;
@@ -54,15 +54,16 @@ function H1C1G = BuildH1C1G_Rearranged(uw,t)
 % Global Variables
 global SETTINGS
 
-switch SETTINGS.BOOL_LOG
-    case 'y'
-        % Use logs
-        H1C1G = BuildH1C1G_log(uw,t);
-    case 'n'
-        % Use nchoosek
-        H1C1G = BuildH1C1G_nchoosek(uw,t);
-    otherwise
-        error('SETTINGS.BOOL_LOG is either y or n')
+if(SETTINGS.BOOL_LOG)   
+    
+    % Use logs
+    H1C1G = BuildH1C1G_log(uw,t);
+    
+elseif (SETTINGS.BOOL_LOG == false)
+    
+    % Use nchoosek
+    H1C1G = BuildH1C1G_nchoosek(uw,t);
+
 end
 
 end

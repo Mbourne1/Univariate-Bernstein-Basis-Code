@@ -37,6 +37,8 @@ for i = 1:1:nCols
 end
 
 % Get the minimal residual and the index of the corresponding column ck
-[residual,idx_col] = min(residual_vec);
+[residual,idx_col] = min(abs(residual_vec));
+
+
 
 end

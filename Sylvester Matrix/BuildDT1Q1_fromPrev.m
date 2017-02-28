@@ -4,11 +4,10 @@ function C1a = BuildDT1Q1_fromPrev(m,n,k,C_0a)
 % subresultant S_{k} to be built. C_0a : the preceeding Partition, from
 % which C1a will be built. BOOL_DENOM : BOOL_LOG : Unused.
 
-global SETTINGS
-
 
 % Where C_0 is the previous Cauchy Matrix,
-knew = k+1;
+k_new = k+1;
+
 % Build Matrix A
 A = [zeros((m+n-k),1) diag(1./(1:1:(m+n-k))) ];
 
@@ -22,14 +21,11 @@ Ba = [...
 C1a = A * C_0a * Ba;
 
 %
-switch SETTINGS.BOOL_DENOM_SYL
-    case 1
-        % if Denominator is included in building toeplitz, then update
-        % denominator for next S_k
-        ratio = nchoosek(m+n-(k),n-(k)) ./ nchoosek(m+n-(knew),n-(knew));
-        C1a = C1a .* ratio;
-    case 0
-end
+
+% if Denominator is included in building toeplitz, then update
+% denominator for next S_k
+ratio = nchoosek(m+n-(k),n-(k)) ./ nchoosek(m+n-(k_new),n-(k_new));
+C1a = C1a .* ratio;
 
 
 end

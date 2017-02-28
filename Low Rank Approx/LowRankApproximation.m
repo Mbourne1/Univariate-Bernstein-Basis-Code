@@ -5,9 +5,7 @@ function [fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
 %
 % Inputs.
 %
-% fx : Coefficients of polynomial f(x)
-%
-% gx : Coefficients of polynomial g(x)
+% [fx, gx] : Coefficients of polynomial f(x) and g(x)
 %
 % alpha : Optimal value of \alpha
 %
@@ -19,17 +17,13 @@ function [fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
 %
 % % Outputs
 %
-% fx_lr : Outputs polynomial f(x) 
+% [fx_lr, gx_lr] : Outputs polynomial f(x) and g(x)
 %
-% gx_lr : Output polynomial g(x)
+% [ux_lr, vx_lr] : Output polynomial u(x) and v(x)
 %
-% ux_lr : Output polynomial u(x)
+% alpha_lr : optimal value of \alpha
 %
-% vx_lr : Output polynomial v(x)
-%
-% alpha : optimal value of \alpha
-%
-% theta : Optimal value of \theta
+% theta_lr : Optimal value of \theta
 
 global SETTINGS
 
@@ -37,9 +31,9 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     
     case 'Standard STLN'
         
-        % Get f(\omega) and g(\omega)
-        fw = GetWithThetas(fx,theta);
-        gw = GetWithThetas(gx,theta);
+        % Get preprocessed polynomials f(\omega) and g(\omega)
+        fw = GetWithThetas(fx, theta);
+        gw = GetWithThetas(gx, theta);
         
         % Performe STLN to get low rank approximation of S(f,g)
         [fw_lr, a_gw_lr, uw, vw] = STLN(fw, alpha.*gw, k, idx_col);
@@ -57,7 +51,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         alpha_lr = alpha;
         theta_lr = theta;
         
-        % 
+        %
         Plot_LowRank_SingularValues(fx, gx, fx_lr, gx_lr,...
             fw, alpha.*gw, fw_lr, a_gw_lr,k);
         
@@ -86,7 +80,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
     case 'None'
         
-      
+        
         % Get f(\omega) and g(\omega)
         fw = GetWithThetas(fx, theta);
         gw = GetWithThetas(gx, theta);
@@ -119,9 +113,7 @@ function Plot_LowRank_SingularValues(fx, gx, fx_lr, gx_lr, fw, a_gw, fw_lr, a_gw
 %
 % % Inputs
 %
-% fx : Coefficients of input polynomial f(x)
-%
-% gx : Coefficients of input polynomial g(x)
+% [fx, gx] : Coefficients of input polynomial f(x) and g(x)
 %
 % fx_lr : Coefficients of polynomial f(x) + \delta f(x) from low rank
 % approximation method.
@@ -139,36 +131,41 @@ function Plot_LowRank_SingularValues(fx, gx, fx_lr, gx_lr, fw, a_gw, fw_lr, a_gw
 
 global SETTINGS
 
-switch SETTINGS.PLOT_GRAPHS
-    case 'y'
-        
-        % Build Sylvester subresultant matrices S_{k} for each of the four 
-        % pairs of polynomials.
-        S1 = BuildDTQ(fx,gx,k);
-        S2 = BuildDTQ(fx_lr,gx_lr,k);
-        S3 = BuildDTQ(fw,a_gw,k);
-        S4 = BuildDTQ(fw_lr,a_gw_lr,k);
-        
-        % Get singular values for each of the 4 Sylvester subresultant
-        % matrices S_{k}
-        vSingularValues1 = svd(S1);
-        vSingularValues2 = svd(S2);
-        vSingularValues3 = svd(S3);
-        vSingularValues4 = svd(S4);
-        
-        % Plot Singular values
-        figure_name = sprintf([mfilename ' : Singular Values']);
-        figure('name',figure_name)
-        plot(log10(vSingularValues1),'-s','DisplayName','fx,gx')
-        hold on
-        plot(log10(vSingularValues2),'-s','DisplayName','fx_lr,gx_lr')
-        plot(log10(vSingularValues3),'-s','DisplayName','fw,a_gw')
-        plot(log10(vSingularValues4),'-s','DisplayName','fw_lr,gw_lr')
-        legend(gca,'show');
-        hold off
-        
-    case 'n'
-    otherwise
-        error([mfilename ' : error'])
+if(SETTINGS.PLOT_GRAPHS)
+    
+    % Build Sylvester subresultant matrices S_{k} for each of the four
+    % pairs of polynomials.
+    
+    % Unprocessed 
+    S1 = BuildDTQ(fx, gx, k);
+    
+    % Unprocessed after low rank approximation
+    S2 = BuildDTQ(fx_lr, gx_lr, k);
+    
+    % Preprocessed
+    S3 = BuildDTQ(fw, a_gw, k);
+    
+    % Preprocessed after low rank approximation
+    S4 = BuildDTQ(fw_lr, a_gw_lr, k);
+    
+    % Get singular values for each of the 4 Sylvester subresultant
+    % matrices S_{k}
+    vSingularValues1 = svd(S1);
+    vSingularValues2 = svd(S2);
+    vSingularValues3 = svd(S3);
+    vSingularValues4 = svd(S4);
+    
+    % Plot Singular values
+    figure_name = sprintf([mfilename ' : Singular Values']);
+    figure('name',figure_name)
+    plot(log10(vSingularValues1),'-s','DisplayName','fx,gx')
+    hold on
+    plot(log10(vSingularValues2),'-s','DisplayName','fx_lr,gx_lr')
+    plot(log10(vSingularValues3),'-s','DisplayName','fw,a_gw')
+    plot(log10(vSingularValues4),'-s','DisplayName','fw_lr,gw_lr')
+    legend(gca,'show');
+    hold off
+    
+    
 end
 end

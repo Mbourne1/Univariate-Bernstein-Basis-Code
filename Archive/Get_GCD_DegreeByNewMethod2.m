@@ -1,5 +1,5 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    GetGCD_DegreeByNewMethod2(fx,gx,deg_limits)
+    Get_GCD_DegreeByNewMethod2(fx,gx,deg_limits)
 % Get degree of the AGCD of input polynomials f(x) and g(x)
 %
 % Inputs.
@@ -32,11 +32,11 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 
 
 % Get lower limit of degree of gcd
-lower_lim = deg_limits(1);
-upper_lim = deg_limits(2);
+lowerLimit = deg_limits(1);
+upperLimit = deg_limits(2);
 
 % Get the number of subresultants to be built
-nSubresultants = upper_lim - lower_lim +1 ;
+nSubresultants = upperLimit - lowerLimit +1 ;
 
 % Get degree m of polynomial f
 m = GetDegree(fx);
@@ -70,10 +70,10 @@ Data_DiagNorm = [];
 
 
 % For each subresultant $$S_{k}$$
-for k = lower_lim:1:upper_lim
+for k = lowerLimit:1:upperLimit
     
     % Get index i, used for storing in vectors.
-    i = k - lower_lim + 1;
+    i = k - lowerLimit + 1;
     
     % If S_{k} is the first subresultant, then it must be built from
     % scratch
@@ -187,21 +187,28 @@ end
 % %
 % %
 % Choose a metric to determine the degree of the GCD.
+% R1 Row Norms
+% R1 Row Diagonals
+% Singular Values
+% Residuals
 global SETTINGS
-switch SETTINGS.METRIC
-    case 'Row Norms'
+switch SETTINGS.RANK_REVEALING_METRIC
+    case 'R1 Row Norms'
         metric = vMaxRowNormR1./vMinRowNormR1;
         
         
-    case 'Row Diagonals'
+    case 'R1 Row Diagonals'
         metric = vMaxDiagR1./vMinDiagR1;
         
     case 'Singular Values'
         metric = vMinimumSingularValues;
+        
+    case 'Residuals'
+        error('Code not developed')
 end
 
 
-if (lower_lim == 1)
+if (lowerLimit == 1)
     can_be_coprime = true;
 else
     can_be_coprime = false;
@@ -213,7 +220,7 @@ end
 
 
 
-if lower_lim == upper_lim
+if lowerLimit == upperLimit
     
     if can_be_coprime
     
@@ -223,7 +230,7 @@ if lower_lim == upper_lim
         GM_fx = vGM_fx(1);
         GM_gx = vGM_gx(1);    
     else
-       t = lower_lim;
+       t = lowerLimit;
        
     end
     
@@ -231,7 +238,7 @@ if lower_lim == upper_lim
 else
     %
     %
-    [t] = GetGCDDegree_MultipleSubresultants(metric,lower_lim);
+    [t] = GetGCDDegree_MultipleSubresultants(metric,lowerLimit);
     
     PlotGraphs();
     % Outputs
@@ -239,10 +246,10 @@ else
     % Output just corresponding to calculated value of the degree. Output
     % subresultant S_{t}, alpha_{t}, theta_{t}, and corresponding geometric
     % means.
-    alpha = vAlpha(t-lower_lim+1);
-    theta = vTheta(t-lower_lim+1);
-    GM_fx = vGM_fx(t-lower_lim+1);
-    GM_gx = vGM_gx(t-lower_lim+1);
+    alpha = vAlpha(t-lowerLimit+1);
+    theta = vTheta(t-lowerLimit+1);
+    GM_fx = vGM_fx(t-lowerLimit+1);
+    GM_gx = vGM_gx(t-lowerLimit+1);
 end
 
 

@@ -63,7 +63,7 @@ while vDeg_arr_fx(ite) > 0
         
         
         % Get GCD of f(x) and f'(x)
-        [arr_fx{ite,1},~,arr_fx{ite+1,1}, arr_ux{ite,1} ,~,~,vTheta(ite+1,1), vDeg_arr_fx(ite+1)] = o_gcd_mymethod( arr_fx{ite},...
+        [arr_fx{ite,1},~,arr_fx{ite+1,1}, arr_ux{ite,1} ,~,~,vTheta(ite+1,1), vDeg_arr_fx(ite+1)] = o_gcd_2Polys_mymethod( arr_fx{ite},...
             Bernstein_Differentiate(arr_fx{ite}), [lower_lim, upper_lim]);
         
         % Get number of distinct roots of f(ite)
