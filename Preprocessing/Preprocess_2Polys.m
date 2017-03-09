@@ -1,39 +1,35 @@
-function [GM_fx, GM_gx, alpha, theta] = Preprocess_2Polys(fx,gx,k)
+function [GM_fx, GM_gx, alpha, theta] = Preprocess_2Polys(fx, gx, k)
 % Preprocess_2Polys(fx,gx,k)
 % Get the optimal values of lamdba, mu, alpha and theta.
 %
 % Inputs.
 %
+% fx : (Vector) Coefficients of f(x)
 %
-% fx : Vector of coefficients of f(x)
+% gx : (Vector) Coefficients of g(x)
 %
-% gx : Vector of coefficients of g(x)
-%
-% k : Degree of common divisor d_{k}(x)
+% k : (Int) Degree of common divisor d_{k}(x)
 %
 % Outputs.
 %
-% lamda : Geometric mean of entries of f(x) in k-th subresultant matrix
+% GM_fx : (Float) Geometric mean of entries of f(x) in k-th subresultant matrix
 %
-% mu : Geometric mean of entries of g(x) in k-th subresultant matrix
+% GM_gx : (Float) Geometric mean of entries of g(x) in k-th subresultant matrix
 %
-% alpha : Optimal value of alpha
+% alpha : (Float) Optimal value of alpha
 %
-% theta : Optimal value of theta
+% theta : (Float) Optimal value of theta
 
 
 % Global variables
 global SETTINGS
 
-% Get degree of polynomial f(x)
+% Get degree of polynomial f(x) and g(x)
 m = GetDegree(fx);
-
-% Get degree of polynomial g(x)
 n = GetDegree(gx);
 
-% Get the mean of the entries.
+% Get the mean of the entries of T_{n-k}(F) and T_{m-k}(g)
 GM_fx = GetMean(fx,n-k);
-
 GM_gx = GetMean(gx,m-k);
 
 % Normalize f(x) and g(x) by geometric means
@@ -43,42 +39,23 @@ gx_n = gx./ GM_gx;
 
 if(SETTINGS.BOOL_ALPHA_THETA)
     
-        
-        % For each coefficient ai of F, obtain the max and min such that F_max =
-        % [max a0, max a1,...] and similarly for F_min, G_max, G_min
-        
-        
-        [v_F_max,v_F_min] = GetMaxMin(fx_n,n-k);
-        [v_G_max,v_G_min] = GetMaxMin(gx_n,m-k);
-        
-        %print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
-        
-        % Calculate the optimal value of alpha and theta for the kth
-        % subresultant matrix.
-        [alpha,theta] = OptimalAlphaTheta(v_F_max, v_F_min, v_G_max, v_G_min);
-        
-        % Having calculated optimal values of alpha and theta, get the max
-        % and min entries in C(f) and C(g)
-        fx_n = fx ./ GM_fx;
-        gx_n = gx ./ GM_gx;
-        
-        fw = GetWithThetas(fx_n,theta);
-        gw = GetWithThetas(gx_n,theta);
-        
-        % Get max and min values;
-        [v_F_max, v_F_min] = GetMaxMin(fw,n-k);
-        [v_G_max, v_G_min] = GetMaxMin(alpha.*gw,m-k);
-        
-        %print(v_F_max,v_F_min,v_G_max,v_G_min,m,n,k);
-        
-        % Testing to see if preprocessing lowers condition number
-        %fprintf([mfilename ' : ' sprintf('Condition S(f(x),g(x)) : %2.4e \n', cond(BuildDTQ(fx,gx,k)))]);
-        %fprintf([mfilename ' : ' sprintf('Conditon S(f(w),alpha g(w)) : %2.4e \n', cond(BuildDTQ(fw,alpha.*gw,k)))]);
+    
+    % For each coefficient ai of F, obtain the max and min such that F_max =
+    % [max a0, max a1,...] and similarly for F_min, G_max, G_min
+    
+    
+    [v_F_max, v_F_min] = GetMaxMin(fx_n, n-k);
+    [v_G_max, v_G_min] = GetMaxMin(gx_n, m-k);
+    
+    
+    % Calculate the optimal value of alpha and theta for the kth
+    % subresultant matrix.
+    [alpha, theta] = OptimalAlphaTheta(v_F_max, v_F_min, v_G_max, v_G_min);
+  
+   
 else
     alpha = 1;
     theta = 1;
-    GM_fx = 1;
-    GM_gx = 1;
 end
 
 end

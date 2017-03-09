@@ -1,4 +1,4 @@
-function [arr_hx] = Deconvolve_Batch_Constrained_With_STLN(arr_fx,vMult)
+function [arr_hx] = Deconvolve_Batch_Constrained_With_STLN(arr_fx, vMult)
 % Let vMultiplicities be a vector containing the multiplicities of the
 % roots of f_{0}(x). vMult = [m_{1}, m_{2} ,..., m_{n}]
 % The division f_{0}/f_{1},...,f_{m_{1}-1} / f_{m_{1}} all have the same solution
@@ -6,35 +6,35 @@ function [arr_hx] = Deconvolve_Batch_Constrained_With_STLN(arr_fx,vMult)
 %
 % % Inputs.
 %
-% arr_fx : Array of polynomials f(x)
+% arr_fx : (Array of Vectors) Array of polynomials f_{i}(x)
 %
-% vMult : Multiplicities of the factors of f_{0}(x) in ascending order.
+% vMult : (Vector) Multiplicities of the factors of f(x) in ascending order
 %
 % % Outputs.
 %
-% arr_hx : Array of polynomials h(x) where h_{i}(x) = f_{i-1}(x) / f_{i}(x)
+% arr_hx : (Vector) Array of polynomials h_{i}(x) where
+% h_{i}(x) = f_{i-1}(x) / f_{i}(x)
 
 % Global Variables
 global SETTINGS
 
 % Get the number of polynomials in the array of polynomials f_{i}(x)
-nPolys_arr_fx = size(arr_fx,1);
+nPolys_arr_fx = size(arr_fx, 1);
 
 % Get the number of polynomials in the array of polynomials h_{i}(x)
-nPolys_arr_hx = nPolys_arr_fx -1 ;
+nPolys_arr_hx = nPolys_arr_fx - 1 ;
 
 % % Get the degree of each of the polynomials f{i}(x)
 
 % Initialise vector
-vDeg_arr_fx = zeros(nPolys_arr_fx,1);
+vDeg_arr_fx = zeros(nPolys_arr_fx, 1);
 
-% For each polynomial f_{i} get the degree
+% For each polynomial f_{i} get the degree m_{i}
 for i = 1:1:nPolys_arr_fx
+    
     vDeg_arr_fx(i) = GetDegree(arr_fx{i});
+    
 end
-
-% Get the degree n(i) of polynomials h_{i}.
-vDeg_arr_hx = (vDeg_arr_fx(1:end-1) - vDeg_arr_fx(2:end));
 
 % Define M to be the total number of all coefficients of the first d polynomials
 % f_{0}...f_{d-1},
@@ -44,29 +44,21 @@ M = sum(vDeg_arr_fx+1) - (vDeg_arr_fx(end)+1);
 % f_{0},...,f_{d}
 nCoefficients_fx = sum(vDeg_arr_fx+1);
 
-% Define N to be the number of coefficients of all h_{i}
-nCoefficients_hx = sum(vDeg_arr_hx+1);
-
-
-%
-% y - Preprocess
-% n - Dont preprocess
-SETTINGS.PREPROC_DECONVOLUTIONS;
-
-switch SETTINGS.PREPROC_DECONVOLUTIONS
-    case 'y'
-        theta = GetOptimalTheta(arr_fx);
-        fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
-    case 'n'
-        theta = 1;
-    otherwise
-        error('err');
+% Preprocess
+if(SETTINGS.PREPROC_DECONVOLUTIONS)
+    
+    theta = GetOptimalTheta(arr_fx);
+    fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
+    
+else
+    theta = 1;
+    
 end
 
-% %
-% %
+% % Preprocess polynomials f_{i}(x) to get array of polynomials
+% f_{i}(\omega)
+
 % Initialise a cell-array for f(w)
-% %
 arr_fw = cell(nPolys_arr_fx,1);
 
 % for each f_{i} get fw_{i}
@@ -74,10 +66,8 @@ for i = 1:1:nPolys_arr_fx
     arr_fw{i} = GetWithThetas(arr_fx{i},theta);
 end
 
-% %
-% %
 % Build LHS Matrix C(f1,...,fd)
-DT_fwQ = BuildDTQ(arr_fw,vMult);
+DT_fwQ = BuildDTQ(arr_fw, vMult);
 
 % %
 % %
@@ -88,34 +78,37 @@ DT_fwQ = BuildDTQ(arr_fw,vMult);
 RHS_vec_fw = BuildRHSF(arr_fw);
 
 
+% Get the vector containing coefficients of polynomials p_{i}(\omega)
+vec_pw = SolveAx_b(DT_fwQ,RHS_vec_fw);
 
-v_pw = SolveAx_b(DT_fwQ,RHS_vec_fw);
-
-nCoefficients_px = length(v_pw);
+% Get number of coefficients in all the polynomials p_{i}(\omega)
+nCoefficients_px = length(vec_pw);
 
 unique_vMult = unique(vMult);
 
+% Get the number of polynomials in the array p_{i}(x)
 nPolys_arr_px = length(unique_vMult);
 
-vDeg_arr_px = zeros(nPolys_arr_px,1);
+% Get the degree of the polynomials in the array p_{i}(x)
+vDeg_arr_px = zeros(nPolys_arr_px, 1);
 
 for i = 1:1:length(unique_vMult)
-    mult = unique_vMult(i);
-    deg = vDeg_arr_fx(mult) - vDeg_arr_fx(mult+1);
-    vDeg_arr_px(i) = deg;
+    factor_multiplicity = unique_vMult(i);
+    factor_degree = vDeg_arr_fx(factor_multiplicity) - vDeg_arr_fx(factor_multiplicity+1);
+    vDeg_arr_px(i) = factor_degree;
 end
 
 % %
 % %
 % Get the polynomials p_{i}(x) repeated to give the set of polynomials
 % h_{i}(x).
-arr_pw = GetArray(v_pw,vDeg_arr_px);
+arr_pw = GetArray(vec_pw, vDeg_arr_px);
 
 % %
 % %
 % Get the polynomials p_{i}(\omega) repeated to give the set of polynomials
 % h_{i}(\omega)
-arr_hw = Get_hx(arr_pw,unique_vMult);
+arr_hw = Get_hx(arr_pw, unique_vMult);
 
 % %
 % %
@@ -141,9 +134,7 @@ ite = 1;
 % Build the matrix F
 F = eye(nCoefficients_px + nCoefficients_fx);
 
-%
-%
-%
+
 % Build the matrix G
 
 % Build component H_h of G
@@ -155,15 +146,15 @@ H_z = DY_hQ - P;
 G = [H_h H_z];
 
 % Compute the first residual
-res_vec = RHS_vec_fw + (P*v_zw) - (DT_fwQ * v_pw);
+res_vec = RHS_vec_fw + (P*v_zw) - (DT_fwQ * vec_pw);
 
 % Update Matrix P*z
 Pz = P*v_zw;
 
 % Perform test
-for i = 1 : 1 : nPolys_arr_fx
-    vec_fw = [RHS_vec_fw; arr_fx{i}];
-end
+%for i = 1 : 1 : nPolys_arr_fx
+%    vec_fw = [RHS_vec_fw; arr_fx{i}];
+%end
 %test1 = DY_hQ * vec_fw;
 %test2 = DT_fwQ * v_pw;
 %test1./test2
@@ -172,7 +163,7 @@ condition(ite) = norm(res_vec)./norm(RHS_vec_fw + Pz);
 
 start_point = ...
     [
-    v_pw;
+    vec_pw;
     v_zw;
     ];
 
@@ -199,13 +190,13 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     delta_zw = y(nCoefficients_px+1:end);
     
     % Add structured perturbations to vector p(\omega)
-    v_pw = v_pw + delta_pw;
+    vec_pw = vec_pw + delta_pw;
     
     % Add structured perturbations to vector z(\omega)
     v_zw = v_zw + delta_zw;
     
     % Get the updated array of polynomials p_{i}(\omega)
-    arr_pw = GetArray(v_pw, vDeg_arr_px);
+    arr_pw = GetArray(vec_pw, vDeg_arr_px);
     
     arr_zw = GetArray(v_zw, vDeg_arr_fx);
     
@@ -233,7 +224,7 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     
     
     % Calculate residual and increment t in LSE Problem
-    res_vec = ((RHS_vec_fw+RHS_vec_Pz) - ((DT_fwQ + DT_zwQ)*v_pw));
+    res_vec = ((RHS_vec_fw+RHS_vec_Pz) - ((DT_fwQ + DT_zwQ)*vec_pw));
     
     % Increment iteration number
     ite = ite + 1;

@@ -7,31 +7,33 @@ function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alph
 %
 % % Inputs.
 %
-% ex:   Example Number
+% ex_num : (String)   Example Number
 %
-% emin: Signal to noise ratio (minimum)
+% emin: (Float) Signal to noise ratio (minimum)
 %
-% emax: Signal to noise ratio (maximum)
+% emax: (Float) Signal to noise ratio (maximum)
 %
-% mean_method : Method for taking mean of entires in S_{k}
+% mean_method : (String) Method for taking mean of entires in S_{k}
 %
 %           'Geometric Mean Matlab Method'
 %           'Geometric Mean My Method'
 %
-% bool_alpha_theta : true or false if preprocessing is performed
+% bool_alpha_theta : (Boolean) true or false if preprocessing is performed
+%           *true
+%           *false
 %
-% low_rank_approx_method :
+% low_rank_approx_method : (String)
 %           'Standard STLN'
 %           'Standard SNTLN'
 %           'Root Specific SNTLN'
 %           'None'
 %
-% apf_method :
+% apf_method : (String)
 %           'Standard APF NonLinear'
 %           'Standard APF Linear'
 %           'None'
 %
-% Sylvester_Build_Method :
+% Sylvester_Build_Method : (String)
 %           'T'
 %           'DT'
 %           'DTQ'
@@ -40,7 +42,7 @@ function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alph
 %           'DTQ Rearranged'
 %
 % % Example
-% >> o_gcd_Univariate_2Polys('1',1e-10,1e-12,'Geometric Mean Matlab Method',true,'None','None','DTQ')
+% >> o_gcd_Univariate_2Polys('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')
 % >> o_gcd_Univariate_2Polys('1',1e-10,1e-12,'Geometric Mean Matlab Method',true,'Standard STLN','Standard APF Nonlinear','DTQ')
 %
 % % Custom Example
@@ -55,23 +57,12 @@ problemType = 'GCD';
 
 % Add subfolders
 restoredefaultpath
-addpath(...
-    'Build Matrices',...
-    'Formatting',...
-    'GCD Methods',...
-    'Get Cofactor Coefficients',...
-    'Get GCD Coefficients',...
-    'Measures',...
-    'Plotting',...
-    'Preprocessing',...
-    'Results',...
-    'Sylvester Matrix')
 
-addpath(genpath('APF'));
-addpath(genpath('Examples'));
-addpath(genpath('Get GCD Degree'));
-addpath(genpath('Low Rank Approx'));
+% Determine where your m-file's folder is.
+folder = fileparts(which(mfilename)); 
 
+% Add that folder plus all subfolders to the path.
+addpath(genpath(folder));
 
 % % Ensure that minimum noise level is less than maximum noise level
 if emin > emax
@@ -98,10 +89,10 @@ fprintf('\t EXAMPLE NUMBER : %s \n',ex_num)
 fprintf('\t EMIN : %s \n' , num2str(SETTINGS.EMIN))
 fprintf('\t EMAX : %s \n' , num2str(SETTINGS.EMAX))
 fprintf('\t MEAN METHOD : %s \n', SETTINGS.MEAN_METHOD)
-fprintf('\t ALPHA_THETA : %s \n', SETTINGS.BOOL_ALPHA_THETA)
+fprintf('\t ALPHA_THETA : %s \n', num2str(SETTINGS.BOOL_ALPHA_THETA))
 fprintf('\t LOW RANK APPROX METHOD : %s \n', SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
 fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD)
-fprintf('\t LOG: %s \n', SETTINGS.BOOL_LOG)
+fprintf('\t LOG: %s \n', num2str(SETTINGS.BOOL_LOG))
 fprintf('\t SYLVESTER BUILD METHOD: %s \n', SETTINGS.SYLVESTER_BUILD_METHOD)
 LineBreakLarge()
 

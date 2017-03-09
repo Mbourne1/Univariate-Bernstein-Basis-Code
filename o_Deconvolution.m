@@ -1,14 +1,14 @@
-function [] = o_Deconvolution(ex_num,emin,bool_preproc)
+function [] = o_Deconvolution(ex_num, emin, bool_preproc)
 % Test the different methods of deconvolving the polynomials f_{i}(x), to
 % form the set of polynomials h_{i} where h_{i} = f{i}/f_{i+1}
 %
 % % Inputs
 %
-% ex_num : Example number (String)
+% ex_num : (String) Example number (String)
 %
-% noise : noise level
+% noise : (Float) noise level
 %
-% bool_preproc : Bool determining whether to include preprocessing
+% bool_preproc : (Boolean) Bool determining whether to include preprocessing
 %
 % % Outputs
 %
@@ -16,7 +16,7 @@ function [] = o_Deconvolution(ex_num,emin,bool_preproc)
 %
 % % Example
 %
-% >> o_Deconvolution('1',1e-12,'y')
+% >> o_Deconvolution('1', 1e-12, true)
 
 
 % Set global settings
@@ -47,7 +47,10 @@ syms x y;
 
 [factor_mult_arr] = Deconvolution_Examples_Univariate(ex_num);
 
+% Get a vector of the factors of f(x)
 vFactors = factor_mult_arr(:,1);
+
+% Get a vector of the multiplicity of the factors of f(x)
 vMult = double(factor_mult_arr(:,2));
 
 % Get highest power of any factor
@@ -60,7 +63,12 @@ highest_pwr = max(vMult);
 
 % Initialise the matrix to store multiplicity of each root across its
 % columns, for each f_{i}(x).
-mult_mat_arr_fx = zeros(highest_pwr+1,length(vMult));
+mult_mat_arr_fx = zeros(highest_pwr+1, length(vMult));
+
+nPolys_arr_fx = highest_pwr +1;
+
+arr_sym_fx = cell(nPolys_arr_fx, 1);
+vDeg_arr_fx = zeros(nPolys_arr_fx, 1);
 
 for i = 0:1:highest_pwr
     
@@ -73,13 +81,11 @@ for i = 0:1:highest_pwr
     % Get the symbolic polynomial f_{i+1}
     arr_sym_fx{i+1,1} = prod(vFactors.^(mults));
     
-    
-    
+
     % Get the degree of polynomial f_{i+1}(x)
     vDeg_arr_fx(i+1) = double(feval(symengine, 'degree', (arr_sym_fx{i+1})));
 end
 
-display(arr_sym_fx{1});
 
 % Get the number of polynomials f_{i}(x)
 nPolys_arr_fx = size(arr_sym_fx,1);
@@ -88,23 +94,19 @@ nPolys_arr_fx = size(arr_sym_fx,1);
 nPolys_arr_hx = nPolys_arr_fx - 1;
 
 
-% %
-% %
-% Get coefficients vectors of h_{i}(x)
-
 % Get multiplicity of the factors of h_{i}(x)
-mult_mat_arr_hx = abs(diff(mult_mat_arr_fx));
+mult_matrix_arr_hx = abs(diff(mult_mat_arr_fx));
 
 % Initialise a cell array to store polynomials h_{i}(x)
-arr_sym_h = cell(nPolys_arr_hx,1);
+arr_symbolic_hx = cell(nPolys_arr_hx,1);
 
 for i = 1:1:nPolys_arr_hx
     
     % Get multiplicity structure of h_{i}(x)
-    mults = mult_mat_arr_hx(i,:)';
+    mults = mult_matrix_arr_hx(i,:)';
     
     % Get symbolic polynomial h_{i}(x)
-    arr_sym_h{i} = prod(vFactors.^(mults));
+    arr_symbolic_hx{i} = prod(vFactors.^(mults));
     
 end
 
@@ -116,21 +118,25 @@ vDeg_arr_hx = diff(vDeg_arr_fx);
 
 % Get the degree structure of the polynomials w_{i} where w_{i} =
 % h_{i-1}/h_{i}
-vDeg_arr_wx = diff([vDeg_arr_hx 0]);
+vDeg_arr_wx = diff([vDeg_arr_hx; 0]);
 
-% Get the multiplicities of the roots.
+% Get the multiplicities of the factors of f(x)
 vMultiplicities = find(vDeg_arr_wx~=0);
 
 
-arr_fx = cell(nPolys_arr_fx,1);
-arr_hx = cell(nPolys_arr_hx,1);
+arr_fx = cell(nPolys_arr_fx, 1);
+arr_hx = cell(nPolys_arr_hx, 1);
 
 for i = 1:1:nPolys_arr_fx
     if i <= nPolys_arr_hx
+        
         arr_fx{i,1} = sym2poly(arr_sym_fx{i})';
-        arr_hx{i,1} = sym2poly(arr_sym_h{i})';
+        arr_hx{i,1} = sym2poly(arr_symbolic_hx{i})';
+        
     else
+        
         arr_fx{i,1} = 1;
+        
     end
     
 end
@@ -139,13 +145,17 @@ end
 % %
 % %
 % Convert the polynomials f_{i}(x) to Bernstein Basis
-for i = 1:1:length(arr_fx)
+for i = 1 : 1 : nPolys_arr_fx
+    
     arr_fx{i,1} = PowerToBernstein(arr_fx{i,1});
+    
 end
 
 % Convert the polynomials h_{i}(x) to Bernstein Basis
-for i = 1:1:length(arr_hx)
+for i = 1 : 1 : nPolys_arr_hx
+    
     arr_hx{i,1} = PowerToBernstein(arr_hx{i,1});
+    
 end
 
 
@@ -156,11 +166,13 @@ end
 % Add noise to the coefficients of f_{i}(x)
 
 % Initialise a cell array to store noisy polynomials f_{i}(x)
-arr_fx_noisy = cell(nPolys_arr_fx,1);
+arr_fx_noisy = cell(nPolys_arr_fx, 1);
 
 % Get noisy polynomials f_{i}(x)
-for i = 1:1:nPolys_arr_fx
+for i = 1 : 1 : nPolys_arr_fx
+    
     arr_fx_noisy{i,1} = AddNoiseToPoly(arr_fx{i},emin);
+    
 end
 
 
@@ -175,7 +187,7 @@ fprintf([mfilename ' : ' 'Deconvolution Separate \n']);
 
 
 arr_hx_Separate = Deconvolve_Separate(arr_fx_noisy);
-vError_Separate = GetErrors(arr_hx_Separate,arr_hx);
+vError_Separate = GetErrors(arr_hx_Separate, arr_hx);
 
 
 %--------------------------------------------------------------------------
@@ -209,7 +221,7 @@ vError_BatchSTLN = GetErrors(arr_hx_BatchSTLN,arr_hx);
 LineBreakLarge()
 fprintf([mfilename ' : ''Deconvoltuion Batch Constrained \n']);
 
-arr_hx_BatchConstrained = Deconvolve_Batch_Constrained(arr_fx_noisy,vMultiplicities);
+arr_hx_BatchConstrained = Deconvolve_Batch_Constrained(arr_fx_noisy, vMultiplicities);
 vError_BatchConstrained = GetErrors(arr_hx_BatchConstrained,arr_hx);
 
 % -------------------------------------------------------------------------
@@ -221,7 +233,7 @@ vError_BatchConstrained = GetErrors(arr_hx_BatchConstrained,arr_hx);
 LineBreakLarge()
 fprintf([mfilename ' : ''Deconvoltuion Batch Constrained With STLN \n']);
 
-arr_hx_BatchConstrainedSTLN = Deconvolve_Batch_Constrained_With_STLN(arr_fx_noisy,vMultiplicities);
+arr_hx_BatchConstrainedSTLN = Deconvolve_Batch_Constrained_With_STLN(arr_fx_noisy, vMultiplicities);
 vError_BatchConstrainedSTLN = GetErrors(arr_hx_BatchConstrainedSTLN,arr_hx);
 % -------------------------------------------------------------------------
 

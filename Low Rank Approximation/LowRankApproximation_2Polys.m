@@ -1,13 +1,15 @@
 function [fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
-    LowRankApproximation(fx, gx, alpha, theta, k, idx_col)
+    LowRankApproximation_2Polys(fx, gx, alpha, theta, k, idx_col)
 % Get the low rank approximation of the Sylvester subresultant matrix
 % S_{k}(f,g)
 %
 % Inputs.
 %
-% [fx, gx] : Coefficients of polynomial f(x) and g(x)
+% fx,
 %
-% alpha : Optimal value of \alpha
+% gx] : Coefficients of polynomial f(x) and g(x)
+%
+% alpha :  Optimal value of \alpha
 %
 % theta : Optimal value of \theta
 %
@@ -113,21 +115,23 @@ function Plot_LowRank_SingularValues(fx, gx, fx_lr, gx_lr, fw, a_gw, fw_lr, a_gw
 %
 % % Inputs
 %
-% [fx, gx] : Coefficients of input polynomial f(x) and g(x)
+% fx : (Vector) Coefficients of input polynomial f(x)
 %
-% fx_lr : Coefficients of polynomial f(x) + \delta f(x) from low rank
+% gx : (Vector) Coefficients of input polynomial g(x)
+%
+% fx_lr : (Vector) Coefficients of polynomial f(x) + \delta f(x) from low rank
 % approximation method.
 %
-% gx_lr : Coefficients of polynomial g(x) + \delta g(x) from low rank
+% gx_lr : (Vector) Coefficients of polynomial g(x) + \delta g(x) from low rank
 % approximation method
 %
-% fw : Coefficients of polynomial f(\omega)
+% fw : (Vector) Coefficients of polynomial f(\omega)
 %
-% gw : Coefficients of polynomial g(\omega)
+% gw : (Vector) Coefficients of polynomial g(\omega)
 %
-% fw_lr :
+% fw_lr : (Vector) 
 %
-% gw_lr :
+% gw_lr : (Vector)
 
 global SETTINGS
 

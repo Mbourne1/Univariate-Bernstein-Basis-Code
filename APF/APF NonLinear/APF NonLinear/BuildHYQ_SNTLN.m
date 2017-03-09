@@ -5,11 +5,11 @@ function HYQ = BuildHYQ_SNTLN(dx, m, n, theta)
 %
 % dx : (Vector) Coefficients of the polynomial d(x)
 %
-% m : (int) Degree of polynomial f(x)
-% 
-% n : (int) Degree of polynomial g(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% theta : Optimal value of theta
+% n : (Int) Degree of polynomial g(x)
+%
+% theta : (Float) Optimal value of theta
 
 HYQ = BuildHYQ1(dx, m, n, theta);
 
@@ -25,17 +25,17 @@ function HYQ = BuildHYQ1(dx,m,n,theta)
 %
 % % Inputs
 %
-% dx: Coefficients of the polynomial d(x)
+% dx: (Vector) Coefficients of the polynomial d(x)
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% n : Degree of polynomial g(x)
+% n : (Int) Degree of polynomial g(x)
 %
-% theta : Optimal value of \theta
+% theta : (Float) Optimal value of \theta
 %
 % % Outputs
 %
-% HYQ : Matrix HYQ
+% HYQ : (Matrix) HYQ
 
 
 global SETTINGS
@@ -61,16 +61,17 @@ end
 function HY = BuildHYPartition_nchoosek(dx, m, theta)
 %
 %
-% Inputs.
+% % Inputs.
 %
 % dx : (Vector) Coefficients of polynomial d(x)
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% theta : Optimal value of \theta
+% theta : (Float) Optimal value of \theta
 %
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Outputs
+%
+% HY : (Matrix)
 
 global SETTINGS
 
@@ -94,15 +95,10 @@ for j = 0:1:(m-t)
     end
 end
 
-switch SETTINGS.BOOL_DENOM_APF
-    case 'y'
-        % include the denominator
-        HY = HY./nchoosek(m,t);
-    case 'n'
-        % Do nothing
-    otherwise
-        error(err)
-end
+
+% include the denominator
+HY = HY./nchoosek(m,t);
+
 end
 
 function A = BuildHYPartition_log(dx, m, theta)
@@ -149,15 +145,11 @@ for j = 0:1:(m-t)
 end
 
 
-switch SETTINGS.BOOL_DENOM_APF
-    case 'y'
-        Denom_eval_log = lnnchoosek(m,t);
-        Denom_eval_exp = 10.^Denom_eval_log;
-        A = A ./ Denom_eval_exp;
-    case 'n'
-    otherwise
-        error(err)
-end
+
+Denom_eval_log = lnnchoosek(m,t);
+Denom_eval_exp = 10.^Denom_eval_log;
+A = A ./ Denom_eval_exp;
+
 
 
 end

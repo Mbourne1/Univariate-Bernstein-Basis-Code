@@ -5,23 +5,33 @@ function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
 %
 % % Inputs
 %
-% [fx, gx] : Coefficients of the polynomials f(x) and g(x) in the Bernstein basis
+% fx : (Vector) Coefficients of the polynomial f(x)
+% 
+% gx : (Vector) Coefficients of the polynomial g(x) 
 %
-% [ux, vx] : Coefficients of the quotient polynomials u(x) and v(x) in the Bernstein basis
+% ux : (Vector) Coefficients of the polynomial u(x), where u(x) is the
+% quotient polynomial f(x)/u(x) = d(x)
 %
-% i_alpha
+% vx : (vector) Coefficients of the polynomial v(x), where v(x) is the
+% quotient polynomial g(x)/v(x) = d(x)
 %
-% i_theta
+% i_alpha : (Float) Initial value of alpha
 %
-% k : Calculated degree of d(x)
+% i_theta : (Float) Initial value of \theta
+%
+% k : (Int) Calculated degree of d(x)
 %
 % % Outputs
 %
-% [fx_lr, gx_lr] :
+% fx_lr : (Vector) 
 %
-% dx_lr :
+% gx_lr : (Vector)
 %
-% [ux_lr, vx_lr] :
+% dx_lr : (Vector)
+%
+% ux_lr : (Vector) 
+%
+% vx_lr : (Vector)
 
 
 
@@ -35,25 +45,23 @@ ite = 1;
 alpha(1) = i_alpha;
 theta(1) = i_theta;
 
-% Get degree of polynomial f(x)
+% Get degree of polynomial f(x) and g(x)
 m = GetDegree(fx);
-
-% Get degree of polynomial g(x)
 n = GetDegree(gx);
 
 % Get number of coefficients in u(x)
-nCoeffs_ux = m-k+1;
-nCoeffs_vx = n-k+1;
-nCoeffs_fx = m+1;
-nCoeffs_gx = n+1;
+nCoefficients_ux = m-k+1;
+nCoefficients_vx = n-k+1;
+nCoefficients_fx = m+1;
+nCoefficients_gx = n+1;
 
 % Initialise some useful vectors
-vecm    = (0:1:m)';
-vecn    = (0:1:n)';
-veck    = (0:1:k)';
+vec_m    = (0:1:m)';
+vec_n    = (0:1:n)';
+vec_k    = (0:1:k)';
 
 % Initialise zk - Structured perturbations of u(x) and v(x)
-zk = zeros(nCoeffs_ux + nCoeffs_vx,1);
+zk = zeros(nCoefficients_ux + nCoefficients_vx,1);
 
 % Convert f and g to modified bernstein basis, excluding binomial
 % coefficient
@@ -67,10 +75,10 @@ vw = GetWithThetas(vx, theta);
 
 % Initialise S = th_f, the vector of thetas corresponding to coefficients
 % of f(x), such that s_{k} = S * p_{k}
-th_f = (diag(theta(ite).^vecm));
+th_f = (diag(theta(ite).^vec_m));
 
 % Initialise T - Matrix such that tk = T * qt
-th_g = (diag(theta(ite).^vecn));
+th_g = (diag(theta(ite).^vec_n));
 
 % Initialise zk - Structured perturbations of u and v
 zk = zeros(m+n-2*k+2,1);
@@ -105,8 +113,8 @@ res_vec = bk - ((HCG)*dw);
 
 % Set some initial values
 residual(ite)   = norm(res_vec);
-z_fx = zeros(nCoeffs_fx, 1);
-z_gx = zeros(nCoeffs_gx, 1);
+z_fx = zeros(nCoefficients_fx, 1);
+z_gx = zeros(nCoefficients_gx, 1);
 
 % Values of LHS Perturbations
 % Obtain structured perturbations sw of fw, and tw of gw
@@ -163,7 +171,7 @@ start_point = [...
 
 yy = start_point;
 
-f = -(yy-start_point);
+f = -(yy - start_point);
 
 % Start the iterative procedure for the solution of the LSE problem.
 
@@ -171,7 +179,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     
     % Use the QR decomposition to solve the LSE problem.
     % min |y-p| subject to Cy=q
-    y = LSE(E,f,C,res_vec);
+    y = LSE(E, f, C, res_vec);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -182,11 +190,11 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     % % obtain the small changes.
     
     % Get change in z_{k} = [z_{u} z_{v}]
-    delta_zk = y(1:nCoeffs_ux + nCoeffs_vx);
+    delta_zk = y(1:nCoefficients_ux + nCoefficients_vx);
     
     % Get change in z_{f}(x)
     %     delta_zf_k = y(m+n-2*k+3:2*m+n-2*k+3);
-    delta_zf_k = y(nCoeffs_ux + nCoeffs_vx + 1: nCoeffs_ux + nCoeffs_vx + nCoeffs_fx );
+    delta_zf_k = y(nCoefficients_ux + nCoefficients_vx + 1: nCoefficients_ux + nCoefficients_vx + nCoefficients_fx );
     
     % Get change in z_{g}(x)
     delta_zg_k = y(2*m+n-2*k+4:2*m+2*n-2*k+4);
@@ -222,8 +230,8 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     gw = GetWithThetas(gx, theta(ite));
     
     % Update matrices S = th_f and T = th_g
-    th_f = diag(theta(ite).^vecm);
-    th_g = diag(theta(ite).^vecn);
+    th_f = diag(theta(ite).^vec_m);
+    th_g = diag(theta(ite).^vec_n);
     
     % Update the polynomial d(\omega)
     dw = GetWithThetas(dx, theta(ite));
@@ -240,11 +248,11 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     vw_wrt_theta = Differentiate_wrt_theta(vw, theta(ite));
     
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G
-    [~,H1C1G,H2C2G] = BuildHCG_2Polys(uw, vw, k);
+    [~, H1C1G, H2C2G] = BuildHCG_2Polys(uw, vw, k);
     
     % Build Matrices H_{1}C_{1}(u)G and H_{2}C_{2}(v)G with respect to
     % theta
-    [~,H1C1G_wrt_theta, H2C2G_wrt_theta] = BuildHCG_2Polys(uw_wrt_theta, vw_wrt_theta,k);
+    [~, H1C1G_wrt_theta, H2C2G_wrt_theta] = BuildHCG_2Polys(uw_wrt_theta, vw_wrt_theta,k);
     
     % Get perturbation vector, and seperate in to perturbations of f,
     % z1 and perturbations of g, z2
@@ -260,11 +268,11 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     z1w_wrt_theta = Differentiate_wrt_theta(z_uw, theta(ite));
     
     % Build Matrices H_{1}E_{1}(z1)G and H_{2}E_{2}(z2)G
-    [~,H1E1G,H2E2G] = BuildHCG_2Polys(z_uw, z_vw, k);
+    [~, H1E1G, H2E2G] = BuildHCG_2Polys(z_uw, z_vw, k);
     
     % Calculate Partial derivatives of Matrices H_{1}E_{1}(z1)G and
     % H_{2}E_{2}(z2)G with respect to theta
-    [~,H1E1G_wrt_theta, H2E2G_wrt_theta] = BuildHCG_2Polys(z1w_wrt_theta, z2w_wrt_theta, k);
+    [~, H1E1G_wrt_theta, H2E2G_wrt_theta] = BuildHCG_2Polys(z1w_wrt_theta, z2w_wrt_theta, k);
     
     % Obtain structured perturbations sw of fw, and tw of gw
     z_fw = GetWithThetas(z_fx, theta(ite));
@@ -353,16 +361,16 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     % variables from the modified Bernstein basis to the Bernstein
     % basis.
     
-    fx_p = GetWithoutThetas(fw,theta(ite));
-    sx_p = GetWithoutThetas(z_fw,theta(ite));
-    gx_p = GetWithoutThetas(gw,theta(ite));
-    tx_p = GetWithoutThetas(z_gw,theta(ite));
+    fx_p = GetWithoutThetas(fw, theta(ite));
+    sx_p = GetWithoutThetas(z_fw, theta(ite));
+    gx_p = GetWithoutThetas(gw, theta(ite));
+    tx_p = GetWithoutThetas(z_gw, theta(ite));
     ukx = ux + z1_ux;
     vkx = vx + z2_vx;
-    dkx = dw./(theta(ite).^veck);
+    dkx = dw./(theta(ite).^vec_k);
     
     [res_ux(ite),res_vx(ite)] = Term_Criterion_APF(fx_p,gx_p,sx_p,...
-        tx_p,ukx,vkx,dkx,k,1.0);
+        tx_p, ukx, vkx, dkx, k, 1.0);
     
     
 end

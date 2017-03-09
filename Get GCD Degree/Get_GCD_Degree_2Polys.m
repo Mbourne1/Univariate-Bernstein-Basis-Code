@@ -1,17 +1,17 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
     Get_GCD_Degree_2Polys(fx, gx, k_limits)
-% GetGCD_Degree_2Polys(fx,gx)
+% GetGCD_Degree_2Polys(fx, gx, k_limits)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
 %
 %
 % % Inputs.
 %
-% fx : coefficients of polynomial f, expressed in Bernstein Basis
+% fx : (Vector) coefficients of polynomial f, expressed in Bernstein Basis
 %
-% gx : coefficients of polynomail g, expressed in Bernstein Basis
+% gx : (Vector) coefficients of polynomail g, expressed in Bernstein Basis
 %
-% k_limits : set the upper and lower bound of the degree of the
+% k_limits : [(Int) (Int)] Set the upper and lower bound of the degree of the
 % GCD of polynomials f(x) and g(x). Usually used when using o_roots() where
 % prior information is known about the upper and lower bound due to number
 % of distinct roots.
@@ -19,16 +19,14 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 % % Outputs.
 %
-% t : Degree of GCD of f(x) and g(x)
+% t : (Int) Degree of GCD of f(x) and g(x)
 %
-% alpha : optimal value of alpha
+% alpha : (Float) Optimal value of alpha
 %
-% theta : optimal value of theta
+% theta : (Float) Optimal value of theta
 %
-% deg_limits :
+% deg_limits : [(Int) (Int)]
 
-addpath 'Preprocessing'
-addpath 'Sylvester Matrix'
 global SETTINGS
 
 % Get degree of polynomail f(x) and g(x)
@@ -37,17 +35,17 @@ n = GetDegree(gx);
 
 % Set my limits to either be equal to the precalculated limits, or an
 % extended range.
-my_limits = [1 min(m,n)];
+myLimits = [1 min(m,n)];
 
 % If the number of distinct roots in f(x) is one, then the degree of the
 % GCD of f(x) and f'(x) = m-1 = n.
-lowerLimit = my_limits(1);
-upperLimit = my_limits(2);
+myLowerLimit = myLimits(1);
+myUpperLimit = myLimits(2);
 
 
 
 % Get the number of subresultants which must be constructed.
-nSubresultants = upperLimit - lowerLimit +1 ;
+nSubresultants = myUpperLimit - myLowerLimit +1 ;
 
 % %
 % Initialisation stage
@@ -67,9 +65,9 @@ arr_R = cell(nSubresultants, 1);
 arr_R1 = cell(nSubresultants, 1);
 
 % For each subresultant $S_{k} k = lowerLimt ... upperLimit$
-for k = lowerLimit : 1 : upperLimit
+for k = myLowerLimit : 1 : myUpperLimit
     
-    i = k - lowerLimit + 1;
+    i = k - myLowerLimit + 1;
     
     [vGM_fx(i), vGM_gx(i), vAlpha(i), vTheta(i)] = Preprocess_2Polys(fx, gx, k);
     
@@ -98,56 +96,58 @@ for k = lowerLimit : 1 : upperLimit
     
     % Get the QR decomposition
     [~, arr_R{i}] = qr(arr_Sk{i});
-    [~,c] = size(arr_R{i});
+    [r,c] = size(arr_R{i});
     arr_R1{i} = arr_R{i}(1:c,1:c);
     
-
+    
     
 end
 
 
 if(SETTINGS.PLOT_GRAPHS)
     
-    x_vec = lowerLimit:1:upperLimit;
-    
-    figure_name = sprintf('Geometric Mean of f(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
-    figure('name',figure_name)
-    hold on
-    plot(x_vec,log10(vGM_fx), '-s')
-    xlabel('k')
-    ylabel('log_{10} lamda_{k}')
-    %xlabel('$\alpha$','Interpreter','LaTex')
-    title(figure_name)
-    hold off
-    
-    figure_name = sprintf('Geometric Mean of g(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
-    figure('name',figure_name)
-    hold on
-    plot(x_vec,log10(vGM_gx), '-s')
-    xlabel('k')
-    ylabel('log_{10} mu')
-    title(figure_name)
-    hold off
-    
-    figure_name = sprintf('Theta values in %s',SETTINGS.SYLVESTER_BUILD_METHOD);
-    figure('name',figure_name)
-    hold on
-    plot(x_vec,log10(vTheta), '-s');
-    xlabel('k')
-    ylabel('log_{10} theta')
-    title(figure_name)
-    hold off
-    
-    figure_name = sprintf('Alpha values in %s', SETTINGS.SYLVESTER_BUILD_METHOD);
-    title(figure_name)
-    figure('name',figure_name)
-    hold on
-    plot(x_vec,log10(vAlpha), '-s')
-    xlabel('k')
-    ylabel('log_{10} alpha')
-    title(figure_name)
-    hold off
-    
+    plot_extra_graphs = false;
+    if (plot_extra_graphs)
+        x_vec = myLowerLimit:1:myUpperLimit;
+        
+        figure_name = sprintf('Geometric Mean of f(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+        figure('name',figure_name)
+        hold on
+        plot(x_vec,log10(vGM_fx), '-s')
+        xlabel('k')
+        ylabel('log_{10} lamda_{k}')
+        %xlabel('$\alpha$','Interpreter','LaTex')
+        title(figure_name)
+        hold off
+        
+        figure_name = sprintf('Geometric Mean of g(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+        figure('name',figure_name)
+        hold on
+        plot(x_vec,log10(vGM_gx), '-s')
+        xlabel('k')
+        ylabel('log_{10} mu')
+        title(figure_name)
+        hold off
+        
+        figure_name = sprintf('Theta values in %s',SETTINGS.SYLVESTER_BUILD_METHOD);
+        figure('name',figure_name)
+        hold on
+        plot(x_vec,log10(vTheta), '-s');
+        xlabel('k')
+        ylabel('log_{10} theta')
+        title(figure_name)
+        hold off
+        
+        figure_name = sprintf('Alpha values in %s', SETTINGS.SYLVESTER_BUILD_METHOD);
+        title(figure_name)
+        figure('name',figure_name)
+        hold on
+        plot(x_vec,log10(vAlpha), '-s')
+        xlabel('k')
+        ylabel('log_{10} alpha')
+        title(figure_name)
+        hold off
+    end
 end
 
 
@@ -178,8 +178,10 @@ switch SETTINGS.RANK_REVEALING_METRIC
         end
         
         % Plot graphs
-        plotRowNorms(arr_R1_RowNorms, my_limitsm, k_limits);
-        plotMaxMinRowSum(vMaxRowNormR1, vMinRowNormR1, my_limits, k_limits)
+        if (SETTINGS.PLOT_GRAPHS)
+            plotRowNorms(arr_R1_RowNorms, my_limits, k_limits);
+            plotMaxMinRowSum(vMaxRowNormR1, vMinRowNormR1, myLimits, k_limits)
+        end
         
         metric = vMinRowNormR1./vMaxRowNormR1;
         
@@ -199,9 +201,11 @@ switch SETTINGS.RANK_REVEALING_METRIC
             
         end
         
-        % Plot Graphs
-        plotRowDiagonals(arr_DiagsR1, k_limits);
-        plotMaxMinRowDiagonals(vMaxDiagR1,vMinDiagR1, k_limits);
+        if (SETTINGS.PLOT_GRAPHS)
+            % Plot Graphs
+            plotRowDiagonals(arr_DiagsR1, k_limits);
+            plotMaxMinRowDiagonals(vMaxDiagR1,vMinDiagR1, k_limits);
+        end
         
         metric = vMinDiagR1./vMaxDiagR1;
         
@@ -221,9 +225,11 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         metric = vMinimumSingularValues;
         
-        % Plot Graphs
-        plotSingularValues(arr_SingularValues, k_limits);
-        plotMinimumSingularValues(vMinimumSingularValues, k_limits)
+        if (SETTINGS.PLOT_GRAPHS)
+            % Plot Graphs
+            plotSingularValues(arr_SingularValues, k_limits);
+            plotMinimumSingularValues(vMinimumSingularValues, k_limits)
+        end
         
     case 'Residuals'
         
@@ -235,22 +241,26 @@ switch SETTINGS.RANK_REVEALING_METRIC
         % SVD
         
         for i = 1:1:nSubresultants
-        
+            
             vMinimumResidual_QR(i) = GetMinimalDistance(arr_Sk{i},'QR');
             vMinimumResidual_SVD(i) = GetMinimalDistance(arr_Sk{i},'SVD');
         end
         
-        % Plot Graphs
-        plotResiduals(vMinimumResidual_QR, my_limits, k_limits);
-        %plotResiduals(vMinimumResidual_SVD, k_limits);
+        if (SETTINGS.PLOT_GRAPHS)
+            % Plot Graphs
+            plotResiduals(vMinimumResidual_QR, myLimits, k_limits);
+            %plotResiduals(vMinimumResidual_SVD, k_limits);
+        end
         
         metric = vMinimumResidual_QR;
         
 end
 
 
+LineBreakLarge();
+
 % If only one subresultant exists, use an alternative method.
-if (upperLimit - lowerLimit == 0 )
+if (myUpperLimit - myLowerLimit == 0 )
     
     % Get the metric to compute the degree of the GCD using only one
     % subresultant matrix.
@@ -264,11 +274,11 @@ if (upperLimit - lowerLimit == 0 )
     GM_fx = vGM_fx(1);
     GM_gx = vGM_gx(1);
     
-   
+    
     
 else
     
-    [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(metric, my_limits);
+    [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(metric, myLimits);
     
     
     % Output all subresultants, all optimal alphas, all optimal thetas and all

@@ -28,7 +28,7 @@ function [alpha,theta] =  OptimalAlphaTheta(F_max,F_min,G_max,G_min)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Define vector f
-f = [1,-1,0,0];
+f = [1, -1, 0, 0];
 
 % get degree of polynomials f and g
 m = GetDegree(F_max);

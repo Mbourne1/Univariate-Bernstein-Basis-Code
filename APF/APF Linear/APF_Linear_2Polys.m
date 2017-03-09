@@ -5,19 +5,37 @@ function [fx_lr, gx_lr, dx_lr, ux_lr, vx_lr] = ...
 %
 % % Inputs
 %
-% [fx, gx] : Coefficients of the polynomial f(x) in the Bernstein basis
+% fx : (Vector) Coefficients of polynomial f(x)
 %
-% [ux, vx] : coefficients of the quotient polynomial u(x) in the Bernstein basis
+% gx : (Vector) Coefficients of the polynomial g(x) in the Bernstein basis
 %
-% k : Calculated degree of d(x)
+% ux : (Vector) Coefficients of the polynomial u(x), where v(x) is the
+% quotient polynomial such that f(x)/u(x) = d(x)
+% 
+% vx : (Vector) Coefficients of the polynomial v(x), where v(x) is the
+% quotient polynomial such that g(x)/v(x) = d(x)
+%
+% k : (Int) Calculated degree of d(x)
 %
 % % Outputs
 %
-% [fx_lr, gx_lr] :
+% fx_lr : (Vector) Coefficients of the polynomial f(x), with added
+% perturbations
 %
-% dx_lr :
+% gx_lr : (Vector) Coefficients of the polynomial g(x), with added
+% perturbations
 %
-% [ux_lr, vx_lr] :
+% dx_lr : (Vector) Coefficients of the polynomial d(x), where d(x) is the
+% greatest common divisor of f(x) and g(x)
+%
+% ux_lr : (Vector) Coefficients of the polynomial u(x), where v(x) is the
+% quotient polynomial such that f(x)/u(x) = d(x), after perturbations have
+% been added to f(x) and g(x)
+%
+% vx_lr : (Vector) Coefficients of the polynomial v(x), where v(x) is the
+% quotient polynomial such that g(x)/v(x) = d(x), after perturbations have
+% been added to f(x) and g(x)
+
 
 % Global Variables
 
@@ -28,13 +46,11 @@ ite = 1;
 
 % Initialise
 
-% Get degree of polynomial f(x)
+% Get degree of polynomial f(x) and g(x)
 m = GetDegree(fx);
-
-% Get degree of polynomial g(x)
 n = GetDegree(gx);
 
-% Get number of coefficients in u(x)
+% Get number of coefficients in u(x), v(x), f(x) and g(x)
 nCoefficients_ux = m-k+1;
 nCoefficients_vx = n-k+1;
 nCoefficients_fx = m+1;
@@ -80,13 +96,13 @@ HYk         = BuildHYQ_SNTLN(dx, m, n, 1);
 % % Build the matrix C given by Hz Hp Hq
 
 % Build the matrix H_{z}
-H_z         = HYk;
+H_z = HYk;
 
 % Build the matrix H_{p}
-H_p         = -1.*th_f;
+H_p = -1.* th_f;
 
 % Build the matrix H_{q}
-H_q         = -1.*th_g;
+H_q = -1.* th_g;
 
 % Build the matrix C
 C_temp      = ...
@@ -117,14 +133,14 @@ start_point = [...
 yy = start_point;
 
 %
-f = -(yy-start_point);
+f = -(yy - start_point);
 
 % Start the iterative procedure for the solution of the LSE problem.
 while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS_APF
     
     % Use the QR decomposition to solve the LSE problem.
     % min |y-p| subject to Cy=q
-    y = LSE(E,f,C,res_vec);
+    y = LSE(E, f, C, res_vec);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -142,7 +158,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     delta_zf_k = y(nCoefficients_ux + nCoefficients_vx + 1: nCoefficients_ux + nCoefficients_vx + nCoefficients_fx );
     
     % Get change in z_{g}(x)
-    delta_zg_k = y(2*m+n-2*k+4:2*m+2*n-2*k+4);
+    delta_zg_k = y(2*m+n-2*k+4 : 2*m+2*n-2*k+4);
         
     % Update variables zk, pk, qk,
     
@@ -150,10 +166,10 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     zk = zk + delta_zk;
     
     % Update z_{f}(x)
-    z_fx = z_fx  + delta_zf_k;
+    z_fx = z_fx + delta_zf_k;
     
     % Update z_{g}(x)
-    z_gx = z_gx  + delta_zg_k;
+    z_gx = z_gx + delta_zg_k;
     
        
     % Get perturbation vector, and seperate in to perturbations of f,

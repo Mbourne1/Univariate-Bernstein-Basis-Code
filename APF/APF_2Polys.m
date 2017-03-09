@@ -79,7 +79,7 @@ switch SETTINGS.APF_METHOD
         SETTINGS.APF_REQ_ITE = 0;
         
     otherwise
-        error([mfilename sprintf(' : Error : %s is not a valide APF Method',SETTINGS.APF_METHOD)])
+        error([mfilename sprintf(' : Error : %s is not a valid APF Method',SETTINGS.APF_METHOD)])
 end
 
 

@@ -121,8 +121,11 @@ SETTINGS.MAX_ITERATIONS_SNTLN = 10;
 
 % Structuring the matrix [C(f) | C(g)]
 SETTINGS.APF_METHOD = apf_method;
-SETTINGS.BOOL_DENOM_APF = 'y';
-SETTINGS.APF_BUILD_METHOD = 'Rearranged';
+
+% APF_BUILD_METHOD
+% * Standard
+% * Rearranged
+SETTINGS.APF_BUILD_METHOD = 'Standard';
 
 % Regarding the computation of the low rank approximation of the 
 % C = [C(u) ; C(v)] matrix

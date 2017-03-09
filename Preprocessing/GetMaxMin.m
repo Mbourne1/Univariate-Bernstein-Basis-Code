@@ -1,12 +1,12 @@
-function [vMax_ai,vMin_ai] = GetMaxMin(fx,n_k)
+function [vMax_ai,vMin_ai] = GetMaxMin(fx, n_k)
 % Get the maximum and minimum occurence of a_{i} in C_{n-k}(f) for all
 % a_{i}, where a_{i} are the m+1 coefficients of the polynomial f(x)
 %
 % % Inputs
 %
-% fx : Coefficients of polynomial f(x)
+% fx : (Vector) Coefficients of polynomial f(x)
 %
-% n_k : Degree of polynomial v(x)
+% n_k : Subscript of T_{n-k}(f(x))
 %
 % % Outputs
 %

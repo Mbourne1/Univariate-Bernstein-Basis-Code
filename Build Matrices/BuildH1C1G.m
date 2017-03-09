@@ -54,7 +54,7 @@ function H1C1G = BuildH1C1G_Rearranged(uw,t)
 % Global Variables
 global SETTINGS
 
-if(SETTINGS.BOOL_LOG)   
+if(SETTINGS.BOOL_LOG)
     
     % Use logs
     H1C1G = BuildH1C1G_log(uw,t);
@@ -63,113 +63,89 @@ elseif (SETTINGS.BOOL_LOG == false)
     
     % Use nchoosek
     H1C1G = BuildH1C1G_nchoosek(uw,t);
-
+    
 end
 
 end
 
-function H1C1G = BuildH1C1G_nchoosek(uw,t)
+function H1C1G = BuildH1C1G_nchoosek(ux, k)
 % Build Partition of the HCG matrix using nchoosek
 %
 %
 % Inputs.
 %
+% ux : (Vector) Coefficients of polynomial u(x)
 %
-% uw :  Coefficients of polynomial u in scaled bernstein basis, to be put
-%       into matrix form.
-%
-% t  :- Degree of GCD
+% k : (Int) Degree of GCD
 %
 %
 
+% Get degree of polynomial u(x)
+m_t = GetDegree(ux);
 
-global SETTINGS
-%
+% Get degree of polynomial f(x)
+m = m_t + k;
 
-% Get degree of polynomial u(w)
-m_minus_t = size(uw,1) - 1;
-
-% Get degree of polynomial f(w)
-m = m_minus_t + t;
-
-H1C1G = zeros(m+1,t+1);
+H1C1G = zeros(m+1,k+1);
 
 % for each column 0:1:t
-for j = 0:1:t
+for j = 0:1:k
     %for each row
-    for i = j:1:(m_minus_t)+j
+    for i = j:1:(m_t)+j
         H1C1G(i+1,j+1) = ...
-            uw(i-j+1)...
+            ux(i-j+1)...
             .* nchoosek(i,j) ...
-            .* nchoosek(m-i,t-j);
+            .* nchoosek(m-i,k-j);
         
     end
 end
 
-switch SETTINGS.BOOL_DENOM_APF
-    case 'y'
-        % Include Common Denominator in the matrix
-        H1C1G  = H1C1G ./ nchoosek(m,t);
-    case 'n'
-        % do nothing
-    otherwise
-        error('SETTINGS.BOOL_DENOM_APF is either y or n')
-        
-end
+% Include Common Denominator in the matrix
+H1C1G  = H1C1G ./ nchoosek(m,k);
+
 end
 
-function H1C1G = BuildH1C1G_log(uw,t)
+function H1C1G = BuildH1C1G_log(ux, k)
 % Build the partition H1C1G where HCG = [H1C1G | H2C2G]
 %
 % Inputs.
 %
 %
-% uw :  Input polynomial
+% uw : (Vector) Coefficients of polynomial u(x)
 %
-% t :   Degree of GCD
+% k : (Int) Index of kth Sylvester subresultant S_{k}(f,g)
 %
 
-%                           Global Variables.
-
-global SETTINGS
-
-%%
 
 % Get degree of polynomial uw, deg(u) = m-t.
-m_minus_t = length(uw)-1;
+m_t = GetDegree(ux);
 
 % Get m - the degree of polynomial f.
-m = m_minus_t + t;
+m = m_t + k;
 
-H1C1G = zeros(m,t);
+H1C1G = zeros(m,k);
 
 % for each column 0:1:t
-for j = 0:1:t
+for j = 0:1:k
     %for each row
-    for i = j:1:(m_minus_t)+j
+    for i = j:1:(m_t)+j
         
-        Numerator_eval_log = lnnchoosek(i,j) + lnnchoosek(m-i,t-j);
+        Numerator_eval_log = lnnchoosek(i,j) + lnnchoosek(m-i,k-j);
         
         Num_eval_exp = 10.^Numerator_eval_log;
         
-        H1C1G(i+1,j+1) = uw(i-j+1) .* Num_eval_exp;
+        H1C1G(i+1,j+1) = ux(i-j+1) .* Num_eval_exp;
         
         
     end
 end
 
-% If include common denominator of the partition of HCG
-switch SETTINGS.BOOL_DENOM_APF
-    case 'y' % Include the common denominator
-        
-        Denom_Eval_log = lnnchoosek(m,t);
-        
-        Denom_Eval_exp  = 10.^Denom_Eval_log;
-        
-        H1C1G = H1C1G ./Denom_Eval_exp;
-    case n
-    otherwise
-        error('SETTINGS.BOOL_DENOM_APF is either y or n');
-end
+
+Denom_Eval_log = lnnchoosek(m,k);
+
+Denom_Eval_exp  = 10.^Denom_Eval_log;
+
+H1C1G = H1C1G ./Denom_Eval_exp;
+
 
 end

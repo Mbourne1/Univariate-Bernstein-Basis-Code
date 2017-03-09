@@ -5,11 +5,11 @@ function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t ] = ...
 % Inputs:
 %
 %
-% fx : Coefficients of the polynomial f(x)
+% fx : (Vector) Coefficients of the polynomial f(x)
 %
-% gx : Coefficients of the polynomial g(x)
+% gx : (Vector) Coefficients of the polynomial g(x)
 %
-% deg_limits : Upper and lower limits for GCD degree may be defined here
+% deg_limits : [(Int) (Int)] Upper and lower limits for GCD degree may be defined here
 % otherwise set to [0,min(m,n)]
 %
 %
@@ -17,19 +17,19 @@ function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t ] = ...
 % Outputs:
 %
 %
-% fx : f(x) + \delta f(x)
+% fx : (Vector) f(x) + \delta f(x)
 %
-% gx : g(x) + \delta g(x
+% gx : (Vector) g(x) + \delta g(x
 %
-% dx : The GCD of f(x) + \delta f(x) and g(x) + \delta g(x)
+% dx : (Vector) The GCD of f(x) + \delta f(x) and g(x) + \delta g(x)
 %
-% ux : Coefficients of polynomial u(x) where u(x) = f(x)/d(x)
+% ux : (Vector) Coefficients of polynomial u(x) where u(x) = f(x)/d(x)
 %
-% vx : Coefficeints of polynomial v(x) where v(x) = g(x)/d(x)
+% vx : (Vector) Coefficeints of polynomial v(x) where v(x) = g(x)/d(x)
 %
-% alpha : Optimal \alpha
+% alpha : (Float) Optimal \alpha
 %
-% theta : Optimal \theta
+% theta : (Float) Optimal \theta
 
 
 
@@ -52,8 +52,8 @@ if onesub == 'y'
 end
 
 % % Get the degree of the GCD
-[t, alpha, theta, GM_fx, GM_gx] = Get_GCD_Degree_2Polys(fx, gx, deg_limits);
 
+[t, alpha, theta, GM_fx, GM_gx] = Get_GCD_Degree_2Polys(fx, gx, deg_limits);
 LineBreakLarge();
 
 
@@ -91,7 +91,7 @@ St_preproc = BuildSubresultant_2Polys(fw, a_gw, t);
 % % Get Low rank approximation of the Sylvester matrix S_{t}(f,g)
 % suffix 'lr' stands for 'low rank'
 [fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
-    LowRankApproximation(fx_n, gx_n, alpha, theta, t, idx_col);
+    LowRankApproximation_2Polys(fx_n, gx_n, alpha, theta, t, idx_col);
 
 % Get the coefficients of the GCD by APF or other method.
 % suffix alr stands for 'approx low rank' 
