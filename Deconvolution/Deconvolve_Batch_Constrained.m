@@ -31,15 +31,8 @@ else
     
 end
 
-% Initialise a cell-array to store preprocessed polynomials f(\omega)
-arr_fw = cell(nPolys_arr_fx, 1);
-
-% Preprocess each polynomial f_{i}(x) to get f_{i}(\omega)
-for i = 1:1:nPolys_arr_fx
-    
-    arr_fw{i} = GetWithThetas(arr_fx{i}, theta);
-    
-end
+% Get polynomials f_{i}(\omega) from f_{i}(x)
+arr_fw = GetPolynomialArrayWithThetas(arr_fx, theta);
 
 % Build LHS Matrix
 LHS_Matrix = BuildDTQ(arr_fw, vMultiplicities);
@@ -47,13 +40,11 @@ LHS_Matrix = BuildDTQ(arr_fw, vMultiplicities);
 % Build the RHS vector
 RHS_vec = BuildRHSF(arr_fw);
 
-% Get number of polynomials in array of h_{i}(x)
-nPolys_arr_hx = nPolys_arr_fx - 1;
-
-
 % Get vector x, the ls solution
 x = SolveAx_b(LHS_Matrix, RHS_vec);
 x_temp = x;
+
+
 
 % Remove non-unique multiplicities.
 unique_vMult = unique(vMultiplicities);
@@ -97,12 +88,12 @@ count = 1;
 for i = 1 : 1 : nPolys_arr_px
     
     if i == 1
-        nReps = unique_vMult(i);
+        nRepetitions = unique_vMult(i);
     else
-        nReps = (unique_vMult(i) - unique_vMult(i-1));
+        nRepetitions = (unique_vMult(i) - unique_vMult(i-1));
     end
     
-    for j = 1 : 1 : nReps
+    for j = 1 : 1 : nRepetitions
         
         arr_hw{count,1} = arr_pw{i};
         count = count + 1;
@@ -112,13 +103,8 @@ for i = 1 : 1 : nPolys_arr_px
 end
 
 % Get array of polynomials h_{i}(x)
-arr_hx = cell(nPolys_arr_hx,1);
+arr_hx = GetPolynomialArrayWithoutThetas(arr_hw, theta);
 
-for i = 1:nPolys_arr_hx
-    
-    arr_hx{i} = GetWithoutThetas(arr_hw{i},theta);
-    
-end
 
 end
 
@@ -144,7 +130,7 @@ function LHS_Matrix = BuildDTQ(arr_fx, vMult)
 % LHS_Matrix : (Matrix) Convolution matrix
 
 
-% Get number of distinct polynomials h_{i}(x)
+% Get number of distinct/ unique polynomials h_{i}(x)
 nDistinctPolys_arr_hx = length(vMult);
 
 % Initialise a cell array to store matrices to form convolution matrix
@@ -203,31 +189,5 @@ end
 
 %LHS_Matrix = blkdiag(arr_C{:});
 LHS_Matrix = blkdiag(arr_DTQ{:});
-
-end
-
-function [RHS_vec] = BuildRHSF(arr_fx)
-% RHS vector consists of f_{1},...,f_{m_{i}} where m_{i} is the highest
-% degree of any root of f_{0}(x).
-%
-% % Inputs
-%
-% arr_fx : (Array of Vectors) Vectors containing coefficients of
-% polynomials f(x).
-%
-% % Outputs
-%
-% RHS_vec : (Vector)
-
-% Get number of polynomials in the array
-nPolys_arr_fx = length(arr_fx);
-
-RHS_vec = [];
-
-for i = 1:1:nPolys_arr_fx - 1
-    
-    RHS_vec = [RHS_vec ; arr_fx{i}];
-    
-end
 
 end

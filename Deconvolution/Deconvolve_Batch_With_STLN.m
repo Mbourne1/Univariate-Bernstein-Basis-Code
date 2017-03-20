@@ -3,16 +3,16 @@ function [arr_hx] = Deconvolve_Batch_With_STLN(arr_fx)
 % where each polynomial g_{i} appears in two of the deconvolutions.
 %
 %
-% Input:
+% Input
 %
-% arr_fx - set of input polynomials g(y) to be deconvolved. Each g_{i} has a
-% different number of elements, so set_g is a cell array.
+% arr_fx : (Array of Vectors) Each cell of the array contains coefficients 
+% of the polynomials f_{i}(x) 
 %
 % Output:
 %
-% arr_hx (Array of Vectors) Vectors containing coefficients of polynomials
+% arr_hx : (Array of Vectors) Vectors containing coefficients of polynomials
 % h_{i}(x) where h_{i} = f_{i}/f_{i+1}
-%
+
 
 
 % Global Variables
@@ -20,10 +20,6 @@ global SETTINGS
 
 % Get the number of polynomials in the array of f_{i}(x)
 nPolys_arr_fx = size(arr_fx,1);
-
-% Get number of polynomials in the array arr_hxy of h_{i}(x)
-nPolys_arr_hx = nPolys_arr_fx - 1;
-
 
 % Get the degree m_{i} of each of the polynomials f_{i}
 
@@ -65,16 +61,8 @@ else
     
 end
 
-% % Get preprocessed f(\omega) from f_{i}(x)
-% Initialise a cell array for preprocessed polynomials f(w)
-arr_fw = cell(nPolys_arr_fx, 1);
-
-% Preprocess each f_{i}(x) get f_{i}(w)
-for i = 1:1:nPolys_arr_fx
-    
-    arr_fw{i} = GetWithThetas(arr_fx{i}, theta);
-    
-end
+% Preprocess polynomials f_{i}(x)
+arr_fw = GetPolynomialArrayWithThetas(arr_fx, theta);
 
 % % Write Deconvolutions in form [D^{-1}T(f)Q] h = RHS_f
 
@@ -93,7 +81,7 @@ v_hw = SolveAx_b(DTQ, vRHS_fw);
 % each of degree n_{i}
 
 % GetArray of polynomials h_{i}(\omega)
-arr_hw = GetArray(v_hw,vDeg_arr_hx);
+arr_hw = GetPolynomialArrayFromVector(v_hw, vDeg_arr_hx);
 
 % Let z be  vectors of perturbations to polynomials f_{i} such that
 % z = [z{0} z{1} z{2} z{3} ... z{d}]
@@ -167,8 +155,8 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     
     % Seperate delta_z into its component vectors delta_z0 delta_z1,...,
     % delta_zd
-    arr_zw = GetArray(v_zw, vDeg_arr_fx);
-    arr_hw = GetArray(v_hw, vDeg_arr_hx);
+    arr_zw = GetPolynomialArrayFromVector(v_zw, vDeg_arr_fx);
+    arr_hw = GetPolynomialArrayFromVector(v_hw, vDeg_arr_hx);
     
     
     %Increment s in LSE Problem
@@ -200,13 +188,9 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     
 end % End of loop
 
-% Get the array of polynomials h_{i}(x) from h_{i}(w) by removing thetas.
-arr_hx = cell(nPolys_arr_hx,1);
-for i = 1:1:nPolys_arr_hx
-    
-    arr_hx{i} = GetWithoutThetas(arr_hw{i},theta);
-    
-end
+% Get array of polynomials h_{i}(x) from h_{i}(\omega)
+arr_hx = GetPolynomialArrayWithoutThetas(arr_hw, theta);
+
 
 
 % Print outputs to command line
@@ -356,36 +340,6 @@ end
 
 
 
-function f = BuildRHSF(fx_array)
-% Build the vector f such that it contains the coefficients of each of the
-% polynomials f_{i}(x) for i = 0,...,n-1
-% Rhs f = [f_{0},...,f_{n-1}]
-%
-% % Inputs
-%
-% fx = (Array of vectors) array of vectors f_{0},...,f_{n}
-%
-%
-% % Outputs
-%
-% f : (Vector) Coefficients of polynomials f_{0}...,f_{n-1}
-
-% Initialise empty vector.
-f = [];
-
-% Get number of polynomials in the array
-nPolys_arr_fx = length(fx_array);
-
-% For each vector f f_{0},...,f_{n-1} in fw_array, add to right hand
-% side vector
-for i = 1 : 1 : nPolys_arr_fx - 1
-    
-    f = [f ; fx_array{i}];
-    
-end
-
-end
-
 
 
 
@@ -439,42 +393,6 @@ end
 
 %Build the Coefficient Matrix C of all matrices c
 DCQ = blkdiag(arr_DT1Q1{1:length(arr_DT1Q1)});
-
-end
-
-
-function arr_hx = GetArray(v_hx, vDeg_arr_hx)
-% Separate the coefficients of each polynomial h_{i}(x) into an array of
-% vectors.
-%
-% % Inputs
-%
-% v_hx : (Vector) Vector containing coefficients of all polynomials
-% h_{i}(x)
-%
-% % Outputs
-%
-% arr_hx : (Array of Vectors) Array containing vectors of coefficients of
-% polynomials h_{i}(x)
-
-% Get the number of polynomials in array of h_{i}(x)
-nPolys_arr_hx = size(vDeg_arr_hx,1);
-
-% Initialise an array to store the polynomials h_{i}(x)
-arr_hx = cell(nPolys_arr_hx, 1);
-
-for i = 1 : 1 : nPolys_arr_hx
-    
-    % Get degree of h{i}
-    deg_hx = vDeg_arr_hx(i);
-    
-    % Get coefficients of h_{i} from the solution vector
-    arr_hx{i} = v_hx(1:deg_hx+1);
-    
-    % Remove the coefficients from the large vector
-    v_hx(1:deg_hx+1) = [];
-    
-end
 
 end
 

@@ -4,10 +4,12 @@ function theta = GetOptimalTheta(arr_fx)
 %
 % Inputs
 %
-% set_f : Set of vectors f_{i}
+% arr_fx : (Array of Vectors) Each cell in the array contains coefficients 
+% of the polynomial f_{i}(x)
 %
-% v_m : vector which stores each m_{i}, the degree of the polynomial f_{i}
-%
+% Outputs
+% 
+% theta : (Float) Optimal value of \theta
 %
 
 
@@ -18,8 +20,8 @@ nPolys_arr_fx = size(arr_fx,1);
 % Let \lambda_{i,j} be its max value in c_i(f_i)
 % Let \mu_{i,j} be its min value in c_{i}(f_i)
 
-F_max = cell(nPolys_arr_fx,1);
-F_min = cell(nPolys_arr_fx,1);
+F_max = cell(nPolys_arr_fx, 1);
+F_min = cell(nPolys_arr_fx, 1);
 
 % Get vector of degrees of polynomials f_{i}(x)
 vDeg_arr_fx = zeros(nPolys_arr_fx,1);

@@ -1,24 +1,29 @@
 function arr_hx = Deconvolve_Set(arr_fx,DECONVOLVE_METHOD)
-% Performs a series of d deconvolutions over a set of polynomials,
-% where each polynomial g_{i} appears in two deconvolutions.
+% Performs a series of n-1 deconvolutions over a set of n polynomials,
+% where each polynomial f_{i}(x) appears in two deconvolutions, and
+% h_{i}(x) = f_{i}(x)/f_{i+1}(x)
 %
 %
 % % Inputs
 %
-% set_f :   Set of input polynomials g(y) to be deconvolved. Each g_{i} has a
-%           different number of elements, so set_g is a cell array.
+% arr_fx : (Array of Vectors) Each cell of the array contains coefficients 
+% of the polynomials f_{i}(x) 
 %
 % % Outputs
 %
-% h_{i} = g_{i-1}/g_{i}
-%
-%
+% arr_hx : (Array of Vectors) Each cell of the array contains coefficients
+% of the polynomial h_{i}(x) = f_{i}(x)/f_{i+1}(x)
+
 
 
 
 % Set Deconvolution Method
-%   single := Use standard non batch method
-%   batch  := Use batch deconvolution
+%   Separate : Use standard non batch method
+%   Batch  : Use batch deconvolution
+%   Batch With STLN
+%   Batch Constrained
+%   Batch Constrained With STLN
+%
 
 switch DECONVOLVE_METHOD
     case 'Separate'
@@ -52,8 +57,10 @@ switch DECONVOLVE_METHOD
         % Get the degree structure of the polynomials w_{i}
         vDeg_wx = diff([vDeg_hx; 0]);
         
-        
+        % Get the vector of multiplicity structur of factors of f_{0}(x)
         vMult = find(vDeg_wx~=0);
+        
+        % Get array of polynomials h_{i}(x)
         arr_hx = Deconvolve_Batch_Constrained(arr_fx,vMult);
         
     case 'Batch Constrained With STLN'
@@ -73,8 +80,10 @@ switch DECONVOLVE_METHOD
         % Get the degree structure of the polynomials w_{i}
         vDeg_wx = diff([vDeg_hx; 0]);
         
-        
+        % Get vector of multiplicity of each factor in f_{0}(x)
         vMult = find(vDeg_wx~=0);
+        
+        % Compute the polynomials h_{i}(x)
         arr_hx = Deconvolve_Batch_Constrained_With_STLN(arr_fx,vMult);
         
     otherwise

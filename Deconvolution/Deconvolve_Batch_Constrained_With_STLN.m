@@ -21,9 +21,6 @@ global SETTINGS
 % Get the number of polynomials in the array of polynomials f_{i}(x)
 nPolys_arr_fx = size(arr_fx, 1);
 
-% Get the number of polynomials in the array of polynomials h_{i}(x)
-nPolys_arr_hx = nPolys_arr_fx - 1 ;
-
 % % Get the degree of each of the polynomials f{i}(x)
 
 % Initialise vector
@@ -59,26 +56,19 @@ end
 % f_{i}(\omega)
 
 % Initialise a cell-array for f(w)
-arr_fw = cell(nPolys_arr_fx,1);
+arr_fw = GetPolynomialArrayWithThetas(arr_fx, theta);
 
-% for each f_{i} get fw_{i}
-for i = 1:1:nPolys_arr_fx
-    arr_fw{i} = GetWithThetas(arr_fx{i},theta);
-end
-
-% Build LHS Matrix C(f1,...,fd)
+% % Build LHS Matrix C(f1,...,fd)
 DT_fwQ = BuildDTQ(arr_fw, vMult);
 
-% %
-% %
-% Build the RHS vector
+% % Build the RHS vector
 
 % RHS vector consists of f_{1},...,f_{m_{i}} where m_{i} is the highest
 % degree of any root of f_{0}(x).
 RHS_vec_fw = BuildRHSF(arr_fw);
 
 
-% Get the vector containing coefficients of polynomials p_{i}(\omega)
+% % Get the vector containing coefficients of polynomials p_{i}(\omega)
 vec_pw = SolveAx_b(DT_fwQ,RHS_vec_fw);
 
 % Get number of coefficients in all the polynomials p_{i}(\omega)
@@ -102,7 +92,7 @@ end
 % %
 % Get the polynomials p_{i}(x) repeated to give the set of polynomials
 % h_{i}(x).
-arr_pw = GetArray(vec_pw, vDeg_arr_px);
+arr_pw = GetPolynomialArrayFromVector(vec_pw, vDeg_arr_px);
 
 % %
 % %
@@ -186,8 +176,8 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     yy = yy + y;
     
     % output y gives delta p and delta z
-    delta_pw = y(1:nCoefficients_px);
-    delta_zw = y(nCoefficients_px+1:end);
+    delta_pw = y(1 : nCoefficients_px);
+    delta_zw = y(nCoefficients_px+1 : end);
     
     % Add structured perturbations to vector p(\omega)
     vec_pw = vec_pw + delta_pw;
@@ -196,9 +186,9 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     v_zw = v_zw + delta_zw;
     
     % Get the updated array of polynomials p_{i}(\omega)
-    arr_pw = GetArray(vec_pw, vDeg_arr_px);
+    arr_pw = GetPolynomialArrayFromVector(vec_pw, vDeg_arr_px);
     
-    arr_zw = GetArray(v_zw, vDeg_arr_fx);
+    arr_zw = GetPolynomialArrayFromVector(v_zw, vDeg_arr_fx);
     
     arr_hw = Get_hx(arr_pw,unique_vMult);
     
@@ -233,14 +223,12 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     condition(ite) = norm(res_vec)./norm(RHS_vec_fw + RHS_vec_Pz);
 end
 
-% Get array of polynomials h_{i}(x) from h_{i}(\omega)
-arr_hx = cell(nPolys_arr_hx,1);
-for i = 1:1:nPolys_arr_hx
-    arr_hx{i} = GetWithoutThetas(arr_hw{i},theta);
-end
 
-%
-%
+
+% Get array of polynomials h_{i}(x) from h_{i}(\omega)
+arr_hx = GetPolynomialArrayWithoutThetas(arr_hw,theta);
+
+
 %
 LineBreakLarge();
 fprintf([mfilename ' : ' sprintf('Required Number of iterations : %i \n',ite)]);
@@ -260,6 +248,9 @@ function LHS_Matrix = BuildDTQ(arr_fx,vMult)
 % Get number of distinct polynomials in h_{i}
 nDistinct_hx = length(vMult);
 
+arr_Cf = cell(nDistinct_hx,1);
+arr_Q = cell(nDistinct_hx,1);
+arr_DTQ = cell(nDistinct_hx,1);
 for i = 1:1:nDistinct_hx
     
     if i > 1
@@ -270,9 +261,13 @@ for i = 1:1:nDistinct_hx
     
     new_mult = vMult(i);
     
-    Cf{i} = [];
+    arr_Cf{i} = [];
     
     % for each polynomial f_{i} in the interval f_{m_{i-1}+1}...f_{m_{i}}
+    
+    arr_Tf = cell((new_mult+1) - (old_mult+1+1));
+    arr_D = cell((new_mult+1) - (old_mult+1+1));
+    
     for j = (old_mult+1+1) : 1 : (new_mult+1)
         
         % Get the degree of the previous polynomial f_{i-1}(x)
@@ -287,49 +282,29 @@ for i = 1:1:nDistinct_hx
         deg_hx = deg_fx_prev - deg_fx;
         
         % Build the Cauchy like matrix T_{m_{i} - m_{i-1}}(f_{i})
-        Tf{j} = BuildT1(fx, deg_hx);
+        arr_Tf{j} = BuildT1(fx, deg_hx);
         
-        D{j} = BuildD_2Polys(deg_fx, deg_hx);
+        arr_D{j} = BuildD_2Polys(deg_fx, deg_hx);
         
         % Stack beneath all other T_{f} which are multiplied by [_{i}(x)
-        Cf{i} = [Cf{i} ; D{j}*Tf{j}];
+        arr_Cf{i} = [arr_Cf{i} ; arr_D{j}*arr_Tf{j}];
     end
     
-    Q{i} = BuildQ1(deg_hx);
+    arr_Q{i} = BuildQ1(deg_hx);
     
-    DTQ{i} = Cf{i} * Q{i};
-    
-end
-
-
-LHS_Matrix = blkdiag(DTQ{:});
-
-end
-
-
-
-function arr_zx = GetArray(v_zx,v_degree_f)
-% Given the vector of perturbations of f(x) given by v_zx
-
-% Get number of polynomials in arr_fx
-nPolys_fx = length(v_degree_f);
-
-% Initialise an array
-arr_zx = cell(nPolys_fx,1);
-
-for i = 1:1:nPolys_fx
-    
-    % Get the m+1 coefficients from the vector
-    arr_zx{i} = v_zx(1:v_degree_f(i)+1);
-    % Remove the m+1 coefficients
-    v_zx(1:v_degree_f(i)+1) = [];
+    arr_DTQ{i} = arr_Cf{i} * arr_Q{i};
     
 end
 
 
+LHS_Matrix = blkdiag(arr_DTQ{:});
+
 end
 
-function arr_hx = Get_hx(arr_px,vUniqueMult)
+
+
+
+function arr_hx = Get_hx(arr_px, vUniqueMult)
 
 % Get number of entries in the array of polynomials p_{i}(x)
 nEntries_arr_px = size(arr_px,1);
@@ -355,29 +330,7 @@ end
 end
 
 
-function RHS_vec_fx = BuildRHSF(arr_fx)
 
-% Get number of polynomials in array of f_{i}(x)
-nPolys_arr_fx = size(arr_fx,1);
-
-% vDeg_arr_fx = zeros(nPolys_arr_fx,1);
-%
-% for i = 1:nPolys_arr_fx
-%     vDeg_arr_fx(i) = GetDegree(arr_fx{i});
-% end
-%
-% % Get the total number of coefficients in the first d polynomials
-% % f_{0},...f_{d-1}
-% nCoefficients_RHS = (sum(vDeg_arr_fx) + nPolys_arr_fx) - (vDeg_arr_fx(end)+1);
-
-% Initialise an empty RHS Vector
-RHS_vec_fx = [];
-
-for i = 1:1:nPolys_arr_fx - 1;
-    RHS_vec_fx = [RHS_vec_fx ; arr_fx{i}];
-end
-
-end
 
 
 function Y_new = BuildDYQ(arr_hw,vDeg_arr_fx)
