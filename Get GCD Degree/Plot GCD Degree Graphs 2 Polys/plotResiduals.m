@@ -1,18 +1,20 @@
-function plotResiduals(vMinimumResiduals, myLimits, k_limits)
+function plotResiduals(vMinimumResiduals, limits_k, limits_t)
 %
 % % Inputs
 %
-% vMinimumResiduals : Vector of residuals
+% vMinimumResiduals : (Vector) Vector of residuals
 %
-% limits : [lowerLimit upperLimit]
+% limits_k : [Int Int]
+%
+% limits_t : [Int Int]
 
 
-myLowerLimit = myLimits(1);
-myUpperLimit = myLimits(2);
-vec_x = myLowerLimit:1:myUpperLimit;
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
+vec_x = lowerLimit_k:1:upperLimit_k;
 
-lowerLimit = k_limits(1);
-upperLimit = k_limits(2);
+lowerLimit_t = limits_t(1);
+upperLimit_t = limits_t(2);
 
 
 % % Plot Residuals
@@ -26,8 +28,8 @@ plot(vec_x, log10(vMinimumResiduals), '-s', 'DisplayName', 'Residuals by SVD')
 ylabel('log_{10} Residuals')
 xlabel('k')
 legend(gca,'show');
-vline(lowerLimit);
-vline(upperLimit);
+vline(lowerLimit_t);
+vline(upperLimit_t);
 hold off
 
 

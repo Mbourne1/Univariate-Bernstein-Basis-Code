@@ -1,25 +1,32 @@
-function [GM_fx, GM_gx, GM_hx, alpha, theta] = Preprocess_3Polys(fx, gx, hx, k)
-% Preprocess_2Polys(fx,gx,k)
+function [GM_fx, GM_gx, GM_hx, alpha, beta, theta] = Preprocess_3Polys(fx, gx, hx, k)
+% Preprocess_3Polys(fx, gx, hx, k)
+%
 % Get the optimal values of lamdba, mu, alpha and theta.
 %
-% Inputs.
+% % Inputs.
 %
 %
-% fx : Vector of coefficients of f(x)
+% fx : (Vector) Vector of coefficients of f(x)
 %
-% gx : Vector of coefficients of g(x)
+% gx : (Vector) Vector of coefficients of g(x)
 %
-% k : Degree of common divisor d_{k}(x)
+% hx : (Vector) Vector of coefficients of h(x)
 %
-% Outputs.
+% k : (Int) Degree of common divisor d_{k}(x)
 %
-% lamda : Geometric mean of entries of f(x) in k-th subresultant matrix
+% % Outputs.
 %
-% mu : Geometric mean of entries of g(x) in k-th subresultant matrix
+% GM_fx : (Float) Geometric mean of entries of f(x) in k-th subresultant matrix
 %
-% alpha : Optimal value of alpha
+% GM_gx : (Float) Geometric mean of entries of g(x) in k-th subresultant matrix
 %
-% theta : Optimal value of theta
+% GM_hx : (Float) Geometric mean of entries of h(x) in k-th subresultant matrix
+%
+% alpha : (Float) Optimal value of \alpha
+%
+% beta : (Float) Optimal value of \beta
+%
+% theta : (Float) Optimal value of \theta
 
 
 % Global variables
@@ -44,53 +51,39 @@ gx_n = gx./ GM_gx;
 hx_n = hx./ GM_hx;
 
 
-if(SETTINGS.BOOL_ALPHA_THETA)
+if (SETTINGS.BOOL_ALPHA_THETA)
     
     % For each coefficient ai of F, obtain the max and min such that F_max =
     % [max a0, max a1,...] and similarly for F_min, G_max, G_min
     
     % Get maximum and minimum entries of each a_{i} in the first
     % partition T_{n-k}(f)
-    [v_F_max1,v_F_min1] = GetMaxMin(fx_n,n-k);
-    
+    [v_F_max1,v_F_min1] = GetMaxMin(fx_n, n-k);
     
     % Get maximum and minimum entries of each a_{i} in the second
     % partition T_{o-k}(f)
-    [v_F_max2,v_F_min2] = GetMaxMin(fx_n,o-k);
+    [v_F_max2, v_F_min2] = GetMaxMin(fx_n, o-k);
     
     % Get maximum and minimum entries of each b_{i} in the third
     % partition T_{m-k}(g)
-    [v_G_max,v_G_min] = GetMaxMin(gx_n,m-k);
+    [v_G_max, v_G_min] = GetMaxMin(gx_n, m-k);
     
     % Get maximum and minimum entries of each c_{i} in the third
     % partition T_{m-k}(h)
-    [v_H_max,v_H_min] = GetMaxMin(hx_n,m-k);
+    [v_H_max, v_H_min] = GetMaxMin(hx_n, m-k);
     
     
-    print(v_F_max1,v_F_min1,v_G_max,v_G_min,m,n,k);
+    %print(v_F_max1,v_F_min1,v_G_max,v_G_min, m, n, k);
     
     % Calculate the optimal value of alpha and theta for the kth
     % subresultant matrix.
-    [alpha,theta] = OptimalAlphaTheta(v_F_max1, v_F_min1, v_G_max, v_G_min);
+    [alpha, beta, theta] = OptimalAlphaBetaTheta(v_F_max1, v_F_min1, v_G_max, v_G_min, v_H_max, v_H_min);
     
-    % Having calculated optimal values of alpha and theta, get the max
-    % and min entries in C(f) and C(g)
-    fx_n = fx ./ GM_fx;
-    gx_n = gx ./ GM_gx;
-    
-    fw = GetWithThetas(fx_n,theta);
-    gw = GetWithThetas(gx_n,theta);
-    
-    % Get max and min values;
-    [v_F_max1,v_F_min1] = GetMaxMin(fw,n-k);
-    [v_G_max,v_G_min] = GetMaxMin(alpha.*gw,m-k);
-    
-    print(v_F_max1,v_F_min1,v_G_max,v_G_min,m,n,k);
-    
-    % Testing to see if preprocessing lowers condition number
-    %fprintf([mfilename ' : ' sprintf('Condition S(f(x),g(x)) : %2.4e \n', cond(BuildDTQ(fx,gx,k)))]);
-    %fprintf([mfilename ' : ' sprintf('Conditon S(f(w),alpha g(w)) : %2.4e \n', cond(BuildDTQ(fw,alpha.*gw,k)))]);
-    
+   
+else
+    alpha = 1;
+    beta = 1;
+    theta = 1;
     
 end
 

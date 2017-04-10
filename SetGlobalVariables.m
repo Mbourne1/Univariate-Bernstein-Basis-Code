@@ -53,8 +53,8 @@ SETTINGS.MEAN_METHOD = mean_method;
 %   * R1 Row Diagonals
 %   * Residuals
 %
-%SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
-SETTINGS.RANK_REVEALING_METRIC = 'Residuals';
+SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
+
 
 % Set the threshold for measuring the degree of the GCD. If max change in
 % metric is less than this value, then all subresultants are full rank or

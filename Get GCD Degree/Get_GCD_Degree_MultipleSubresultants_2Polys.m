@@ -1,4 +1,4 @@
-function [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(vMetric, deg_limits)
+function [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(vMetric, limits_k)
 % Get the problem type, dependent on the vector of singular values from the
 % series s_{k}
 %
@@ -10,7 +10,7 @@ function [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(vMetric, deg_limits)
 %
 % % Inputs
 %
-% vMetric : vector of values used to determine degree of GCD. These values
+% vMetric : (Vector) vector of values used to determine degree of GCD. These values
 % may be 
 %       'Minimum Singular values of S_{k}'
 %       'Min/Max Row Diagonals of R_{k}'
@@ -26,8 +26,8 @@ global SETTINGS
 [St,~] = dbstack();
 calling_function = St(2).name;
 
-lowerLimit = deg_limits(1);
-upperLimit = deg_limits(2);
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
 
 
 % Get the maximum change in singular values and the index at which the
@@ -56,8 +56,8 @@ if  abs(maxChangeMetric) < SETTINGS.THRESHOLD
         mu = avgMetricValue;
         hline = refline([0 mu]);
         hline.Color = 'r';
-        vline(lowerLimit,'b','');
-        vline(lowerLimit,'b','');
+        vline(lowerLimit_k,'b','');
+        vline(lowerLimit_k,'b','');
         hold off
         
         
@@ -67,7 +67,7 @@ if  abs(maxChangeMetric) < SETTINGS.THRESHOLD
     if  avgMetricValue < SETTINGS.THRESHOLD_RANK
         % If all singular values are close to zero, then rank deficient, degree of
         % gcd is min(m,n)
-        t = upperLimit;
+        t = upperLimit_k;
         
         fprintf([mfilename ' : ' calling_function ' : ' sprintf('All Subresultants are Rank Deficient \n')])
         fprintf([mfilename ' : ' calling_function ' : ' sprintf('t = %i \n',t)])
@@ -85,7 +85,7 @@ if  abs(maxChangeMetric) < SETTINGS.THRESHOLD
 else
     
     % maxChange is signifcant
-    t = lowerLimit + indexMaxChange - 1;
+    t = lowerLimit_k + indexMaxChange - 1;
     
     fprintf([mfilename ' : ' calling_function ' : ' 'Mixed \n'])
     fprintf([mfilename ' : ' calling_function ' : ' sprintf('t = %i \n',t)])

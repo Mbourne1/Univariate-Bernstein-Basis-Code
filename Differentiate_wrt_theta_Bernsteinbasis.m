@@ -1,15 +1,16 @@
-function Partial_fw_wrt_theta = Differentiate_wrt_theta_Bernsteinbasis(fw,theta)
+function Partial_fw_wrt_theta = Differentiate_wrt_theta_Bernsteinbasis(fw, theta)
 % Differentiate f(\omega,\theta) with respect to theta
 %
 % % Inputs
 %
-% fw : Polynomial f(\omega)
+% fw : (Vector) Coefficients of the polynomial f(\omega)
 %
-% theta : Optimal value of \theta
+% theta : (Float) Optimal value of \theta
 %
 % % Outputs
 %
-% Partial_fw_wrt_theta : 
+% Partial_fw_wrt_theta : (Vector) Partial derivative of f(\omega) with
+% respect to \theta.
 
 
 

@@ -1,17 +1,22 @@
-function [f_noisy] = AddNoiseToPoly(f,el,eu)
+function [f_noisy] = AddNoiseToPoly(f, el, eu)
 % Add noise to the coefficients of polynomial f(x)
 %
-%                           Inputs
+% % Inputs
 %
-% f  : Column vector of coefficients of polynomial f(x).
+% f  : (Vector) Column vector of coefficients of polynomial f(x).
 %
-% el : signal to noise low limit.
+% el : (Float) signal to noise low limit.
 %
-% eu : signal to noise upper limit
+% eu : (Float) signal to noise upper limit
 %
+%
+% % Outputs
+%
+% f_noisy : (Vector) Coefficients of polynomial f(x) with noise added to
+% the coefficients.
 
 
-% Get the degree of input polynomial f
+% Get the degree of input polynomial f(x)
 m = GetDegree(f);
 
 
@@ -31,7 +36,7 @@ switch nargin
         
     case 3 % Specified upper and lower bound of noise
         
-        y = (2*rand(m+1,1))-ones(m+1,1);
+        y = (2*rand(m+1,1)) - ones(m+1,1);
         s = eu *ones(m+1,1) -  y.*(eu-el);
         noisevector = f.*s;
         f_noisy = f + noisevector;

@@ -8,11 +8,11 @@ function [] = o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_the
 %
 % % Inputs
 %
-% ex_num : (string) Example Number
+% ex_num : (String) Example Number
 %
-% emin : (float) Noise/Signal maximum threshold (minimum)
+% emin : (Float) Noise/Signal maximum threshold (minimum)
 %
-% emax : (float) Noise/Signal maximum threshold (maximum)
+% emax : (Float) Noise/Signal maximum threshold (maximum)
 %
 % mean_method : (string) method used to compute the mean of entries in C_{n-k}(f)
 %               and C_{m-k}(g)
@@ -21,9 +21,9 @@ function [] = o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_the
 %           'Geometric Mean My Method'
 %
 %
-% bool_alpha_theta : (string)
-%           'y'
-%           'n'
+% bool_alpha_theta : (Boolean)
+%           true
+%           false
 %
 % low_rank_approx_method : (string)
 %           'None'

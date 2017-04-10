@@ -6,11 +6,15 @@ function m = GetDegree(fx)
 %
 % Inputs.
 %
-% fx : Coefficients of vector f(x).
+% fx : (Vector) Coefficients of vector f(x).
+%
+% % Outputs
+%
+% m : (Int) Degree of polynomial f(x)
 
 
 
 % Get the degree.
-m = size(fx,1) - 1;
+m = size(fx, 1) - 1;
 
 end

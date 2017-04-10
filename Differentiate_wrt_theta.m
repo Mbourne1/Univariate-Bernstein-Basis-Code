@@ -3,9 +3,15 @@ function Partial_fw_wrt_theta = Differentiate_wrt_theta(fw,theta)
 %
 % % Inputs
 %
-% fw : Polynomial f(\omega)
+% fw : (Vector) Coefficients of the polynomial f(\omega)
 %
-% theta : Optimal value of \theta
+% theta : (Float) Optimal value of \theta
+%
+%
+% % Outputs
+%
+% Partial_fw_wrt_theta : (Vector) Coefficients of the partial derivative of
+% f(\omega) with respect to \theta.
 
 
 bool_diff_method = 'power basis';

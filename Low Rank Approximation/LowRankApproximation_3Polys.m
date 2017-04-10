@@ -1,29 +1,45 @@
-function [fx_lr, gx_lr, hx_lr, ux_lr, vx_lr, wx_lr, alpha_lr, theta_lr] = ...
-    LowRankApproximation_3Polys(fx, gx, hx, alpha, theta, k, idx_col)
+function [fx_lr, gx_lr, hx_lr, ux_lr, vx_lr, wx_lr, alpha_lr, beta_lr, theta_lr] = ...
+    LowRankApproximation_3Polys(fx, gx, hx, alpha, beta, theta, k, idx_col)
 % Get the low rank approximation of the Sylvester subresultant matrix
 % S_{k}(f,g)
 %
-% Inputs.
+% % Inputs.
 %
-% [fx, gx, hx] : Coefficients of polynomials f(x) g(x) and h(x)
+% fx : (Vector) Coefficients of polynomial f(x)
 %
-% alpha : Optimal value of \alpha
+% gx : (Vector) Coefficients of polynomial g(x)
 %
-% theta : Optimal value of \theta
+% hx : (Vector) Coefficients of polynomial h(x)
 %
-% k : Degree of GCD of f(x) and g(x)
+% alpha : (Float) Optimal value of \alpha
 %
-% idx_col : Index of optimal column for removal from S_{k}(f,g)
+% beta : (Float) Optimal value of \beta
+%
+% theta : (Float) Optimal value of \theta
+%
+% k : (Int) Degree of GCD of f(x) and g(x)
+%
+% idx_col : (Int) Index of optimal column for removal from S_{k}(f,g)
 %
 % % Outputs
 %
-% [fx_lr, gx_lr, hx_lr] : Outputs polynomial f(x), g(x) and h(x)
+% fx_lr : (Vector)
 %
-% [ux_lr, vx_lr, wx_lr] : Output polynomials u(x), v(x) and h(x)
+% gx_lr : (Vector) 
 %
-% alpha : optimal value of \alpha
+% hx_lr : (Vector) Outputs polynomial f(x), g(x) and h(x)
 %
-% theta : Optimal value of \theta
+% ux_lr : (Vector)
+%
+% vx_lr : (Vector)
+%
+% wx_lr : (Vector)  Output polynomials u(x), v(x) and h(x)
+%
+% alpha_lr : (Float) optimal value of \alpha
+%
+% beta_lr : (Float) Optimal value of \beta
+%
+% theta_lr : (Float) Optimal value of \theta
 
 global SETTINGS
 
@@ -33,34 +49,35 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         error([mfilename ' : Code Not Yet Completed'])
         
+        % The file STLN_3Polys does not yet exist!!!
+        
         % Get f(\omega) and g(\omega)
-        fw = GetWithThetas(fx,theta);
-        gw = GetWithThetas(gx,theta);
-        hw = GetWithThetas(hx,theta);
+        fw = GetWithThetas(fx, theta);
+        gw = GetWithThetas(gx, theta);
+        hw = GetWithThetas(hx, theta);
         
         % Performe STLN to get low rank approximation of S(f,g)
-        [fw_lr, a_gw_lr, uw, vw] = STLN(fw, alpha.*gw, k, idx_col);
+        [fw_lr, a_gw_lr, b_gw_lr, uw, vw] = STLN_3Polys(fw, alpha.*gw, beta.*hw, k, idx_col);
         
         
         
         % Get f(x) and g(x) from low rank approximation.
-        fx_lr = GetWithoutThetas(fw_lr,theta);
-        gx_lr = GetWithoutThetas(a_gw_lr,theta) ./ alpha;
+        fx_lr = GetWithoutThetas(fw_lr, theta);
+        gx_lr = GetWithoutThetas(a_gw_lr, theta) ./ alpha;
+        hx_lr = GetWithoutThetas(b_hw_lr, theta) ./ beta;
         
         % Get u(x) and v(x) from low rank approximation
-        ux_lr = GetWithoutThetas(uw,theta);
-        vx_lr = GetWithoutThetas(vw,theta);
+        ux_lr = GetWithoutThetas(uw, theta);
+        vx_lr = GetWithoutThetas(vw, theta);
+        wx_lr = GetWithoutThetas(ww, theta);
         
         % \alpha and \theta are same as input, as they are unchanged by
         % STLN
         alpha_lr = alpha;
         theta_lr = theta;
+        beta_lr = beta;
         
-        %
-        Plot_LowRank_SingularValues(fx, gx, fx_lr, gx_lr,...
-            fw, alpha.*gw, fw_lr, a_gw_lr,k);
-        
-        
+       
         
     case 'Standard SNTLN' % Structured Non-Linear Total Least Norm
         
@@ -95,7 +112,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         hw = GetWithThetas(hx,theta);
         
         % Get quotient polynomials u(\omega) and v(\omega)
-        [uw, vw, ww] = GetQuotients_3Polys(fw, alpha.*gw, hw, k);
+        [uw, vw, ww] = GetQuotients_3Polys(fw, alpha.*gw, beta.*hw, k);
         
         % f(x) and g(x) are unchanged from input
         fx_lr = fx;
@@ -104,13 +121,14 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         
         % \alpha and \theta are unchanged from input
         alpha_lr = alpha;
+        beta_lr = beta;
         theta_lr = theta;
         
         % Get polynomials u(x), v(x) and w(x) from u(\omega), v(\omega)
         % and w(\omega)
-        vx_lr = GetWithoutThetas(vw,theta);
-        ux_lr = GetWithoutThetas(uw,theta);
-        wx_lr = GetWithoutThetas(ww,theta);
+        vx_lr = GetWithoutThetas(vw, theta);
+        ux_lr = GetWithoutThetas(uw, theta);
+        wx_lr = GetWithoutThetas(ww, theta);
         
         SETTINGS.LOW_RANK_APPROX_REQ_ITE = 0;
         
@@ -123,25 +141,36 @@ end
 end
 
 
-function Plot_LowRank_SingularValues(fx,gx,fx_lr,gx_lr,fw,a_gw, fw_lr,a_gw_lr,k)
+function Plot_LowRank_SingularValues(fx, gx, hx, fx_lr, gx_lr, hx_lr, fw, a_gw, b_gw, fw_lr, a_gw_lr, b_gw_lr, k)
 %
 % % Inputs
 %
-% [fx, gx] : Coefficients of input polynomial f(x) and g(x)
+% fx : (Vector) Coefficients of input polynomial f(x)
 %
-% fx_lr : Coefficients of polynomial f(x) + \delta f(x) from low rank
+% gx : (Vector) Coefficients of input polynomial g(x)
+%
+% hx : (Vector)
+%
+% fx_lr : (Vector) Coefficients of polynomial f(x) + \delta f(x) from low rank
 % approximation method.
 %
-% gx_lr : Coefficients of polynomial g(x) + \delta g(x) from low rank
+% gx_lr : (Vector) Coefficients of polynomial g(x) + \delta g(x) from low rank
 % approximation method
+%
+% hx_lr : (Vector)
 %
 % fw : Coefficients of polynomial f(\omega)
 %
 % gw : Coefficients of polynomial g(\omega)
 %
+% hw : 
+%
 % fw_lr :
 %
 % gw_lr :
+%
+%
+
 
 global SETTINGS
 

@@ -7,20 +7,19 @@ function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alph
 %
 % % Inputs.
 %
-% ex_num : (String)   Example Number
+% ex_num : (String) Example Number
 %
 % emin: (Float) Signal to noise ratio (minimum)
 %
 % emax: (Float) Signal to noise ratio (maximum)
 %
 % mean_method : (String) Method for taking mean of entires in S_{k}
-%
 %           'Geometric Mean Matlab Method'
 %           'Geometric Mean My Method'
 %
-% bool_alpha_theta : (Boolean) true or false if preprocessing is performed
-%           *true
-%           *false
+% bool_alpha_theta : (Bool) true or false if preprocessing is performed
+%           * true
+%           * false
 %
 % low_rank_approx_method : (String)
 %           'Standard STLN'
@@ -106,6 +105,7 @@ LineBreakLarge()
 % Get roots from example file
 [fx_exact, gx_exact, dx_exact, ux_exact, vx_exact] = Examples_GCD(ex_num);
 
+% Get degree of f(x) and g(x)
 m = GetDegree(fx_exact);
 n = GetDegree(gx_exact);
 

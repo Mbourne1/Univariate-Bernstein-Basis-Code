@@ -2,6 +2,17 @@ function fx_bi = GetWithBinomials(fx)
 % Given the polynomial coefficients f(x) in the Bernstein basis, multiply
 % the coefficients a_{i} by nchoosek(m,i), to obtain coefficients in the
 % scaled Bernstein form.
+%
+%
+% % Inputs
+%
+% fx : (Vector) Coefficients of polynomial f(x)
+%
+% % Outputs
+%
+% fx_bi : (Vector) Coefficients of the polynomial f(x) in scaled Bernstein
+% form.
+
 
 % Get the degree of polynomial f(x).
 m = GetDegree(fx);

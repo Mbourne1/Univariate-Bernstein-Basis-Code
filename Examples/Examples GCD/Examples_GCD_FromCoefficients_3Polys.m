@@ -18,12 +18,12 @@ function [fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_FromCoefficients_3Polys(ex_
 %                   v(x) given by g(x)/d(x)
 %                   w(x) given by h(x)/d(x)
 
-addpath('../Examples')
+addpath(genpath('../Examples'))
 
 % Get roots and multiplicities from example file
 [f_root_mult_arr, g_root_mult_arr, h_root_mult_arr, ...
     d_root_mult_arr,...
-    u_root_mult_arr, v_root_mult_arr, w_root_mult_arr] = Univariate_GCD_Examples_3Polys(ex_num);
+    u_root_mult_arr, v_root_mult_arr, w_root_mult_arr] = GCD_Examples_Univariate_3Polys(ex_num);
 
 % Get the coefficients of the polynomials f(x), g(x) and h(x).
 fx = BuildPolyFromRootsSymbolic(f_root_mult_arr);

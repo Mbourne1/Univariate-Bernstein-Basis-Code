@@ -1,5 +1,5 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
-    Get_GCD_Degree_2Polys(fx, gx, k_limits)
+    Get_GCD_Degree_2Polys(fx, gx, t_limits)
 % GetGCD_Degree_2Polys(fx, gx, k_limits)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
@@ -35,17 +35,17 @@ n = GetDegree(gx);
 
 % Set my limits to either be equal to the precalculated limits, or an
 % extended range.
-myLimits = [1 min(m,n)];
+k_limits = [1 min(m,n)];
 
 % If the number of distinct roots in f(x) is one, then the degree of the
 % GCD of f(x) and f'(x) = m-1 = n.
-myLowerLimit = myLimits(1);
-myUpperLimit = myLimits(2);
+lowerLimit_k = k_limits(1);
+upperLimit_k = k_limits(2);
 
 
 
 % Get the number of subresultants which must be constructed.
-nSubresultants = myUpperLimit - myLowerLimit +1 ;
+nSubresultants = upperLimit_k - lowerLimit_k +1 ;
 
 % %
 % Initialisation stage
@@ -65,9 +65,9 @@ arr_R = cell(nSubresultants, 1);
 arr_R1 = cell(nSubresultants, 1);
 
 % For each subresultant $S_{k} k = lowerLimt ... upperLimit$
-for k = myLowerLimit : 1 : myUpperLimit
+for k = lowerLimit_k : 1 : upperLimit_k
     
-    i = k - myLowerLimit + 1;
+    i = k - lowerLimit_k + 1;
     
     [vGM_fx(i), vGM_gx(i), vAlpha(i), vTheta(i)] = Preprocess_2Polys(fx, gx, k);
     
@@ -108,7 +108,7 @@ if(SETTINGS.PLOT_GRAPHS)
     
     plot_extra_graphs = false;
     if (plot_extra_graphs)
-        x_vec = myLowerLimit:1:myUpperLimit;
+        x_vec = lowerLimit_k:1:upperLimit_k;
         
         figure_name = sprintf('Geometric Mean of f(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
         figure('name',figure_name)
@@ -179,8 +179,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         % Plot graphs
         if (SETTINGS.PLOT_GRAPHS)
-            plotRowNorms(arr_R1_RowNorms, my_limits, k_limits);
-            plotMaxMinRowSum(vMaxRowNormR1, vMinRowNormR1, myLimits, k_limits)
+            plotRowNorms(arr_R1_RowNorms, k_limits, t_limits);
+            plotMaxMinRowSum(vMaxRowNormR1, vMinRowNormR1, k_limits, t_limits)
         end
         
         metric = vMinRowNormR1./vMaxRowNormR1;
@@ -203,8 +203,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         if (SETTINGS.PLOT_GRAPHS)
             % Plot Graphs
-            plotRowDiagonals(arr_DiagsR1, k_limits);
-            plotMaxMinRowDiagonals(vMaxDiagR1,vMinDiagR1, k_limits);
+            plotRowDiagonals(arr_DiagsR1, k_limits, t_limits);
+            plotMaxMinRowDiagonals(vMaxDiagR1,vMinDiagR1, k_limits, t_limits);
         end
         
         metric = vMinDiagR1./vMaxDiagR1;
@@ -227,8 +227,8 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         if (SETTINGS.PLOT_GRAPHS)
             % Plot Graphs
-            plotSingularValues(arr_SingularValues, k_limits);
-            plotMinimumSingularValues(vMinimumSingularValues, k_limits)
+            plotSingularValues(arr_SingularValues, k_limits, t_limits);
+            plotMinimumSingularValues(vMinimumSingularValues, k_limits, t_limits)
         end
         
     case 'Residuals'
@@ -248,7 +248,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         if (SETTINGS.PLOT_GRAPHS)
             % Plot Graphs
-            plotResiduals(vMinimumResidual_QR, myLimits, k_limits);
+            plotResiduals(vMinimumResidual_QR, k_limits, t_limits);
             %plotResiduals(vMinimumResidual_SVD, k_limits);
         end
         
@@ -260,7 +260,7 @@ end
 LineBreakLarge();
 
 % If only one subresultant exists, use an alternative method.
-if (myUpperLimit - myLowerLimit == 0 )
+if (upperLimit_k - lowerLimit_k == 0 )
     
     % Get the metric to compute the degree of the GCD using only one
     % subresultant matrix.
@@ -278,7 +278,7 @@ if (myUpperLimit - myLowerLimit == 0 )
     
 else
     
-    [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(metric, myLimits);
+    [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(metric, k_limits);
     
     
     % Output all subresultants, all optimal alphas, all optimal thetas and all

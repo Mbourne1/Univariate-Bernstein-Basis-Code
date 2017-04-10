@@ -1,23 +1,22 @@
-function plotRowNorms(arr_RowNorms, myLimits, k_limits)
+function plotRowNorms(arr_RowNorms, limits_k, limits_t)
 % 
 % % Inputs
 %
-% arr_RowNorms 
+% arr_RowNorms : (Array of Vectors) 
 %
-% myLimits : These are defined by me
+% limits_k : [Int Int]
 %
-% k_limits : These are precomputed
-
+% limits_t : [Int Int]
 
 global SETTINGS
 
 % Set my limits
-myLowerLimit = myLimits(1);
-myUpperLimit = myLimits(2);
+lowerLimit_k = limits_k(1);
+upperLimit_k = limits_k(2);
 
 % Set limits
-lowerLimit = k_limits(1);
-upperLimit = k_limits(2);
+lowerLimit_t = limits_t(1);
+upperLimit_t = limits_t(2);
 
 figure_name = sprintf('%s : Diag Norm',mfilename);
 figure('name',figure_name)
@@ -25,7 +24,7 @@ hold on
 
 for i = 1:1:length(arr_RowNorms)
 
-    k = myLowerLimit + (i-1);
+    k = lowerLimit_k + (i-1);
     
     % get vector of row norms
     vec_RowNorms = arr_RowNorms{i};
@@ -36,17 +35,13 @@ for i = 1:1:length(arr_RowNorms)
     
 end
 
-vline(lowerLimit);
-vline(upperLimit);
-
-hold off
-
 xlabel('k')
 ylabel('log10 Row Norm of R1 from QR decomposition of S_{k}')
 title(sprintf('log10 Row Norm of R1 from the QR decomposition of each subresultant %s', SETTINGS.SYLVESTER_BUILD_METHOD));
-xlim([myLowerLimit, myUpperLimit]);
+xlim([lowerLimit_k, upperLimit_k]);
 
-vline(myLowerLimit,'b','');
-vline(myUpperLimit,'b','');
+vline(lowerLimit_t, 'b', '');
+vline(upperLimit_t, 'b', '');
+
 hold off
 end

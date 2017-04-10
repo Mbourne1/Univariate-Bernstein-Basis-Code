@@ -7,31 +7,30 @@ function [] = o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alph
 %
 % % Inputs.
 %
-% ex:   Example Number
+% ex : (String) Example Number
 %
-% emin: Signal to noise ratio (minimum)
+% emin: (Float) Signal to noise ratio (minimum)
 %
-% emax: Signal to noise ratio (maximum)
+% emax: (Float) Signal to noise ratio (maximum)
 %
 % mean_method : Method for taking mean of entires in S_{k}
-%
 %           'Geometric Mean Matlab Method'
 %           'Geometric Mean My Method'
 %
-% bool_alpha_theta : 'y' or 'n' if preprocessing is performed
+% bool_alpha_theta : (Bool) if preprocessing is performed
 %
-% low_rank_approx_method :
+% low_rank_approx_method : (String)
 %           'Standard STLN'
 %           'Standard SNTLN'
 %           'Root Specific SNTLN'
 %           'None'
 %
-% apf_method :
+% apf_method : (String)
 %           'Standard APF NonLinear'
 %           'Standard APF Linear'
 %           'None'
 %
-% Sylvester_Build_Method :
+% Sylvester_Build_Method : (String)
 %           'T'
 %           'DT'
 %           'DTQ'
@@ -40,13 +39,13 @@ function [] = o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alph
 %           'DTQ Rearranged'
 %
 % % Example
-% >> o_gcd_3Polys('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','None','None','DTQ')
-% >> o_gcd_3Polys('1',1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','Standard APF Nonlinear','DTQ')
+% >> o_gcd_Univariate_3Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')
+% >> o_gcd_Univariate_3Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'Standard APF Nonlinear', 'DTQ')
 %
 % % Custom Example
 %
 % ex_num = 'Custom:m=10 n=10 t=5 low=0 high=1'
-% >> o_gcd_3Polys(ex_num,1e-12,1e-10,'Geometric Mean Matlab Method','y','Standard STLN','None','DTQ')
+% >> o_gcd_Univariate_3Polys(ex_num, 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ')
 
 global SETTINGS
 
@@ -61,7 +60,6 @@ addpath(...
     'GCD Methods',...
     'Get Cofactor Coefficients',...
     'Get GCD Coefficients',...
-    'Get GCD Degree',...
     'Measures',...
     'Plotting',...
     'Preprocessing',...
@@ -70,7 +68,8 @@ addpath(...
 
 addpath(genpath('APF'));
 addpath(genpath('Examples'));
-addpath(genpath('Low Rank Approx'));
+addpath(genpath('Get GCD Degree'));
+addpath(genpath('Low Rank Approximation'));
 
 
 % % Ensure that minimum noise level is less than maximum noise level
@@ -98,7 +97,7 @@ fprintf('\t EXAMPLE NUMBER : %s \n',ex_num)
 fprintf('\t EMIN : %s \n' , num2str(SETTINGS.EMIN))
 fprintf('\t EMAX : %s \n' , num2str(SETTINGS.EMAX))
 fprintf('\t MEAN METHOD : %s \n', SETTINGS.MEAN_METHOD)
-fprintf('\t ALPHA_THETA : %s \n', SETTINGS.BOOL_ALPHA_THETA)
+fprintf('\t ALPHA_THETA : %s \n', num2str(SETTINGS.BOOL_ALPHA_THETA))
 fprintf('\t LOW RANK APPROX METHOD : %s \n', SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
 fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD)
 fprintf('\t LOG: %s \n', SETTINGS.BOOL_LOG)
@@ -117,16 +116,18 @@ LineBreakLarge()
     = Examples_GCD_3Polys(ex_num);
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
-fx = AddVariableNoiseToPoly(fx_exact,emin,emax);
-gx = AddVariableNoiseToPoly(gx_exact,emin,emax);
-hx = AddVariableNoiseToPoly(hx_exact,emin,emax);
+fx = AddVariableNoiseToPoly(fx_exact, emin, emax);
+gx = AddVariableNoiseToPoly(gx_exact, emin, emax);
+hx = AddVariableNoiseToPoly(hx_exact, emin, emax);
 
-% set upper and lower limit of the degree of the GCD
-lower_lim = 1;
-upper_lim = min([GetDegree(fx),GetDegree(gx),GetDegree(hx)]);
+% set upper and lower limit of the degree of the GCD. Since this is a
+% general GCD problem, no prior limits are known.
+lower_limit_t = 1;
+upper_limit_t = min([GetDegree(fx), GetDegree(gx), GetDegree(hx)]);
+limits_t = [lower_limit_t,upper_limit_t];
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~,~,~,dx_calc,ux_calc,vx_calc,wx_calc] = o_gcd_3Polys_mymethod(fx, gx, hx, [lower_lim,upper_lim]);
+[~,~,~,dx, ux ,vx, wx] = o_gcd_3Polys_mymethod(fx, gx, hx, limits_t);
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
@@ -134,10 +135,11 @@ upper_lim = min([GetDegree(fx),GetDegree(gx),GetDegree(hx)]);
 LineBreakMedium();
 try
     
-    error.dx = GetError('d',dx_exact,dx_calc);
-    error.ux = GetError('u',ux_exact,ux_calc);
-    error.vx = GetError('v',vx_exact,vx_calc);
-    error.wx = GetError('w',wx_exact,wx_calc);
+    error.dx = GetError('d', dx_exact, dx);
+    error.ux = GetError('u', ux_exact, ux);
+    error.vx = GetError('v', vx_exact, vx);
+    error.wx = GetError('w', wx_exact, wx);
+    
 catch
     
     error.dx = 1000;
@@ -148,7 +150,7 @@ catch
 end
 
 % Print results to results file
-PrintToFile(GetDegree(fx), GetDegree(gx), GetDegree(hx), GetDegree(dx_calc), error)
+PrintToFile(GetDegree(fx), GetDegree(gx), GetDegree(hx), GetDegree(dx), error)
 LineBreakMedium();
 
 end
