@@ -61,7 +61,7 @@ vGM_gx    =   zeros(nSubresultants, 1);
 % Initialise some cell arrays
 arr_SingularValues = cell(nSubresultants, 1);
 arr_Sk = cell(nSubresultants, 1);
-arr_R = cell(nSubresultants, 1);
+arr_R  = cell(nSubresultants, 1);
 arr_R1 = cell(nSubresultants, 1);
 
 % For each subresultant $S_{k} k = lowerLimt ... upperLimit$

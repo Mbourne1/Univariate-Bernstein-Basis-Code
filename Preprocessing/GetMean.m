@@ -15,12 +15,18 @@ switch SETTINGS.MEAN_METHOD
         lambda = geomean(abs(C_f_unproc(C_f_unproc~=0)));
         
     case 'Geometric Mean My Method'
-        lambda = GetGeometricMean(fx,n_k);
+        lambda = GetGeometricMean(fx, n_k);
+        
+        
+    case 'Arithmetic Mean'
+        
+        lambda = GetArithmeticMean(fx, n_k);
+        
         
     case 'None'
         lambda = 1;
              
     otherwise
-        error('err: MEAN_METHOD must be either matlab or mymethod')
+        error('err: MEAN_METHOD must be either *Geometric Mean Matlab Method or *Geometric Man My Method or *None')
 end
 end

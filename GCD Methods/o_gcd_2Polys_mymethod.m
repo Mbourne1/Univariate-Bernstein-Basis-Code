@@ -1,5 +1,5 @@
 function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t ] = ...
-    o_gcd_2Polys_mymethod(fx, gx, deg_limits)
+    o_gcd_2Polys_mymethod(fx, gx, limits_t)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
 % Inputs:
@@ -9,7 +9,7 @@ function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t ] = ...
 %
 % gx : (Vector) Coefficients of the polynomial g(x)
 %
-% deg_limits : [(Int) (Int)] Upper and lower limits for GCD degree may be defined here
+% limits_t : [(Int) (Int)] Upper and lower limits for GCD degree may be defined here
 % otherwise set to [0,min(m,n)]
 %
 %
@@ -53,7 +53,7 @@ end
 
 % % Get the degree of the GCD
 
-[t, alpha, theta, GM_fx, GM_gx] = Get_GCD_Degree_2Polys(fx, gx, deg_limits);
+[t, alpha, theta, GM_fx, GM_gx] = Get_GCD_Degree_2Polys(fx, gx, limits_t);
 LineBreakLarge();
 
 

@@ -194,15 +194,15 @@ function GM_fx = GMnchoosek(fx, n_k)
 % Inputs.
 %
 %
-% fx :  Polynomial coefficients of f(x)
+% fx : (Vector) Coefficients of the polynomial f(x)
 %
-% n_k :   Degree of polynomial v_{k}(x), determines number of columns in
+% n_k : (Int) Degree of polynomial v_{k}(x), determines number of columns in
 % T_{n-k}(f(x))
 %
 %
 % Outputs.
 %
-% gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
+% gm : (Float) Geometric mean of entries of fx in the Syvlester Matrix S_{k}
 %
 
 % Global Variables.
@@ -222,6 +222,8 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
         % Calculate the degree of the polynomial f.
         m = GetDegree(fx);
+        
+        fx = abs(fx);
         
         % Get the product of the numerators
         prod_numerator = prod(fx.*GetBinomials(m));

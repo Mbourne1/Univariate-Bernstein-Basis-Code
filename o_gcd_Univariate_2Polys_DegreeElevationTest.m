@@ -7,31 +7,30 @@ function [] = o_gcd_Univariate_2Polys_DegreeElevationTest(ex_num, emin, emax, me
 %
 % % Inputs.
 %
-% ex:   Example Number
+% ex: (String) Example Number
 %
-% emin: Signal to noise ratio (minimum)
+% emin: (Float) Signal to noise ratio (minimum)
 %
-% emax: Signal to noise ratio (maximum)
+% emax: (Float) Signal to noise ratio (maximum)
 %
-% mean_method : Method for taking mean of entires in S_{k}
-%
+% mean_method : (String) Method for taking mean of entires in S_{k}
 %           'Geometric Mean Matlab Method'
 %           'Geometric Mean My Method'
 %
-% bool_alpha_theta : true or false if preprocessing is performed
+% bool_alpha_theta : (Boolean) true or false if preprocessing is performed
 %
-% low_rank_approx_method :
+% low_rank_approx_method : (String)
 %           'Standard STLN'
 %           'Standard SNTLN'
 %           'Root Specific SNTLN'
 %           'None'
 %
-% apf_method :
+% apf_method : (String)
 %           'Standard APF NonLinear'
 %           'Standard APF Linear'
 %           'None'
 %
-% Sylvester_Build_Method :
+% Sylvester_Build_Method : (String)
 %           'T'
 %           'DT'
 %           'DTQ'
@@ -39,13 +38,13 @@ function [] = o_gcd_Univariate_2Polys_DegreeElevationTest(ex_num, emin, emax, me
 %           'DTQ Rearranged Denom Removed'
 %           'DTQ Rearranged'
 %
-% p : Degree elevation of polynomial f(x)
+% p : (Int) Degree elevation of polynomial f(x)
 %
-% q : Degree elevation of polynomial g(x)
+% q : (Int) Degree elevation of polynomial g(x)
 %
 % % Example
-% >> o_gcd_Univariate_2Polys_DegreeElevationTest('1',1e-10,1e-12,'Geometric Mean Matlab Method',true,'None','None','DTQ', 2, 5)
-% >> o_gcd_Univariate_2Polys_DegreeElevationTest('1',1e-10,1e-12,'Geometric Mean Matlab Method',true,'Standard STLN','Standard APF Nonlinear','DTQ', 4, 3)
+% >> o_gcd_Univariate_2Polys_DegreeElevationTest('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ', 2, 5)
+% >> o_gcd_Univariate_2Polys_DegreeElevationTest('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'Standard APF Nonlinear','DTQ', 4, 3)
 %
 % % Custom Example
 %
@@ -74,7 +73,7 @@ addpath(...
 addpath(genpath('APF'));
 addpath(genpath('Examples'));
 addpath(genpath('Get GCD Degree'));
-addpath(genpath('Low Rank Approx'));
+addpath(genpath('Low Rank Approximation'));
 
 
 % % Ensure that minimum noise level is less than maximum noise level

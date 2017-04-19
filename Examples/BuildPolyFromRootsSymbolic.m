@@ -1,17 +1,21 @@
-
 function fx = BuildPolyFromRootsSymbolic(f_factor_mult_array)
-
-addpath 'Basis Conversion'
-addpath 'Bernstein Methods'
-
-
 % This function takes the factors of the polynomial f(x) in a symbolic
 % form, gets the coefficients of the factors in Bernstein form, then
 % multiplies these to form polynomial f(x) in bernstein form.
+%
+% % Inputs
+%
+% f_factor_mult_array : (Matrix) Where first column consists of factors and
+% second column consists of their multiplicity in f(x)
+%
+% % Outputs
+%
+% fx : (Vector) Coefficients of polynomial f(x)
+
 
 syms x
 
-nFactors = size(f_factor_mult_array,1);
+nFactors = size(f_factor_mult_array, 1);
 
 for i = 1 : 1 : nFactors
    

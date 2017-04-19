@@ -71,7 +71,7 @@ addpath(genpath('GCD Methods'));
 addpath(genpath('Get Cofactor Coefficients'));
 addpath(genpath('Get GCD Coefficients'));
 addpath(genpath('Get GCD Degree'));
-addpath(genpath('Low Rank Approx'));
+addpath(genpath('Low Rank Approximation'));
 addpath(genpath('Root Finding Methods'));
 
 % Set the problem type to a roots type problem.
@@ -101,11 +101,13 @@ PrintGlobalVariables();
 % Check that max and min signal to noise ratio are the correct way around.
 % If not, rearrange min and max.
 if emin > emax
+    
     fprintf('minimum noise greater than maximum noise \n swapping values...\n')
     emin_wrong = emin;
     emax_wrong = emax;
     emin = emax_wrong;
     emax = emin_wrong;
+    
 end
 
 

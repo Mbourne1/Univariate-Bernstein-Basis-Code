@@ -5,14 +5,19 @@ function [fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_3Polys(ex_num)
 %
 % Outputs.
 %
-% [fx, gx, hx] : Coefficients of the polynomial f(x), g(x) and h(x)
+% fx : (Vector) Coefficients of the polynomial f(x)
 %
-% dx : Coefficients of the polynomial d(x), the GCD of f(x) and g(x)
+% gx : (Vector) Coefficients of the polynomial g(x)
 %
-% [ux, vx, wx] : Coefficients of the polynomials 
-%                   u(x), given by f(x)/d(x)
-%                   v(x), given by g(x)/d(x)
-%                   w(x), given by h(x)/d(x)
+% hx : (Vector) Coefficients of the polynomial h(x)
+%
+% dx : (Vector) Coefficients of the polynomial d(x), the GCD of f(x) and g(x)
+%
+% ux : (Vector) Coefficients of the polynomial u(x), given by f(x)/d(x)
+%
+% vx : (Vector) Coefficients of the polynomial u(x), given by g(x)/d(x)
+%
+% wx : (Vector) Coefficients of the polynomial u(x), given by h(x)/d(x)
 
 
 EXAMPLE_TYPE = 'From Coefficients';

@@ -179,13 +179,13 @@ function [] = PrintToFile(m,n,t,error)
 %
 % % Inputs
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% n : Degree of polynomial g(x)
+% n : (Int) Degree of polynomial g(x)
 %
-% t : Computed degree of the GCD d(x)
+% t : (Int) Computed degree of the GCD d(x)
 %
-% error : array of errors e
+% error : [Float Float Float] Array of errors e
 %   error.dx
 %   error.ux
 %   error.vx

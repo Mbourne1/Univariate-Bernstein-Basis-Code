@@ -24,7 +24,8 @@ switch EXAMPLE_TYPE
         
         
     case 'From Roots'
-        [f_root_mult_arr,g_root_mult_arr,d_root_mult_arr] = Examples_GCD_FromRoots(ex_num);
+        
+        [f_root_mult_arr, g_root_mult_arr, d_root_mult_arr] = Examples_GCD_FromRoots(ex_num);
         
         fx_exact_bi = BuildPolyFromRoots(f_root_mult_arr);
         gx_exact_bi = BuildPolyFromRoots(g_root_mult_arr);

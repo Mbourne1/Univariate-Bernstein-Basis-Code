@@ -1,5 +1,6 @@
 function [] = o_gcd_Univariate_2Polys_batch()
-
+% Perfome a batch of univariate gcd computations with varying input
+% parameters.
 
 ex_num_arr = {'1'};
 %ex_num_arr = {  '2'};
@@ -58,16 +59,20 @@ for i1 = 1:1:length(bool_log_arr)
                                     
                                     apf_method = apf_method_arr{i9};
                                     try
+                                        
                                         close all;
                                         clc;
                                         o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method)
                                         fileId = fopen('log.txt','a')
-                                        fprintf(fileId,'%s \n','success');
+                                        fprintf(fileId,'%s %s \n', datetime('now'), 'Success' );
                                         fclose(fileId);
+                                        
                                     catch err
+                                        
                                         fileId = fopen('log.txt','a')
-                                        fprintf(fileId,'%s \n\n\n',getReport(err));
+                                        fprintf(fileId,'%s %s \n\n\n', datetime('now') , getReport(err));
                                         fclose(fileId);
+                                        
                                     end
                                 end
                             end

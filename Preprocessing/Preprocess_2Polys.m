@@ -1,12 +1,12 @@
 function [GM_fx, GM_gx, alpha, theta] = Preprocess_2Polys(fx, gx, k)
-% Preprocess_2Polys(fx,gx,k)
+% Preprocess_2Polys(fx, gx, k)
 % Get the optimal values of lamdba, mu, alpha and theta.
 %
 % Inputs.
 %
-% fx : (Vector) Coefficients of f(x)
+% fx : (Vector) Coefficients of polynomial f(x)
 %
-% gx : (Vector) Coefficients of g(x)
+% gx : (Vector) Coefficients of polynomial g(x)
 %
 % k : (Int) Degree of common divisor d_{k}(x)
 %
@@ -29,8 +29,8 @@ m = GetDegree(fx);
 n = GetDegree(gx);
 
 % Get the mean of the entries of T_{n-k}(F) and T_{m-k}(g)
-GM_fx = GetMean(fx,n-k);
-GM_gx = GetMean(gx,m-k);
+GM_fx = GetMean(fx, n-k);
+GM_gx = GetMean(gx, m-k);
 
 % Normalize f(x) and g(x) by geometric means
 fx_n = fx./ GM_fx;

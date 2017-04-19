@@ -77,7 +77,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         Sk = [D1T1Q D2T2Q];
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD must be one of the following \n T \n DT \n DTQ \n TQ \n DTQ Rearranged Denom Removed \n DTQ Rearranged')
+        error('SETTINGS.SYLVESTER_BUILD_METHOD must be one of the following *T or *DT or *DTQ or *TQ or *DTQ Rearranged Denom Removed or *DTQ Rearranged')
 end
 
 end
