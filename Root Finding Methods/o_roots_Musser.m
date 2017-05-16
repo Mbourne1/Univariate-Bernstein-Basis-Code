@@ -21,97 +21,104 @@ global SETTINGS
 ite = 1;
 
 %
-f{1} = fx;
+arr_fx{1} = fx;
 
 % Get the derivative of f(x)
-gx{1} = Bernstein_Differentiate(f{1});
+arr_gx{1} = Bernstein_Differentiate(arr_fx{1});
 
 % Get the degree of f(x)
-m = GetDegree(f{1});
+m = GetDegree(arr_fx{1});
 
 % Get the degree of g(x)
-n = GetDegree(gx{1});
+n = GetDegree(arr_gx{1});
 
 % Set upper and lower limits of GCD(f,g) # Since number of distinct roots
 % is unknown, upper and lower limits are unknown.
-lower_lim = 1;
-upper_lim = min(m,n);
-deg_limits = [lower_lim, upper_lim];
+lowerLimit_t = 1;
+upperLimit_t = min(m,n);
+limits_t = [lowerLimit_t, upperLimit_t];
 
-
-bool_CanBeCoprime = false;
 
 % Perform GCD computation.
-[fx_n,gx_n,dx, ux, vx, alpha, theta, t] ...
-    = o_gcd_mymethod(f{1},gx{ite},deg_limits,bool_CanBeCoprime);
+[fx_o,gx_o,dx_o, ux_o, vx_o, alpha, theta, t] ...
+    = o_gcd_2Polys_mymethod(arr_fx{1}, arr_gx{ite}, limits_t);
+
+dx = dx_o;
+ux = ux_o;
 
 LineBreakMedium();
-g{ite} = dx;
+arr_gx{ite,1} = dx;
 
-h{ite} = Deconvolve(f{1},g{ite});
+arr_hx{ite,1} = Deconvolve(arr_fx{1},arr_gx{ite});
 
-while (GetDegree(h{ite}) > 0 )
+while (GetDegree(arr_hx{ite}) > 0 )
     
     % Get the degree of polynomial f(x)
-    m = GetDegree(g{ite});
+    m = GetDegree(arr_gx{ite});
     
     % Get the degree of polynomial g(x)
-    n = GetDegree(h{ite});
+    n = GetDegree(arr_hx{ite});
     
     % Set Limits
-    lower_lim = 1;
-    upper_lim = min(m,n);
-    deg_limits = [lower_lim, upper_lim];
-    bool_coprime = true;
+    lowerLimit_t = 1;
+    upperLimit_t = min(m,n);
+    limits_t = [lowerLimit_t, upperLimit_t];
     
-    if (GetDegree(h{ite}) ==0 || GetDegree(g{ite}) == 0)
-        h{ite+1} = 1;
+    
+    if (GetDegree(arr_hx{ite}) ==0 || GetDegree(arr_gx{ite}) == 0)
+        arr_hx{ite+1,1} = 1;
     else
         
         %[fx_n,gx_n,dx, ux, ~, ~, ~, ~ ] ...
         %    = o_gcd_mymethod(g{ite},h{ite},deg_limits);
         
+        [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t] ...
+            = o_gcd_2Polys_mymethod(arr_gx{ite}, arr_hx{ite}, limits_t);
         
-        [~,~,dx, ux, ~, ~, ~, ~] ...
-            = o_gcd_mymethod(g{ite},h{ite},deg_limits,bool_coprime);
+        dx = dx_o;
+        ux = ux_o;
         
-        h{ite+1} = dx;
+        arr_hx{ite+1,1} = dx;
     end
     
     % The polynomial g can be obtained in two ways, as u(x) from the GCD
     % triple (d(x),u(x),v(x)) or by deconvolution.
     
     
-    switch SETTINGS.ROOTS_HX
+    switch SETTINGS.GET_HX_METHOD
         case 'From ux'
-            g{ite+1} = ux;
-        case 'From Deconvolutions'
-            g{ite+1} = Deconvolve(g{ite},h{ite+1});
+            arr_gx{ite+1,1} = ux;
+            
+        case 'From Deconvolution'
+            arr_gx{ite+1,1} = Deconvolve(arr_gx{ite},arr_hx{ite+1});
+            
+        otherwise
+            error('err')
     end
     
     %fprintf([mfilename ' : ' sprintf('g_{%i} degree : %i \n',ite+1,GetDegree(g{ite+1})) ]);
     %fprintf([mfilename ' : ' sprintf('h_{%i} degree : %i \n',ite+1,GetDegree(h{ite+1})) ]);
     
-    w{ite} = Deconvolve(h{ite},h{ite+1});
+    %arr_mx{ite,1} = Deconvolve(arr_hx{ite},arr_hx{ite+1});
     ite = ite+1;
     
     LineBreakMedium();
     
 end
 
-w_batch = Deconvolve_Set(h);
-w = w_batch;
+w_batch = Deconvolve_Set(arr_hx, 'Batch');
+arr_wx = w_batch;
 
 
 %
 root_mult_array = [];
 
-for i = 1:1:length(w)
+for i = 1:1:length(arr_wx)
     
     try
         %fprintf('Roots of multiplicity %i \n',i)
         
-        factor = w{i};
+        factor = arr_wx{i};
         m = GetDegree(factor);
         if m == 0
             % do nothing
@@ -151,7 +158,8 @@ for i = 1:1:length(w)
     catch
     end
 end
-
+try
 PrintoutRoots('MUSSER METHOD',root_mult_array);
-
+catch
+end
 end

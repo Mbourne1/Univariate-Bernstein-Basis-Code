@@ -4,8 +4,17 @@
 \usepackage{latexsym}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage[acronym]{glossaries}
 %\usepackage{psfrag}
 \usepackage[dvips]{graphicx}
+
+\newacronym{AGCD}{AGCD}{Approximate Greatest Common Divisor}
+\newacronym{APF}{APF}{Approximate Polynomial Factorisation}
+\newacronym{CAGD}{CAGD}{Computer Aided Geometric Design}
+\newacronym{GCD}{GCD}{Greatest Common Divisor}
+\newacronym{SVD}{SVD}{Singular Value Decomposition}
+\newacronym{SNTLN}{SNTLN}{Structured Non-Linear Total Least Norm}
+\newacronym{CAD}{CAD}{Computer Aided Design}
 
 %New commands
 \newcommand{\GCD}{\textrm{GCD}}
@@ -53,73 +62,229 @@ Degree of an $\AGCD$ of two Bernstein polynomials
 This note describes the programs
 %
 \begin{center}
-\texttt{o\_roots.m} and \texttt{o\_gcd.m}
+\texttt{o\_roots\_Univariate.m} 
+and 
+\texttt{o\_gcd\_Univariate\_2Polys.m}
 \end{center}
 %
-The first is for calculating the roots of a polynomial in the Bernstein basis. The second is for calculating the GCD of two arbitrary polynomials. Both of these files use \texttt{o1.m} to calculate a $\GCD$ and quotient polynomials. 
- Bernstein polynomials $f(y)$ and $g(y)$. The modified matrix
-$S(f,g)$.
+\begin{enumerate}
+
+	\item The first file is used in the computation of a polynomial's roots and corresponding multiplicities, where the given polynomial is in Bernstein form.
+	
+	\item The second file is used in teh computation of the \gls{GCD} of two polynomials in Bernstein form.
+
+
+\end{enumerate}
+
 
 The programs are executed by typing
 %
 %
 \begin{center}
-\texttt{o\_roots(n,ec\_min,ec\_max,BOOL\_SNTLN,BOOL\_APF,BOOL\_DENOM,BOOL\_PREPROC,BOOL\_LOG)} and \\
-\texttt{o\_gcd(n,ec\_min,ec\_max,BOOL\_SNTLN,BOOL\_APF,BOOL\_DENOM,BOOL\_PREPROC,BOOL\_LOG)}
+\texttt{o\_roots\_Univariate(ex\_num, emin, emax, mean\_method, bool\_alpha\_theta, low\_rank\_approx\_method, apf\_method, sylvester\_build\_method)}
+
+\texttt{o\_gcd\_2Polys\_Univariate(ex\_num, emin, emax, mean\_method, bool\_alpha\_theta, low\_rank\_approx\_method, apf\_method, sylvester\_build\_method)}
 \end{center}
 %
  where
 %
 \begin{description}
-\item{\hspace{0.7cm} 
-\texttt{n} is an integer that defines the polynomials $f(y)$ in the program
-\texttt{Root\_examples.m}} or polynomials $f(y)$ and $g(y)$ in the program \texttt{GCD\_examples.m} for \texttt{o\_roots} and \texttt{o\_gcd.m} respectively.
-%
-\item{\hspace{0.7cm} \texttt{ec\_min} and \texttt{ec\_max} are the minimum and maximum ratios:
+
+	\item[\texttt{ex\_num}]
+	A String typically containing an integer, which defines the example to be run.
+	
+	\item[\texttt{emin}] Minimum signal : noise ratio
+	
+	\item[\texttt{emax}] Maximum signal : noise ratio
+	
+	\item[\texttt{mean\_method}]
+	Method used to compute the mean of the entries of the partitions of the Sylvester subresultant matrix
+		\begin{description}
+			\item[\texttt{None}] No mean method used
+			\item[\texttt{Geometric Mean My Method}] : Fast method 
+			\item[\texttt{Geometric Mean Matlab Method}] : Standard Matlab method
+			\item[\texttt{Arithmetic Mean}] : 
+		\end{description} 
+
+	
+	\item 
+	\texttt{bool\_alpha\_theta} 
+		\begin{description}
+			\item[\texttt{true}] : Preprocess polynomials
+			\item[\texttt{false}] : Exclude preprocessing 
+		\end{description}
 
 
-%
-\begin{align*}
-\frac{\textrm{noise level}}{\textrm{signal level}}
-\end{align*}
-%
-measured in the componentwise sense.}
-\item{\hspace{0.7cm}
-\texttt{BOOL\_SNTLN} is a boolean value, whether structured perturbations are added to the Sylvester matrix.
-}
-\texttt{BOOL\_APF} is a boolean value, whether structured perturbations are added to the Approximate polynomial factorisation.
-}
+	
+	\item 
+	\texttt{low\_rank\_approx\_method}
+		\begin{description}
+			\item[\texttt{None}] 
+			\item[\texttt{Standard SNTLN}] 
+			\item[\texttt{Standard STLN}]
+			\item[\texttt{Root Specific SNTLN}] 
+		\end{description}
+	
+	
+	
+	\item 
+	\texttt{apf\_method}
+		\begin{description}
+			\item[\texttt{None}] 
+			\item[\texttt{Standard Linear APF}]
+			\item[\texttt{Standard NonLinear APF}]
+		\end{description}
 
+
+	\item
+	\texttt{Sylvester\_Build\_Method}
+		\begin{description}
+			
+			\item[\texttt{T} : ]
+			The matrix 
+			$
+				T_{k}
+				\left(
+					f(x)
+					,
+					g(x)
+				\right)
+			$
+			
+			
+			\item[\texttt{DT} : ]
+			The matrix 
+			$
+				D^{-1}_{m+n-k}
+				T_{k}
+				\left(
+					f(x)
+					,
+					g(x)
+				\right)
+			$
+			
+			\item[\texttt{DTQ} : ]
+			The matrix
+			$
+				D^{-1}_{m+n-k}
+				T_{k}
+				\left(
+					f
+					,
+					g
+				\right)
+				\hat{Q}
+			$
+			
+			
+			\item[\texttt{TQ} : ]
+			The matrix
+			$
+				T_{k}
+				\left(
+					f
+					,
+					g
+				\right)
+				\hat{Q}
+			$
+			
+			\item[\texttt{DTQ Rearranged} : ]
+			The matrix 
+			$
+				S_{k}
+				\left(
+					f(x)
+					,
+					g(x)
+				\right)
+				=
+				D^{-1}_{m+n-k}
+				T_{k}
+				\left(
+					f(x)
+					,
+					g(x)
+				\right)
+				\hat{Q}
+			$ where the entries are computed in a rearranged form.
+			
+			\item[\texttt{DTQ Rearranged Denom Removed} : ]
+			$
+				\tilde{S}
+				\left(
+					f(x)
+					,
+					g(x).
+				\right)
+			$
+			
+		\end{description}
+
+%
 \end{description}
-%
-The differences in the programs are:
-\begin{itemize}
-\item{
-The program \text{o\_gcd.m} takes two polynomials $f(y)$ and $g(y)$ and calculates the $\GCD$ of their perturbed forms.
-}
-\item{
-The program \text{o\_roots.m} takes only one exact polynomial $\hat{f}(y)$ adds noise to its coefficients such that $f(y)$ is the noisy form, calculates it's derivative $f'(y)$ and performs a $\gcd$ calculation to obtain $d_{1}(y)$. A new $\gcd$ calculation is performed on d(y) and its derivative. This is performed iteratively until the GCD calculation output is a scalar. The set of gcd values $d_{1},d_{2},\dots d_n$ are used to compute the roots and corresponding multiplicities of $\hat{f}(y)$
-}
-%
-
-\end{itemize}
-
-\vspace{0.5cm}    
-
 
 Examples of executing the programs  are
 %
 
-\texttt{o1(5,1e-8), o2(15,1e-7), o3(21,1e-5)} and \texttt{o4(30,1e-7)}.
+\texttt{o\_gcd\_Univariate\_2Polys('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')}
 
-$\hfill\Box$
-
+\texttt{o\_roots\_Univariate('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')}
 
 
 The programs produce the following output:
 %
+\section{Points of Interest}
+\subsection{Limits}
+The code makes frequent use of variables \texttt{t\_limits} and \texttt{k\_limits}. 
+\begin{description}
 
-%
+	\item[\texttt{t\_limits} : ] In the computation of the factorisation of $\hat{f}_{0}(x)$, many \gls{GCD} computations are required to generate the sequence 
+	$
+		\hat{f}_{i}(x)
+		=
+		GCD
+		\left(
+			\hat{f}_{i-1}(x)
+			,
+			\hat{f}_{i-1}^{'}(x)
+		\right)
+	$. The degree of
+	$
+		GCD
+		\left(
+			\hat{f}_{i}(x)
+			,
+			\hat{f}_{i}^{'}(x)
+		\right)
+	$ is bound by the number of distinct roots of $\hat{f}_{i}(x)$, and the number of distinct roots is always less than or equal to the number of distinct roots of $\hat{f}_{i-1}(x)$. 
+	
+	\item[\texttt{k\_limits} : ] This variable defines the range of Sylvester subresultant matrices 
+	$
+		S_{k}
+		\left(
+			\hat{f}_{i}(x)
+			,
+			\hat{f}_{i}^{'}(x)
+		\right)
+	$ considered in the computation of the degree of the \gls{GCD}. By default this range is set between $1$ and $\min(m,n)$, however \texttt{limits\_t} can also be used since it is known that all subresultant matrices outside this range are known to be singular. 
+\end{description}
+
+\subsection{Computing the Degree of the GCD}
+There are several methods considered for the computation of the degree of the \gls{GCD}. A global variable \texttt{SETTINGS.RANK\_REVEALING\_METRIC} defined in the file \texttt{SetGlobalVariables.m} determines which method is used.
+
+\begin{description}
+	
+	\item[Singular Values : ] 
+	
+	\item[R1 Row Norms :]
+	
+	\item[R1 Row Diagonals : ]
+	
+	\item[Residuals : ]
+	
+\end{description}
 
 %
 

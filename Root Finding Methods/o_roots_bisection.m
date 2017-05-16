@@ -1,17 +1,17 @@
-function [ root_mult_array ] = o_roots_bisection(fx)
+function [ root_mult_array ] = o_roots_Bisection(fx)
 %   ROOTS_BISECTION obtain roots in interval by bisection method, once a
 %   root is obtained with assumed multiplicity one, deconvolve and perform
 %   bisection on f2 with root removed, until no more roots are found.
 %
 % Inputs.
 %
-% fx : Coefficients of polynomial f(x)
-%
+% fx : (Vector) Coefficients of polynomial f(x)
 %
 % Outputs.
 %
-% root_mult_array : Matrix of roots of f(x) and their corresponding
-% multiplicities, where the row i contains r_{i} and multiplicity m_{i}.
+% root_mult_array : [(Float) (Int)] Matrix consisting of two columns, containing 
+%   roots of f(x) and their corresponding multiplicities, 
+%   where the row i contains r_{i} and multiplicity m_{i}.
 
 % Get the upper and lower bound of the bisection method.
 interval_lowerbound = 0;
@@ -68,7 +68,10 @@ while (b - a >= min_interval_size)
         a = c;
         
     else
+        try
         PrintoutRoots('BISECTION' , root_mult_array)
+        catch
+        end
         return
     end
 end
@@ -87,7 +90,7 @@ gx = GetWithoutBinomials(gx_bi);
 
 % Perform deconvolution to obtain f2, the remainder of the polynomial now
 % that the found root has been removed.
-f2 = Bernstein_Deconvolve(fx,gx);
+f2 = Deconvolve(fx,gx);
 
 ite_num = 1;
 
@@ -150,7 +153,7 @@ while GetDegree(f2) >=1
     gx = GetWithoutBinomials(gx_bi);
     
     % Perform deconvolution to obtain f2
-    f2 = Bernstein_Deconvolve(f2,gx);
+    f2 = Deconvolve(f2, gx);
     
     
 end

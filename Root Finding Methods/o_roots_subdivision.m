@@ -80,7 +80,7 @@ r1_x = GetWithoutBinomials(r1_bi);
 
 % Obtain the polynomial f_{2}, given by the removal of the calculated roots
 % from f_{1}.
-f2 = Bernstein_Deconvolve(fx,r1_x);
+f2 = Deconvolve(fx,r1_x);
 
 % While f_{2} is not a scalar.
 while GetDegree(f2) >= 1
@@ -99,7 +99,7 @@ while GetDegree(f2) >= 1
     %Plot_fx(f2,a,b,figure_name);
     
     % Get roots of polynomial f2
-    [t_new,~,reached_depth] = FindRoots(Pk,m_ite,1,m_ite,1,1);
+    [t_new,~,reached_depth] = FindRoots(Pk, m_ite, 1, m_ite, 1, 1);
     
     % add the found roots to a list of roots
     root_mult_array = [root_mult_array; t_new ones(length(t_new))];
@@ -121,7 +121,7 @@ while GetDegree(f2) >= 1
     
     % Perform deconvolution and obtain remaining part of original input
     % polynomial. Update f2 to be the result of the deconvolution.
-    f2 = Bernstein_Deconvolve(f2,r1_x);
+    f2 = Deconvolve(f2,r1_x);
     
     
 end

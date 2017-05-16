@@ -60,7 +60,11 @@ SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
 % metric is less than this value, then all subresultants are full rank or
 % rank deficient.
 SETTINGS.THRESHOLD = 1;
+
+% This metric determines whether all sylvester subresutlant matrices are
+% considered to be full rank (non-singular) or rank deficient (Singular)
 SETTINGS.THRESHOLD_RANK = -5;
+
 
 % -------------------------------------------------------------------------
 %

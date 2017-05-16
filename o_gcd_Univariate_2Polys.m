@@ -1,5 +1,5 @@
 function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method)
-% o_gcd_2Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+% o_gcd_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
 % g(x) as defined in the example file.
@@ -54,14 +54,8 @@ global SETTINGS
 % Set the problem type to a GCD problem
 problemType = 'GCD';
 
-% Add subfolders
-restoredefaultpath
-
-% Determine where your m-file's folder is.
-folder = fileparts(which(mfilename)); 
-
 % Add that folder plus all subfolders to the path.
-addpath(genpath(folder));
+addpath(genpath(pwd));
 
 % % Ensure that minimum noise level is less than maximum noise level
 if emin > emax
@@ -113,7 +107,7 @@ n = GetDegree(gx_exact);
 fx = AddVariableNoiseToPoly(fx_exact, emin, emax);
 gx = AddVariableNoiseToPoly(gx_exact, emin, emax);
 
-% set upper and lower limit of the degree of the GCD
+% Set upper and lower limit of the degree of the GCD
 lower_lim = 1;
 upper_lim = min(m, n);
 limits = [lower_lim upper_lim];

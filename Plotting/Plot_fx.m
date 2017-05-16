@@ -1,11 +1,21 @@
 function [] = Plot_fx(fx,a,b,figure_name)
 % Plot the Bernstein polynomial f(x) and its control points defined over
 % the interval [a,b]
+%
+% % Inputs
+%
+% fx : (Vector) Coefficients of polynomial f(x) 
+%
+% a : (Float) Lower end of interval
+%
+% b : (Float) Upper end of interval
+%
+% figure_name : (String)
 
 
-global PLOT_GRAPHS
-switch PLOT_GRAPHS
-    case 'y'
+global SETTINGS
+switch SETTINGS.PLOT_GRAPHS
+    case true
         
         % Get the control points of f(x)
         Pk = GetControlPoints(a,b,fx);
@@ -33,7 +43,7 @@ switch PLOT_GRAPHS
         hold on
         scatter(Pk(:,1),Pk(:,2));
         hold off
-    case 'n'
+    case false
     otherwise
         error('err');
 end

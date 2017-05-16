@@ -1,4 +1,15 @@
 function [root_mult_array] = o_roots_BezierClipping(fx)
+%
+% % Inputs
+%
+% fx : (Vector) Coefficients of polynomial f(x)
+%
+% % Outputs
+%
+% root_mult_array : [Float Int] Matrix consisting of two columns containing
+%   (i) a root and (ii) its multiplicity.
+
+
 
 % Pseudocode from 'Computing roots of polynomials by quadratic clipping'
 % Barton and Juttler
@@ -46,7 +57,7 @@ root_mult_array = [];
 % While f(x) is not a constant
 while GetDegree(fx) >= 1
     
-    if GetDegree(fx) == 1;
+    if GetDegree(fx) == 1
         
         
         % Curve is a straight line.
@@ -120,7 +131,7 @@ while GetDegree(fx) >= 1
     %save_all_figures_to_directory(dir_name);
     
     % Close all open plots
-    close all;
+    %close all;
     
     
     % Get the root.
@@ -136,17 +147,23 @@ while GetDegree(fx) >= 1
         ];
     
     % Deconvolve root from polynomial
-    fx = Bernstein_Deconvolve(fx,tx);
+    fx = Deconvolve(fx, tx);
     
     % Increment iteration number
     outer_loop_ite = outer_loop_ite + 1;
     
 end
 
-
-% % Print out roots
-PrintoutRoots('CLIPPING',root_mult_array);
-
+try
+    
+    % % Print out roots
+    PrintoutRoots('CLIPPING',root_mult_array);
+    
+catch
+    
+    fprintf('CLIPPING : No roots found')
+    
+end
 
 end
 
@@ -155,7 +172,7 @@ function [new_left_pk, new_right_pk] = BezierSubdivide(Pk,degree,c)
 % Given a set of control points, subdivide such that two new sets of
 % control points are obtained.
 %
-% Inputs.
+% % Inputs.
 %
 %
 % Pk :  Set of original control points.
@@ -164,7 +181,7 @@ function [new_left_pk, new_right_pk] = BezierSubdivide(Pk,degree,c)
 %
 % c :    point of subdivision.
 %
-%                           Outputs.
+% % Outputs.
 %
 %
 % new_left_pk : - The set of control points on the left of c.

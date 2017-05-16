@@ -1,4 +1,4 @@
-function arr_hx = Deconvolve_Set(arr_fx,DECONVOLVE_METHOD)
+function arr_hx = Deconvolve_Set(arr_fx, DECONVOLVE_METHOD)
 % Performs a series of n-1 deconvolutions over a set of n polynomials,
 % where each polynomial f_{i}(x) appears in two deconvolutions, and
 % h_{i}(x) = f_{i}(x)/f_{i+1}(x)
@@ -24,6 +24,7 @@ function arr_hx = Deconvolve_Set(arr_fx,DECONVOLVE_METHOD)
 %   Batch Constrained
 %   Batch Constrained With STLN
 %
+
 
 switch DECONVOLVE_METHOD
     case 'Separate'

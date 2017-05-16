@@ -29,12 +29,12 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
     
         m = GetDegree(fx);
         
-        lambda = ((m+n_k+1) / ((m+1)*(m+1)*(n_k+1))) * sum(abs(fx));
+        lambda = ((m+n_k+1) / ((m+1)^2*(n_k+1))) * sum(abs(fx));
         
         
-        %Tf = BuildSubresultant_Partition_2Polys(fx, n_k);
-        %lambda2 = mean(Tf(Tf~=0));
-        %display(lambda)
+        % Tf = BuildSubresultant_Partition_2Polys(fx, n_k);
+        % lambda2 = mean(Tf(Tf~=0));
+        % display(lambda)
         
     case {'T', 'DT','TQ', 'DTQ Rearranged Denom Removed','DTQ Rearranged'}
         

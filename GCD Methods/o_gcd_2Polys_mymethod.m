@@ -34,9 +34,10 @@ function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t ] = ...
 
 
 
-% Use this to compute the degree of the GCD only using one Sylvester matrix
+% Use this to compute the degree of the GCD using ONLY one Sylvester matrix
 % onesub = 'y'. This code is included as a test to show that computing GCD degree by
-% all subresultant matrices is better than just the first.
+% method using ALL subresultant matrices gives better results than using 
+% just the first subresultant.
 onesub = 'n';
 if onesub == 'y'
     Get_GCD_Degree_One_Subresultant(fx,gx);
@@ -60,11 +61,17 @@ LineBreakLarge();
 if t == 0 % If degree of GCD is 0, polynomials are coprime
     
     fprintf([mfilename ' : ' sprintf('f(x) and g(x) are coprime \n')])
+    
+    fx_o = fx;
+    gx_o = gx;
     dx_o = 1;
+    
     ux_o = fx;
     vx_o = gx;
+    
     alpha_o = 1;
     theta_o = 1;
+    
     return
     
 end

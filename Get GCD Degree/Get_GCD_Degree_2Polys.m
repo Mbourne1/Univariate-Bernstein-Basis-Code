@@ -1,6 +1,6 @@
 function [t,alpha, theta,GM_fx,GM_gx] = ...
     Get_GCD_Degree_2Polys(fx, gx, t_limits)
-% GetGCD_Degree_2Polys(fx, gx, k_limits)
+% GetGCD_Degree_2Polys(fx, gx, t_limits)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
 %
@@ -11,7 +11,7 @@ function [t,alpha, theta,GM_fx,GM_gx] = ...
 %
 % gx : (Vector) coefficients of polynomail g, expressed in Bernstein Basis
 %
-% k_limits : [(Int) (Int)] Set the upper and lower bound of the degree of the
+% t_limits : [(Int) (Int)] Set the upper and lower bound of the degree of the
 % GCD of polynomials f(x) and g(x). Usually used when using o_roots() where
 % prior information is known about the upper and lower bound due to number
 % of distinct roots.
@@ -42,13 +42,11 @@ k_limits = [1 min(m,n)];
 lowerLimit_k = k_limits(1);
 upperLimit_k = k_limits(2);
 
-
-
 % Get the number of subresultants which must be constructed.
 nSubresultants = upperLimit_k - lowerLimit_k +1 ;
 
 % %
-% Initialisation stage
+% Initialisation of some vectors
 
 % Initialise vectors to store all optimal alphas and theta, and each
 % geometric mean for f and g in each S_{k} for k = 1,...,min(m,n)
@@ -67,15 +65,16 @@ arr_R1 = cell(nSubresultants, 1);
 % For each subresultant $S_{k} k = lowerLimt ... upperLimit$
 for k = lowerLimit_k : 1 : upperLimit_k
     
+    % Set index i
     i = k - lowerLimit_k + 1;
     
+    % Get Geometric means, \alpha, and \theta
     [vGM_fx(i), vGM_gx(i), vAlpha(i), vTheta(i)] = Preprocess_2Polys(fx, gx, k);
     
     % 18/04/2016
     % Given the previous geometric mean of f(x) calculate the new geometric
-    % mean by my new method
-    
-    if (i>1)
+    % mean by my new method. 
+    if (i > 1)
         GM_fx_test = GetGeometricMeanFromPrevious(fx , vGM_fx(i-1) , m , n-k);
         GM_gx_test = GetGeometricMeanFromPrevious(gx , vGM_gx(i-1) , n , m-k);
     end
@@ -96,7 +95,7 @@ for k = lowerLimit_k : 1 : upperLimit_k
     
     % Get the QR decomposition
     [~, arr_R{i}] = qr(arr_Sk{i});
-    [r,c] = size(arr_R{i});
+    [~,c] = size(arr_R{i});
     arr_R1{i} = arr_R{i}(1:c,1:c);
     
     
@@ -107,7 +106,8 @@ end
 if(SETTINGS.PLOT_GRAPHS)
     
     plot_extra_graphs = false;
-    if (plot_extra_graphs)
+    
+    if ( plot_extra_graphs )
         x_vec = lowerLimit_k:1:upperLimit_k;
         
         figure_name = sprintf('Geometric Mean of f(x) %s', SETTINGS.SYLVESTER_BUILD_METHOD);
