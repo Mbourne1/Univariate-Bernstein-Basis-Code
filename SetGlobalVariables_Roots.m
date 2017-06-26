@@ -32,7 +32,7 @@ SETTINGS.EMAX = emax;
 SETTINGS.SEED = 1024;
 
 % Outputs
-SETTINGS.PLOT_GRAPHS = true;
+SETTINGS.PLOT_GRAPHS = false;
 
 % BOOL_LOG (Boolean)
 %   true : Use Logs

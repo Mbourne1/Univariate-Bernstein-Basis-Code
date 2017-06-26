@@ -92,7 +92,7 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         gw = GetWithThetas(gx, theta);
         
         % Get quotient polynomials u(\omega) and v(\omega)
-        [uw,vw] = GetQuotients_2Polys(fw, alpha.*gw, k);
+        [uw, vw] = GetQuotients_2Polys(fw, alpha.*gw, k);
         
         % f(x) and g(x) are unchanged from input
         fx_lr = fx;

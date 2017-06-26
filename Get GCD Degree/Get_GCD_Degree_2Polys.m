@@ -65,9 +65,7 @@ vAlpha    =   zeros(nSubresultants, 1);
 vTheta    =   zeros(nSubresultants, 1);
 vGM_fx    =   zeros(nSubresultants, 1);
 vGM_gx    =   zeros(nSubresultants, 1);
-vConditionSk = zeros(nSubresultants, 1);
-vConditionCf = zeros(nSubresultants, 1);
-vConditionCg = zeros(nSubresultants, 1);
+%vConditionSk = zeros(nSubresultants, 1);
 
 % Initialise some cell arrays
 arr_SingularValues = cell(nSubresultants, 1);
@@ -88,7 +86,7 @@ for k = lowerLimit_k : 1 : upperLimit_k
     
     % 18/04/2016
     % Given the previous geometric mean of f(x) calculate the new geometric
-    % mean by my new method. 
+    % mean by my new method.
     if (i > 1)
         GM_fx_test = GetGeometricMeanFromPrevious(fx , vGM_fx(i-1) , m , n-k);
         GM_gx_test = GetGeometricMeanFromPrevious(gx , vGM_gx(i-1) , n , m-k);
@@ -102,14 +100,15 @@ for k = lowerLimit_k : 1 : upperLimit_k
     fw = GetWithThetas(fx_n, vTheta(i));
     gw = GetWithThetas(gx_n, vTheta(i));
     
-    plotCoefficients(fx, fw);
-    plotCoefficients(gx, vAlpha(i).*gw);
+    
+    %plotCoefficients(fx, fw);
+    %plotCoefficients(gx, vAlpha(i).*gw);
     
     % Build the k-th subresultant
     arr_Sk{i} = BuildSubresultant_2Polys(fw, vAlpha(i).*gw, k);
     
     % Get condition of the sylvester subresultant matrix
-    vConditionSk(i) = cond(arr_Sk{i});
+    %vConditionSk(i) = cond(arr_Sk{i});
     
     % Get condition of first partiton
     % vConditionCf(i) = cond(arr_Sk{i}(:, 1:n-k+1));
@@ -130,7 +129,7 @@ for k = lowerLimit_k : 1 : upperLimit_k
     
 end
 
-plotConditionNumbers(vConditionSk, limits_k, limits_t)
+%plotConditionNumbers(vConditionSk, limits_k, limits_t)
 %plotConditionNumbers(vConditionCf, limits_k, limits_t)
 %plotConditionNumbers(vConditionCg, limits_k, limits_t)
 
@@ -139,7 +138,7 @@ fprintf(sprintf('Metric used to compute degree of GCD : %s \n', SETTINGS.RANK_RE
 
 % R1 Row Norms
 % R1 Row Diagonals
-% Singular Values
+% Minimum Singular Values
 % Residuals
 
 switch SETTINGS.RANK_REVEALING_METRIC
@@ -214,7 +213,7 @@ switch SETTINGS.RANK_REVEALING_METRIC
             plotSingularValues(arr_SingularValues, limits_k, limits_t);
             plotMinimumSingularValues(vMinimumSingularValues, limits_k, limits_t, rank_range)
         end
-    
+        
     case 'Max/Min Singular Values'
         
         % Get the minimal singular value from S_{k}
@@ -275,13 +274,13 @@ LineBreakLarge();
 % If only one subresultant exists, use an alternative method.
 
 if (upperLimit_t == lowerLimit_t)
-        
+    
     t = upperLimit_t;
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);
     GM_gx = vGM_gx(1);
-
+    
     
 elseif (upperLimit_k == lowerLimit_k )
     
@@ -292,7 +291,7 @@ elseif (upperLimit_k == lowerLimit_k )
     % Compute the degree of the GCD.
     t = Get_GCD_Degree_OneSubresultant_2Polys(vMetric, rank_range);
     
-
+    
     alpha = vAlpha(1);
     theta = vTheta(1);
     GM_fx = vGM_fx(1);
@@ -330,20 +329,24 @@ end
 end
 
 
-function [] = plotCoefficients(fx,fw)
+function [] = plotCoefficients(fx, fw)
 
 m = GetDegree(fx);
-
-figure()
-hold on
-vec_x = 0:1:m;
-plot(vec_x, log10(fx),'r-s','DisplayName','f(x)');
-plot(vec_x, log10(fw),'b-o','DisplayName','f(\omega)');
-legend(gca,'show');
-xlabel('i')
-ylabel('log_{10} (\Re)')
-hold off
-
+global SETTINGS
+switch SETTINGS.PLOT_GRAPHS
+    case true
+        
+        figure()
+        hold on
+        vec_x = 0:1:m;
+        plot(vec_x, log10(fx),'r-s','DisplayName','f(x)');
+        plot(vec_x, log10(fw),'b-o','DisplayName','f(\omega)');
+        legend(gca,'show');
+        xlabel('i')
+        ylabel('log_{10} (\Re)')
+        hold off
+    case 'false'
+end
 end
 
 

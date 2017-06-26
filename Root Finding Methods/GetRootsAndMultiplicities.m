@@ -48,3 +48,5 @@ try
 catch
     fprintf('No Roots Found in %s \n', str_method)
 end
+
+end

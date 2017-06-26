@@ -40,6 +40,7 @@ function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t, rank_range] = ...
 % just the first subresultant.
 onesub = 'n';
 if onesub == 'y'
+    
     Get_GCD_Degree_One_Subresultant(fx,gx);
     fx_o = [];
     gx_o = [];
@@ -49,6 +50,7 @@ if onesub == 'y'
     alpha_o = [];
     theta_o = [];
     t = [];
+    
     return;
 end
 

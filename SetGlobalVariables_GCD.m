@@ -119,13 +119,6 @@ SETTINGS.SYLVESTER_BUILD_METHOD = Sylvester_Build_Method;
 
 
 %-------------------------------------------------------------------------
-%
-%               LOW RANK SYLVESTER MATRIX SETTINGS.
-%
-
-
-% Regarding the computation of the Sylvester low rank approximation
-
 
 % LOW_RANK_APPROXIMATION_METHOD:
 %

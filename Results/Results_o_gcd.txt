@@ -15008,3 +15008,27 @@ ax/Min Singular Values
 24-Jun-2017 17:23:47,6,26,28,16,2.0636e-07,2.5654e-07,1.3114e-07,None,0,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
 24-Jun-2017 17:27:49,7,30,38,20,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
 24-Jun-2017 17:27:58,7,30,38,16,1.9979,2,1.9999,None,0,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:13:25,10,35,31,23,2,2,2,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:13:54,4,5,6,2,3.4485e-12,2.9156e-12,1.1065e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:14:04,5,9,9,6,2,2,2,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:14:24,6,26,28,17,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:15:09,7,30,38,20,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:15:51,7,30,38,16,1.9979,2,1.9999,None,0,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:16:28,8,25,24,16,2,2,2,None,0,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:17:13,8,25,24,16,2,2,2,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:26:35,8,25,24,16,1.1569e-09,4.5082e-12,3.5685e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:28:35,8,25,24,16,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:28:40,1,4,4,3,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:29:10,1,4,4,3,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:29:50,1,4,4,3,2.0033e-12,4.7423e-13,1.0165e-10,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:30:42,1,4,4,3,2.0033e-12,4.7423e-13,1.0165e-10,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:30:44,1,4,4,3,2.0033e-12,4.7423e-13,1.0165e-10,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:30:51,2,19,16,5,9.5524e-09,1.0397e-09,2.2254e-06,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:30:59,3,21,20,12,1.1726e-09,2.2393e-13,1.3544e-10,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:31:03,4,5,6,2,7.8315e-11,3.422e-12,2.968e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:31:06,5,9,9,6,3.0973e-10,3.8563e-11,1.1908e-12,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:31:11,6,26,28,17,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:31:20,7,30,38,20,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:31:25,8,25,24,16,1.1569e-09,4.5082e-12,3.5685e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:31:30,9,35,31,23,7.0671e-06,3.3459e-12,2.5999e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:31:35,10,35,31,23,1.4117e-06,1.0707e-09,3.8602e-10,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 

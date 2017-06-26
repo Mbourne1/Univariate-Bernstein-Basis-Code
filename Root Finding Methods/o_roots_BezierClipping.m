@@ -45,6 +45,9 @@ global ymin
 global ymax
 
 
+interval_low = 0;
+interval_high = 1;
+
 % max error
 epsilon = 1e-5;
 
@@ -62,7 +65,7 @@ while GetDegree(fx) >= 1
 
         % Curve is a straight line.
         m = 1;
-        x = linspace(0, 1, m+1)';
+        x = linspace(interval_low, interval_high, m + 1)';
         CP = [x, fx];
         
         xmin = min(CP(:,1));
@@ -71,7 +74,7 @@ while GetDegree(fx) >= 1
         ymax = max(CP(:,2));
         
         x_intercept_new = GetXIntercept(CP);
-        fprintf('x intercept : %2.4f',x_intercept_new)
+        fprintf('x intercept : %2.4f', x_intercept_new)
     else
         
         % Get degree of polynomial f(x)
@@ -79,16 +82,19 @@ while GetDegree(fx) >= 1
         
         % Define the set of control points of f(x)
         % Split the unit interval into m+1 parts
-        x = linspace(0,1,m+1)';
+        x = linspace(interval_low, interval_high, m + 1)';
         CP = [x,fx];
         
-        xmin = min(CP(:,1));
-        xmax = max(CP(:,1));
-        ymin = min(CP(:,2));
-        ymax = max(CP(:,2));
+        xmin = min(CP(:, 1));
+        xmax = max(CP(:, 1));
+        ymin = min(CP(:, 2));
+        ymax = max(CP(:, 2));
         
-        x_intercept_old = 0;
-        x_intercept_new = 1;
+        
+        x_intercept_old = interval_low;
+        x_intercept_new = interval_high;
+        
+        
         inner_loop_ite = 1;
         
         while abs(x_intercept_new - x_intercept_old) > epsilon
@@ -113,6 +119,7 @@ while GetDegree(fx) >= 1
             
             % Get the first point at which the convex hull crosses the x axis.
             x_intercept_old = x_intercept_new;
+            
             x_intercept_new = GetXIntercept(convex_hull_vertices);
            
             if(x_intercept_new == -1000)
