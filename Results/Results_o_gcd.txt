@@ -15032,3 +15032,12 @@ ax/Min Singular Values
 26-Jun-2017 09:31:25,8,25,24,16,1.1569e-09,4.5082e-12,3.5685e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
 26-Jun-2017 09:31:30,9,35,31,23,7.0671e-06,3.3459e-12,2.5999e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
 26-Jun-2017 09:31:35,10,35,31,23,1.4117e-06,1.0707e-09,3.8602e-10,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:45:00,4,5,6,2,7.8315e-11,3.422e-12,2.968e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:45:17,4,5,6,2,7.8417e-11,3.4251e-12,2.9667e-11,None,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:45:26,5,9,9,6,3.0976e-10,3.8567e-11,1.1906e-12,None,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:45:40,6,26,28,17,1000,1000,1000,None,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:45:55,7,30,38,20,1000,1000,1000,None,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:46:49,7,30,38,20,1000,1000,1000,None,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:47:15,7,30,38,20,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:48:31,7,30,38,20,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+26-Jun-2017 09:48:55,4,5,6,2,7.8315e-11,3.422e-12,2.968e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 

@@ -132,6 +132,10 @@ end
 %plotConditionNumbers(vConditionSk, limits_k, limits_t)
 %plotConditionNumbers(vConditionCf, limits_k, limits_t)
 %plotConditionNumbers(vConditionCg, limits_k, limits_t)
+%plotThetas(vTheta)
+%plotAlphas(vAlpha)
+%plotGeometricMean(vGM_fx, vGM_gx);
+
 
 
 fprintf(sprintf('Metric used to compute degree of GCD : %s \n', SETTINGS.RANK_REVEALING_METRIC));
@@ -350,7 +354,44 @@ end
 end
 
 
+function [] = plotThetas(vTheta)
 
+nSubresultants = length(vTheta);
+
+figure()
+hold on
+x_vec = 1:1:nSubresultants;
+plot(x_vec, vTheta, '-s')
+xlabel('k')
+hold off
+
+end
+
+
+function [] = plotAlphas(vAlpha)
+nSubresultants = length(vAlpha);
+
+figure()
+hold on
+x_vec = 1:1:nSubresultants;
+plot(x_vec, vAlpha, '-s')
+xlabel('k')
+hold off
+end
+
+function [] = plotGeometricMean(vGM_fx, vGM_gx)
+
+nSubresultants = length(vGM_fx);
+
+figure()
+hold on
+x_vec = 1:1:nSubresultants;
+plot(x_vec, vGM_fx, '-s')
+plot(x_vec, vGM_gx, '-s')
+
+xlabel('k')
+hold off
+end
 
 
 
