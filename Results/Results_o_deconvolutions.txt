@@ -1,0 +1,726 @@
+DATE, EX_NUM, BOOL_PREPROC, NOISE, method_name, error_norm 
+24-Jun-2017 13:10:13,1,1,1e-08,Separate,4.8038e-08 
+24-Jun-2017 13:10:14,1,1,1e-08,Batch,2.6904 
+24-Jun-2017 13:10:14,1,1,1e-08,Batch With STLN,2.6509 
+24-Jun-2017 13:10:14,1,1,1e-08,Batch Constrained,2.1977 
+24-Jun-2017 13:10:14,1,1,1e-08,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:10:47,5,1,1e-08,Separate,2.7305e-08 
+24-Jun-2017 13:10:47,5,1,1e-08,Batch,3.187e-08 
+24-Jun-2017 13:10:47,5,1,1e-08,Batch With STLN,3.1507e-08 
+24-Jun-2017 13:10:47,5,1,1e-08,Batch Constrained,1.3898e-08 
+24-Jun-2017 13:10:47,5,1,1e-08,Batch Constrained With STLN,1.1789e-08 
+24-Jun-2017 13:10:47,6,1,1e-08,Separate,2.7305e-08 
+24-Jun-2017 13:10:47,6,1,1e-08,Batch,3.187e-08 
+24-Jun-2017 13:10:47,6,1,1e-08,Batch With STLN,3.1507e-08 
+24-Jun-2017 13:10:47,6,1,1e-08,Batch Constrained,1.3898e-08 
+24-Jun-2017 13:10:47,6,1,1e-08,Batch Constrained With STLN,1.1789e-08 
+24-Jun-2017 13:10:47,4,1,1e-08,Separate,2.4285e-07 
+24-Jun-2017 13:10:47,4,1,1e-08,Batch,2.4952e-08 
+24-Jun-2017 13:10:47,4,1,1e-08,Batch With STLN,2.4334e-08 
+24-Jun-2017 13:10:47,4,1,1e-08,Batch Constrained,7.778e-09 
+24-Jun-2017 13:10:47,4,1,1e-08,Batch Constrained With STLN,4.9939e-09 
+24-Jun-2017 13:10:47,2,1,1e-08,Separate,5.6924e-08 
+24-Jun-2017 13:10:47,2,1,1e-08,Batch,5.9806e-08 
+24-Jun-2017 13:10:47,2,1,1e-08,Batch With STLN,5.9297e-08 
+24-Jun-2017 13:10:47,2,1,1e-08,Batch Constrained,2.1529e-08 
+24-Jun-2017 13:10:47,2,1,1e-08,Batch Constrained With STLN,2.1743e-08 
+24-Jun-2017 13:10:49,5,0,1e-08,Separate,2.7305e-08 
+24-Jun-2017 13:10:49,5,0,1e-08,Batch,2.7305e-08 
+24-Jun-2017 13:10:49,5,0,1e-08,Batch With STLN,2.7029e-08 
+24-Jun-2017 13:10:49,5,0,1e-08,Batch Constrained,9.3124e-09 
+24-Jun-2017 13:10:49,5,0,1e-08,Batch Constrained With STLN,7.1756e-09 
+24-Jun-2017 13:10:50,4,0,1e-08,Separate,2.4285e-07 
+24-Jun-2017 13:10:50,4,0,1e-08,Batch,2.4285e-07 
+24-Jun-2017 13:10:50,4,0,1e-08,Batch With STLN,2.5125e-07 
+24-Jun-2017 13:10:50,4,0,1e-08,Batch Constrained,1.1922e-07 
+24-Jun-2017 13:10:50,4,0,1e-08,Batch Constrained With STLN,3.5539e-08 
+24-Jun-2017 13:10:50,6,0,1e-08,Separate,2.7305e-08 
+24-Jun-2017 13:10:50,6,0,1e-08,Batch,2.7305e-08 
+24-Jun-2017 13:10:50,6,0,1e-08,Batch With STLN,2.7029e-08 
+24-Jun-2017 13:10:50,6,0,1e-08,Batch Constrained,9.3124e-09 
+24-Jun-2017 13:10:50,6,0,1e-08,Batch Constrained With STLN,7.1756e-09 
+24-Jun-2017 13:10:50,2,0,1e-08,Separate,5.6924e-08 
+24-Jun-2017 13:10:50,2,0,1e-08,Batch,5.6924e-08 
+24-Jun-2017 13:10:50,2,0,1e-08,Batch With STLN,5.646e-08 
+24-Jun-2017 13:10:50,2,0,1e-08,Batch Constrained,1.871e-08 
+24-Jun-2017 13:10:50,2,0,1e-08,Batch Constrained With STLN,1.8983e-08 
+24-Jun-2017 13:10:52,5,1,1e-10,Separate,2.7305e-10 
+24-Jun-2017 13:10:52,5,1,1e-10,Batch,3.187e-10 
+24-Jun-2017 13:10:52,5,1,1e-10,Batch With STLN,3.1507e-10 
+24-Jun-2017 13:10:52,5,1,1e-10,Batch Constrained,1.3899e-10 
+24-Jun-2017 13:10:52,5,1,1e-10,Batch Constrained With STLN,1.1789e-10 
+24-Jun-2017 13:10:52,4,1,1e-10,Separate,2.4285e-09 
+24-Jun-2017 13:10:52,4,1,1e-10,Batch,2.4952e-10 
+24-Jun-2017 13:10:52,4,1,1e-10,Batch With STLN,2.4334e-10 
+24-Jun-2017 13:10:52,4,1,1e-10,Batch Constrained,7.7781e-11 
+24-Jun-2017 13:10:52,4,1,1e-10,Batch Constrained With STLN,4.994e-11 
+24-Jun-2017 13:10:52,6,1,1e-10,Separate,2.7305e-10 
+24-Jun-2017 13:10:52,6,1,1e-10,Batch,3.187e-10 
+24-Jun-2017 13:10:52,6,1,1e-10,Batch With STLN,3.1507e-10 
+24-Jun-2017 13:10:52,6,1,1e-10,Batch Constrained,1.3899e-10 
+24-Jun-2017 13:10:52,6,1,1e-10,Batch Constrained With STLN,1.1789e-10 
+24-Jun-2017 13:10:53,2,1,1e-10,Separate,5.6924e-10 
+24-Jun-2017 13:10:53,2,1,1e-10,Batch,5.9806e-10 
+24-Jun-2017 13:10:53,2,1,1e-10,Batch With STLN,5.9297e-10 
+24-Jun-2017 13:10:53,2,1,1e-10,Batch Constrained,2.1529e-10 
+24-Jun-2017 13:10:53,2,1,1e-10,Batch Constrained With STLN,2.1743e-10 
+24-Jun-2017 13:10:54,5,0,1e-10,Separate,2.7305e-10 
+24-Jun-2017 13:10:54,5,0,1e-10,Batch,2.7305e-10 
+24-Jun-2017 13:10:54,5,0,1e-10,Batch With STLN,2.7029e-10 
+24-Jun-2017 13:10:54,5,0,1e-10,Batch Constrained,9.3124e-11 
+24-Jun-2017 13:10:54,5,0,1e-10,Batch Constrained With STLN,7.1756e-11 
+24-Jun-2017 13:10:55,4,0,1e-10,Separate,2.4285e-09 
+24-Jun-2017 13:10:55,4,0,1e-10,Batch,2.4286e-09 
+24-Jun-2017 13:10:55,4,0,1e-10,Batch With STLN,2.5125e-09 
+24-Jun-2017 13:10:55,4,0,1e-10,Batch Constrained,1.1922e-09 
+24-Jun-2017 13:10:55,4,0,1e-10,Batch Constrained With STLN,3.5539e-10 
+24-Jun-2017 13:10:55,6,0,1e-10,Separate,2.7305e-10 
+24-Jun-2017 13:10:55,6,0,1e-10,Batch,2.7305e-10 
+24-Jun-2017 13:10:55,6,0,1e-10,Batch With STLN,2.7029e-10 
+24-Jun-2017 13:10:55,6,0,1e-10,Batch Constrained,9.3124e-11 
+24-Jun-2017 13:10:55,6,0,1e-10,Batch Constrained With STLN,7.1756e-11 
+24-Jun-2017 13:10:55,2,0,1e-10,Separate,5.6924e-10 
+24-Jun-2017 13:10:55,2,0,1e-10,Batch,5.6924e-10 
+24-Jun-2017 13:10:55,2,0,1e-10,Batch With STLN,5.646e-10 
+24-Jun-2017 13:10:55,2,0,1e-10,Batch Constrained,1.8709e-10 
+24-Jun-2017 13:10:55,2,0,1e-10,Batch Constrained With STLN,1.8983e-10 
+24-Jun-2017 13:10:57,4,1,1e-12,Separate,2.4287e-11 
+24-Jun-2017 13:10:57,4,1,1e-12,Batch,2.4948e-12 
+24-Jun-2017 13:10:57,4,1,1e-12,Batch With STLN,2.4327e-12 
+24-Jun-2017 13:10:57,4,1,1e-12,Batch Constrained,7.782e-13 
+24-Jun-2017 13:10:57,4,1,1e-12,Batch Constrained With STLN,4.9978e-13 
+24-Jun-2017 13:10:57,5,1,1e-12,Separate,2.7304e-12 
+24-Jun-2017 13:10:57,5,1,1e-12,Batch,3.1861e-12 
+24-Jun-2017 13:10:57,5,1,1e-12,Batch With STLN,3.1505e-12 
+24-Jun-2017 13:10:57,5,1,1e-12,Batch Constrained,1.393e-12 
+24-Jun-2017 13:10:57,5,1,1e-12,Batch Constrained With STLN,1.18e-12 
+24-Jun-2017 13:10:57,6,1,1e-12,Separate,2.7304e-12 
+24-Jun-2017 13:10:57,6,1,1e-12,Batch,3.1861e-12 
+24-Jun-2017 13:10:57,6,1,1e-12,Batch With STLN,3.1505e-12 
+24-Jun-2017 13:10:57,6,1,1e-12,Batch Constrained,1.393e-12 
+24-Jun-2017 13:10:57,6,1,1e-12,Batch Constrained With STLN,1.18e-12 
+24-Jun-2017 13:10:57,2,1,1e-12,Separate,5.6921e-12 
+24-Jun-2017 13:10:57,2,1,1e-12,Batch,5.9792e-12 
+24-Jun-2017 13:10:57,2,1,1e-12,Batch With STLN,5.9286e-12 
+24-Jun-2017 13:10:57,2,1,1e-12,Batch Constrained,2.1517e-12 
+24-Jun-2017 13:10:57,2,1,1e-12,Batch Constrained With STLN,2.1746e-12 
+24-Jun-2017 13:10:59,4,0,1e-12,Separate,2.4287e-11 
+24-Jun-2017 13:10:59,4,0,1e-12,Batch,2.4292e-11 
+24-Jun-2017 13:10:59,4,0,1e-12,Batch With STLN,2.513e-11 
+24-Jun-2017 13:10:59,4,0,1e-12,Batch Constrained,1.1933e-11 
+24-Jun-2017 13:10:59,4,0,1e-12,Batch Constrained With STLN,3.5558e-12 
+24-Jun-2017 13:10:59,5,0,1e-12,Separate,2.7304e-12 
+24-Jun-2017 13:10:59,5,0,1e-12,Batch,2.7309e-12 
+24-Jun-2017 13:10:59,5,0,1e-12,Batch With STLN,2.7031e-12 
+24-Jun-2017 13:10:59,5,0,1e-12,Batch Constrained,9.2975e-13 
+24-Jun-2017 13:10:59,5,0,1e-12,Batch Constrained With STLN,7.1727e-13 
+24-Jun-2017 13:10:59,6,0,1e-12,Separate,2.7304e-12 
+24-Jun-2017 13:10:59,6,0,1e-12,Batch,2.7309e-12 
+24-Jun-2017 13:10:59,6,0,1e-12,Batch With STLN,2.7031e-12 
+24-Jun-2017 13:10:59,6,0,1e-12,Batch Constrained,9.2975e-13 
+24-Jun-2017 13:10:59,6,0,1e-12,Batch Constrained With STLN,7.1727e-13 
+24-Jun-2017 13:10:59,2,0,1e-12,Separate,5.6921e-12 
+24-Jun-2017 13:10:59,2,0,1e-12,Batch,5.6917e-12 
+24-Jun-2017 13:10:59,2,0,1e-12,Batch With STLN,5.6455e-12 
+24-Jun-2017 13:10:59,2,0,1e-12,Batch Constrained,1.867e-12 
+24-Jun-2017 13:10:59,2,0,1e-12,Batch Constrained With STLN,1.8972e-12 
+24-Jun-2017 13:11:01,3,1,1e-08,Separate,1.1147e-08 
+24-Jun-2017 13:11:01,3,1,1e-08,Batch,4.991e-08 
+24-Jun-2017 13:11:01,3,1,1e-08,Batch With STLN,5.0401e-08 
+24-Jun-2017 13:11:01,3,1,1e-08,Batch Constrained,5.5091e-08 
+24-Jun-2017 13:11:01,3,1,1e-08,Batch Constrained With STLN,4.5044e-08 
+24-Jun-2017 13:11:02,7,1,1e-08,Separate,4.6844e-07 
+24-Jun-2017 13:11:02,7,1,1e-08,Batch,1.2403e-07 
+24-Jun-2017 13:11:02,7,1,1e-08,Batch With STLN,1.2008e-07 
+24-Jun-2017 13:11:02,7,1,1e-08,Batch Constrained,5.3012e-08 
+24-Jun-2017 13:11:02,7,1,1e-08,Batch Constrained With STLN,8.6253e-09 
+24-Jun-2017 13:11:02,8,1,1e-08,Separate,3.1703e-06 
+24-Jun-2017 13:11:02,8,1,1e-08,Batch,3.8314e-08 
+24-Jun-2017 13:11:02,8,1,1e-08,Batch With STLN,3.8456e-08 
+24-Jun-2017 13:11:02,8,1,1e-08,Batch Constrained,1.7773e-08 
+24-Jun-2017 13:11:02,8,1,1e-08,Batch Constrained With STLN,1.6919e-08 
+24-Jun-2017 13:11:03,3,0,1e-08,Separate,1.1147e-08 
+24-Jun-2017 13:11:03,3,0,1e-08,Batch,1.1147e-08 
+24-Jun-2017 13:11:03,3,0,1e-08,Batch With STLN,1.1119e-08 
+24-Jun-2017 13:11:03,3,0,1e-08,Batch Constrained,7.7664e-09 
+24-Jun-2017 13:11:03,3,0,1e-08,Batch Constrained With STLN,5.3091e-09 
+24-Jun-2017 13:11:04,7,0,1e-08,Separate,4.6844e-07 
+24-Jun-2017 13:11:04,7,0,1e-08,Batch,4.6844e-07 
+24-Jun-2017 13:11:04,7,0,1e-08,Batch With STLN,7.4653e-07 
+24-Jun-2017 13:11:04,7,0,1e-08,Batch Constrained,4.434e-07 
+24-Jun-2017 13:11:04,7,0,1e-08,Batch Constrained With STLN,7.8418e-07 
+24-Jun-2017 13:11:04,8,0,1e-08,Separate,3.1703e-06 
+24-Jun-2017 13:11:04,8,0,1e-08,Batch,3.1703e-06 
+24-Jun-2017 13:11:04,8,0,1e-08,Batch With STLN,2.6404e-06 
+24-Jun-2017 13:11:04,8,0,1e-08,Batch Constrained,2.998e-06 
+24-Jun-2017 13:11:04,8,0,1e-08,Batch Constrained With STLN,2.3354e-06 
+24-Jun-2017 13:11:05,3,1,1e-10,Separate,1.8775e-09 
+24-Jun-2017 13:11:05,3,1,1e-10,Batch,4.6757e-08 
+24-Jun-2017 13:11:05,3,1,1e-10,Batch With STLN,4.6798e-08 
+24-Jun-2017 13:11:05,3,1,1e-10,Batch Constrained,5.0262e-08 
+24-Jun-2017 13:11:05,3,1,1e-10,Batch Constrained With STLN,3.9047e-08 
+24-Jun-2017 13:11:06,7,1,1e-10,Separate,6.4714e-07 
+24-Jun-2017 13:11:06,7,1,1e-10,Batch,1.9506e-09 
+24-Jun-2017 13:11:06,7,1,1e-10,Batch With STLN,1.9274e-09 
+24-Jun-2017 13:11:06,7,1,1e-10,Batch Constrained,1.5962e-09 
+24-Jun-2017 13:11:06,7,1,1e-10,Batch Constrained With STLN,1.5141e-09 
+24-Jun-2017 13:11:07,3,0,1e-10,Separate,1.8775e-09 
+24-Jun-2017 13:11:07,3,0,1e-10,Batch,1.8775e-09 
+24-Jun-2017 13:11:07,3,0,1e-10,Batch With STLN,1.8787e-09 
+24-Jun-2017 13:11:07,3,0,1e-10,Batch Constrained,1.7867e-09 
+24-Jun-2017 13:11:07,3,0,1e-10,Batch Constrained With STLN,1.7737e-09 
+24-Jun-2017 13:11:07,8,1,1e-10,Separate,2.4476e-08 
+24-Jun-2017 13:11:07,8,1,1e-10,Batch,3.8e-10 
+24-Jun-2017 13:11:07,8,1,1e-10,Batch With STLN,3.8142e-10 
+24-Jun-2017 13:11:07,8,1,1e-10,Batch Constrained,1.7092e-10 
+24-Jun-2017 13:11:07,8,1,1e-10,Batch Constrained With STLN,1.6199e-10 
+24-Jun-2017 13:11:08,7,0,1e-10,Separate,6.4714e-07 
+24-Jun-2017 13:11:08,7,0,1e-10,Batch,6.4714e-07 
+24-Jun-2017 13:11:08,7,0,1e-10,Batch With STLN,6.5593e-07 
+24-Jun-2017 13:11:08,7,0,1e-10,Batch Constrained,6.4713e-07 
+24-Jun-2017 13:11:08,7,0,1e-10,Batch Constrained With STLN,6.5517e-07 
+24-Jun-2017 13:11:08,1,1,1e-08,Separate,7.1785e-08 
+24-Jun-2017 13:11:08,1,1,1e-08,Batch,2.6904 
+24-Jun-2017 13:11:08,1,1,1e-08,Batch With STLN,2.6509 
+24-Jun-2017 13:11:08,1,1,1e-08,Batch Constrained,2.1977 
+24-Jun-2017 13:11:08,1,1,1e-08,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:11:09,3,1,1e-12,Separate,1.8951e-09 
+24-Jun-2017 13:11:09,3,1,1e-12,Batch,4.674e-08 
+24-Jun-2017 13:11:09,3,1,1e-12,Batch With STLN,4.6776e-08 
+24-Jun-2017 13:11:09,3,1,1e-12,Batch Constrained,5.0215e-08 
+24-Jun-2017 13:11:09,3,1,1e-12,Batch Constrained With STLN,3.8989e-08 
+24-Jun-2017 13:11:10,8,0,1e-10,Separate,2.4476e-08 
+24-Jun-2017 13:11:10,8,0,1e-10,Batch,2.4475e-08 
+24-Jun-2017 13:11:10,8,0,1e-10,Batch With STLN,1.9134e-08 
+24-Jun-2017 13:11:10,8,0,1e-10,Batch Constrained,2.2161e-08 
+24-Jun-2017 13:11:10,8,0,1e-10,Batch Constrained With STLN,1.5428e-08 
+24-Jun-2017 13:11:10,7,1,1e-12,Separate,6.4939e-07 
+24-Jun-2017 13:11:10,7,1,1e-12,Batch,1.5236e-09 
+24-Jun-2017 13:11:10,7,1,1e-12,Batch With STLN,1.5238e-09 
+24-Jun-2017 13:11:10,7,1,1e-12,Batch Constrained,1.5235e-09 
+24-Jun-2017 13:11:10,7,1,1e-12,Batch Constrained With STLN,1.5132e-09 
+24-Jun-2017 13:11:11,3,0,1e-12,Separate,1.8951e-09 
+24-Jun-2017 13:11:11,3,0,1e-12,Batch,1.8951e-09 
+24-Jun-2017 13:11:11,3,0,1e-12,Batch With STLN,1.8956e-09 
+24-Jun-2017 13:11:11,3,0,1e-12,Batch Constrained,1.8303e-09 
+24-Jun-2017 13:11:11,3,0,1e-12,Batch Constrained With STLN,1.8176e-09 
+24-Jun-2017 13:11:12,7,0,1e-12,Separate,6.4939e-07 
+24-Jun-2017 13:11:12,7,0,1e-12,Batch,6.4939e-07 
+24-Jun-2017 13:11:12,7,0,1e-12,Batch With STLN,6.5526e-07 
+24-Jun-2017 13:11:12,7,0,1e-12,Batch Constrained,6.4938e-07 
+24-Jun-2017 13:11:12,7,0,1e-12,Batch Constrained With STLN,6.5398e-07 
+24-Jun-2017 13:11:13,8,1,1e-12,Separate,7.7033e-09 
+24-Jun-2017 13:11:13,8,1,1e-12,Batch,1.4125e-11 
+24-Jun-2017 13:11:13,8,1,1e-12,Batch With STLN,1.4125e-11 
+24-Jun-2017 13:11:13,8,1,1e-12,Batch Constrained,1.3714e-11 
+24-Jun-2017 13:11:13,8,1,1e-12,Batch Constrained With STLN,1.3699e-11 
+24-Jun-2017 13:11:13,1,0,1e-08,Separate,7.1785e-08 
+24-Jun-2017 13:11:13,1,0,1e-08,Batch,7.1785e-08 
+24-Jun-2017 13:11:13,1,0,1e-08,Batch With STLN,7.2388e-08 
+24-Jun-2017 13:11:13,1,0,1e-08,Batch Constrained,8.8679e-08 
+24-Jun-2017 13:11:13,1,0,1e-08,Batch Constrained With STLN,9.3629e-08 
+24-Jun-2017 13:11:15,8,0,1e-12,Separate,7.7033e-09 
+24-Jun-2017 13:11:15,8,0,1e-12,Batch,7.7035e-09 
+24-Jun-2017 13:11:15,8,0,1e-12,Batch With STLN,7.8212e-09 
+24-Jun-2017 13:11:15,8,0,1e-12,Batch Constrained,7.7009e-09 
+24-Jun-2017 13:11:15,8,0,1e-12,Batch Constrained With STLN,7.8629e-09 
+24-Jun-2017 13:11:21,1,1,1e-10,Separate,7.1787e-10 
+24-Jun-2017 13:11:21,1,1,1e-10,Batch,2.6904 
+24-Jun-2017 13:11:21,1,1,1e-10,Batch With STLN,2.6509 
+24-Jun-2017 13:11:21,1,1,1e-10,Batch Constrained,2.1977 
+24-Jun-2017 13:11:21,1,1,1e-10,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:11:25,1,0,1e-10,Separate,7.1787e-10 
+24-Jun-2017 13:11:25,1,0,1e-10,Batch,7.1787e-10 
+24-Jun-2017 13:11:25,1,0,1e-10,Batch With STLN,7.239e-10 
+24-Jun-2017 13:11:25,1,0,1e-10,Batch Constrained,8.8677e-10 
+24-Jun-2017 13:11:25,1,0,1e-10,Batch Constrained With STLN,9.3627e-10 
+24-Jun-2017 13:11:33,1,1,1e-12,Separate,7.3727e-12 
+24-Jun-2017 13:11:33,1,1,1e-12,Batch,2.6904 
+24-Jun-2017 13:11:33,1,1,1e-12,Batch With STLN,2.6509 
+24-Jun-2017 13:11:33,1,1,1e-12,Batch Constrained,2.1977 
+24-Jun-2017 13:11:33,1,1,1e-12,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:11:36,1,0,1e-12,Separate,7.3727e-12 
+24-Jun-2017 13:11:36,1,0,1e-12,Batch,7.3949e-12 
+24-Jun-2017 13:11:36,1,0,1e-12,Batch With STLN,7.4534e-12 
+24-Jun-2017 13:11:36,1,0,1e-12,Batch Constrained,8.9048e-12 
+24-Jun-2017 13:11:36,1,0,1e-12,Batch Constrained With STLN,9.397e-12 
+24-Jun-2017 13:19:39,4,1,1e-06,Separate,2.4286e-05 
+24-Jun-2017 13:19:39,4,1,1e-06,Batch,2.4952e-06 
+24-Jun-2017 13:19:39,4,1,1e-06,Batch With STLN,2.4334e-06 
+24-Jun-2017 13:19:39,4,1,1e-06,Batch Constrained,7.778e-07 
+24-Jun-2017 13:19:39,4,1,1e-06,Batch Constrained With STLN,4.9939e-07 
+24-Jun-2017 13:19:39,5,1,1e-06,Separate,2.7305e-06 
+24-Jun-2017 13:19:39,5,1,1e-06,Batch,3.187e-06 
+24-Jun-2017 13:19:39,5,1,1e-06,Batch With STLN,3.1507e-06 
+24-Jun-2017 13:19:39,5,1,1e-06,Batch Constrained,1.3898e-06 
+24-Jun-2017 13:19:39,5,1,1e-06,Batch Constrained With STLN,1.1789e-06 
+24-Jun-2017 13:19:39,2,1,1e-06,Separate,5.6924e-06 
+24-Jun-2017 13:19:39,2,1,1e-06,Batch,5.9806e-06 
+24-Jun-2017 13:19:39,2,1,1e-06,Batch With STLN,5.9297e-06 
+24-Jun-2017 13:19:39,2,1,1e-06,Batch Constrained,2.1529e-06 
+24-Jun-2017 13:19:39,2,1,1e-06,Batch Constrained With STLN,2.1743e-06 
+24-Jun-2017 13:19:39,6,1,1e-06,Separate,2.7305e-06 
+24-Jun-2017 13:19:39,6,1,1e-06,Batch,3.187e-06 
+24-Jun-2017 13:19:39,6,1,1e-06,Batch With STLN,3.1507e-06 
+24-Jun-2017 13:19:39,6,1,1e-06,Batch Constrained,1.3898e-06 
+24-Jun-2017 13:19:39,6,1,1e-06,Batch Constrained With STLN,1.1789e-06 
+24-Jun-2017 13:19:41,4,0,1e-06,Separate,2.4286e-05 
+24-Jun-2017 13:19:41,4,0,1e-06,Batch,2.4286e-05 
+24-Jun-2017 13:19:41,4,0,1e-06,Batch With STLN,2.5125e-05 
+24-Jun-2017 13:19:41,4,0,1e-06,Batch Constrained,1.1922e-05 
+24-Jun-2017 13:19:41,4,0,1e-06,Batch Constrained With STLN,3.5539e-06 
+24-Jun-2017 13:19:41,5,0,1e-06,Separate,2.7305e-06 
+24-Jun-2017 13:19:41,5,0,1e-06,Batch,2.7305e-06 
+24-Jun-2017 13:19:41,5,0,1e-06,Batch With STLN,2.7029e-06 
+24-Jun-2017 13:19:41,5,0,1e-06,Batch Constrained,9.3124e-07 
+24-Jun-2017 13:19:41,5,0,1e-06,Batch Constrained With STLN,7.1756e-07 
+24-Jun-2017 13:19:41,6,0,1e-06,Separate,2.7305e-06 
+24-Jun-2017 13:19:41,6,0,1e-06,Batch,2.7305e-06 
+24-Jun-2017 13:19:41,6,0,1e-06,Batch With STLN,2.7029e-06 
+24-Jun-2017 13:19:41,6,0,1e-06,Batch Constrained,9.3124e-07 
+24-Jun-2017 13:19:41,6,0,1e-06,Batch Constrained With STLN,7.1756e-07 
+24-Jun-2017 13:19:41,2,0,1e-06,Separate,5.6924e-06 
+24-Jun-2017 13:19:41,2,0,1e-06,Batch,5.6924e-06 
+24-Jun-2017 13:19:41,2,0,1e-06,Batch With STLN,5.646e-06 
+24-Jun-2017 13:19:41,2,0,1e-06,Batch Constrained,1.871e-06 
+24-Jun-2017 13:19:41,2,0,1e-06,Batch Constrained With STLN,1.8983e-06 
+24-Jun-2017 13:19:43,4,1,1e-07,Separate,2.4285e-06 
+24-Jun-2017 13:19:43,4,1,1e-07,Batch,2.4952e-07 
+24-Jun-2017 13:19:43,4,1,1e-07,Batch With STLN,2.4334e-07 
+24-Jun-2017 13:19:43,4,1,1e-07,Batch Constrained,7.778e-08 
+24-Jun-2017 13:19:43,4,1,1e-07,Batch Constrained With STLN,4.9939e-08 
+24-Jun-2017 13:19:43,5,1,1e-07,Separate,2.7305e-07 
+24-Jun-2017 13:19:43,5,1,1e-07,Batch,3.187e-07 
+24-Jun-2017 13:19:43,5,1,1e-07,Batch With STLN,3.1507e-07 
+24-Jun-2017 13:19:43,5,1,1e-07,Batch Constrained,1.3898e-07 
+24-Jun-2017 13:19:43,5,1,1e-07,Batch Constrained With STLN,1.1789e-07 
+24-Jun-2017 13:19:43,6,1,1e-07,Separate,2.7305e-07 
+24-Jun-2017 13:19:43,6,1,1e-07,Batch,3.187e-07 
+24-Jun-2017 13:19:43,6,1,1e-07,Batch With STLN,3.1507e-07 
+24-Jun-2017 13:19:43,6,1,1e-07,Batch Constrained,1.3898e-07 
+24-Jun-2017 13:19:43,6,1,1e-07,Batch Constrained With STLN,1.1789e-07 
+24-Jun-2017 13:19:43,2,1,1e-07,Separate,5.6924e-07 
+24-Jun-2017 13:19:43,2,1,1e-07,Batch,5.9806e-07 
+24-Jun-2017 13:19:43,2,1,1e-07,Batch With STLN,5.9297e-07 
+24-Jun-2017 13:19:43,2,1,1e-07,Batch Constrained,2.1529e-07 
+24-Jun-2017 13:19:43,2,1,1e-07,Batch Constrained With STLN,2.1743e-07 
+24-Jun-2017 13:19:45,4,0,1e-07,Separate,2.4285e-06 
+24-Jun-2017 13:19:45,4,0,1e-07,Batch,2.4285e-06 
+24-Jun-2017 13:19:45,4,0,1e-07,Batch With STLN,2.5125e-06 
+24-Jun-2017 13:19:45,4,0,1e-07,Batch Constrained,1.1922e-06 
+24-Jun-2017 13:19:45,4,0,1e-07,Batch Constrained With STLN,3.5539e-07 
+24-Jun-2017 13:19:45,5,0,1e-07,Separate,2.7305e-07 
+24-Jun-2017 13:19:45,5,0,1e-07,Batch,2.7305e-07 
+24-Jun-2017 13:19:45,5,0,1e-07,Batch With STLN,2.7029e-07 
+24-Jun-2017 13:19:45,5,0,1e-07,Batch Constrained,9.3124e-08 
+24-Jun-2017 13:19:45,5,0,1e-07,Batch Constrained With STLN,7.1756e-08 
+24-Jun-2017 13:19:45,6,0,1e-07,Separate,2.7305e-07 
+24-Jun-2017 13:19:45,6,0,1e-07,Batch,2.7305e-07 
+24-Jun-2017 13:19:45,6,0,1e-07,Batch With STLN,2.7029e-07 
+24-Jun-2017 13:19:45,6,0,1e-07,Batch Constrained,9.3124e-08 
+24-Jun-2017 13:19:45,6,0,1e-07,Batch Constrained With STLN,7.1756e-08 
+24-Jun-2017 13:19:45,2,0,1e-07,Separate,5.6924e-07 
+24-Jun-2017 13:19:45,2,0,1e-07,Batch,5.6924e-07 
+24-Jun-2017 13:19:45,2,0,1e-07,Batch With STLN,5.646e-07 
+24-Jun-2017 13:19:45,2,0,1e-07,Batch Constrained,1.871e-07 
+24-Jun-2017 13:19:45,2,0,1e-07,Batch Constrained With STLN,1.8983e-07 
+24-Jun-2017 13:19:47,4,1,1e-08,Separate,2.4285e-07 
+24-Jun-2017 13:19:47,4,1,1e-08,Batch,2.4952e-08 
+24-Jun-2017 13:19:47,4,1,1e-08,Batch With STLN,2.4334e-08 
+24-Jun-2017 13:19:47,4,1,1e-08,Batch Constrained,7.778e-09 
+24-Jun-2017 13:19:47,4,1,1e-08,Batch Constrained With STLN,4.9939e-09 
+24-Jun-2017 13:19:47,5,1,1e-08,Separate,2.7305e-08 
+24-Jun-2017 13:19:47,5,1,1e-08,Batch,3.187e-08 
+24-Jun-2017 13:19:47,5,1,1e-08,Batch With STLN,3.1507e-08 
+24-Jun-2017 13:19:47,5,1,1e-08,Batch Constrained,1.3898e-08 
+24-Jun-2017 13:19:47,5,1,1e-08,Batch Constrained With STLN,1.1789e-08 
+24-Jun-2017 13:19:47,6,1,1e-08,Separate,2.7305e-08 
+24-Jun-2017 13:19:47,6,1,1e-08,Batch,3.187e-08 
+24-Jun-2017 13:19:47,6,1,1e-08,Batch With STLN,3.1507e-08 
+24-Jun-2017 13:19:47,6,1,1e-08,Batch Constrained,1.3898e-08 
+24-Jun-2017 13:19:47,6,1,1e-08,Batch Constrained With STLN,1.1789e-08 
+24-Jun-2017 13:19:47,2,1,1e-08,Separate,5.6924e-08 
+24-Jun-2017 13:19:47,2,1,1e-08,Batch,5.9806e-08 
+24-Jun-2017 13:19:47,2,1,1e-08,Batch With STLN,5.9297e-08 
+24-Jun-2017 13:19:47,2,1,1e-08,Batch Constrained,2.1529e-08 
+24-Jun-2017 13:19:47,2,1,1e-08,Batch Constrained With STLN,2.1743e-08 
+24-Jun-2017 13:19:48,4,0,1e-08,Separate,2.4285e-07 
+24-Jun-2017 13:19:48,4,0,1e-08,Batch,2.4285e-07 
+24-Jun-2017 13:19:48,4,0,1e-08,Batch With STLN,2.5125e-07 
+24-Jun-2017 13:19:48,4,0,1e-08,Batch Constrained,1.1922e-07 
+24-Jun-2017 13:19:48,4,0,1e-08,Batch Constrained With STLN,3.5539e-08 
+24-Jun-2017 13:19:49,5,0,1e-08,Separate,2.7305e-08 
+24-Jun-2017 13:19:49,5,0,1e-08,Batch,2.7305e-08 
+24-Jun-2017 13:19:49,5,0,1e-08,Batch With STLN,2.7029e-08 
+24-Jun-2017 13:19:49,5,0,1e-08,Batch Constrained,9.3124e-09 
+24-Jun-2017 13:19:49,5,0,1e-08,Batch Constrained With STLN,7.1756e-09 
+24-Jun-2017 13:19:49,6,0,1e-08,Separate,2.7305e-08 
+24-Jun-2017 13:19:49,6,0,1e-08,Batch,2.7305e-08 
+24-Jun-2017 13:19:49,6,0,1e-08,Batch With STLN,2.7029e-08 
+24-Jun-2017 13:19:49,6,0,1e-08,Batch Constrained,9.3124e-09 
+24-Jun-2017 13:19:49,6,0,1e-08,Batch Constrained With STLN,7.1756e-09 
+24-Jun-2017 13:19:49,2,0,1e-08,Separate,5.6924e-08 
+24-Jun-2017 13:19:49,2,0,1e-08,Batch,5.6924e-08 
+24-Jun-2017 13:19:49,2,0,1e-08,Batch With STLN,5.646e-08 
+24-Jun-2017 13:19:49,2,0,1e-08,Batch Constrained,1.871e-08 
+24-Jun-2017 13:19:49,2,0,1e-08,Batch Constrained With STLN,1.8983e-08 
+24-Jun-2017 13:19:50,4,1,1e-09,Separate,2.4285e-08 
+24-Jun-2017 13:19:50,4,1,1e-09,Batch,2.4952e-09 
+24-Jun-2017 13:19:50,4,1,1e-09,Batch With STLN,2.4334e-09 
+24-Jun-2017 13:19:50,4,1,1e-09,Batch Constrained,7.778e-10 
+24-Jun-2017 13:19:50,4,1,1e-09,Batch Constrained With STLN,4.9939e-10 
+24-Jun-2017 13:19:51,5,1,1e-09,Separate,2.7305e-09 
+24-Jun-2017 13:19:51,5,1,1e-09,Batch,3.187e-09 
+24-Jun-2017 13:19:51,5,1,1e-09,Batch With STLN,3.1507e-09 
+24-Jun-2017 13:19:51,5,1,1e-09,Batch Constrained,1.3898e-09 
+24-Jun-2017 13:19:51,5,1,1e-09,Batch Constrained With STLN,1.1789e-09 
+24-Jun-2017 13:19:51,6,1,1e-09,Separate,2.7305e-09 
+24-Jun-2017 13:19:51,6,1,1e-09,Batch,3.187e-09 
+24-Jun-2017 13:19:51,6,1,1e-09,Batch With STLN,3.1507e-09 
+24-Jun-2017 13:19:51,6,1,1e-09,Batch Constrained,1.3898e-09 
+24-Jun-2017 13:19:51,6,1,1e-09,Batch Constrained With STLN,1.1789e-09 
+24-Jun-2017 13:19:51,2,1,1e-09,Separate,5.6924e-09 
+24-Jun-2017 13:19:51,2,1,1e-09,Batch,5.9806e-09 
+24-Jun-2017 13:19:51,2,1,1e-09,Batch With STLN,5.9297e-09 
+24-Jun-2017 13:19:51,2,1,1e-09,Batch Constrained,2.1529e-09 
+24-Jun-2017 13:19:51,2,1,1e-09,Batch Constrained With STLN,2.1743e-09 
+24-Jun-2017 13:19:52,4,0,1e-09,Separate,2.4285e-08 
+24-Jun-2017 13:19:52,4,0,1e-09,Batch,2.4285e-08 
+24-Jun-2017 13:19:52,4,0,1e-09,Batch With STLN,2.5125e-08 
+24-Jun-2017 13:19:52,4,0,1e-09,Batch Constrained,1.1922e-08 
+24-Jun-2017 13:19:52,4,0,1e-09,Batch Constrained With STLN,3.5539e-09 
+24-Jun-2017 13:19:53,5,0,1e-09,Separate,2.7305e-09 
+24-Jun-2017 13:19:53,5,0,1e-09,Batch,2.7305e-09 
+24-Jun-2017 13:19:53,5,0,1e-09,Batch With STLN,2.7029e-09 
+24-Jun-2017 13:19:53,5,0,1e-09,Batch Constrained,9.3124e-10 
+24-Jun-2017 13:19:53,5,0,1e-09,Batch Constrained With STLN,7.1756e-10 
+24-Jun-2017 13:19:53,6,0,1e-09,Separate,2.7305e-09 
+24-Jun-2017 13:19:53,6,0,1e-09,Batch,2.7305e-09 
+24-Jun-2017 13:19:53,6,0,1e-09,Batch With STLN,2.7029e-09 
+24-Jun-2017 13:19:53,6,0,1e-09,Batch Constrained,9.3124e-10 
+24-Jun-2017 13:19:53,6,0,1e-09,Batch Constrained With STLN,7.1756e-10 
+24-Jun-2017 13:19:53,2,0,1e-09,Separate,5.6924e-09 
+24-Jun-2017 13:19:53,2,0,1e-09,Batch,5.6924e-09 
+24-Jun-2017 13:19:53,2,0,1e-09,Batch With STLN,5.646e-09 
+24-Jun-2017 13:19:53,2,0,1e-09,Batch Constrained,1.871e-09 
+24-Jun-2017 13:19:53,2,0,1e-09,Batch Constrained With STLN,1.8983e-09 
+24-Jun-2017 13:19:54,4,1,1e-10,Separate,2.4285e-09 
+24-Jun-2017 13:19:54,4,1,1e-10,Batch,2.4952e-10 
+24-Jun-2017 13:19:54,4,1,1e-10,Batch With STLN,2.4334e-10 
+24-Jun-2017 13:19:54,4,1,1e-10,Batch Constrained,7.7781e-11 
+24-Jun-2017 13:19:54,4,1,1e-10,Batch Constrained With STLN,4.994e-11 
+24-Jun-2017 13:19:55,5,1,1e-10,Separate,2.7305e-10 
+24-Jun-2017 13:19:55,5,1,1e-10,Batch,3.187e-10 
+24-Jun-2017 13:19:55,5,1,1e-10,Batch With STLN,3.1507e-10 
+24-Jun-2017 13:19:55,5,1,1e-10,Batch Constrained,1.3899e-10 
+24-Jun-2017 13:19:55,5,1,1e-10,Batch Constrained With STLN,1.1789e-10 
+24-Jun-2017 13:19:55,6,1,1e-10,Separate,2.7305e-10 
+24-Jun-2017 13:19:55,6,1,1e-10,Batch,3.187e-10 
+24-Jun-2017 13:19:55,6,1,1e-10,Batch With STLN,3.1507e-10 
+24-Jun-2017 13:19:55,6,1,1e-10,Batch Constrained,1.3899e-10 
+24-Jun-2017 13:19:55,6,1,1e-10,Batch Constrained With STLN,1.1789e-10 
+24-Jun-2017 13:19:55,2,1,1e-10,Separate,5.6924e-10 
+24-Jun-2017 13:19:55,2,1,1e-10,Batch,5.9806e-10 
+24-Jun-2017 13:19:55,2,1,1e-10,Batch With STLN,5.9297e-10 
+24-Jun-2017 13:19:55,2,1,1e-10,Batch Constrained,2.1529e-10 
+24-Jun-2017 13:19:55,2,1,1e-10,Batch Constrained With STLN,2.1743e-10 
+24-Jun-2017 13:19:56,4,0,1e-10,Separate,2.4285e-09 
+24-Jun-2017 13:19:56,4,0,1e-10,Batch,2.4286e-09 
+24-Jun-2017 13:19:56,4,0,1e-10,Batch With STLN,2.5125e-09 
+24-Jun-2017 13:19:56,4,0,1e-10,Batch Constrained,1.1922e-09 
+24-Jun-2017 13:19:56,4,0,1e-10,Batch Constrained With STLN,3.5539e-10 
+24-Jun-2017 13:19:57,5,0,1e-10,Separate,2.7305e-10 
+24-Jun-2017 13:19:57,5,0,1e-10,Batch,2.7305e-10 
+24-Jun-2017 13:19:57,5,0,1e-10,Batch With STLN,2.7029e-10 
+24-Jun-2017 13:19:57,5,0,1e-10,Batch Constrained,9.3124e-11 
+24-Jun-2017 13:19:57,5,0,1e-10,Batch Constrained With STLN,7.1756e-11 
+24-Jun-2017 13:19:57,6,0,1e-10,Separate,2.7305e-10 
+24-Jun-2017 13:19:57,6,0,1e-10,Batch,2.7305e-10 
+24-Jun-2017 13:19:57,6,0,1e-10,Batch With STLN,2.7029e-10 
+24-Jun-2017 13:19:57,6,0,1e-10,Batch Constrained,9.3124e-11 
+24-Jun-2017 13:19:57,6,0,1e-10,Batch Constrained With STLN,7.1756e-11 
+24-Jun-2017 13:19:57,2,0,1e-10,Separate,5.6924e-10 
+24-Jun-2017 13:19:57,2,0,1e-10,Batch,5.6924e-10 
+24-Jun-2017 13:19:57,2,0,1e-10,Batch With STLN,5.646e-10 
+24-Jun-2017 13:19:57,2,0,1e-10,Batch Constrained,1.8709e-10 
+24-Jun-2017 13:19:57,2,0,1e-10,Batch Constrained With STLN,1.8983e-10 
+24-Jun-2017 13:19:58,4,1,1e-12,Separate,2.4287e-11 
+24-Jun-2017 13:19:58,4,1,1e-12,Batch,2.4948e-12 
+24-Jun-2017 13:19:58,4,1,1e-12,Batch With STLN,2.4327e-12 
+24-Jun-2017 13:19:58,4,1,1e-12,Batch Constrained,7.782e-13 
+24-Jun-2017 13:19:58,4,1,1e-12,Batch Constrained With STLN,4.9978e-13 
+24-Jun-2017 13:19:59,5,1,1e-12,Separate,2.7304e-12 
+24-Jun-2017 13:19:59,5,1,1e-12,Batch,3.1861e-12 
+24-Jun-2017 13:19:59,5,1,1e-12,Batch With STLN,3.1505e-12 
+24-Jun-2017 13:19:59,5,1,1e-12,Batch Constrained,1.393e-12 
+24-Jun-2017 13:19:59,5,1,1e-12,Batch Constrained With STLN,1.18e-12 
+24-Jun-2017 13:19:59,6,1,1e-12,Separate,2.7304e-12 
+24-Jun-2017 13:19:59,6,1,1e-12,Batch,3.1861e-12 
+24-Jun-2017 13:19:59,6,1,1e-12,Batch With STLN,3.1505e-12 
+24-Jun-2017 13:19:59,6,1,1e-12,Batch Constrained,1.393e-12 
+24-Jun-2017 13:19:59,6,1,1e-12,Batch Constrained With STLN,1.18e-12 
+24-Jun-2017 13:20:00,2,1,1e-12,Separate,5.6921e-12 
+24-Jun-2017 13:20:00,2,1,1e-12,Batch,5.9792e-12 
+24-Jun-2017 13:20:00,2,1,1e-12,Batch With STLN,5.9286e-12 
+24-Jun-2017 13:20:00,2,1,1e-12,Batch Constrained,2.1517e-12 
+24-Jun-2017 13:20:00,2,1,1e-12,Batch Constrained With STLN,2.1746e-12 
+24-Jun-2017 13:20:00,4,0,1e-12,Separate,2.4287e-11 
+24-Jun-2017 13:20:00,4,0,1e-12,Batch,2.4292e-11 
+24-Jun-2017 13:20:00,4,0,1e-12,Batch With STLN,2.513e-11 
+24-Jun-2017 13:20:00,4,0,1e-12,Batch Constrained,1.1933e-11 
+24-Jun-2017 13:20:00,4,0,1e-12,Batch Constrained With STLN,3.5558e-12 
+24-Jun-2017 13:20:01,5,0,1e-12,Separate,2.7304e-12 
+24-Jun-2017 13:20:01,5,0,1e-12,Batch,2.7309e-12 
+24-Jun-2017 13:20:01,5,0,1e-12,Batch With STLN,2.7031e-12 
+24-Jun-2017 13:20:01,5,0,1e-12,Batch Constrained,9.2975e-13 
+24-Jun-2017 13:20:01,5,0,1e-12,Batch Constrained With STLN,7.1727e-13 
+24-Jun-2017 13:20:02,6,0,1e-12,Separate,2.7304e-12 
+24-Jun-2017 13:20:02,6,0,1e-12,Batch,2.7309e-12 
+24-Jun-2017 13:20:02,6,0,1e-12,Batch With STLN,2.7031e-12 
+24-Jun-2017 13:20:02,6,0,1e-12,Batch Constrained,9.2975e-13 
+24-Jun-2017 13:20:02,6,0,1e-12,Batch Constrained With STLN,7.1727e-13 
+24-Jun-2017 13:20:02,2,0,1e-12,Separate,5.6921e-12 
+24-Jun-2017 13:20:02,2,0,1e-12,Batch,5.6917e-12 
+24-Jun-2017 13:20:02,2,0,1e-12,Batch With STLN,5.6455e-12 
+24-Jun-2017 13:20:02,2,0,1e-12,Batch Constrained,1.867e-12 
+24-Jun-2017 13:20:02,2,0,1e-12,Batch Constrained With STLN,1.8972e-12 
+24-Jun-2017 13:20:02,3,1,1e-06,Separate,1.1339e-06 
+24-Jun-2017 13:20:02,3,1,1e-06,Batch,1.2316e-06 
+24-Jun-2017 13:20:02,3,1,1e-06,Batch With STLN,1.235e-06 
+24-Jun-2017 13:20:02,3,1,1e-06,Batch Constrained,6.8637e-07 
+24-Jun-2017 13:20:02,3,1,1e-06,Batch Constrained With STLN,7.248e-07 
+24-Jun-2017 13:20:03,7,1,1e-06,Separate,3.0074e-05 
+24-Jun-2017 13:20:03,7,1,1e-06,Batch,1.2404e-05 
+24-Jun-2017 13:20:03,7,1,1e-06,Batch With STLN,1.1984e-05 
+24-Jun-2017 13:20:03,7,1,1e-06,Batch Constrained,5.3042e-06 
+24-Jun-2017 13:20:03,7,1,1e-06,Batch Constrained With STLN,8.5194e-07 
+24-Jun-2017 13:20:04,3,0,1e-06,Separate,1.1339e-06 
+24-Jun-2017 13:20:04,3,0,1e-06,Batch,1.1339e-06 
+24-Jun-2017 13:20:04,3,0,1e-06,Batch With STLN,1.13e-06 
+24-Jun-2017 13:20:04,3,0,1e-06,Batch Constrained,8.5712e-07 
+24-Jun-2017 13:20:04,3,0,1e-06,Batch Constrained With STLN,6.4076e-07 
+24-Jun-2017 13:20:04,8,1,1e-06,Separate,0.00031785 
+24-Jun-2017 13:20:04,8,1,1e-06,Batch,3.8318e-06 
+24-Jun-2017 13:20:04,8,1,1e-06,Batch With STLN,3.8459e-06 
+24-Jun-2017 13:20:04,8,1,1e-06,Batch Constrained,1.778e-06 
+24-Jun-2017 13:20:04,8,1,1e-06,Batch Constrained With STLN,1.6927e-06 
+24-Jun-2017 13:20:05,7,0,1e-06,Separate,3.0074e-05 
+24-Jun-2017 13:20:05,7,0,1e-06,Batch,3.0074e-05 
+24-Jun-2017 13:20:05,7,0,1e-06,Batch With STLN,1.9701e-05 
+24-Jun-2017 13:20:05,7,0,1e-06,Batch Constrained,2.5893e-05 
+24-Jun-2017 13:20:05,7,0,1e-06,Batch Constrained With STLN,1.8165e-05 
+24-Jun-2017 13:20:06,3,1,1e-07,Separate,1.1309e-07 
+24-Jun-2017 13:20:06,3,1,1e-07,Batch,1.3689e-07 
+24-Jun-2017 13:20:06,3,1,1e-07,Batch With STLN,1.3869e-07 
+24-Jun-2017 13:20:06,3,1,1e-07,Batch Constrained,1.07e-07 
+24-Jun-2017 13:20:06,3,1,1e-07,Batch Constrained With STLN,1.0444e-07 
+24-Jun-2017 13:20:07,8,0,1e-06,Separate,0.00031785 
+24-Jun-2017 13:20:07,8,0,1e-06,Batch,0.00031785 
+24-Jun-2017 13:20:07,8,0,1e-06,Batch With STLN,0.00026484 
+24-Jun-2017 13:20:07,8,0,1e-06,Batch Constrained,0.00030069 
+24-Jun-2017 13:20:07,8,0,1e-06,Batch Constrained With STLN,0.00023439 
+24-Jun-2017 13:20:07,7,1,1e-07,Separate,2.608e-06 
+24-Jun-2017 13:20:07,7,1,1e-07,Batch,1.2404e-06 
+24-Jun-2017 13:20:07,7,1,1e-07,Batch With STLN,1.2007e-06 
+24-Jun-2017 13:20:07,7,1,1e-07,Batch Constrained,5.3037e-07 
+24-Jun-2017 13:20:07,7,1,1e-07,Batch Constrained With STLN,8.5182e-08 
+24-Jun-2017 13:20:08,3,0,1e-07,Separate,1.1309e-07 
+24-Jun-2017 13:20:08,3,0,1e-07,Batch,1.1309e-07 
+24-Jun-2017 13:20:08,3,0,1e-07,Batch With STLN,1.1271e-07 
+24-Jun-2017 13:20:08,3,0,1e-07,Batch Constrained,8.4852e-08 
+24-Jun-2017 13:20:08,3,0,1e-07,Batch Constrained With STLN,6.2945e-08 
+24-Jun-2017 13:20:09,8,1,1e-07,Separate,3.1771e-05 
+24-Jun-2017 13:20:09,8,1,1e-07,Batch,3.8318e-07 
+24-Jun-2017 13:20:09,8,1,1e-07,Batch With STLN,3.8459e-07 
+24-Jun-2017 13:20:09,8,1,1e-07,Batch Constrained,1.778e-07 
+24-Jun-2017 13:20:09,8,1,1e-07,Batch Constrained With STLN,1.6926e-07 
+24-Jun-2017 13:20:09,7,0,1e-07,Separate,2.608e-06 
+24-Jun-2017 13:20:09,7,0,1e-07,Batch,2.608e-06 
+24-Jun-2017 13:20:09,7,0,1e-07,Batch With STLN,2.2902e-06 
+24-Jun-2017 13:20:09,7,0,1e-07,Batch Constrained,2.1134e-06 
+24-Jun-2017 13:20:09,7,0,1e-07,Batch Constrained With STLN,2.2641e-06 
+24-Jun-2017 13:20:10,3,1,1e-08,Separate,1.1147e-08 
+24-Jun-2017 13:20:10,3,1,1e-08,Batch,4.991e-08 
+24-Jun-2017 13:20:10,3,1,1e-08,Batch With STLN,5.0401e-08 
+24-Jun-2017 13:20:10,3,1,1e-08,Batch Constrained,5.5091e-08 
+24-Jun-2017 13:20:10,3,1,1e-08,Batch Constrained With STLN,4.5044e-08 
+24-Jun-2017 13:20:10,1,1,1e-06,Separate,7.1786e-06 
+24-Jun-2017 13:20:10,1,1,1e-06,Batch,2.6904 
+24-Jun-2017 13:20:10,1,1,1e-06,Batch With STLN,2.6509 
+24-Jun-2017 13:20:10,1,1,1e-06,Batch Constrained,2.1977 
+24-Jun-2017 13:20:10,1,1,1e-06,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:20:11,8,0,1e-07,Separate,3.1771e-05 
+24-Jun-2017 13:20:11,8,0,1e-07,Batch,3.1771e-05 
+24-Jun-2017 13:20:11,8,0,1e-07,Batch With STLN,2.6473e-05 
+24-Jun-2017 13:20:11,8,0,1e-07,Batch Constrained,3.0053e-05 
+24-Jun-2017 13:20:11,8,0,1e-07,Batch Constrained With STLN,2.3427e-05 
+24-Jun-2017 13:20:11,7,1,1e-08,Separate,4.6844e-07 
+24-Jun-2017 13:20:11,7,1,1e-08,Batch,1.2403e-07 
+24-Jun-2017 13:20:11,7,1,1e-08,Batch With STLN,1.2008e-07 
+24-Jun-2017 13:20:11,7,1,1e-08,Batch Constrained,5.3012e-08 
+24-Jun-2017 13:20:11,7,1,1e-08,Batch Constrained With STLN,8.6253e-09 
+24-Jun-2017 13:20:12,3,0,1e-08,Separate,1.1147e-08 
+24-Jun-2017 13:20:12,3,0,1e-08,Batch,1.1147e-08 
+24-Jun-2017 13:20:12,3,0,1e-08,Batch With STLN,1.1119e-08 
+24-Jun-2017 13:20:12,3,0,1e-08,Batch Constrained,7.7664e-09 
+24-Jun-2017 13:20:12,3,0,1e-08,Batch Constrained With STLN,5.3091e-09 
+24-Jun-2017 13:20:13,7,0,1e-08,Separate,4.6844e-07 
+24-Jun-2017 13:20:13,7,0,1e-08,Batch,4.6844e-07 
+24-Jun-2017 13:20:13,7,0,1e-08,Batch With STLN,7.4653e-07 
+24-Jun-2017 13:20:13,7,0,1e-08,Batch Constrained,4.434e-07 
+24-Jun-2017 13:20:13,7,0,1e-08,Batch Constrained With STLN,7.8418e-07 
+24-Jun-2017 13:20:14,8,1,1e-08,Separate,3.1703e-06 
+24-Jun-2017 13:20:14,8,1,1e-08,Batch,3.8314e-08 
+24-Jun-2017 13:20:14,8,1,1e-08,Batch With STLN,3.8456e-08 
+24-Jun-2017 13:20:14,8,1,1e-08,Batch Constrained,1.7773e-08 
+24-Jun-2017 13:20:14,8,1,1e-08,Batch Constrained With STLN,1.6919e-08 
+24-Jun-2017 13:20:14,3,1,1e-09,Separate,2.0198e-09 
+24-Jun-2017 13:20:14,3,1,1e-09,Batch,4.6923e-08 
+24-Jun-2017 13:20:14,3,1,1e-09,Batch With STLN,4.7007e-08 
+24-Jun-2017 13:20:14,3,1,1e-09,Batch Constrained,5.0686e-08 
+24-Jun-2017 13:20:14,3,1,1e-09,Batch Constrained With STLN,3.9581e-08 
+24-Jun-2017 13:20:15,1,0,1e-06,Separate,7.1786e-06 
+24-Jun-2017 13:20:15,1,0,1e-06,Batch,7.1786e-06 
+24-Jun-2017 13:20:15,1,0,1e-06,Batch With STLN,7.2389e-06 
+24-Jun-2017 13:20:15,1,0,1e-06,Batch Constrained,8.868e-06 
+24-Jun-2017 13:20:15,1,0,1e-06,Batch Constrained With STLN,9.363e-06 
+24-Jun-2017 13:20:16,7,1,1e-09,Separate,6.2698e-07 
+24-Jun-2017 13:20:16,7,1,1e-09,Batch,1.2475e-08 
+24-Jun-2017 13:20:16,7,1,1e-09,Batch With STLN,1.2085e-08 
+24-Jun-2017 13:20:16,7,1,1e-09,Batch Constrained,5.4685e-09 
+24-Jun-2017 13:20:16,7,1,1e-09,Batch Constrained With STLN,1.7228e-09 
+24-Jun-2017 13:20:16,3,0,1e-09,Separate,2.0198e-09 
+24-Jun-2017 13:20:16,3,0,1e-09,Batch,2.0198e-09 
+24-Jun-2017 13:20:16,3,0,1e-09,Batch With STLN,2.0245e-09 
+24-Jun-2017 13:20:16,3,0,1e-09,Batch Constrained,1.5561e-09 
+24-Jun-2017 13:20:16,3,0,1e-09,Batch Constrained With STLN,1.4434e-09 
+24-Jun-2017 13:20:16,8,0,1e-08,Separate,3.1703e-06 
+24-Jun-2017 13:20:16,8,0,1e-08,Batch,3.1703e-06 
+24-Jun-2017 13:20:16,8,0,1e-08,Batch With STLN,2.6404e-06 
+24-Jun-2017 13:20:16,8,0,1e-08,Batch Constrained,2.998e-06 
+24-Jun-2017 13:20:16,8,0,1e-08,Batch Constrained With STLN,2.3354e-06 
+24-Jun-2017 13:20:18,7,0,1e-09,Separate,6.2698e-07 
+24-Jun-2017 13:20:18,7,0,1e-09,Batch,6.2698e-07 
+24-Jun-2017 13:20:18,7,0,1e-09,Batch With STLN,6.6226e-07 
+24-Jun-2017 13:20:18,7,0,1e-09,Batch Constrained,6.2683e-07 
+24-Jun-2017 13:20:18,7,0,1e-09,Batch Constrained With STLN,6.6602e-07 
+24-Jun-2017 13:20:18,3,1,1e-10,Separate,1.8775e-09 
+24-Jun-2017 13:20:18,3,1,1e-10,Batch,4.6757e-08 
+24-Jun-2017 13:20:18,3,1,1e-10,Batch With STLN,4.6798e-08 
+24-Jun-2017 13:20:18,3,1,1e-10,Batch Constrained,5.0262e-08 
+24-Jun-2017 13:20:18,3,1,1e-10,Batch Constrained With STLN,3.9047e-08 
+24-Jun-2017 13:20:19,8,1,1e-09,Separate,3.1032e-07 
+24-Jun-2017 13:20:19,8,1,1e-09,Batch,3.8284e-09 
+24-Jun-2017 13:20:19,8,1,1e-09,Batch With STLN,3.8425e-09 
+24-Jun-2017 13:20:19,8,1,1e-09,Batch Constrained,1.7707e-09 
+24-Jun-2017 13:20:19,8,1,1e-09,Batch Constrained With STLN,1.685e-09 
+24-Jun-2017 13:20:20,7,1,1e-10,Separate,6.4714e-07 
+24-Jun-2017 13:20:20,7,1,1e-10,Batch,1.9506e-09 
+24-Jun-2017 13:20:20,7,1,1e-10,Batch With STLN,1.9274e-09 
+24-Jun-2017 13:20:20,7,1,1e-10,Batch Constrained,1.5962e-09 
+24-Jun-2017 13:20:20,7,1,1e-10,Batch Constrained With STLN,1.5141e-09 
+24-Jun-2017 13:20:20,3,0,1e-10,Separate,1.8775e-09 
+24-Jun-2017 13:20:20,3,0,1e-10,Batch,1.8775e-09 
+24-Jun-2017 13:20:20,3,0,1e-10,Batch With STLN,1.8787e-09 
+24-Jun-2017 13:20:20,3,0,1e-10,Batch Constrained,1.7867e-09 
+24-Jun-2017 13:20:20,3,0,1e-10,Batch Constrained With STLN,1.7737e-09 
+24-Jun-2017 13:20:21,8,0,1e-09,Separate,3.1032e-07 
+24-Jun-2017 13:20:21,8,0,1e-09,Batch,3.1032e-07 
+24-Jun-2017 13:20:21,8,0,1e-09,Batch With STLN,2.5726e-07 
+24-Jun-2017 13:20:21,8,0,1e-09,Batch Constrained,2.9267e-07 
+24-Jun-2017 13:20:21,8,0,1e-09,Batch Constrained With STLN,2.2631e-07 
+24-Jun-2017 13:20:22,7,0,1e-10,Separate,6.4714e-07 
+24-Jun-2017 13:20:22,7,0,1e-10,Batch,6.4714e-07 
+24-Jun-2017 13:20:22,7,0,1e-10,Batch With STLN,6.5593e-07 
+24-Jun-2017 13:20:22,7,0,1e-10,Batch Constrained,6.4713e-07 
+24-Jun-2017 13:20:22,7,0,1e-10,Batch Constrained With STLN,6.5517e-07 
+24-Jun-2017 13:20:22,3,1,1e-12,Separate,1.8951e-09 
+24-Jun-2017 13:20:22,3,1,1e-12,Batch,4.674e-08 
+24-Jun-2017 13:20:22,3,1,1e-12,Batch With STLN,4.6776e-08 
+24-Jun-2017 13:20:22,3,1,1e-12,Batch Constrained,5.0215e-08 
+24-Jun-2017 13:20:22,3,1,1e-12,Batch Constrained With STLN,3.8989e-08 
+24-Jun-2017 13:20:23,8,1,1e-10,Separate,2.4476e-08 
+24-Jun-2017 13:20:23,8,1,1e-10,Batch,3.8e-10 
+24-Jun-2017 13:20:23,8,1,1e-10,Batch With STLN,3.8142e-10 
+24-Jun-2017 13:20:23,8,1,1e-10,Batch Constrained,1.7092e-10 
+24-Jun-2017 13:20:23,8,1,1e-10,Batch Constrained With STLN,1.6199e-10 
+24-Jun-2017 13:20:23,1,1,1e-07,Separate,7.1785e-07 
+24-Jun-2017 13:20:23,1,1,1e-07,Batch,2.6904 
+24-Jun-2017 13:20:23,1,1,1e-07,Batch With STLN,2.6509 
+24-Jun-2017 13:20:23,1,1,1e-07,Batch Constrained,2.1977 
+24-Jun-2017 13:20:23,1,1,1e-07,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:20:24,7,1,1e-12,Separate,6.4939e-07 
+24-Jun-2017 13:20:24,7,1,1e-12,Batch,1.5236e-09 
+24-Jun-2017 13:20:24,7,1,1e-12,Batch With STLN,1.5238e-09 
+24-Jun-2017 13:20:24,7,1,1e-12,Batch Constrained,1.5235e-09 
+24-Jun-2017 13:20:24,7,1,1e-12,Batch Constrained With STLN,1.5132e-09 
+24-Jun-2017 13:20:24,3,0,1e-12,Separate,1.8951e-09 
+24-Jun-2017 13:20:24,3,0,1e-12,Batch,1.8951e-09 
+24-Jun-2017 13:20:24,3,0,1e-12,Batch With STLN,1.8956e-09 
+24-Jun-2017 13:20:24,3,0,1e-12,Batch Constrained,1.8303e-09 
+24-Jun-2017 13:20:24,3,0,1e-12,Batch Constrained With STLN,1.8176e-09 
+24-Jun-2017 13:20:26,8,0,1e-10,Separate,2.4476e-08 
+24-Jun-2017 13:20:26,8,0,1e-10,Batch,2.4475e-08 
+24-Jun-2017 13:20:26,8,0,1e-10,Batch With STLN,1.9134e-08 
+24-Jun-2017 13:20:26,8,0,1e-10,Batch Constrained,2.2161e-08 
+24-Jun-2017 13:20:26,8,0,1e-10,Batch Constrained With STLN,1.5428e-08 
+24-Jun-2017 13:20:26,7,0,1e-12,Separate,6.4939e-07 
+24-Jun-2017 13:20:26,7,0,1e-12,Batch,6.4939e-07 
+24-Jun-2017 13:20:26,7,0,1e-12,Batch With STLN,6.5526e-07 
+24-Jun-2017 13:20:26,7,0,1e-12,Batch Constrained,6.4938e-07 
+24-Jun-2017 13:20:26,7,0,1e-12,Batch Constrained With STLN,6.5398e-07 
+24-Jun-2017 13:20:28,1,0,1e-07,Separate,7.1785e-07 
+24-Jun-2017 13:20:28,1,0,1e-07,Batch,7.1785e-07 
+24-Jun-2017 13:20:28,1,0,1e-07,Batch With STLN,7.2388e-07 
+24-Jun-2017 13:20:28,1,0,1e-07,Batch Constrained,8.8679e-07 
+24-Jun-2017 13:20:28,1,0,1e-07,Batch Constrained With STLN,9.3629e-07 
+24-Jun-2017 13:20:28,8,1,1e-12,Separate,7.7033e-09 
+24-Jun-2017 13:20:28,8,1,1e-12,Batch,1.4125e-11 
+24-Jun-2017 13:20:28,8,1,1e-12,Batch With STLN,1.4125e-11 
+24-Jun-2017 13:20:28,8,1,1e-12,Batch Constrained,1.3714e-11 
+24-Jun-2017 13:20:28,8,1,1e-12,Batch Constrained With STLN,1.3699e-11 
+24-Jun-2017 13:20:30,8,0,1e-12,Separate,7.7033e-09 
+24-Jun-2017 13:20:30,8,0,1e-12,Batch,7.7035e-09 
+24-Jun-2017 13:20:30,8,0,1e-12,Batch With STLN,7.8212e-09 
+24-Jun-2017 13:20:30,8,0,1e-12,Batch Constrained,7.7009e-09 
+24-Jun-2017 13:20:30,8,0,1e-12,Batch Constrained With STLN,7.8629e-09 
+24-Jun-2017 13:20:36,1,1,1e-08,Separate,7.1785e-08 
+24-Jun-2017 13:20:36,1,1,1e-08,Batch,2.6904 
+24-Jun-2017 13:20:36,1,1,1e-08,Batch With STLN,2.6509 
+24-Jun-2017 13:20:36,1,1,1e-08,Batch Constrained,2.1977 
+24-Jun-2017 13:20:36,1,1,1e-08,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:20:39,1,0,1e-08,Separate,7.1785e-08 
+24-Jun-2017 13:20:39,1,0,1e-08,Batch,7.1785e-08 
+24-Jun-2017 13:20:39,1,0,1e-08,Batch With STLN,7.2388e-08 
+24-Jun-2017 13:20:39,1,0,1e-08,Batch Constrained,8.8679e-08 
+24-Jun-2017 13:20:39,1,0,1e-08,Batch Constrained With STLN,9.3629e-08 
+24-Jun-2017 13:20:47,1,1,1e-09,Separate,7.1786e-09 
+24-Jun-2017 13:20:47,1,1,1e-09,Batch,2.6904 
+24-Jun-2017 13:20:47,1,1,1e-09,Batch With STLN,2.6509 
+24-Jun-2017 13:20:47,1,1,1e-09,Batch Constrained,2.1977 
+24-Jun-2017 13:20:47,1,1,1e-09,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:20:51,1,0,1e-09,Separate,7.1786e-09 
+24-Jun-2017 13:20:51,1,0,1e-09,Batch,7.1786e-09 
+24-Jun-2017 13:20:51,1,0,1e-09,Batch With STLN,7.2389e-09 
+24-Jun-2017 13:20:51,1,0,1e-09,Batch Constrained,8.8679e-09 
+24-Jun-2017 13:20:51,1,0,1e-09,Batch Constrained With STLN,9.3629e-09 
+24-Jun-2017 13:20:58,1,1,1e-10,Separate,7.1787e-10 
+24-Jun-2017 13:20:58,1,1,1e-10,Batch,2.6904 
+24-Jun-2017 13:20:58,1,1,1e-10,Batch With STLN,2.6509 
+24-Jun-2017 13:20:58,1,1,1e-10,Batch Constrained,2.1977 
+24-Jun-2017 13:20:58,1,1,1e-10,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:21:02,1,0,1e-10,Separate,7.1787e-10 
+24-Jun-2017 13:21:02,1,0,1e-10,Batch,7.1787e-10 
+24-Jun-2017 13:21:02,1,0,1e-10,Batch With STLN,7.239e-10 
+24-Jun-2017 13:21:02,1,0,1e-10,Batch Constrained,8.8677e-10 
+24-Jun-2017 13:21:02,1,0,1e-10,Batch Constrained With STLN,9.3627e-10 
+24-Jun-2017 13:21:09,1,1,1e-12,Separate,7.3727e-12 
+24-Jun-2017 13:21:09,1,1,1e-12,Batch,2.6904 
+24-Jun-2017 13:21:09,1,1,1e-12,Batch With STLN,2.6509 
+24-Jun-2017 13:21:09,1,1,1e-12,Batch Constrained,2.1977 
+24-Jun-2017 13:21:09,1,1,1e-12,Batch Constrained With STLN,0.37947 
+24-Jun-2017 13:21:13,1,0,1e-12,Separate,7.3727e-12 
+24-Jun-2017 13:21:13,1,0,1e-12,Batch,7.3949e-12 
+24-Jun-2017 13:21:13,1,0,1e-12,Batch With STLN,7.4534e-12 
+24-Jun-2017 13:21:13,1,0,1e-12,Batch Constrained,8.9048e-12 
+24-Jun-2017 13:21:13,1,0,1e-12,Batch Constrained With STLN,9.397e-12 

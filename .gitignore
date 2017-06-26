@@ -1,11 +1,11 @@
 # My Ignores
-*.xls
-*.xlsx
-*.txt
-*.jpg
-*.eps
-*.fig
-*.png
+.xls
+.xlsx
+.txt
+.jpg
+.eps
+.fig
+.png
 
 
 # Windows image file caches
