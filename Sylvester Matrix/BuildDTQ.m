@@ -1,25 +1,24 @@
-function [DTQ] = BuildDTQ(fx,gx,k)
+function [DTQ] = BuildDTQ(fx, gx, k)
 % BuildDTQ(fx,gx,t)
 %
 % Build the matrix DTQ = D^{-1}T(f,g)*Q.
 %
 % Inputs.
 %
-% fx : Coefficients of polynomial f(x)
+% fx : (Vector) Coefficients of polynomial f(x)
 %
-% gx : Coefficients of polynomial g(x)
+% gx : (Vector) Coefficients of polynomial g(x)
 %
-% k : index of subresultant
+% k : (Int) index of subresultant
 %
-% Note: If you wish to build the Sylvester matrix for preprocessed and
-% scaled polynomials f(\omega)g(\omega), the preprocessed forms must be the
-% inputs to this function.
+% % Outputs
+%
+% DTQ 
 
-
-% Get degree of polynomial f(w)
+% Get degree of polynomial f(x)
 m = GetDegree(fx);
 
-% Get degree of polynomial g(w)
+% Get degree of polynomial g(x)
 n = GetDegree(gx);
 
 % Build matrix D^{-1}

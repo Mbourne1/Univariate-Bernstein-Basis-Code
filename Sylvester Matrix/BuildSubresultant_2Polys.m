@@ -33,33 +33,33 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
     
     case 'T'
         
-        T = BuildT_2Polys(fx,gx,k);
+        T = BuildT_2Polys(fx, gx, k);
         Sk = T;
         
     case 'DT'
         
-        D = BuildD_2Polys(m,n-k);
-        T = BuildT_2Polys(fx,gx,k);
+        D = BuildD_2Polys(m, n - k);
+        T = BuildT_2Polys(fx, gx, k);
         Sk = D*T;
         
     case 'DTQ'
         
-        D = BuildD_2Polys(m,n-k);
-        T = BuildT_2Polys(fx,gx,k);
-        Q = BuildQ_2Polys(m,n,k);
+        D = BuildD_2Polys(m, n - k);
+        T = BuildT_2Polys(fx, gx, k);
+        Q = BuildQ_2Polys(m, n, k);
         Sk = D*T*Q;
         
     case 'TQ'
         
-        T = BuildT_2Polys(fx,gx,k);
-        Q = BuildQ_2Polys(m,n,k);
+        T = BuildT_2Polys(fx, gx, k);
+        Q = BuildQ_2Polys(m, n, k);
         
         Sk = T*Q;
         
-    case 'DTQ Rearranged Denom Removed'
+    case 'DTQ Denominator Removed'
         
-        DT1Q1 = BuildDT1Q1_Rearranged_RemovedDenom(fx,n-k);
-        DT2Q2 = BuildDT1Q1_Rearranged_RemovedDenom(gx,m-k);
+        DT1Q1 = BuildDT1Q1_Rearranged_RemovedDenom(fx, n - k);
+        DT2Q2 = BuildDT1Q1_Rearranged_RemovedDenom(gx, m - k);
         
         Sk = [DT1Q1 DT2Q2];
         
@@ -68,16 +68,21 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'DTQ Rearranged' % Build based on generating individual elements
         
         % Build First Partition
-        D1T1Q = BuildDT1Q1(fx,n-k);
+        D1T1Q = BuildDT1Q1(fx, n - k);
         
         % Build Second Partition
-        D2T2Q = BuildDT1Q1(gx,m-k);
+        D2T2Q = BuildDT1Q1(gx, m - k);
         
         % Build Sylvester Matrix by concatenation of matrices A and B.
         Sk = [D1T1Q D2T2Q];
         
+   
+        
+        
+        
+        
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD must be one of the following *T or *DT or *DTQ or *TQ or *DTQ Rearranged Denom Removed or *DTQ Rearranged')
+        error('SETTINGS.SYLVESTER_BUILD_METHOD must be one of the following *T or *DT or *DTQ or *TQ or *DTQ Denominator Removed or *DTQ Rearranged')
 end
 
 end

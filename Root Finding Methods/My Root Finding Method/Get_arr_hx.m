@@ -6,8 +6,8 @@ switch SETTINGS.GET_ARR_HX_METHOD
     
     case 'From Deconvolution'
     
-        fprintf([mfilename ' : ' sprintf('Deconvolving f_{i}(x) : %s \n',SETTINGS.DECONVOLVE_METHOD_HX_FX)])
-        arr_hx = Deconvolve_Set(arr_fx,SETTINGS.DECONVOLVE_METHOD_HX_FX);
+        fprintf([mfilename ' : ' sprintf('Deconvolving f_{i}(x) : %s \n',SETTINGS.DECONVOLUTION_METHOD_HX_FX)])
+        arr_hx = Deconvolve_Set(arr_fx,SETTINGS.DECONVOLUTION_METHOD_HX_FX);
     
     case 'From ux'
         

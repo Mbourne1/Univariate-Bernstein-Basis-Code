@@ -1,5 +1,8 @@
 function arr_hx = Deconvolve_Batch(arr_fx)
-% Perform batch deconvolution
+% Perform batch deconvolution where each h_{i}(x) = f_{i-1}(x)/f_{i}(x) so
+% each polynomial f_{i}(x) appears in the RHS matrix and the LHS vector,
+% except f_{0} which only appears in the matrix and f_{n} which only
+% appears in the vector.
 %
 % % Inputs
 %
@@ -35,7 +38,7 @@ vDegree_arr_hx = (vDegree_arr_fx(1:end-1) - vDegree_arr_fx(2:end))';
 if(SETTINGS.PREPROC_DECONVOLUTIONS)
     
     theta = GetOptimalTheta(arr_fx);
-    fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
+    fprintf([mfilename ' : ' sprintf('Optimal theta : %2.4f \n',theta)])
     
 else
     theta = 1;
@@ -54,10 +57,10 @@ DCQ = BuildDCQ(arr_fw);
 
 % Get the solution vector h(w) in the system of equations
 % DCQ * h = RHS_vec.
-v_hw = SolveAx_b(DCQ,RHS_fw);
+v_hw = SolveAx_b(DCQ, RHS_fw);
 
 
-% Seperate solution vector h, into component parts h_{1},h_{2},...h_{d},
+% Separate solution vector h, into component parts h_{1},h_{2},...h_{d},
 % each of degree n_{i}
 % initialise a cell array to store the coefficients of the individual
 % polynomials h_{i}
@@ -88,13 +91,13 @@ function DCQ = BuildDCQ(arr_fx)
 % DCQ : (Matrix) Convolution matrix in the deconvolution problem
 
 % Get the number of polynomials in the array
-nPolys_arr_fx = length(arr_fx);
+nPolynomials_arr_fx = length(arr_fx);
 
 % Initialise the cell array to store the matrices D^{-1}_{}T_{}(f)Q_{}
-arr_DT1Q1 = cell(nPolys_arr_fx - 1,1);
+arr_DT1Q1 = cell(nPolynomials_arr_fx - 1,1);
 
 % For each of the polynomials f_{i}(x), excluding the final polynomial
-for i = 1 : 1 : (nPolys_arr_fx - 1)
+for i = 1 : 1 : (nPolynomials_arr_fx - 1)
     
     % Get the polynomial f_{i} = set_f{i+1}
     fw = arr_fx{i+1};

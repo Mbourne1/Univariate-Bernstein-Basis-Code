@@ -1,5 +1,8 @@
-function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method)
-% o_gcd_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method)
+function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, ...
+    bool_alpha_theta, low_rank_approx_method, apf_method, ...
+    Sylvester_Build_Method, rank_revealing_metric)
+% o_gcd_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+%   low_rank_approx_method, apf_method, Sylvester_Build_Method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
 % g(x) as defined in the example file.
@@ -14,45 +17,44 @@ function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alph
 % emax: (Float) Signal to noise ratio (maximum)
 %
 % mean_method : (String) Method for taking mean of entires in S_{k}
-%           'Geometric Mean Matlab Method'
-%           'Geometric Mean My Method'
+%   * 'Geometric Mean Matlab Method'
+%   * 'Geometric Mean My Method'
 %
 % bool_alpha_theta : (Bool) true or false if preprocessing is performed
-%           * true
-%           * false
+%   * true
+%   * false
 %
 % low_rank_approx_method : (String)
-%           'Standard STLN'
-%           'Standard SNTLN'
-%           'Root Specific SNTLN'
-%           'None'
+%   * 'Standard STLN'
+%   * 'Standard SNTLN'
+%   * 'Root Specific SNTLN'
+%   * 'None'
 %
 % apf_method : (String)
-%           'Standard APF NonLinear'
-%           'Standard APF Linear'
-%           'None'
+%   * 'Standard APF NonLinear'
+%   * 'Standard APF Linear'
+%   * 'None'
 %
 % Sylvester_Build_Method : (String)
-%           'T'
-%           'DT'
-%           'DTQ'
-%           'TQ'
-%           'DTQ Rearranged Denom Removed'
-%           'DTQ Rearranged'
+%   * 'T'
+%   * 'DT'
+%   * 'DTQ'
+%   * 'TQ'
+%   * 'DTQ Denominator Removed'
+%   * 'DTQ Rearranged'
+%
+% rank_revealing_metric : (String)
+%   * Singular Values :   
+%   * Max/Min Singular Values :
+%   * R1 Row Norms : 
+%   * R1 Row Diagonals :
+%   * Residuals :
 %
 % % Example
-% >> o_gcd_Univariate_2Polys('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')
-% >> o_gcd_Univariate_2Polys('1',1e-10,1e-12,'Geometric Mean Matlab Method',true,'Standard STLN','Standard APF Nonlinear','DTQ')
-%
-% % Custom Example
-%
-% ex_num = 'Custom:m=10 n=10 t=5 low=0 high=1'
-% >> o_gcd_Univariate_2Polys(ex_num,1e-10,1e-12,'Geometric Mean Matlab Method','y','Standard STLN','None','DTQ')
+% >> o_gcd_Univariate_2Polys('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ', 'Minimum Singular Values')
+% >> o_gcd_Univariate_2Polys('1',1e-10,1e-12,'Geometric Mean Matlab Method', true, 'Standard STLN', 'Standard APF Nonlinear', 'DTQ', 'Minimum Singular Values')
 
 global SETTINGS
-
-% Set the problem type to a GCD problem
-problemType = 'GCD';
 
 % Add that folder plus all subfolders to the path.
 addpath(genpath(pwd));
@@ -65,7 +67,7 @@ if emin > emax
 end
 
 % % Set global variables.
-SetGlobalVariables(problemType,...
+SetGlobalVariables_GCD(...
     ex_num,...
     emin,...
     emax,...
@@ -73,7 +75,8 @@ SetGlobalVariables(problemType,...
     bool_alpha_theta,...
     low_rank_approx_method,...
     apf_method,...
-    Sylvester_Build_Method);
+    Sylvester_Build_Method, ...
+    rank_revealing_metric);
 
 % Print the parameters.
 LineBreakLarge()
@@ -83,6 +86,7 @@ fprintf('\t EMIN : %s \n' , num2str(SETTINGS.EMIN))
 fprintf('\t EMAX : %s \n' , num2str(SETTINGS.EMAX))
 fprintf('\t MEAN METHOD : %s \n', SETTINGS.MEAN_METHOD)
 fprintf('\t ALPHA_THETA : %s \n', num2str(SETTINGS.BOOL_ALPHA_THETA))
+fprintf('\t RANK REVEALING METRIC : %s \n', SETTINGS.RANK_REVEALING_METRIC);
 fprintf('\t LOW RANK APPROX METHOD : %s \n', SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
 fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD)
 fprintf('\t LOG: %s \n', num2str(SETTINGS.BOOL_LOG))
@@ -108,12 +112,15 @@ fx = AddVariableNoiseToPoly(fx_exact, emin, emax);
 gx = AddVariableNoiseToPoly(gx_exact, emin, emax);
 
 % Set upper and lower limit of the degree of the GCD
-lower_lim = 1;
-upper_lim = min(m, n);
-limits = [lower_lim upper_lim];
+lowerLimit_t = 1;
+upperLimit_t = min(m, n);
+limits_t = [lowerLimit_t upperLimit_t];
 
-% Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~, ~, dx_calc, ux_calc, vx_calc] = o_gcd_2Polys_mymethod(fx, gx, limits);
+% Set range of rank revealing metric
+rank_range = [0 0];
+
+% Obtain the coefficients of the GCD d and quotient polynomials u(x) and v(x).
+[~, ~, dx_calc, ux_calc, vx_calc] = o_gcd_2Polys_mymethod(fx, gx, limits_t, rank_range);
 
 t_calc = GetDegree(dx_calc);
 
@@ -142,7 +149,11 @@ LineBreakMedium();
 
 end
 
-function [error] = GetError(name,f_calc,f_exact)
+
+
+
+
+function [error] = GetError(name, fx_calc,fx_exact)
 % Get distance between f(x) and the calulated f(x)
 
 % Get the angle between the two vectors
@@ -150,15 +161,15 @@ function [error] = GetError(name,f_calc,f_exact)
 % angle_error = 1 - angle;
 % fprintf('\tCalculated angle error : %8.2e \n', angle_error)
 
-f_calc  = Normalise(f_calc);
-f_exact = Normalise(f_exact);
+fx_calc  = NormaliseVector(fx_calc);
+fx_exact = NormaliseVector(fx_exact);
 
 % Calculate relative errors in outputs
-rel_error_f = norm(abs(f_calc - f_exact) ./ f_exact);
+rel_error_fx = norm(abs(fx_calc - fx_exact) ./ fx_exact);
 
-fprintf('\tCalculated relative error %s : %8.2e \n ',name,rel_error_f);
+fprintf('\tCalculated relative error %s : %8.2e \n ',name, rel_error_fx);
 
-error = norm(abs(f_calc - f_exact) );
+error = norm(abs(fx_calc - fx_exact) );
 
 fprintf('\tCalculated error %s : %8.2e \n', name,error);
 
@@ -168,7 +179,7 @@ end
 
 
 
-function [] = PrintToFile(m,n,t,error)
+function [] = PrintToFile(m, n, t, error)
 % Print results of gcd computation to a text file
 %
 % % Inputs
@@ -187,7 +198,12 @@ function [] = PrintToFile(m,n,t,error)
 
 global SETTINGS
 
-fullFileName = sprintf('Results/Results_o_gcd%s.txt',datetime('today'));
+%myDate = datetime('today');
+%[year,month,day] = ymd(myDate);
+%fullFileName = sprintf('Results/Results_o_gcd-%s-%s-%s.txt',num2str(year),num2str(month),num2str(day));
+
+fullFileName = sprintf('Results/Results_o_gcd.txt');
+
 
 % If file already exists append a line
 if exist(fullFileName, 'file')
@@ -210,7 +226,7 @@ end
     function WriteNewLine()
         % Write a new line of the text file
         
-        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
+        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s \n',...
             datetime('now'),...
             SETTINGS.EX_NUM,...
             int2str(m),...
@@ -229,14 +245,15 @@ end
             num2str(SETTINGS.APF_REQ_ITE),...
             num2str(SETTINGS.BOOL_LOG),...
             SETTINGS.SYLVESTER_BUILD_METHOD,...
-            SETTINGS.GCD_COEFFICIENT_METHOD...
+            SETTINGS.GCD_COEFFICIENT_METHOD,...
+            SETTINGS.RANK_REVEALING_METRIC...
             );
     end
 
 
     function WriteHeader()
         % If the file doesnt already exist, write a header to the text file
-        fprintf(fileID,'DATE,EX_NUM,m,n,t,ERROR_UX,ERROR_VX,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,BOOL_LOG,SYLVESTER_BUILD_METHOD,GCD_METHOD\n');
+        fprintf(fileID,'DATE, EX_NUM, m, n, t, ERROR_UX, ERROR_VX, ERROR_DX, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,BOOL_LOG,SYLVESTER_BUILD_METHOD,GCD_METHOD, RANK_REVEALING_METRIC\n');
     end
 
 

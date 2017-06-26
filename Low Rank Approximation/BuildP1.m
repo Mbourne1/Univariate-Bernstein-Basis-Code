@@ -4,21 +4,21 @@ function P1 = BuildP1(m, n_k, idx_col)
 %
 % % Inputs
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% n_k : Degree of polynomial v(x)
+% n_k : (Int) Degree of polynomial v(x)
 %
-% idx_col : Index of column of T_{n-k}(f) which is being constructed.
+% idx_col : (Int) Index of column of T_{n-k}(f) which is being constructed.
 %
 % % Outputs
 %
-% P1 : Partition of the matrix P
+% P1 : (Matrix) Partition of the matrix P
 
 % Initialise the partition P_{1}
 P1 = zeros(m+n_k+1,m+1);
 
 % Get with binomials corresponding to v(x)
-mat = eye(m+1) .* nchoosek(n_k, idx_col-1);
+mat = eye(m+1);
 
 % 
 P1(idx_col:idx_col+m, :) = mat;

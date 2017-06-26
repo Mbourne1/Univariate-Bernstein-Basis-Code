@@ -1,4 +1,4 @@
-function [ root_mult_array ] = o_roots_Bisection(fx)
+function [ root_multiplicity_matrix ] = o_roots_Bisection(fx)
 %   ROOTS_BISECTION obtain roots in interval by bisection method, once a
 %   root is obtained with assumed multiplicity one, deconvolve and perform
 %   bisection on f2 with root removed, until no more roots are found.
@@ -9,8 +9,8 @@ function [ root_mult_array ] = o_roots_Bisection(fx)
 %
 % Outputs.
 %
-% root_mult_array : [(Float) (Int)] Matrix consisting of two columns, containing 
-%   roots of f(x) and their corresponding multiplicities, 
+% root_mult_array : [(Float) (Int)] Matrix consisting of two columns, containing
+%   roots of f(x) and their corresponding multiplicities,
 %   where the row i contains r_{i} and multiplicity m_{i}.
 
 % Get the upper and lower bound of the bisection method.
@@ -29,12 +29,12 @@ min_interval_size = 0.0001;
 
 % eps_abs : when evaluating the curve at a point c, if f(c) is within
 % eps_abs of zero, then c is considered to be a root of f.
-eps_abs = 1e-12;
+epsilon_abs = 1e-12;
 
 % Plot f(x)
 ite_num = 1;
 
-root_mult_array = [];
+root_multiplicity_matrix = [];
 
 figure_name = sprintf('%s : Bernstein Polynomial Curve %i',mfilename,ite_num);
 Plot_fx(fx,a,b,figure_name);
@@ -49,7 +49,7 @@ while (b - a >= min_interval_size)
     
     % check to see if the evaluation of the function f at the midpoint is
     % within the margins of error of zero
-    if ( abs(Bernstein_Evaluate(fx,c)) < eps_abs )
+    if ( abs(Bernstein_Evaluate(fx,c)) < epsilon_abs )
         break;
         
         % Check for change of sign in the first half of the interval
@@ -69,7 +69,7 @@ while (b - a >= min_interval_size)
         
     else
         try
-        PrintoutRoots('BISECTION' , root_mult_array)
+            PrintoutRoots('BISECTION' , root_multiplicity_matrix)
         catch
         end
         return
@@ -77,20 +77,20 @@ while (b - a >= min_interval_size)
 end
 
 % Get calculated roots and multiplicity
-root_mult = [c 1];
+root_multiplicity = [c 1];
 
 % Initialise list of all roots
-root_mult_array = root_mult;
+root_multiplicity_matrix = root_multiplicity;
 
 % Convert to polynomial in scaled bernstein form
-gx_bi = BuildPolyFromRoots(root_mult);
+gx_bi = BuildPolyFromRoots(root_multiplicity);
 
 % Build polynomial of the removed root
 gx = GetWithoutBinomials(gx_bi);
 
 % Perform deconvolution to obtain f2, the remainder of the polynomial now
 % that the found root has been removed.
-f2 = Deconvolve(fx,gx);
+f2 = Deconvolve(fx, gx);
 
 ite_num = 1;
 
@@ -120,34 +120,41 @@ while GetDegree(f2) >=1
         c = (a + b)/2;
         
         % Evaluate the function at the midpoint
-        if (  abs(Bernstein_Evaluate(f2,c)) < eps_abs )
+        if (  abs(Bernstein_Evaluate(f2,c)) < epsilon_abs )
             break;
             
             % Check for change of sign in first half of the interval
+            
         elseif ( Bernstein_Evaluate(f2,a)*Bernstein_Evaluate(f2,c) < 0 )
+            
             % if change of sign, then set the upper bound of the next
             % interval b = c
             b = c;
             
             % Check for change of sign in the second half of the interval
+            
         elseif ( Bernstein_Evaluate(f2,b)*Bernstein_Evaluate(f2,c) < 0 )
+            
             % if change of sign, then set the lower bound of the next
             % interval a = c
             a = c;
+            
         else
-            PrintoutRoots('BISECTION' , root_mult_array)
+            
+            PrintoutRoots('BISECTION' , root_multiplicity_matrix)
             return;
+            
         end
     end
     
     % Get calculated roots and multiplicity
-    root_mult = [c 1];
+    root_multiplicity = [c 1];
     
     % Add root to list of roots
-    root_mult_array = [root_mult_array ;root_mult];
+    root_multiplicity_matrix = [root_multiplicity_matrix ;root_multiplicity];
     
     % Convert to polynomial in scaled bernstein form
-    gx_bi = BuildPolyFromRoots(root_mult);
+    gx_bi = BuildPolyFromRoots(root_multiplicity);
     
     % Build polynomial of removed root
     gx = GetWithoutBinomials(gx_bi);
@@ -158,8 +165,7 @@ while GetDegree(f2) >=1
     
 end
 
-% Print out roots
-PrintoutRoots('BISECTION' , root_mult_array)
+
 end
 
 

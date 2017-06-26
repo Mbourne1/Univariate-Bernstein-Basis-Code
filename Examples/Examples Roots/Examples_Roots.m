@@ -1,4 +1,15 @@
-function [fx_exact] = Examples_Roots(ex_num)
+function [fx_exact, fx_factor_multiplicity_array] = Examples_Roots(ex_num)
+%
+% % Inputs
+%
+% ex_num : (String)
+%
+% % Outputs
+%
+% fx_exact : (Vector) Coefficients of f(x) in Bernstein form
+%
+% fx_factor_multiplicity_array : (Matrix) Contains symbolic factors of f(x)
+% and the corresponding multiplicity
 
 Example_Type = 'From Coefficients';
 
@@ -28,7 +39,7 @@ switch Example_Type
         
         
     case 'From Coefficients'
-        fx_exact = Examples_Roots_FromCoefficients(ex_num);
+        [fx_exact, fx_factor_multiplicity_array] = Examples_Roots_FromCoefficients(ex_num);
         %fx_bi = GetWithBinomials(fx_exact);
     otherwise
         error('error : Example_Type not valid')

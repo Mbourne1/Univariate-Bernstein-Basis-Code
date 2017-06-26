@@ -38,10 +38,11 @@ lowerLimit_t = 1;
 upperLimit_t = min(m,n);
 limits_t = [lowerLimit_t, upperLimit_t];
 
+rank_range = [-10,0];
 
 % Perform GCD computation.
 [fx_o,gx_o,dx_o, ux_o, vx_o, alpha, theta, t] ...
-    = o_gcd_2Polys_mymethod(arr_fx{1}, arr_gx{ite}, limits_t);
+    = o_gcd_2Polys_mymethod(arr_fx{1}, arr_gx{ite}, limits_t, rank_range);
 
 dx = dx_o;
 ux = ux_o;
@@ -72,8 +73,8 @@ while (GetDegree(arr_hx{ite}) > 0 )
         %[fx_n,gx_n,dx, ux, ~, ~, ~, ~ ] ...
         %    = o_gcd_mymethod(g{ite},h{ite},deg_limits);
         
-        [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t] ...
-            = o_gcd_2Polys_mymethod(arr_gx{ite}, arr_hx{ite}, limits_t);
+        [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t, rank_range] ...
+            = o_gcd_2Polys_mymethod(arr_gx{ite}, arr_hx{ite}, limits_t, rank_range);
         
         dx = dx_o;
         ux = ux_o;
@@ -157,9 +158,4 @@ for i = 1:1:length(arr_wx)
         
     catch
     end
-end
-try
-PrintoutRoots('MUSSER METHOD',root_mult_array);
-catch
-end
 end

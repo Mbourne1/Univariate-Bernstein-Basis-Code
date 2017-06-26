@@ -18,9 +18,11 @@ nPolys_arr_fx = length(arr_fx);
 arr_fw = cell(nPolys_arr_fx, 1);
 
 % For each polynomial f_{i}(x), preprocess to obtain f_{i}(\omega)
-for i = 1:1:length(arr_fx)
+for i = 1 : 1 : nPolys_arr_fx
     
     arr_fw{i,1} = GetWithThetas(arr_fx{i}, theta);
     
 end
+
+
 end

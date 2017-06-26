@@ -1,4 +1,4 @@
-function [fx_lr,gx_lr,ux_lr,vx_lr] = STLN(fx, gx, k, idx_OptCol)
+function [fx_lr, gx_lr, ux_lr, vx_lr] = STLN(fx, gx, k, idx_OptCol)
 % Perform STLN with no refinement of alpha or theta to compute the low rank
 % approximation of the Sylvester subresultant matrix S_{k}(f,g)
 %
@@ -65,13 +65,15 @@ hk = DBQ(:,idx_OptCol);
 DPQ = BuildDPG_STLN(m, n, k, idx_OptCol);
 
 % Get initial residual (A_{t}+E_{t})x = (c_{t} + h_{t})
-xk = SolveAx_b(Ak+Bk, ck+hk);
+xk = SolveAx_b(Ak + Bk, ck + hk);
 
 % Get residual vector
 res_vec = (ck + hk) - (Ak+Bk)*xk;
 
 % Get the vector x with a zero included in the x_ls solution.
 x = [xk(1:idx_OptCol-1) ; 0 ; xk(idx_OptCol:end)];
+
+
 
 % Build the matrix Y_{t}
 DYQ = BuildDYQ_STLN(x, m, n, k);
@@ -90,8 +92,8 @@ E = blkdiag(eye(m+n+2), zeros(m+n-2*k+1, m+n-2*k+1));
 % Define the starting vector for the iterations for the LSE problem.
 start_point     =   ...
     [...
-    z;...
-    xk;
+        z;...
+        xk;
     ];
 
 
@@ -133,7 +135,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     z_gx = z(m+2 : end);
     
     % Build the matrix E = D^{-1} * B(zf,zg) * Q
-    DBQ = BuildDTQ(z_fx,z_gx,k);
+    DBQ = BuildDTQ(z_fx, z_gx, k);
     
     % Build the matrix Bt = DBQ with opt column removed.
     Bk = DBQ;
@@ -145,7 +147,7 @@ while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIO
     % Get the vector x
     x = [xk(1:idx_OptCol-1) ; 0 ; xk(idx_OptCol:end)];
     
-    % Seperate the component parts of x into x_v and x_u, where x_v is an
+    % Separate the component parts of x into x_v and x_u, where x_v is an
     % approximation of v(x) and x_u is an approximation u(x).
     DYQ = BuildDYQ_SNTLN(x, m, n, k, 1, 1);
     
@@ -187,16 +189,16 @@ gx_lr = gx + z_gx;
 % % Get polynomials u(x) and v(x)
 
 % Get u(x) and v(x) from x_ls
-x = [xk(1:idx_OptCol-1) ; -1 ; xk(idx_OptCol:end)];
+x = [xk(1 : idx_OptCol - 1) ; -1 ; xk(idx_OptCol : end)];
 
 % Get the number of coefficients in v(x)
-nCoefficients_vx = n-k+1;
+nCoefficients_vx = n - k + 1;
 
 % Get the polynomial v(x) from the vector x
-vx_lr = x(1:nCoefficients_vx);
+vx_lr = x(1 : nCoefficients_vx);
 
 % Get the polynomial u(x) from the vector x
-ux_lr = -1.* x(nCoefficients_vx + 1:end) ;
+ux_lr = -1.* x(nCoefficients_vx + 1 : end) ;
 
 
 end

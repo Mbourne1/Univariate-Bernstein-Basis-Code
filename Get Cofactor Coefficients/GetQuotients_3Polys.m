@@ -81,7 +81,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         wx = vec_x(nCoeffs_vx + 1: nCoeffs_vx + nCoeffs_wx);
         ux = -vec_x(nCoeffs_vx + nCoeffs_wx + 1:end);
         
-    case 'DTQ Rearranged Denom Removed'
+    case 'DTQ Denominator Removed'
         
         vx = vec_x(1:nCoeffs_vx);
         wx = vec_x(nCoeffs_vx + 1: nCoeffs_vx + nCoeffs_wx);

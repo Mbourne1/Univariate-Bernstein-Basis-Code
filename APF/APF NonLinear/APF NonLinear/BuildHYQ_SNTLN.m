@@ -15,7 +15,7 @@ HYQ = BuildHYQ1(dx, m, n, theta);
 
 end
 
-function HYQ = BuildHYQ1(dx,m,n,theta)
+function HYQ = BuildHYQ1(dx, m, n, theta)
 % Builds the Matrix H.Y.Q where Y_{k} performs a change of variable.
 % E(w).d = Y(d).w where d is vector of coefficients of GCD, and w is vector
 % of perturbations to f and g
@@ -42,15 +42,13 @@ global SETTINGS
 
 
 
-
-
 if(SETTINGS.BOOL_LOG)
-    A = BuildHYPartition_log(dx,m,theta);
-    B = BuildHYPartition_log(dx,n,theta);
+    A = BuildHYPartition_log(dx, m, theta);
+    B = BuildHYPartition_log(dx, n, theta);
 else
     
-    A = BuildHYPartition_nchoosek(dx,m,theta);
-    B = BuildHYPartition_nchoosek(dx,n,theta);
+    A = BuildHYPartition_nchoosek(dx, m, theta);
+    B = BuildHYPartition_nchoosek(dx, n, theta);
     
 end
 
@@ -72,8 +70,6 @@ function HY = BuildHYPartition_nchoosek(dx, m, theta)
 % % Outputs
 %
 % HY : (Matrix)
-
-global SETTINGS
 
 % Get degree of polynomial d(x)
 t = GetDegree(dx);
@@ -107,26 +103,25 @@ function A = BuildHYPartition_log(dx, m, theta)
 % % Inputs
 %
 %
-% dx : Coefficients of polynomial d(x)
+% dx : (Vector) Coefficients of polynomial d(x)
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% theta : Optimal value of \theta
+% theta : (Float) Optimal value of \theta
 %
 %
 % % Outputs
 %
-% A : Matrix forming a partition of HY
+% A : (Matrix) Matrix forming a partition of HY
 %
 %
 
-global SETTINGS
 
-% Get degree of polynomial dw
+% Get degree of polynomial d(x)
 t = GetDegree(dx);
 
 % Initialise an empty matrix
-A = zeros(m+1,m-t+1);
+A = zeros(m+1, m-t+1);
 
 % for each column j of the matrix A
 for j = 0:1:(m-t)

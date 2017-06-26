@@ -12,7 +12,7 @@ function [arr_hx] = Deconvolve_Batch_Constrained_With_STLN(arr_fx, vMult)
 %
 % % Outputs.
 %
-% arr_hx : (Vector) Array of polynomials h_{i}(x) where
+% arr_hx : (Array of Vectors) Array of polynomials h_{i}(x) where
 % h_{i}(x) = f_{i-1}(x) / f_{i}(x)
 
 % Global Variables
@@ -69,7 +69,7 @@ RHS_vec_fw = BuildRHSF(arr_fw);
 
 
 % % Get the vector containing coefficients of polynomials p_{i}(\omega)
-vec_pw = SolveAx_b(DT_fwQ,RHS_vec_fw);
+vec_pw = SolveAx_b(DT_fwQ, RHS_vec_fw);
 
 % Get number of coefficients in all the polynomials p_{i}(\omega)
 nCoefficients_px = length(vec_pw);
@@ -80,19 +80,25 @@ unique_vMult = unique(vMult);
 nPolys_arr_px = length(unique_vMult);
 
 % Get the degree of the polynomials in the array p_{i}(x)
-vDeg_arr_px = zeros(nPolys_arr_px, 1);
+vDegree_arr_px = zeros(nPolys_arr_px, 1);
 
 for i = 1:1:length(unique_vMult)
+    
+    % Get multiplicity 
     factor_multiplicity = unique_vMult(i);
+    
+    % Get Degree
     factor_degree = vDeg_arr_fx(factor_multiplicity) - vDeg_arr_fx(factor_multiplicity+1);
-    vDeg_arr_px(i) = factor_degree;
+    
+    % 
+    vDegree_arr_px(i) = factor_degree;
 end
 
 % %
 % %
 % Get the polynomials p_{i}(x) repeated to give the set of polynomials
 % h_{i}(x).
-arr_pw = GetPolynomialArrayFromVector(vec_pw, vDeg_arr_px);
+arr_pw = GetPolynomialArrayFromVector(vec_pw, vDegree_arr_px);
 
 % %
 % %
@@ -186,7 +192,7 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     v_zw = v_zw + delta_zw;
     
     % Get the updated array of polynomials p_{i}(\omega)
-    arr_pw = GetPolynomialArrayFromVector(vec_pw, vDeg_arr_px);
+    arr_pw = GetPolynomialArrayFromVector(vec_pw, vDegree_arr_px);
     
     arr_zw = GetPolynomialArrayFromVector(v_zw, vDeg_arr_fx);
     
@@ -226,7 +232,7 @@ end
 
 
 % Get array of polynomials h_{i}(x) from h_{i}(\omega)
-arr_hx = GetPolynomialArrayWithoutThetas(arr_hw,theta);
+arr_hx = GetPolynomialArrayWithoutThetas(arr_hw, theta);
 
 
 %
@@ -282,12 +288,12 @@ for i = 1:1:nDistinct_hx
         deg_hx = deg_fx_prev - deg_fx;
         
         % Build the Cauchy like matrix T_{m_{i} - m_{i-1}}(f_{i})
-        arr_Tf{j} = BuildT1(fx, deg_hx);
+        arr_Tf{j,1} = BuildT1(fx, deg_hx);
         
-        arr_D{j} = BuildD_2Polys(deg_fx, deg_hx);
+        arr_D{j,1} = BuildD_2Polys(deg_fx, deg_hx);
         
         % Stack beneath all other T_{f} which are multiplied by [_{i}(x)
-        arr_Cf{i} = [arr_Cf{i} ; arr_D{j}*arr_Tf{j}];
+        arr_Cf{i,1} = [arr_Cf{i} ; arr_D{j}*arr_Tf{j}];
     end
     
     arr_Q{i} = BuildQ1(deg_hx);
@@ -305,6 +311,17 @@ end
 
 
 function arr_hx = Get_hx(arr_px, vUniqueMult)
+%
+% % Inputs
+%
+% arr_px : (Array of Vectors) Array of vectors containing coefficietns of 
+% the polynomials p_{i}(x)
+% 
+% vUniqueMult : (Vector)
+%
+% % Outputs
+%
+% arr_hx : (Array of Vectors) Array of polynomials h_{i}(x)
 
 % Get number of entries in the array of polynomials p_{i}(x)
 nEntries_arr_px = size(arr_px,1);
@@ -313,16 +330,17 @@ nEntries_arr_px = size(arr_px,1);
 count = 1;
 
 
-for i = 1:1:nEntries_arr_px
+for i = 1 : 1 : nEntries_arr_px
     
     if i == 1
-        nReps = vUniqueMult(i);
+        nRepititions = vUniqueMult(i);
     else
-        nReps = (vUniqueMult(i) - vUniqueMult(i-1));
+        nRepititions = (vUniqueMult(i) - vUniqueMult(i-1));
     end
     
-    for j = 1:1:nReps
-        arr_hx{count,1} = arr_px{i};
+    % Insert the vector n times
+    for j = 1 : 1 : nRepititions
+        arr_hx{count, 1} = arr_px{i};
         count = count + 1;
     end
     

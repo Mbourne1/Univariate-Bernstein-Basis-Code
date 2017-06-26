@@ -56,13 +56,13 @@ global SETTINGS
 
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
-    
-    % T :
-    % DT :
-    % DTQ :
-    % TQ :
-    % DTQ Rearranged Denom Removed :
-    % DTQ Rearranged :
+% Values
+%   * T :
+%   * DT :
+%   * DTQ :
+%   * TQ :
+%   * DTQ Denominator Removed :
+%   * DTQ Rearranged :
     
     case 'DTQ'
         % Compute Geometric Mean of D^{-1}T(f,g)Q, which contains three
@@ -210,12 +210,12 @@ global SETTINGS
 
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
-    % T :
-    % DT :
-    % DTQ :
-    % TQ :
-    % DTQ Rearranged Denom Removed :
-    % DTQ Rearranged :
+%   * T :
+%   * DT :
+%   * DTQ :
+%   * TQ :
+%   * DTQ Denominator Removed :
+%   * DTQ Rearranged :
     case 'T'
         
     case 'DT'
@@ -281,8 +281,10 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
     case 'TQ'
         error('err')
-    case 'DTQ Rearranged Denom Removed'
+    
+    case 'DTQ Denominator Removed'
         error('err')
+
     case 'DTQ Rearranged'
         error('err')
         

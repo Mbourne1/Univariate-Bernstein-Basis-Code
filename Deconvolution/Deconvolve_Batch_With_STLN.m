@@ -77,7 +77,7 @@ DTQ = BuildDTQ(arr_fw);
 v_hw = SolveAx_b(DTQ, vRHS_fw);
 
 
-% Seperate solution vector h, into component parts h_{1},h_{2},...h_{d},
+% Separate solution vector h, into component parts h_{1},h_{2},...h_{d},
 % each of degree n_{i}
 
 % GetArray of polynomials h_{i}(\omega)
@@ -153,7 +153,7 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     % Add structured perturbations to vector z(\omega).
     v_zw = v_zw + delta_z;
     
-    % Seperate delta_z into its component vectors delta_z0 delta_z1,...,
+    % Separate delta_z into its component vectors delta_z0 delta_z1,...,
     % delta_zd
     arr_zw = GetPolynomialArrayFromVector(v_zw, vDeg_arr_fx);
     arr_hw = GetPolynomialArrayFromVector(v_hw, vDeg_arr_hx);

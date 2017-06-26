@@ -254,7 +254,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_APF) && ite < SETTINGS.MAX_ITERATIONS
     % theta
     [~, H1C1G_wrt_theta, H2C2G_wrt_theta] = BuildHCG_2Polys(uw_wrt_theta, vw_wrt_theta,k);
     
-    % Get perturbation vector, and seperate in to perturbations of f,
+    % Get perturbation vector, and separate in to perturbations of f,
     % z1 and perturbations of g, z2
     z1_ux = zk(1:m-k+1);
     z2_vx = zk(m-k+2:m+n-2*k+2);

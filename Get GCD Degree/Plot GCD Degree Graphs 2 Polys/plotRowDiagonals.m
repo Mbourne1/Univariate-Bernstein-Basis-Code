@@ -15,9 +15,6 @@ global SETTINGS
 lowerLimit_k = limits_k(1);
 upperLimit_k = limits_k(2);
 
-lowerLimit_t = limits_t(1);
-upperLimit_t = limits_t(1);
-
 % Plot graph of norms of each row (N) from the qr decompostion of each S_{k}
 figure_name = sprintf('%s : Row Sum Norm',mfilename);
 figure('name',figure_name)
@@ -36,9 +33,8 @@ xlabel('k')
 ylabel(sprintf('Diagonals of R1 from QR decomposition of %s',SETTINGS.SYLVESTER_BUILD_METHOD))
 title(sprintf('Diagonals of R1 from QR decomposition of %s',SETTINGS.SYLVESTER_BUILD_METHOD));
 
-xlim([lowerLimit_k upperLimit_k]);
-vline(lowerLimit_t, 'b', '');
-vline(upperLimit_t, 'b', '');
+%xlim([lowerLimit_k upperLimit_k]);
+vline(limits_t,{'r','r'})
 
 hold off
 end

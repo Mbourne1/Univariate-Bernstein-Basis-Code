@@ -1,12 +1,39 @@
-
-
-\documentclass[a4paper,11pt]{article}
+\documentclass{article}
+\usepackage{fullpage}
 \usepackage{latexsym}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage[acronym]{glossaries}
 %\usepackage{psfrag}
 \usepackage[dvips]{graphicx}
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows}
+
+
+% Tikzstyle
+\tikzstyle{startstop} = 
+[
+	rectangle, 
+	rounded corners, 
+	minimum width = 3cm, 
+	minimum height = 1cm, 
+	text centered, 
+	draw=black, 
+	fill=red!30
+]
+
+\tikzstyle{process} = 
+	[
+		rectangle, 
+		minimum width=3cm, 
+		minimum height=1cm, 
+		text centered,
+		draw=black, 
+		fill=white!30
+	]
+
+\tikzstyle{arrow} = [thick,->,>=stealth]
 
 \newacronym{AGCD}{AGCD}{Approximate Greatest Common Divisor}
 \newacronym{APF}{APF}{Approximate Polynomial Factorisation}
@@ -30,22 +57,8 @@
 \newcommand{\APF}{\textrm{APF}}
 
 
-\setlength{\topmargin}{-2.0cm}
-%\setlength{\textheight}{25.5cm}
-\setlength{\textheight}{26cm}
-%\setlength{\textwidth}{16cm}
-\setlength{\textwidth}{17.5cm}
-%%\setlength{\oddsidemargin}{0cm}
-\setlength{\oddsidemargin}{-0.5cm}
-\setlength{\evensidemargin}{0cm}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{4pt} % adjusts the spacing between paragraphs
 
 \begin{document}
-%\begin{center}
-%Response to referees' comments for GR/T24036/01:
-%\end{center}
-%
 \begin{center}
 Degree of an $\AGCD$ of two Bernstein polynomials
 \end{center}
@@ -71,7 +84,7 @@ and
 
 	\item The first file is used in the computation of a polynomial's roots and corresponding multiplicities, where the given polynomial is in Bernstein form.
 	
-	\item The second file is used in teh computation of the \gls{GCD} of two polynomials in Bernstein form.
+	\item The second file is used in the computation of the \gls{GCD} of two polynomials in Bernstein form.
 
 
 \end{enumerate}
@@ -81,66 +94,90 @@ The programs are executed by typing
 %
 %
 \begin{center}
-\texttt{o\_roots\_Univariate(ex\_num, emin, emax, mean\_method, bool\_alpha\_theta, low\_rank\_approx\_method, apf\_method, sylvester\_build\_method)}
+\texttt
+	{
+	o\_roots\_Univariate
+	(
+		ex\_num, 
+		emin, 
+		emax, 
+		mean\_method, 
+		bool\_alpha\_theta, 
+		low\_rank\_approx\_method, 
+		apf\_method, 
+		sylvester\_build\_method,
+		rank\_revealing\_metric,
+		deconvolution\_method\_hx,
+		deconvolution\_method\_wx,
+	)
+	}
 
-\texttt{o\_gcd\_2Polys\_Univariate(ex\_num, emin, emax, mean\_method, bool\_alpha\_theta, low\_rank\_approx\_method, apf\_method, sylvester\_build\_method)}
+\texttt
+	{
+	o\_gcd\_2Polys\_Univariate
+	(
+		ex\_num, 
+		emin, 
+		emax, 
+		mean\_method, 
+		bool\_alpha\_theta, 
+		low\_rank\_approx\_method, 
+		apf\_method, 
+		sylvester\_build\_method,
+		rank\_revealing\_metric
+	)}
 \end{center}
 %
  where
 %
 \begin{description}
 
-	\item[\texttt{ex\_num}]
-	A String typically containing an integer, which defines the example to be run.
+	\item[ex\_num : ]
+	(String) A string typically containing an integer, which defines the example to be run.
 	
-	\item[\texttt{emin}] Minimum signal : noise ratio
+	\item[{emin} : ] (Float) Minimum signal : noise ratio
 	
-	\item[\texttt{emax}] Maximum signal : noise ratio
+	\item[{emax} : ] (Float) Maximum signal : noise ratio
 	
-	\item[\texttt{mean\_method}]
-	Method used to compute the mean of the entries of the partitions of the Sylvester subresultant matrix
+	\item[{mean\_method} : ] (String) Method used to compute the mean of the entries of the partitions of the Sylvester subresultant matrix
 		\begin{description}
-			\item[\texttt{None}] No mean method used
-			\item[\texttt{Geometric Mean My Method}] : Fast method 
-			\item[\texttt{Geometric Mean Matlab Method}] : Standard Matlab method
-			\item[\texttt{Arithmetic Mean}] : 
+			\item[\texttt{None} : ] No mean method used
+			\item[\texttt{Geometric Mean My Method} : ] Fast method 
+			\item[\texttt{Geometric Mean Matlab Method} : ] Standard Matlab method
+			\item[\texttt{Arithmetic Mean} : ] 
 		\end{description} 
 
 	
-	\item 
-	\texttt{bool\_alpha\_theta} 
+	\item[{bool\_alpha\_theta} : ] (Boolean)
 		\begin{description}
-			\item[\texttt{true}] : Preprocess polynomials
-			\item[\texttt{false}] : Exclude preprocessing 
+			\item[\texttt{true} : ]  Preprocess polynomials
+			\item[\texttt{false} : ]  Exclude preprocessing 
 		\end{description}
 
 
 	
-	\item 
-	\texttt{low\_rank\_approx\_method}
+	\item[{low\_rank\_approx\_method} : ] (String)
 		\begin{description}
-			\item[\texttt{None}] 
-			\item[\texttt{Standard SNTLN}] 
-			\item[\texttt{Standard STLN}]
-			\item[\texttt{Root Specific SNTLN}] 
+			\item[\texttt{None} : ] 
+			\item[\texttt{Standard SNTLN} : ] 
+			\item[\texttt{Standard STLN} : ]
+			\item[\texttt{Root Specific SNTLN} : ] 
 		\end{description}
 	
 	
 	
-	\item 
-	\texttt{apf\_method}
+	\item[{apf\_method} : ] (String)
 		\begin{description}
-			\item[\texttt{None}] 
-			\item[\texttt{Standard Linear APF}]
-			\item[\texttt{Standard NonLinear APF}]
+			\item[\texttt{None} : ] 
+			\item[\texttt{Standard Linear APF} : ]
+			\item[\texttt{Standard NonLinear APF} : ]
 		\end{description}
 
 
-	\item
-	\texttt{Sylvester\_Build\_Method}
+	\item[{Sylvester\_Build\_Method : }] (String)
 		\begin{description}
 			
-			\item[\texttt{T} : ]
+			\item[{T} : ]
 			The matrix 
 			$
 				T_{k}
@@ -152,7 +189,7 @@ The programs are executed by typing
 			$
 			
 			
-			\item[\texttt{DT} : ]
+			\item[{DT} : ]
 			The matrix 
 			$
 				D^{-1}_{m+n-k}
@@ -164,33 +201,33 @@ The programs are executed by typing
 				\right)
 			$
 			
-			\item[\texttt{DTQ} : ]
+			\item[{DTQ} : ]
 			The matrix
 			$
 				D^{-1}_{m+n-k}
 				T_{k}
 				\left(
-					f
+					f(x)
 					,
-					g
+					g(x)
 				\right)
 				\hat{Q}
 			$
 			
 			
-			\item[\texttt{TQ} : ]
+			\item[{TQ} : ]
 			The matrix
 			$
 				T_{k}
 				\left(
-					f
+					f(x)
 					,
-					g
+					g(x)
 				\right)
 				\hat{Q}
 			$
 			
-			\item[\texttt{DTQ Rearranged} : ]
+			\item[{DTQ Rearranged} : ]
 			The matrix 
 			$
 				S_{k}
@@ -210,7 +247,7 @@ The programs are executed by typing
 				\hat{Q}
 			$ where the entries are computed in a rearranged form.
 			
-			\item[\texttt{DTQ Rearranged Denom Removed} : ]
+			\item[{DTQ Denominator Removed} : ]
 			$
 				\tilde{S}
 				\left(
@@ -222,20 +259,148 @@ The programs are executed by typing
 			
 		\end{description}
 
+
+	\item [rank\_revealing\_metric] (String)
+		\begin{description}
+			\item[Singular Values] : Compute the degree of the GCD using minimum singular values of the set of Sylvester subresultant matrices.
+			
+			\item[Max/Min Singular Values] : Compute the degree of the GCD using the ratio of maximum to minimum singular values of each Sylvester subresultant matrix.
+			
+			\item[R1 Row Norms] : Compute the degree of the GCD using the norm of the rows of the matrix R from the QR decomposition of each Sylvester subresultant matrix.
+			
+			\item[R1 Row Diagonals] : Compute the degree of the GCD using the diagonals of the matrix R obtained by the QR decomposition of each Sylvester subresultant matrix.
+			
+			\item[Residuals] : Compute the degree of the GCD using the minimum residual obtained by removing the optimal column of each of the Sylvester subresultant matrices.
+		\end{description}
+		
+		
+		
+	\item [deconvolution\_method\_hx] (String)
+		\begin{description}
+		
+			\item[Separate] :
+			
+			\item[Batch] :
+			
+			\item[Batch STLN] :
+			
+			\item[Batch Constrained] :
+			
+			\item[Batch Constrained STLN] :
+			
+		\end{description}
+	
+	\item [deconvolution\_method\_wx] (String)
+		\begin{description}
+			\item[Separate] :
+			
+			\item[Batch]  :
+		\end{description}
+
 %
 \end{description}
+
+\section{Examples}
 
 Examples of executing the programs  are
 %
 
-\texttt{o\_gcd\_Univariate\_2Polys('1', 1e-10, 1e-12, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')}
+\texttt
+	{
+		o\_gcd\_Univariate\_2Polys
+		(
+			`1',
+			1e-10, 
+			1e-12, 
+			`Geometric Mean Matlab Method', 
+			true, 
+			`None', 
+			`None', 
+			`DTQ',
+			`Minimum Singular Values'
+		)}
 
-\texttt{o\_roots\_Univariate('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')}
+\texttt
+	{
+		o\_roots\_Univariate
+		(
+			`1',
+			 1e-12, 
+			 1e-10, 
+			 `Geometric Mean Matlab Method', 
+			 true, 
+			 `None', 
+			 `None', 
+			 `DTQ',
+			 `Minimum Singular Values',
+			 `Batch Constrained',
+			 `Batch'
+		)}
 
-
-The programs produce the following output:
-%
 \section{Points of Interest}
+
+\subsection{Other Variables}
+Other less frequently changed variables are found in the file \texttt{SetGlobalVariables.m}
+
+\begin{description}
+	\item[SEED] (Int)Used in random number generation
+	
+	\item[PLOT\_GRAPHS] : (Boolean) 
+		\begin{enumerate}
+		\item true : Plot graphs
+		\item false : Don't plot graphs
+		\end{enumerate}
+	
+	\item[BOOL\_LOG] : (Boolean) Whether to use logs in the computation of the geometric mean
+		\begin{enumerate}
+		\item true
+		\item false
+		\end{enumerate}
+	
+	
+	\item[GCD\_COEFFICIENT\_METHOD] (String)
+		\begin{description}
+			\item ux and vx
+			\item ux
+		\end{description}
+	
+	\item[MAX\_ERROR\_SNTLN] (Float)
+	
+	\item[MAX\_ITERATIONS\_SNTLN] (Int)
+	
+	\item[MAX\_ERROR\_APF] (Float)
+		
+	\item[MAX\_ITERATIONS\_APF] (Int)
+		
+	\item[GET\_HX\_METHOD] (String) Used in the computation of the set of polynomials $h_{i}(x)$ in the Tobey and Horowitz factorisation algorithm.
+		\begin{description}
+		\item[From Deconvolutions] : Deconvolve the set of polynomials $f_{i}(x)$
+		\item[From ux] : The polynomials $h_{i}(x)$ are a by-product of the GCD computation. 
+		\end{description}
+	
+	\item[DECONVOLVE\_METHOD\_HX\_FX] (String) 
+	The deconvolution method used to obtain $h_{i}(x)$ from $f_{i}(x)$
+		\begin{description}
+			\item[Batch] 
+			\item[Batch With STLN]
+			\item[Batch Constrained]
+			\item[Batch Constrained With STLN]
+		\end{description}
+	
+	\item[DECONVOLVE\_METHOD\_WX\_HX] (String)
+		\begin{description}
+			\item[Separate]
+			\item[Batch] 
+		\end{description}
+	
+	\item[MAX\_ERROR\_DECONVOLUTIONS] (Float)
+	
+	\item[MAX\_ITERATIONS\_DECONVOLUTIONS] (Int)
+	
+	\item[PREPROC\_DECONVOLUTIONS] (Boolean)
+	
+\end{description}
+
 \subsection{Limits}
 The code makes frequent use of variables \texttt{t\_limits} and \texttt{k\_limits}. 
 \begin{description}
@@ -276,17 +441,127 @@ There are several methods considered for the computation of the degree of the \g
 
 \begin{description}
 	
-	\item[Singular Values : ] 
+	\item[\texttt{Singular Values} : ] 
 	
-	\item[R1 Row Norms :]
+	\item[\texttt{R1 Row Norms} :]
 	
-	\item[R1 Row Diagonals : ]
+	\item[\texttt{R1 Row Diagonals} : ]
 	
-	\item[Residuals : ]
+	\item[\texttt{Residuals} : ]
 	
 \end{description}
 
 %
+\subsection{The Deconvolution Problem in the Polynomial Factorisation Algorithm}
+
+The deconvolution functions can be tested away from the polynomial factorisation algorithm using the file \texttt{o\_Deconvolution.m}. The deconvolution methods considered are:
+\begin{description}
+	\item[\texttt{Separate} : ] 
+	
+	\item[\texttt{Batch} : ]
+	
+	\item[\texttt{Batch With STLN} : ]
+	
+	\item[\texttt{Batch Constrained} : ]
+	
+	\item[\texttt{Batch Constrained With STLN} : ]
+\end{description}
+
+\section{Code Flow}
+
+
+\begin{tikzpicture}[node distance=2cm]
+	\node 
+	(start) 
+	[startstop] 
+	{o\_roots\_Univariate};
+	
+	
+	\node
+	(SetGlobalVariables)
+	[
+		process,
+		below of = start
+	]
+	{
+		Set Global Variables
+	}
+	;
+	
+	\node
+	(GetExample)
+	[
+		process,
+		below of = SetGlobalVariables
+	]
+	{
+		Get Example
+	}
+	;
+	
+	\node
+	(AddNoise)
+	[
+		process,
+		below of = GetExample
+	]
+	{
+		Add Noise
+	};	
+
+
+	\node
+	(Loop)
+	[
+		process,
+		below of = AddNoise
+	]
+	{
+		$i > nMethods$
+	};
+
+
+	\node
+	(RootFindingMethod)
+	[
+		process,
+		right of = Loop,
+		xshift = 2cm
+	]
+	{
+		Root Finding Method
+	};
+	
+	\node
+	(ErrorAnalysis)
+	[
+		process,
+		below of = Loop
+	]
+	{
+		Analyse Error
+	};
+	
+	\node
+	(End)
+	[
+		startstop,
+		below of = ErrorAnalysis
+	]
+	{
+		End
+	};
+	
+	\draw [arrow] (start) -- (SetGlobalVariables);
+	\draw [arrow] (SetGlobalVariables) -- (GetExample);
+	\draw [arrow] (GetExample) -- (AddNoise);
+	\draw [arrow] (AddNoise) -- (Loop);
+	\draw [arrow] (Loop) -- (RootFindingMethod);
+	\draw [arrow] (RootFindingMethod) -- (Loop);
+	\draw [arrow] (Loop) -- (ErrorAnalysis);
+	\draw [arrow] (ErrorAnalysis) -- (End);
+	
+\end{tikzpicture}
 
 
 

@@ -5,27 +5,31 @@ function [fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
 %
 % Inputs.
 %
-% fx,
+% fx : (Vector) Coefficients of the polynomial f(x)
 %
-% gx] : Coefficients of polynomial f(x) and g(x)
+% gx : (Vector) Coefficients of the polynomial g(x)
 %
-% alpha :  Optimal value of \alpha
+% alpha :  (Float) Optimal value of \alpha
 %
-% theta : Optimal value of \theta
+% theta : (Float) Optimal value of \theta
 %
-% k : Degree of GCD of f(x) and g(x)
+% k : (Int) Degree of GCD of f(x) and g(x)
 %
-% idx_col : Index of optimal column for removal from S_{k}(f,g)
+% idx_col : (Int) Index of optimal column for removal from S_{k}(f,g)
 %
 % % Outputs
 %
-% [fx_lr, gx_lr] : Outputs polynomial f(x) and g(x)
+% fx_lr : (Vector) Output coefficients of the polynomial f(x)
 %
-% [ux_lr, vx_lr] : Output polynomial u(x) and v(x)
+% gx_lr : (Vector) Output coefficients of the polynomial g(x)
 %
-% alpha_lr : optimal value of \alpha
+% ux_lr : (Vector) Output coefficients of the polynomial u(x)
+% 
+% vx_lr : (Vector) Output coefficients of the polynomial v(x)
 %
-% theta_lr : Optimal value of \theta
+% alpha_lr : (Float) Optimal value of \alpha
+%
+% theta_lr : (Float) Optimal value of \theta
 
 global SETTINGS
 
@@ -41,12 +45,12 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
         [fw_lr, a_gw_lr, uw, vw] = STLN(fw, alpha.*gw, k, idx_col);
         
         % Get f(x) and g(x) from low rank approximation.
-        fx_lr = GetWithoutThetas(fw_lr,theta);
-        gx_lr = GetWithoutThetas(a_gw_lr,theta) ./ alpha;
+        fx_lr = GetWithoutThetas(fw_lr, theta);
+        gx_lr = GetWithoutThetas(a_gw_lr, theta) ./ alpha;
         
         % Get u(x) and v(x) from low rank approximation
-        ux_lr = GetWithoutThetas(uw,theta);
-        vx_lr = GetWithoutThetas(vw,theta);
+        ux_lr = GetWithoutThetas(uw, theta);
+        vx_lr = GetWithoutThetas(vw, theta);
         
         % \alpha and \theta are same as input, as they are unchanged by
         % STLN
@@ -62,19 +66,19 @@ switch SETTINGS.LOW_RANK_APPROXIMATION_METHOD
     case 'Standard SNTLN' % Structured Non-Linear Total Least Norm
         
         % Perform SNTLN to get low rank approximation of S_{k}(f,g)
-        [fx_lr,gx_lr,ux_lr,vx_lr,alpha_lr,theta_lr] = SNTLN(fx,gx,alpha,theta,k,idx_col);
+        [fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = SNTLN(fx, gx, alpha, theta, k, idx_col);
         
         % Get f(\omega)
-        fw = GetWithThetas(fx,theta_lr);
+        fw = GetWithThetas(fx, theta_lr);
         
         % Get g(\omega)
-        a_gw = alpha_lr.* GetWithThetas(gx,theta_lr);
+        a_gw = alpha_lr.* GetWithThetas(gx, theta_lr);
         
         % Get f(\omega) from f(x) from low rank approximation
-        fw_lr = GetWithThetas(fx_lr,theta_lr);
+        fw_lr = GetWithThetas(fx_lr, theta_lr);
         
         % Get g(\omega) from g(x) from low rank approximation
-        a_gw_lr = alpha_lr .* GetWithThetas(gx_lr,theta_lr);
+        a_gw_lr = alpha_lr .* GetWithThetas(gx_lr, theta_lr);
         
         % Plot the Singular values of the Sylvester subresultants S_{k}
         Plot_LowRank_SingularValues(fx, gx, fx_lr, gx_lr,...
@@ -141,16 +145,16 @@ if(SETTINGS.PLOT_GRAPHS)
     % pairs of polynomials.
     
     % Unprocessed 
-    S1 = BuildDTQ(fx, gx, k);
+    S1 = BuildDTQ(fx, gx, 1);
     
     % Unprocessed after low rank approximation
-    S2 = BuildDTQ(fx_lr, gx_lr, k);
+    S2 = BuildDTQ(fx_lr, gx_lr, 1);
     
     % Preprocessed
-    S3 = BuildDTQ(fw, a_gw, k);
+    S3 = BuildDTQ(fw, a_gw, 1);
     
     % Preprocessed after low rank approximation
-    S4 = BuildDTQ(fw_lr, a_gw_lr, k);
+    S4 = BuildDTQ(fw_lr, a_gw_lr, 1);
     
     % Get singular values for each of the 4 Sylvester subresultant
     % matrices S_{k}

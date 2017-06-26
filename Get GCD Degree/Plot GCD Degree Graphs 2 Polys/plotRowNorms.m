@@ -7,6 +7,8 @@ function plotRowNorms(arr_RowNorms, limits_k, limits_t)
 % limits_k : [Int Int]
 %
 % limits_t : [Int Int]
+%
+% rank_range : [(Float) (Float)]
 
 global SETTINGS
 
@@ -18,11 +20,13 @@ upperLimit_k = limits_k(2);
 lowerLimit_t = limits_t(1);
 upperLimit_t = limits_t(2);
 
+
+
 figure_name = sprintf('%s : Diag Norm',mfilename);
 figure('name',figure_name)
 hold on
 
-for i = 1:1:length(arr_RowNorms)
+for i = 1 : 1 : length(arr_RowNorms)
 
     k = lowerLimit_k + (i-1);
     
@@ -38,10 +42,11 @@ end
 xlabel('k')
 ylabel('log10 Row Norm of R1 from QR decomposition of S_{k}')
 title(sprintf('log10 Row Norm of R1 from the QR decomposition of each subresultant %s', SETTINGS.SYLVESTER_BUILD_METHOD));
-xlim([lowerLimit_k, upperLimit_k]);
+%xlim([lowerLimit_k, upperLimit_k]);
 
-vline(lowerLimit_t, 'b', '');
-vline(upperLimit_t, 'b', '');
+vline(limits_t, {'-b','-b'});
+
+
 
 hold off
 end

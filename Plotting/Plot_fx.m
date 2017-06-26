@@ -1,4 +1,4 @@
-function [] = Plot_fx(fx,a,b,figure_name)
+function [] = Plot_fx(fx, a, b, figure_name)
 % Plot the Bernstein polynomial f(x) and its control points defined over
 % the interval [a,b]
 %
@@ -14,20 +14,21 @@ function [] = Plot_fx(fx,a,b,figure_name)
 
 
 global SETTINGS
+
 switch SETTINGS.PLOT_GRAPHS
     case true
         
         % Get the control points of f(x)
-        Pk = GetControlPoints(a,b,fx);
+        Pk = GetControlPoints(a, b, fx);
         
         % Initialise the column vector of x values
-        x = linspace(a,b,100)';
+        x = linspace(a, b, 100)';
         
         % Get number of entries in x vector
-        nEntries_x = size(x,1);
+        nEntries_x = size(x, 1);
         
         % Initialise a y vector of the same size as x
-        y = zeros(nEntries_x,1);
+        y = zeros(nEntries_x, 1);
         
         % Set the y ordinate values.
         for i = 1:1:nEntries_x
@@ -41,9 +42,12 @@ switch SETTINGS.PLOT_GRAPHS
         figure('name',figure_name)
         plot(x,y,'-');
         hold on
+        grid on
         scatter(Pk(:,1),Pk(:,2));
         hold off
+        
     case false
+        
     otherwise
         error('err');
 end

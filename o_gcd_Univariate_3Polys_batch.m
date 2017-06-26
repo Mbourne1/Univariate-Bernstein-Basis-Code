@@ -15,7 +15,7 @@ apf_method_arr = {'Standard APF Nonlinear', 'None'};
 mean_method_arr = {'Geometric Mean Matlab Method','None'};
 bool_log_arr = {false};
 gcd_coefficient_method_arr = {'ux and vx'};
-%Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ','DTQ Rearranged Denom Removed','DTQ Rearranged'};
+%Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ','DTQ Denominator Removed','DTQ Rearranged'};
 %Sylvester_Build_Method_arr = {'DTQ'};
 
 Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ'};

@@ -19,12 +19,12 @@ function [dx] = GetGCDCoefficients_2Polys(ux, vx, fx, gx, t, alpha, theta)
 global SETTINGS
 
 % Get f(w) and g(w)
-fw = GetWithThetas(fx,theta);
-gw = GetWithThetas(gx,theta);
+fw = GetWithThetas(fx, theta);
+gw = GetWithThetas(gx, theta);
 
 % Get u(w) and v(w)
-uw = GetWithThetas(ux,theta);
-vw = GetWithThetas(vx,theta);
+uw = GetWithThetas(ux, theta);
+vw = GetWithThetas(vx, theta);
 
 
 switch SETTINGS.GCD_COEFFICIENT_METHOD
@@ -33,7 +33,7 @@ switch SETTINGS.GCD_COEFFICIENT_METHOD
         bk = [fw ; alpha .* gw];
         
         % Build the coefficient vector HCG
-        HCG = BuildHCG_2Polys(uw,vw,t);
+        HCG = BuildHCG_2Polys(uw, vw, t);
         
         % Get the vector d(w), which is the solution of a problem of the form Ax=b
         dw = SolveAx_b(HCG,bk);

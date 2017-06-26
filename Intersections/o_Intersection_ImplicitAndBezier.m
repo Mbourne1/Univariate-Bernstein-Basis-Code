@@ -1,4 +1,4 @@
-function [] = o_IntersectionImplicitAndBezier()
+function [] = o_Intersection_ImplicitAndBezier()
 % Get the points of intersection between an implicitly defined curve C_{1} 
 % and a Bézier curve C_{2}
 
@@ -76,7 +76,7 @@ SETTINGS.SNTLN_METHOD = 'None';
 SETTINGS.APF_METHOD = 'None';
 
 SETTINGS.APF_BUILD_METHOD = 'Standard APF' ;
-SETTINGS.DECONVOLVE_METHOD = 'single';
+SETTINGS.DECONVOLUTION_METHOD = 'single';
 
 % Calculate roots by my method
 %vRoots = o_roots_mymethod(poly);

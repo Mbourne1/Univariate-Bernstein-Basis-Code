@@ -22,7 +22,7 @@ arr_fx = cell(nPolys_fx, 1);
 for i = 1:1:nPolys_fx
     
     % Get the m+1 coefficients from the vector
-    arr_fx{i} = vec_fx(1 : vDegree_fx(i)+1);
+    arr_fx{i} = vec_fx(1 : vDegree_fx(i) + 1);
     
     % Remove the m+1 coefficients
     vec_fx(1:vDegree_fx(i)+1) = [];

@@ -35,7 +35,7 @@ function [] = o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alph
 %           'DT'
 %           'DTQ'
 %           'TQ'
-%           'DTQ Rearranged Denom Removed'
+%           'DTQ Denominator Removed'
 %           'DTQ Rearranged'
 %
 % % Example
@@ -207,7 +207,7 @@ function [] = PrintToFile(m,n,o,t,error)
 global SETTINGS
 
 % Specify file name
-fullFileName = sprintf('Results/Results_o_gcd_3Polys%s.txt',datetime('today'));
+fullFileName = sprintf('Results/Results_o_gcd_3Polys.txt');
 
 % If file already exists append a line
 if exist(fullFileName, 'file')

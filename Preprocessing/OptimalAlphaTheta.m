@@ -58,15 +58,15 @@ b= -[
     
     if numel(x) == 4
         
-        theta=real(10^x(3));
-        alpha=real(10^x(4));
+        theta = real(10^x(3));
+        alpha = real(10^x(4));
         
     elseif numel(x) <4
         % Exclude alpha, optimise theta
-        Part1 = [ ones(m+1,1)  zeros(m+1,1)  (0:-1:-m)'   ];
-        Part2 = [ ones(n+1,1)  zeros(n+1,1)  (0:-1:-n)'   ];
-        Part3 = [ zeros(m+1,1) -ones(m+1,1)  (0:1:m)'     ];
-        Part4 = [ zeros(n+1,1) -ones(n+1,1)  (0:1:n)'     ];
+        Part1 = [ ones(m + 1, 1)  zeros(m + 1, 1)  (0 : -1 : -m)'   ];
+        Part2 = [ ones(n + 1, 1)  zeros(n + 1, 1)  (0 : -1 : -n)'   ];
+        Part3 = [ zeros(m + 1, 1) -ones(m + 1, 1)  (0 : 1 : m)'     ];
+        Part4 = [ zeros(n + 1, 1) -ones(n + 1, 1)  (0 : 1 : n)'     ];
         
         f = [1 -1 0];
         A = -[Part1; Part2; Part3; Part4];

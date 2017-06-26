@@ -35,7 +35,7 @@ function [] = o_gcd_Univariate_2Polys_DegreeElevationTest(ex_num, emin, emax, me
 %           'DT'
 %           'DTQ'
 %           'TQ'
-%           'DTQ Rearranged Denom Removed'
+%           'DTQ Denominator Removed'
 %           'DTQ Rearranged'
 %
 % p : (Int) Degree elevation of polynomial f(x)
@@ -177,8 +177,8 @@ function [error] = GetError(name,f_calc,f_exact)
 % angle_error = 1 - angle;
 % fprintf('\tCalculated angle error : %8.2e \n', angle_error)
 
-f_calc  = Normalise(f_calc);
-f_exact = Normalise(f_exact);
+f_calc  = NormaliseVector(f_calc);
+f_exact = NormaliseVector(f_exact);
 
 % Calculate relative errors in outputs
 rel_error_f = norm(abs(f_calc - f_exact) ./ f_exact);

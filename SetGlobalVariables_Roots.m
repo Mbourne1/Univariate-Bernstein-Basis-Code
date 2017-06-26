@@ -1,6 +1,6 @@
-function [] = SetGlobalVariables(problemType, ex_num, emin, emax, ...
+function [] = SetGlobalVariables_Roots(ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,...
-    Sylvester_Build_Method)
+    Sylvester_Build_Method, rank_revealing_metric, deconvolution_method_hx, deconvolution_method_wx)
 % Set the global variables
 %
 % Inputs.
@@ -11,15 +11,22 @@ function [] = SetGlobalVariables(problemType, ex_num, emin, emax, ...
 %
 % apf_method
 %
+%
+%
+%
+%
+%
+%
 
 global SETTINGS
+
+% Set example number
 SETTINGS.EX_NUM = ex_num;
 
+% Set noise levels
 SETTINGS.EMIN = emin;
 SETTINGS.EMAX = emax;
 
-% Set the problem Type
-SETTINGS.PROBLEM_TYPE = problemType;
 
 % Noise SEED for random numbers
 SETTINGS.SEED = 1024;
@@ -27,9 +34,9 @@ SETTINGS.SEED = 1024;
 % Outputs
 SETTINGS.PLOT_GRAPHS = true;
 
-%
-% 'y' : Use Logs
-% 'n'
+% BOOL_LOG (Boolean)
+%   true : Use Logs
+%   false : Dont use logs
 %
 SETTINGS.BOOL_LOG = false;
 
@@ -49,21 +56,12 @@ SETTINGS.MEAN_METHOD = mean_method;
 % Set the metric for measuring the degree of the GCD.
 %
 %   * Singular Values
+%   * Max/Min Singular Values
 %   * R1 Row Norms
 %   * R1 Row Diagonals
 %   * Residuals
 %
-SETTINGS.RANK_REVEALING_METRIC = 'Singular Values';
-
-
-% Set the threshold for measuring the degree of the GCD. If max change in
-% metric is less than this value, then all subresultants are full rank or
-% rank deficient.
-SETTINGS.THRESHOLD = 1;
-
-% This metric determines whether all sylvester subresutlant matrices are
-% considered to be full rank (non-singular) or rank deficient (Singular)
-SETTINGS.THRESHOLD_RANK = -5;
+SETTINGS.RANK_REVEALING_METRIC = rank_revealing_metric;
 
 
 % -------------------------------------------------------------------------
@@ -90,7 +88,7 @@ SETTINGS.SYLVESTER_BUILD_METHOD = Sylvester_Build_Method;
 % DT :
 % DTQ :
 % TQ : 
-% DTQ Rearranged Denom Removed :
+% DTQ Denominator Removed :
 % DTQ Rearranged :
 
 
@@ -123,10 +121,11 @@ SETTINGS.MAX_ITERATIONS_SNTLN = 10;
 %
 %
 
+
 % Structuring the matrix [C(f) | C(g)]
 SETTINGS.APF_METHOD = apf_method;
 
-% APF_BUILD_METHOD
+% APF_BUILD_METHOD (String) 
 % * Standard
 % * Rearranged
 SETTINGS.APF_BUILD_METHOD = 'Standard';
@@ -135,30 +134,6 @@ SETTINGS.APF_BUILD_METHOD = 'Standard';
 % C = [C(u) ; C(v)] matrix
 SETTINGS.MAX_ERROR_APF = 1e-14;
 SETTINGS.MAX_ITERATIONS_APF = 50;
-
-%-------------------------------------------------------------------------
-%
-%           INPUT VALIDATION
-%
-%
-
-
-% Validation
-% If BOOL_Q has not been included, then the Sylvester rearrangement is not
-% applicable, and the common denominators can not be removed.
-% Simplest method, no structure added.
-% Override users input options if incompatable.
-
-
-if ( strcmp(SETTINGS.PROBLEM_TYPE,'GCD') && strcmp(SETTINGS.LOW_RANK_APPROXIMATION_METHOD, 'Root Specific SNTLN'))
-    
-    fprintf([mfilename ' : Can not use root specific SNTLN method for GCD type problem']);
-    SETTINGS.LOW_RANK_APPROXIMATION_METHOD = 'Standard SNTLN';
-    
-end
-    
-
-%
 
 
 
@@ -169,29 +144,31 @@ end
 %
 % Deconvolution method in the root finding problem 
 
+% GET_HX_METHOD
 %   'From Deconvolution'
 %   'From ux'
 SETTINGS.GET_HX_METHOD = 'From Deconvolution';
 
-%
+% DECONVOLUTION_METHOD_HX_FX
+% * Separate
+% * Batch
+% * Batch With STLN
+% * Batch Constrained
+% * Batch Constrained With STLN
+SETTINGS.DECONVOLUTION_METHOD_HX = deconvolution_method_hx;
+
+% DECONVOLUTION_METHOD_WX_HX
 % Separate
 % Batch
-% Batch With STLN
-% Batch Constrained
-% Batch Constrained With STLN
-
-deconvolve_method_hx = 'Batch';
-SETTINGS.DECONVOLVE_METHOD_HX_FX = deconvolve_method_hx;
-
-% Separate
-% Batch
-deconvolve_method_wx = 'Separate';
-SETTINGS.DECONVOLVE_METHOD_WX_HX = deconvolve_method_wx;
-
+if (strcmp(deconvolution_method_wx, 'Batch') || strcmp(deconvolution_method_wx ,'Separate'))
+    SETTINGS.DECONVOLUTION_METHOD_WX = deconvolution_method_wx;
+else
+    error('not valid')
+end
 
 SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-15;
-SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 100;
-SETTINGS.PREPROC_DECONVOLUTIONS = 'y';
+SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 10;
+SETTINGS.PREPROC_DECONVOLUTIONS = true;
 
 end
 

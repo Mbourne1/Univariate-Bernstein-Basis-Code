@@ -67,7 +67,7 @@ DCQ = BuildDCQ(fw);
 hw_vec = SolveAx_b(DCQ,RHS_vec);
 v_h = hw_vec;
 
-% Seperate solution vector h, into component parts h_{1},h_{2},...h_{d},
+% Separate solution vector h, into component parts h_{1},h_{2},...h_{d},
 % each of degree n_{i}
 % initialise a cell array to store the coefficients of the individual
 % polynomials h_{i}
@@ -157,7 +157,7 @@ while (condition > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     % Add structured perturbations to vector z.
     zw_ite = zw_ite + delta_z;
     
-    % Seperate delta_z into its component vectors delta_z0 delta_z1,...,
+    % Separate delta_z into its component vectors delta_z0 delta_z1,...,
     % delta_zd
     zz = zw_ite;
     

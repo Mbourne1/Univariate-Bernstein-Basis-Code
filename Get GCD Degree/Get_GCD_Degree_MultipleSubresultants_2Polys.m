@@ -1,12 +1,12 @@
-function [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(vMetric, limits_k)
+function [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(vMetric, limits_k, limits_t, rank_range)
 % Get the problem type, dependent on the vector of singular values from the
 % series s_{k}
 %
 % Get the type of problem.
 % Problem Type.
-% Singular      : All Subresultants S_{k} are Singular, and rank deficient
-% NonSingular   : All Subresultants S_{k} are Non-Singular, and full rank
-% Mixed         : Some Subresultants are Singular, others are Non-Singular.
+%   Singular      : All Subresultants S_{k} are Singular, and rank deficient
+%   NonSingular   : All Subresultants S_{k} are Non-Singular, and full rank
+%   Mixed         : Some Subresultants are Singular, others are Non-Singular.
 %
 % % Inputs
 %
@@ -16,11 +16,14 @@ function [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(vMetric, limits_k)
 %       'Min/Max Row Diagonals of R_{k}'
 %       'Min/Max Row Norms of R_{k}'
 %
-% deg_limits : Limits of degree of GCD
+% limits_k : [(Int) (Int)] Range of k values for which the Sylvester subresultant matrix
+%   S_{k} is constructed
+%
+% limits_t : [Int Int] 
+%
+% rank_range : [(Float) (Float)] 
 
 
-% Intialise global settings
-global SETTINGS
 
 % Get the function which called this function.
 [St,~] = dbstack();
@@ -29,42 +32,36 @@ calling_function = St(2).name;
 lowerLimit_k = limits_k(1);
 upperLimit_k = limits_k(2);
 
+vec_k = lowerLimit_k : 1 : upperLimit_k - 1;
+
+rank_range_low = rank_range(1);
+rank_range_high = rank_range(2);
+
+previousDelta = abs(diff(rank_range));
 
 % Get the maximum change in singular values and the index at which the
 % maximum change occured.
-[maxChangeMetric, indexMaxChange] = Analysis(vMetric);
+[maxDelta, indexMaxDelta] = Analysis(vMetric);
 
-display([mfilename ' : ' calling_function ' : ' sprintf('Max Change : %2.4f ', maxChangeMetric)]);
-display([mfilename ' : ' calling_function ' : ' sprintf('Threshold : %2.4f ',SETTINGS.THRESHOLD)]);
+display([mfilename ' : ' sprintf('Previous Delta : %2.4f', previousDelta)]);
+display([mfilename ' : ' sprintf('Current Delta : %2.4f', maxDelta)]);
 
+% Two condition : 
+% 1. Is the maxDelta large enough
+% 2. Is the index of the maxDelta within the upper and lower bounds of t
 
-if  abs(maxChangeMetric) < SETTINGS.THRESHOLD
+% Check conditon 1.
+if  abs(maxDelta) < (0.5 * previousDelta)
     
-    % maxChange is insignificant
-    % Get the average minimum singular value
-    avgMetricValue = log10(mean(vMetric));
+    fprintf('Delta is insignificant \n');
+    avgMetricValue = mean(vMetric);
     
-    % %
-    % %
-    % %
-    if(SETTINGS.PLOT_GRAPHS)
+    
+    display(avgMetricValue)
+    
+    
+    if  avgMetricValue < mean(rank_range)
         
-        figure_name = sprintf([mfilename ' : ' calling_function ': Singular Values of %s'],SETTINGS.SYLVESTER_BUILD_METHOD);
-        figure('name',figure_name)
-        plot(log10(vMetric),'DisplayName','Singular Values');
-        hold on
-        mu = avgMetricValue;
-        hline = refline([0 mu]);
-        hline.Color = 'r';
-        vline(lowerLimit_k,'b','');
-        vline(lowerLimit_k,'b','');
-        hold off
-        
-        
-    end
-    
-    
-    if  avgMetricValue < SETTINGS.THRESHOLD_RANK
         % If all singular values are close to zero, then rank deficient, degree of
         % gcd is min(m,n)
         t = upperLimit_k;
@@ -73,7 +70,7 @@ if  abs(maxChangeMetric) < SETTINGS.THRESHOLD
         fprintf([mfilename ' : ' calling_function ' : ' sprintf('t = %i \n',t)])
         
     else
-        % if all singular values are not close to zero, then full rank, degree
+        % If all Rank metric values are not close to zero, then the matrices are all of full rank, degree
         % of gcd is 0
         
         t = 0;
@@ -84,8 +81,12 @@ if  abs(maxChangeMetric) < SETTINGS.THRESHOLD
     
 else
     
-    % maxChange is signifcant
-    t = lowerLimit_k + indexMaxChange - 1;
+    % To do - Add code to make sure that the max change is within the
+    % bounds
+    
+    t = (lowerLimit_k) + indexMaxDelta - 1;
+        
+    
     
     fprintf([mfilename ' : ' calling_function ' : ' 'Mixed \n'])
     fprintf([mfilename ' : ' calling_function ' : ' sprintf('t = %i \n',t)])

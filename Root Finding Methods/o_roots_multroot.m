@@ -4,15 +4,15 @@ function [roots_Bb] = o_roots_multroot(fx)
 %
 % % Inputs.
 %
-%   fx : Column vector of coefficients of the polynomial f(x) in Bernstein
+% fx : (Vector) Vector of coefficients of the polynomial f(x) in Bernstein
 %   form.
 %
 % % Outputs.
 %
-%   roots_Bb : Roots of f(x) as calculated by the zheng MultRoots function.
+% roots_Bb : Roots of f(x) as calculated by the zheng MultRoots function.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
+% %
 
 addpath 'Root Finding Methods/multroot/multroot'
 
@@ -29,8 +29,6 @@ roots_calc = multroot(fx.*Bi_m);
 % convert roots wrt t, Bernstein basis
 roots_Bb = [1- roots_calc(:,1)./(1+roots_calc(:,1)) roots_calc(:,2)];
 
-% Printout roots to screen
-PrintoutRoots('MULTROOTS METHOD', roots_Bb);
 
 
 

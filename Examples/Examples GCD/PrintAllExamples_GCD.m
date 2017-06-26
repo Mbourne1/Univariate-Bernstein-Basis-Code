@@ -8,7 +8,7 @@ for i = 1:1:length(ex_num_arr)
     ex_num = ex_num_arr{i};
     
     [f_roots_mult_arr,g_roots_mult_arr,d_roots_mult_arr,...
-        u_roots_mult_arr,v_roots_mult_arr] = Univariate_GCD_Examples(ex_num);
+        u_roots_mult_arr,v_roots_mult_arr] = GCD_Examples_Univariate_2Polys(ex_num);
     
     
     symbolic_f = GetSymbolicPolyFromSymbolicRoots(f_roots_mult_arr);

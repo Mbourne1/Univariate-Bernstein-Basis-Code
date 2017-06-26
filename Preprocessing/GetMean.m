@@ -9,7 +9,7 @@ switch SETTINGS.MEAN_METHOD
     case 'Geometric Mean Matlab Method'
         
         % Build the partition of the Sylvester matrix
-        C_f_unproc = BuildSubresultant_Partition_2Polys(fx,n_k);
+        C_f_unproc = BuildSubresultant_Partition_2Polys(fx, n_k);
         
         % Get geometric mean of non-zero entries
         lambda = geomean(abs(C_f_unproc(C_f_unproc~=0)));
@@ -24,6 +24,7 @@ switch SETTINGS.MEAN_METHOD
         
         
     case 'None'
+        
         lambda = 1;
              
     otherwise

@@ -47,46 +47,46 @@ vec_x =[
 % Obtain values for quotient polynomials u and v. still expressed in the
 % scaled bernstein basis, including theta.
 
-nCoeffs_vx = n-k+1;
+nCoefficients_vx = n - k + 1;
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
     case 'T'
         
-        vx_bi = vec_x(1:nCoeffs_vx);
-        ux_bi = -vec_x(nCoeffs_vx + 1:end);
+        vx_bi = vec_x(1:nCoefficients_vx);
+        ux_bi = -vec_x(nCoefficients_vx + 1:end);
         
         ux = GetWithoutBinomials(ux_bi);
         vx = GetWithoutBinomials(vx_bi);
         
     case 'DT'
         
-        vx_bi = vec_x(1:nCoeffs_vx);
-        ux_bi = -vec_x(nCoeffs_vx + 1:end);
+        vx_bi = vec_x(1:nCoefficients_vx);
+        ux_bi = -vec_x(nCoefficients_vx + 1:end);
         ux = GetWithoutBinomials(ux_bi);
         vx = GetWithoutBinomials(vx_bi);
         
     case 'DTQ'
         
-        vx = vec_x(1:nCoeffs_vx);
-        ux = -vec_x(nCoeffs_vx +1:end);
+        vx = vec_x(1:nCoefficients_vx);
+        ux = -vec_x(nCoefficients_vx +1:end);
         
     case 'TQ'
         
         
         
-        vx = vec_x(1:nCoeffs_vx);
-        ux = -vec_x(nCoeffs_vx + 1:end);
+        vx = vec_x(1:nCoefficients_vx);
+        ux = -vec_x(nCoefficients_vx + 1:end);
         
         
-    case 'DTQ Rearranged Denom Removed'
+    case 'DTQ Denominator Removed'
         
-        vx = vec_x(1:nCoeffs_vx);
-        ux = -vec_x(nCoeffs_vx + 1:end);
+        vx = vec_x(1:nCoefficients_vx);
+        ux = -vec_x(nCoefficients_vx + 1:end);
         
     case 'DTQ Rearranged'
         
-        vx = vec_x(1:nCoeffs_vx);
-        ux = -vec_x(nCoeffs_vx +1 :end);
+        vx = vec_x(1:nCoefficients_vx);
+        ux = -vec_x(nCoefficients_vx +1 :end);
         
     otherwise 
         error('err')

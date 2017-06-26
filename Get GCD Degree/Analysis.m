@@ -1,10 +1,8 @@
-function [maxDelta,indexMaxDelta] = Analysis(vMetric)
-%
-%
+function [maxDelta, indexMaxDelta] = Analysis(vMetric)
 %
 % % Inputs
 %
-% vMetric 
+% vMetric : (Vector) Vector of rank revealing metric
 %
 % % Outputs
 %
@@ -16,7 +14,7 @@ function [maxDelta,indexMaxDelta] = Analysis(vMetric)
     % % Analyse Max:Min Row Norms for each subresultant
     
     % Get the change in the ratios from one subresultant to the next.
-    vDeltaMetric = abs(diff(log10(vMetric)));
+    vDeltaMetric = abs(diff((vMetric)));
     
     % Get the maximum change in rowsum ratio and its index
     [maxDelta,indexMaxDelta] = max(vDeltaMetric);

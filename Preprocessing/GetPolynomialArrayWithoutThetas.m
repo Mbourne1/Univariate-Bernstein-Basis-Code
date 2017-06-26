@@ -12,16 +12,16 @@ function arr_hx = GetPolynomialArrayWithoutThetas(arr_hw, theta)
 % arr_hx : (Array of Vectors)
 
 % Get number of polynomials in the array
-nPolys_arr_hx = length(arr_hw);
+nPolynomials_arr_hx = length(arr_hw);
 
 
 % Initialise a cell array to store h_{i}(x)
-arr_hx = cell(nPolys_arr_hx, 1);
+arr_hx = cell(nPolynomials_arr_hx, 1);
 
 
-for i = 1:1:nPolys_arr_hx
+for i = 1:1:nPolynomials_arr_hx
     
-    arr_hx{i} = GetWithoutThetas(arr_hw{i},theta);
+    arr_hx{i} = GetWithoutThetas(arr_hw{i}, theta);
     
 end
 

@@ -16,13 +16,13 @@ global SETTINGS
 
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD 
-    % Possible Values.
-    % T : 
-    % DT :
-    % DTQ :
-    % TQ : 
-    % DTQ Rearranged Denom Removed :
-    % DTQ Rearranged :
+% Possible Values.
+%   * T : 
+%   * DT :
+%   * DTQ :
+%   * TQ : 
+%   * DTQ Denominator Removed :
+%   * DTQ Rearranged :
     
     
     case 'DTQ'
@@ -32,11 +32,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         lambda = ((m+n_k+1) / ((m+1)^2*(n_k+1))) * sum(abs(fx));
         
         
-        % Tf = BuildSubresultant_Partition_2Polys(fx, n_k);
-        % lambda2 = mean(Tf(Tf~=0));
-        % display(lambda)
-        
-    case {'T', 'DT','TQ', 'DTQ Rearranged Denom Removed','DTQ Rearranged'}
+    case {'T', 'DT','TQ', 'DTQ Denominator Removed','DTQ Rearranged'}
         
         Tf = BuildSubresultant_Partition_2Polys(fx, n_k);
         lambda = mean(Tf(Tf~=0));

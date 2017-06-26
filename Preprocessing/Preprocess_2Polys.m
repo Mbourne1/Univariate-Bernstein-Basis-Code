@@ -37,7 +37,7 @@ fx_n = fx./ GM_fx;
 gx_n = gx./ GM_gx;
 
 
-if(SETTINGS.BOOL_ALPHA_THETA)
+if (SETTINGS.BOOL_ALPHA_THETA)
     
     
     % For each coefficient ai of F, obtain the max and min such that F_max =

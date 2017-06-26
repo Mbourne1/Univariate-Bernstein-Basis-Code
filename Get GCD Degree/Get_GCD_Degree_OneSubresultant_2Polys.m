@@ -1,19 +1,26 @@
-function t = Get_GCD_Degree_OneSubresultant_2Polys(vMetric)
+function t = Get_GCD_Degree_OneSubresultant_2Polys(vMetric, rank_range)
 % Given the vector of values from either minimum singular values or max:min
 % R diagonals.
 % Get the rank, where only one subresultant exists.
 %
 % Inputs
 %
-% vSingularValues : Vector of Singular Values.
+% vSingularValues : (Vector) Vector of rank revealing metric
 %
+% rank_range : [Float Float] 
 %
 % Outputs.
 %
-% t : Computed degree of the GCD
+% t : (Int) Computed degree of the GCD
 
 
 global SETTINGS
+
+
+% 
+rank_range_low = rank_range(1);
+rank_range_high = rank_range(2);
+previousDelta = abs(diff(rank_range));
 
 % Get the calling function
 [St,~] = dbstack();
@@ -28,16 +35,20 @@ if(SETTINGS.PLOT_GRAPHS)
     figure('name',figure_name)
     hold on
     title('Singular values of S_{1}')
-    plot(log10(vMetric))
+    plot(vMetric)
+    hline(rank_range_low,'r')
+    hline(rank_range_high,'r')
+    hline(mean(rank_range),'b')
+    
     hold off
     
 end
 
-[vDeltaMeric,~] = Analysis(vMetric);
+[maxDelta,~] = Analysis(vMetric);
 
 % If the change is smaller than the predefined threshold value, then plot
 % is considered 'flat'.
-if vDeltaMeric < SETTINGS.THRESHOLD
+if maxDelta < (0.5 * previousDelta)
     
     % The subresultant is of full rank, in which case t = 0
     t = 0;

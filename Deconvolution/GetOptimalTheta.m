@@ -10,22 +10,22 @@ function theta = GetOptimalTheta(arr_fx)
 % Outputs
 % 
 % theta : (Float) Optimal value of \theta
-%
+
 
 
 % Get number of polynomials in the array
-nPolys_arr_fx = size(arr_fx,1);
+nPolynomials_arr_fx = size(arr_fx, 1);
 
 %For each coefficient ai,j
 % Let \lambda_{i,j} be its max value in c_i(f_i)
 % Let \mu_{i,j} be its min value in c_{i}(f_i)
 
-F_max = cell(nPolys_arr_fx, 1);
-F_min = cell(nPolys_arr_fx, 1);
+F_max = cell(nPolynomials_arr_fx, 1);
+F_min = cell(nPolynomials_arr_fx, 1);
 
 % Get vector of degrees of polynomials f_{i}(x)
-vDeg_arr_fx = zeros(nPolys_arr_fx,1);
-for i = 1:1:nPolys_arr_fx
+vDeg_arr_fx = zeros(nPolynomials_arr_fx,1);
+for i = 1:1:nPolynomials_arr_fx
     vDeg_arr_fx(i) = GetDegree(arr_fx{i});
 end
 
@@ -35,7 +35,7 @@ vDeg_arr_hx = vDeg_arr_fx(1:end-1) - vDeg_arr_fx(2:end);
 
 % For each polynomial f_{1},...,f_{d}, note we exclude f_{0} from this,
 % since f_{0} does not appear in the LHS matrix.
-for i = 2:1:nPolys_arr_fx  
+for i = 2 : 1 : nPolynomials_arr_fx  
     
     % Get polynomial f_{i} from the set g containing all f_{i}
     fx = arr_fx{i};
@@ -55,7 +55,7 @@ for i = 2:1:nPolys_arr_fx
         % Get the coefficient a_{j} of polynomial f_{i}
         aij = fx(j+1);
         
-        % initialise a vector to store all the a_{i}
+        % initialise a vector to store all the a_{i} for j = 0,...,n
         x = zeros(n+1,1);
         
         % For each occurence of the coefficient ai_j in the columns of C_{n_{i}}(f_{i})
@@ -114,6 +114,7 @@ for i = 1:1:nPolys
 end
 
 
+Bi = cell(nPolys,1);
 
 % For each Bi
 for i = 1:1:nPolys

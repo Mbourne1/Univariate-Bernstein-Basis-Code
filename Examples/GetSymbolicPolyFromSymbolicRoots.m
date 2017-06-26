@@ -1,10 +1,6 @@
 
 function fx = GetSymbolicPolyFromSymbolicRoots(f_factor_mult_array)
 
-addpath 'Basis Conversion'
-addpath 'Bernstein Methods'
-
-
 % This function takes the factors of the polynomial f(x) in a symbolic
 % form, gets the coefficients of the factors in Bernstein form, then
 % multiplies these to form polynomial f(x) in bernstein form.
