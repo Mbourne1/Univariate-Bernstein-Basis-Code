@@ -1,4 +1,4 @@
-function [dx] = GetGCDCoefficients_2Polys(ux, vx, fx, gx, t, alpha, theta)
+function [dx] = GetGCDCoefficients_2Polys(ux, vx, fx, gx, t)
 % Get The Coefficients of the approximate GCD using Quotient Polynomials.
 %
 % % Inputs
@@ -18,37 +18,26 @@ function [dx] = GetGCDCoefficients_2Polys(ux, vx, fx, gx, t, alpha, theta)
 % Global variables
 global SETTINGS
 
-% Get f(w) and g(w)
-fw = GetWithThetas(fx, theta);
-gw = GetWithThetas(gx, theta);
-
-% Get u(w) and v(w)
-uw = GetWithThetas(ux, theta);
-vw = GetWithThetas(vx, theta);
-
 
 switch SETTINGS.GCD_COEFFICIENT_METHOD
     case 'ux and vx'
         % Build solution vector bk = [f;g]
-        bk = [fw ; alpha .* gw];
+        bk = [fx ; gx];
         
         % Build the coefficient vector HCG
-        HCG = BuildHCG_2Polys(uw, vw, t);
+        HCG = BuildHCG_2Polys(ux, vx, t);
         
         % Get the vector d(w), which is the solution of a problem of the form Ax=b
-        dw = SolveAx_b(HCG,bk);
-        
-        % Get d(x) without thetas
-        dx = GetWithoutThetas(dw,theta);
+        dx = SolveAx_b(HCG,bk);
         
     case 'ux'
-        bk = fw;
+        bk = fx;
         
-        H1C1G = BuildH1C1G(uw,t);
+        H1C1G = BuildH1C1G(ux,t);
         
-        dw = SolveAx_b(H1C1G,bk);
+        dx = SolveAx_b(H1C1G,bk);
         
-        dx = GetWithoutThetas(dw,theta);
+        
     otherwise
         error('GCD_COEFFICIENT_METHOD is either (ux) or (ux and vx)')
 end

@@ -1,4 +1,4 @@
-function DPQ = BuildDPG_STLN(m,n,k,idx_col)
+function DPQ = BuildDPG_STLN(m, n, k, idx_col)
 % BuildDPQ(m,n,k,idx_col)
 %
 % Build the matrix DP. Build the matrix DP such that DP * [f;g] gives the
@@ -26,19 +26,19 @@ function DPQ = BuildDPG_STLN(m,n,k,idx_col)
 % DPQ : (Matrix) DPQ
 
 % Get the number of columns in T_{n-k}(f)
-nColumns_Tf = n-k+1;
+nColumns_Tf = n - k + 1;
 
 % Build the matrix D^{-1}_{m+n-k}
-D = BuildD_2Polys(m,n-k);
+D = BuildD_2Polys(m, n - k);
     
 % Build the matrices P_{1} and P_{2}
 
 if idx_col <= nColumns_Tf % Column is in first partition T_{n-k}(f) of S_{k}
         
     % Build the matrix P
-    P1 = BuildP1(m, n-k, idx_col) .* nchoosek(n-k, idx_col - 1);
+    P1 = BuildP1(m, n - k, idx_col) .* nchoosek(n - k, idx_col - 1);
     
-    P2 = zeros(m+n-k+1, n+1);
+    P2 = zeros(m + n - k + 1, n + 1);
     
 else  %  The column is from the second partiton of the Sylvester matrix poly g
     
@@ -47,10 +47,10 @@ else  %  The column is from the second partiton of the Sylvester matrix poly g
     idx_col = idx_col - (n - k + 1);
     
     % Build the matrix P_{1}
-    P1 = zeros(m+n-k+1, m+1);
+    P1 = zeros(m + n - k + 1, m + 1);
     
     % Build the matrix P_{2}
-    P2 =  BuildP1(n, m-k, idx_col) .* nchoosek(m-k, idx_col - 1);
+    P2 =  BuildP1(n, m - k, idx_col) .* nchoosek(m - k, idx_col - 1);
     
 end
 

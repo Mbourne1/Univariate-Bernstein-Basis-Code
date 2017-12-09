@@ -51,19 +51,19 @@ m = GetDegree(fx);
 n = GetDegree(gx);
 
 % Get number of coefficients in u(x), v(x), f(x) and g(x)
-nCoefficients_ux = m-k+1;
-nCoefficients_vx = n-k+1;
-nCoefficients_fx = m+1;
-nCoefficients_gx = n+1;
+nCoefficients_ux = m - k + 1;
+nCoefficients_vx = n - k + 1;
+nCoefficients_fx = m + 1;
+nCoefficients_gx = n + 1;
 
 
 
 % Initialise S, the vector of thetas corresponding to coefficients of f(x),
 % such that s_{k} = S * p_{k}
-th_f = eye(m+1);
+th_f = eye(m + 1);
 
 % Initialise T - Matrix such that tk = T * qt
-th_g = eye(n+1);
+th_g = eye(n + 1);
 
 % Initialise zk - Structured perturbations of u and v
 zk = zeros(m+n-2*k+2,1);

@@ -18,7 +18,11 @@ function [my_error] = GetBackwardErrorMeasure(root_mult_arr, fx_exact)
 fx_comp = GetWithoutBinomials( BuildPolyFromRoots( root_mult_arr));
 
 % Get distance between f_{comp}(x) and f_{exact}(x)
-my_error  = norm(NormaliseVector(fx_comp) - NormaliseVector(fx_exact)) ./ norm(NormaliseVector(fx_exact));
+
+fx_comp = fx_comp./fx_comp(1);
+fx_exact = fx_exact ./ fx_exact(1);
+
+my_error  = norm(fx_comp - fx_exact) ./ norm(fx_exact);
 
 
 end

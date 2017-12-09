@@ -1,4 +1,6 @@
-function [] = o_gcd_Univariate_2Polys_DegreeElevationTest(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method, p, q)
+function [] = o_gcd_Univariate_2Polys_DegreeElevationTest(ex_num, emin, emax, mean_method, ...
+    bool_alpha_theta, low_rank_approx_method, apf_method, ...
+    Sylvester_Build_Method, rank_revealing_metric, p, q)
 % o_gcd_Univariate_2Polys_DegreeElevationTest(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, p , q)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
@@ -53,27 +55,7 @@ function [] = o_gcd_Univariate_2Polys_DegreeElevationTest(ex_num, emin, emax, me
 
 global SETTINGS
 
-% Set the problem type to a GCD problem
-problemType = 'GCD';
 
-% Add subfolders
-restoredefaultpath
-addpath(...
-    'Build Matrices',...
-    'Formatting',...
-    'GCD Methods',...
-    'Get Cofactor Coefficients',...
-    'Get GCD Coefficients',...
-    'Measures',...
-    'Plotting',...
-    'Preprocessing',...
-    'Results',...
-    'Sylvester Matrix')
-
-addpath(genpath('APF'));
-addpath(genpath('Examples'));
-addpath(genpath('Get GCD Degree'));
-addpath(genpath('Low Rank Approximation'));
 
 
 % % Ensure that minimum noise level is less than maximum noise level
@@ -84,7 +66,7 @@ if emin > emax
 end
 
 % % Set global variables.
-SetGlobalVariables(problemType,...
+SetGlobalVariables_GCD_2Polys(...
     ex_num,...
     emin,...
     emax,...
@@ -92,7 +74,8 @@ SetGlobalVariables(problemType,...
     bool_alpha_theta,...
     low_rank_approx_method,...
     apf_method,...
-    Sylvester_Build_Method);
+    Sylvester_Build_Method,...
+    rank_revealing_metric);
 
 % Print the parameters.
 LineBreakLarge()
@@ -136,10 +119,11 @@ gx_star = AddVariableNoiseToPoly(gx_star_exact, emin, emax);
 % set upper and lower limit of the degree of the GCD
 lower_lim = 1;
 upper_lim = min(m_star, n_star);
-limits = [lower_lim upper_lim];
+limits_t = [lower_lim upper_lim];
+rank_range = [0, -14];
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~, ~, dx_calc, ux_calc, vx_calc] = o_gcd_2Polys_mymethod(fx_star, gx_star, limits);
+[~, ~, dx_calc, ux_calc, vx_calc] = o_gcd_2Polys_mymethod(fx_star, gx_star, limits_t, rank_range);
 
 t_star_calc = GetDegree(dx_calc);
 t = t_star_calc - max_r;
@@ -150,9 +134,9 @@ t = t_star_calc - max_r;
 LineBreakMedium();
 try
     
-    error.dx = GetError('d', dx_exact, dx_calc);
-    error.ux = GetError('u', ux_exact, ux_calc);
-    error.vx = GetError('v', vx_exact, vx_calc);
+    error.dx = GetPolynomialError(dx_exact, dx_calc);
+    error.ux = GetPolynomialError(ux_exact, ux_calc);
+    error.vx = GetPolynomialError(vx_exact, vx_calc);
     
 catch
     
@@ -169,29 +153,6 @@ LineBreakMedium();
 
 end
 
-function [error] = GetError(name,f_calc,f_exact)
-% Get distance between f(x) and the calulated f(x)
-
-% Get the angle between the two vectors
-% angle = dot(f_calc,f_exact) ./ (norm(f_calc) * norm(f_exact));
-% angle_error = 1 - angle;
-% fprintf('\tCalculated angle error : %8.2e \n', angle_error)
-
-f_calc  = NormaliseVector(f_calc);
-f_exact = NormaliseVector(f_exact);
-
-% Calculate relative errors in outputs
-rel_error_f = norm(abs(f_calc - f_exact) ./ f_exact);
-
-fprintf('\tCalculated relative error %s : %8.2e \n ',name,rel_error_f);
-
-error = norm(abs(f_calc - f_exact) );
-
-fprintf('\tCalculated error %s : %8.2e \n', name,error);
-
-
-
-end
 
 
 

@@ -47,9 +47,21 @@ end
 % Plot vertical lines
 vline(limits_t,{'r','-r'});
 
+grid on
+box on
 
-
+xlabel('$k$','Interpreter','latex','FontSize',20);
+ylabel('$\log_{10} \left( \sigma_{k,i} \right)$','Interpreter','latex','FontSize',20);
 hold off
 
 
+% Figure size and location
+myplot = gca;
+myval_side = 0.10;
+myval_base = 0.08;
+set(myplot, 'Position', [ myval_side myval_base 0.98 - myval_side 0.98 - myval_base])
+set(gcf, 'Position', [100, 100, 710, 650])
+
+box on
+grid on
 end

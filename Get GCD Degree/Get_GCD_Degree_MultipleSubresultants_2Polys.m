@@ -32,7 +32,8 @@ calling_function = St(2).name;
 lowerLimit_k = limits_k(1);
 upperLimit_k = limits_k(2);
 
-vec_k = lowerLimit_k : 1 : upperLimit_k - 1;
+lowerLimit_t = limits_t(1);
+upperLimit_t = limits_t(2);
 
 rank_range_low = rank_range(1);
 rank_range_high = rank_range(2);
@@ -41,7 +42,41 @@ previousDelta = abs(diff(rank_range));
 
 % Get the maximum change in singular values and the index at which the
 % maximum change occured.
-[maxDelta, indexMaxDelta] = Analysis(vMetric);
+vMetric = sanitize(vMetric);
+
+% Get the change in the ratios from one subresultant to the next.
+vDeltaMetric = abs(diff((vMetric)));
+
+% Get the maximum change in rowsum ratio and its index
+[maxDelta, indexMaxDelta] = max(vDeltaMetric);
+
+% Get the vector of all possible values of t
+vec_k = lowerLimit_k : 1 : upperLimit_k - 1;
+
+% Get the presumed degree of the GCD (based only on maximum delta)
+t_pressumed =  vec_k(indexMaxDelta);
+
+% If presumed degree is less than the lower limit, remove it from the
+% vector of possible degrees, and remove corresponding delta from the
+% vector or deltas. Look for the next smallest delta, until the index of
+% the maximum delta is within the upper and lower bounds of t.
+
+while ( t_pressumed < lowerLimit_t )
+
+    % Remove
+    vDeltaMetric(indexMaxDelta) = []; 
+    vec_k(indexMaxDelta) = [];
+
+    % Get new max delta
+    [maxDelta, indexMaxDelta] = max(vDeltaMetric);
+    
+    % Set presumed 
+    t_pressumed = vec_k(indexMaxDelta);
+
+    
+end
+    
+
 
 display([mfilename ' : ' sprintf('Previous Delta : %2.4f', previousDelta)]);
 display([mfilename ' : ' sprintf('Current Delta : %2.4f', maxDelta)]);
@@ -84,7 +119,7 @@ else
     % To do - Add code to make sure that the max change is within the
     % bounds
     
-    t = (lowerLimit_k) + indexMaxDelta - 1;
+    t = t_pressumed;
         
     
     

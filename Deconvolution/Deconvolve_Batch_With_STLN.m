@@ -19,41 +19,40 @@ function [arr_hx] = Deconvolve_Batch_With_STLN(arr_fx)
 global SETTINGS
 
 % Get the number of polynomials in the array of f_{i}(x)
-nPolys_arr_fx = size(arr_fx,1);
+nPolynomials_arr_fx = size(arr_fx, 1);
 
-% Get the degree m_{i} of each of the polynomials f_{i}
+% % Get the degree m_{i} of each of the polynomials f_{i}
 
 % Initialise vector to store degrees of f_{i}(x)
-vDeg_arr_fx = zeros(nPolys_arr_fx, 1);
+vDegree_arr_fx = zeros(nPolynomials_arr_fx, 1);
 
 % For each polynomial f_{i}, get its degree.
-for i = 1 : 1 : nPolys_arr_fx
+for i = 1 : 1 : nPolynomials_arr_fx
     
-    vDeg_arr_fx(i) = GetDegree( arr_fx{i});
+    vDegree_arr_fx(i) = GetDegree( arr_fx{i});
     
 end
 
-% Get the degrees n{i} of polynomials h_{i} = f_{i-1}/f_{i}.
-vDeg_arr_hx = (vDeg_arr_fx(1:end-1) - vDeg_arr_fx(2:end));
+% % Get the degrees n{i} of polynomials h_{i} = f_{i-1}/f_{i}.
+vDegree_arr_hx = (vDegree_arr_fx(1:end-1) - vDegree_arr_fx(2:end));
 
 
 % Define M to be the total number of coefficeints of all the polynomials
 % f_{i} excluding the last f_{i}.
 % f_{0},...,f_{nPolys_f-1}.
-M = sum(vDeg_arr_fx+1) - (vDeg_arr_fx(end:end)+1);
+M = sum(vDegree_arr_fx + 1) - (vDegree_arr_fx(end:end)+1);
 
 % Define M1 to be the total number of all coefficients of all of the polynomials
 % f_{i}
-M1 = sum(vDeg_arr_fx+1);
+nCoefficients_fx = sum(vDegree_arr_fx + 1);
 
 % Define N to be the number of coefficients of all h_{i}
-N = sum(vDeg_arr_hx+1);
+nCoefficients_hx = sum(vDegree_arr_hx + 1);
 
 % Preprocess the polynomials to get optimal value \theta
 if(SETTINGS.PREPROC_DECONVOLUTIONS)
     
     theta = GetOptimalTheta(arr_fx);
-    fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
     
 else
     
@@ -81,55 +80,58 @@ v_hw = SolveAx_b(DTQ, vRHS_fw);
 % each of degree n_{i}
 
 % GetArray of polynomials h_{i}(\omega)
-arr_hw = GetPolynomialArrayFromVector(v_hw, vDeg_arr_hx);
+arr_hw = GetPolynomialArrayFromVector(v_hw, vDegree_arr_hx);
 
 % Let z be  vectors of perturbations to polynomials f_{i} such that
 % z = [z{0} z{1} z{2} z{3} ... z{d}]
-arr_zw = cell(nPolys_arr_fx, 1);
+arr_qw = cell(nPolynomials_arr_fx, 1);
 
-for i = 1 : 1 : nPolys_arr_fx
+for i = 1 : 1 : nPolynomials_arr_fx
     
     % initialise polynomial z_{i} as a zero vector.
-    arr_zw{i,1} = zeros(vDeg_arr_fx(i)+1,1);
+    arr_qw{i,1} = zeros(vDegree_arr_fx(i) + 1,1);
     
     
 end
 
 % Build vector z, consisting of all vectors z_{i}
-v_zw = cell2mat(arr_zw);
+v_qw = cell2mat(arr_qw);
 
 % Build the Matrix P
-P = [eye(M) zeros(M,M1-M)];
+P = [eye(M) zeros(M, nCoefficients_fx - M)];
 
 % Get Vector of perturbations for RHS by multiplying perturbation vector by
 % P, such that we eliminate the z_max
 
 % Build Matrix Y, where E(z)h = Y(h)z
-DYU = BuildDYU(arr_hw, vDeg_arr_fx);
+DYU = BuildDYU(arr_hw, vDegree_arr_fx);
 
 % Compute the initial residual
-res_vec = (vRHS_fw + (P*v_zw) - (DTQ*v_hw));
+t = (vRHS_fw + (P*v_qw) - (DTQ*v_hw));
 
 % Set the iteration counter.
 ite = 1;
 
-F = eye(N+M1);
+% Initialise the weight vector
+E = [eye(nCoefficients_fx) zeros(nCoefficients_fx, nCoefficients_hx)];
 
-G = [DTQ (DYU)-P];
+C_q = (DYU) - P;
+C_h = DTQ;
+C = [C_q C_h];
 
 
 
-condition(ite) = norm(res_vec)./ norm(vRHS_fw);
+condition(ite) = norm(t)./ norm(vRHS_fw);
 
 start_point = ...
     [
-    v_hw;
-    v_zw;
+        v_qw;
+        v_hw;
     ];
 
 yy = start_point;
 
-s = -(yy - start_point);
+s = E*(start_point - yy);
 % Perform iteration to obtain perturbations
 
 while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
@@ -138,50 +140,49 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     % Use the QR decomposition to solve the LSE problem and then
     % update the solution.
     % min |Fy-s| subject to Gy=t
-    y = LSE(F, s, G, res_vec);
+    y = LSE_new(E, s, C, t);
     
     % Update vector yy
     yy = yy + y;
     
     % Output y gives delta h and delta z
-    delta_h = y(1:N);
-    delta_z = y(N+1:end);
+    delta_z = y(1 : nCoefficients_fx );
+    delta_h = y( nCoefficients_fx + 1 : nCoefficients_fx + nCoefficients_hx);
     
     % Add structured perturbations to vector h(\omega).
+    v_qw = v_qw + delta_z;
     v_hw = v_hw + delta_h;
     
-    % Add structured perturbations to vector z(\omega).
-    v_zw = v_zw + delta_z;
     
     % Separate delta_z into its component vectors delta_z0 delta_z1,...,
     % delta_zd
-    arr_zw = GetPolynomialArrayFromVector(v_zw, vDeg_arr_fx);
-    arr_hw = GetPolynomialArrayFromVector(v_hw, vDeg_arr_hx);
+    arr_qw = GetPolynomialArrayFromVector(v_qw, vDegree_arr_fx);
+    arr_hw = GetPolynomialArrayFromVector(v_hw, vDegree_arr_hx);
     
     
     %Increment s in LSE Problem
-    s = -(yy - start_point);
+    s = E*(start_point - yy);
     
     %Build iterative DYU
-    DYU = BuildDYU(arr_hw, vDeg_arr_fx);
+    DYU = BuildDYU(arr_hw, vDegree_arr_fx);
     
     % Build DCEQ
     DC_fQ = BuildDTQ(arr_fw);
-    DC_zQ = BuildDTQ(arr_zw);
+    DC_zQ = BuildDTQ(arr_qw);
     
-    % Build G
-    G = [(DC_fQ + DC_zQ) (DYU - P)];
+    C_q = (DYU) - P;
+    C_h = DC_fQ + DC_zQ;
+    C = [C_q C_h];
     
     % Update the RHS_vector
     vRHS_fw = BuildRHSF(arr_fw);
-    vRHS_zw = BuildRHSF(arr_zw);
+    vRHS_zw = BuildRHSF(arr_qw);
     
     % Calculate residual and increment t in LSE Problem
-    res_vec = ((vRHS_fw + vRHS_zw ) - ((DC_fQ + DC_zQ)*v_hw));
-    
+    t = ((vRHS_fw + vRHS_zw ) - ((DC_fQ + DC_zQ)*v_hw));
     
     % Get the condition
-    condition(ite +1) = norm(res_vec)./norm((vRHS_fw + vRHS_zw));
+    condition(ite +1) = norm(t)./norm((vRHS_fw + vRHS_zw));
     
     % Increment iteration number
     ite = ite + 1;
@@ -194,10 +195,11 @@ arr_hx = GetPolynomialArrayWithoutThetas(arr_hw, theta);
 
 
 % Print outputs to command line
-fprintf([mfilename ' : ' 'Performed Deconvolutions...\n'])
-fprintf([mfilename ' : ' sprintf('Iterations required for Batch Deconvolution %i\n', ite)]);
+LineBreakLarge();
+fprintf([mfilename ' : ' sprintf('Required Number of iterations : %i \n',ite)]);
+LineBreakLarge();
 
-if (SETTINGS.PLOT_GRAPHS)
+if (SETTINGS.PLOT_GRAPHS_DECONVOLUTION_LRA)
     fig_name = sprintf([mfilename ' : ' 'Condition at Iterations']);
     figure('name',fig_name)
     hold on

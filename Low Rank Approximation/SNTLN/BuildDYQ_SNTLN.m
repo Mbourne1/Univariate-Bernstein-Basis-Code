@@ -27,7 +27,7 @@ nCoefficients_x1 = n - k + 1;
 
 % Split the vector x_{k} = [x_{1} x_{2}]
 x1 = xk(1 : nCoefficients_x1);
-x2 = xk(nCoefficients_x1+1 : end);
+x2 = xk(nCoefficients_x1 + 1 : end);
 
 % Build the matrix D^{-1}_{m+n-k}
 D = BuildD_2Polys(m, n - k);

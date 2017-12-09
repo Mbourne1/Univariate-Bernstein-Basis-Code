@@ -7,7 +7,7 @@ arr_bool_alpha_theta = {true, false};
 arr_emin = {1e-08, 1e-09, 1e-10, 1e-11, 1e-12};
 arr_low_rank_approx_method = {'Standard SNTLN','Standard STLN','None'};
 arr_apf_method = {'None'};
-arr_mean_method_arr = {'Geometric Mean Matlab Method','None'};
+arr_mean_method_arr = {'Geometric Mean Matlab Method', 'None', 'Arithmetic Mean'};
 arr_Sylvester_Build_Method = {'T', 'DT', 'DTQ', 'TQ', 'DTQ Denominator Removed'};
 arr_rank_revealing_metric = {'Minimum Singular Values', 'Max/Min Singular Values', 'R1 Row Norms', 'R1 Row Diagonals', 'Residuals'};
 
@@ -31,7 +31,7 @@ for i1 = 1:1:length(arr_bool_log)
         parfor i3 = 1:1:length(arr_ex_num)
             for i4 = 1:1:length(arr_emin)
                 for i5 = 1:1:length(arr_low_rank_approx_method)
-                    for i6 = 1:1:length(arr_bool_alpha_theta)                       
+                    for i6 = 1:1:length(arr_bool_alpha_theta)
                         for i7 = 1:1:length(arr_mean_method_arr)
                             for i8 = 1:1:length(arr_Sylvester_Build_Method)
                                 for i9 = 1:1:length(arr_apf_method)
@@ -50,39 +50,38 @@ for i1 = 1:1:length(arr_bool_log)
                                         
                                         
                                         file_name = 'log_GCD_computations.txt'
-                                        %try
-                                        close all;
-                                        clc;
-                                        o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, rank_revealing_metric)
-                                        fileId = fopen(file_name,'a')
-                                        fprintf(fileId,'%s %s \n', datetime('now'), 'Success' );
-                                        fclose(fileId);
-                                        
-                                        %catch err
-                                        %
-                                        %    fileId = fopen(file_name,'a')
-                                        %    fprintf(fileId,'%s %s \n\n\n', datetime('now') , getReport(err));
-                                        %    fclose(fileId);
-                                        
-                                        %end
-                                        
+                                        try
+                                            close all;
+                                            clc;
+                                            o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, rank_revealing_metric)
+                                            fileId = fopen(file_name,'a')
+                                            fprintf(fileId,'%s %s \n', datetime('now'), 'Success' );
+                                            fclose(fileId);
+                                            
+                                        catch err
+                                            
+                                            fileId = fopen(file_name,'a')
+                                            fprintf(fileId,'%s %s \n\n\n', datetime('now') , getReport(err));
+                                            fclose(fileId);
+                                        end
                                     end
                                 end
                             end
+                            
                         end
                     end
-                    
-                    
                 end
-                
-                
             end
-            
-            
         end
+        
+        
     end
     
+    
 end
+
+
+
 
 
 

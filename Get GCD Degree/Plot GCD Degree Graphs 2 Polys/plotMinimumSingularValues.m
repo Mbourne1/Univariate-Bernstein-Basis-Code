@@ -36,11 +36,11 @@ vline(limits_t,{'r','r'})
 
 
 % Plot Labels
-ylabel('log \sigma(k)')
-xlabel('k')
+ylabel('$ \log_{10} \left( \sigma(k) \right)$','Interpreter','latex')
+xlabel('$k$','Interpreter','latex')
 legend(gca,'show');
 
-
+grid on
 
 hold off
 

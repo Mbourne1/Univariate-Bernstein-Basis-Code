@@ -1,5 +1,5 @@
-function [t, alpha, beta, theta, GM_fx, GM_gx, GM_hx] = ...
-    Get_GCD_Degree_3Polys(fx, gx, hx, limits_t)
+function [t, lambda, mu, rho, theta, GM_fx, GM_gx, GM_hx] = ...
+    Get_GCD_Degree_3Polys(fx, gx, hx, limits_t, rank_range)
 % GetGCD_Degree_2Polys(fx,gx)
 %
 % Get degree t of the AGCD d(x) of input polynomials f(x) and g(x)
@@ -18,6 +18,9 @@ function [t, alpha, beta, theta, GM_fx, GM_gx, GM_hx] = ...
 % prior information is known about the upper and lower bound due to number
 % of distinct roots.
 %
+% rank_range : [Float Float] : Used as upper and lower threshold for
+% determining whether a matrix is singular or non-singular.
+%
 %
 % % Outputs.
 %
@@ -25,19 +28,23 @@ function [t, alpha, beta, theta, GM_fx, GM_gx, GM_hx] = ...
 %
 % alpha : (Float) optimal value of alpha
 %
-% beta : (Float) 
+% beta : (Float)
 %
 % theta : (Float) optimal value of theta
 %
 % GM_fx : (Float) Geometric mean of entries of f(x)
-% 
+%
 % GM_gx : (Float) Geometric mean of entries of g(x)
 %
 % GM_hx : (Float) Geometric mean of entries of h(x)
 %
 
-addpath 'Preprocessing'
-addpath 'Sylvester Matrix'
+global SETTINGS
+
+% if not 5 input arguments, then error
+if (nargin ~= 5)
+    error('Not enough input arguments');
+end
 
 % Get degree of polynomail f(x)
 m = GetDegree(fx);
@@ -47,7 +54,7 @@ o = GetDegree(hx);
 % Set upper and lower limit for computing the degree of the GCD. Note may
 % be best to set to degree limits or may be best to set to 1 & min(m,n)
 lowerLimit_k = 1;
-upperLimit_k = min([m,n,o]);
+upperLimit_k = min([m, n, o]);
 limits_k = [lowerLimit_k upperLimit_k];
 
 % Get the number of subresultants which must be constructed.
@@ -58,8 +65,9 @@ nSubresultants = upperLimit_k - lowerLimit_k +1 ;
 
 % Initialise vectors to store all optimal alphas and theta, and each
 % geometric mean for f and g in each S_{k} for k = 1,...,min(m,n)
-vAlpha = zeros(nSubresultants, 1);
-vBeta = zeros(nSubresultants, 1);
+vLambda = zeros(nSubresultants, 1);
+vMu = zeros(nSubresultants, 1);
+vRho = zeros(nSubresultants, 1);
 vTheta = zeros(nSubresultants, 1);
 vGM_fx = zeros(nSubresultants, 1);
 vGM_gx = zeros(nSubresultants, 1);
@@ -84,29 +92,39 @@ vMinimumSingularValues = zeros(nSubresultants,1);
 
 
 
-
 % For each subresultant $S_{k}$
-for k = lowerLimit_k:1:upperLimit_k
+for k = lowerLimit_k : 1 : upperLimit_k
     
     i = k - lowerLimit_k + 1;
     
-    [vGM_fx(i), vGM_gx(i), vGM_hx(i), alpha, beta, theta ] = Preprocess_3Polys(fx, gx, hx, k);
+
     
-    vAlpha(i) = alpha;
-    vBeta(i) = beta; 
+    switch SETTINGS.SYLVESTER_EQUATIONS
+        
+        case '2'
+            [GM_fx, GM_gx, GM_hx, lambda, mu, rho, theta ] = ...
+                Preprocess_3Polys_2Eqns(fx, gx, hx, k);
+            
+        case '3'
+            [GM_fx, GM_gx, GM_hx, lambda, mu, rho, theta ] = ...
+                Preprocess_3Polys_3Eqns(fx, gx, hx, k);
+        otherwise
+            error('err')
+            
+    end
+
+    
+    vGM_fx(i) = GM_fx;
+    vGM_gx(i) = GM_gx;
+    vGM_hx(i) = GM_hx;
+    
+    
+    vLambda(i) = lambda;
+    vMu(i) = mu;
+    vRho(i) = rho;
     vTheta(i) = theta;
     
-    display(alpha)
-    display(beta) 
-    display(theta)
-    
-    % 18/04/2016
-    % Given the previous geometric mean of f(x) calculate the new geometric
-    % mean by my new method
-    if i>1
-        %GM_fx = GetGeometricMeanFromPrevious(fx , vGM_fx(i-1) , m , n-k);
-        %GM_gx = GetGeometricMeanFromPrevious(gx , vGM_gx(i-1) , n , m-k);
-    end
+
     
     % Divide f(x) and g(x) by geometric means
     fx_n = fx./ vGM_fx(i);
@@ -115,23 +133,146 @@ for k = lowerLimit_k:1:upperLimit_k
     
     
     % Construct the kth subresultant matrix S_{k}(f(\theta),g(\theta))
-    fw = GetWithThetas(fx_n, vTheta(i));
-    gw = GetWithThetas(gx_n, vTheta(i));
-    hw = GetWithThetas(hx_n, vTheta(i));
+    alpha_fw = lambda .* GetWithThetas(fx_n, vTheta(i));
+    beta_gw = mu .* GetWithThetas(gx_n, vTheta(i));
+    gamma_hw = rho .* GetWithThetas(hx_n, vTheta(i));
     
-    % Build the k-th subresultant   
-    % Note : We dont include any alpha yet 
-    arr_Sk{i} = BuildSubresultant_3Polys(fw, alpha.*gw, beta.*hw,k);
+    % Build the k-th subresultant    
+    arr_Sk{i} = BuildSubresultant_3Polys(alpha_fw, beta_gw, gamma_hw, k);
     
     
+    
+
+    if k == lowerLimit_k
+        
+
+        figure_name = sprintf('Heat Map : %s : %s', SETTINGS.SYLVESTER_BUILD_METHOD, SETTINGS.EX_NUM);
+        figure('Name',figure_name)
+        hold on
+        colormap('hot');
+        data = log10(abs(arr_Sk{i}));
+        imagesc(flipud(data));
+        colorbar;
+        hold off
+        
+
+        PlotCoefficients(...
+            {...
+            fx, alpha_fw,...
+            gx, beta_gw,...
+            hx, gamma_hw...
+            },...
+            {...
+            '$f(x)$', '$\lambda \tilde{f}(\omega)$',...
+            '$g(x)$', '$\mu \tilde{g}(\omega)$',...
+            '$h(x)$', '$\rho \tilde{h}(\omega)$'...
+            },...
+            {'--','-s','--','-s','--','-s'}...
+            );
+        
+        %PlotCoefficients({fx, alpha_fw1}, {'f(x)', '\alpha f(\omega)'});
+        %PlotCoefficients({gx, beta_gw}, {'g(x)', '\beta g(\omega)'});
+        %PlotCoefficients({hx, gamma_hw}, {'h(x)', '\gamma h(\omega)'});
+    end
+    
+
+    
+    vCondition(i) = cond(arr_Sk{i});
     
     % Get the matrix R1 from the QR Decomposition of S
     arr_R1{i} = GetR1(arr_Sk{i});
     
-      
+    
     
     
 end % End of for
+
+
+% % Plot fmax
+% figure()
+% hold on
+% for i = 1 : 1 : nSubresultants
+%    
+%     temp_vec1 = arrF_max_1{i};
+%     temp_vec2 = arrF_max_2{i};
+%     temp_vec3 = arr_G_max{i};
+%     temp_vec4 = arr_H_max{i};
+%     
+%     x_vec = i.*ones(length(temp_vec1),1);
+%     scatter(x_vec, log10(temp_vec1), 'MarkerEdgeColor','red')
+%     scatter(x_vec, log10(temp_vec2), 'MarkerEdgeColor','blue')
+%     
+%     x_vec = i.*ones(length(temp_vec3),1);
+%     scatter(x_vec, log10(temp_vec3), 'MarkerEdgeColor','green')
+%     x_vec = i.*ones(length(temp_vec4),1);
+%     scatter(x_vec, log10(temp_vec4), 'MarkerEdgeColor','yellow')
+% end
+% hold off
+% 
+% % Plot fmax
+% figure()
+% hold on
+% for i = 1 : 1 : nSubresultants
+%    
+%     temp_vec1 = arrF_min_1{i};
+%     temp_vec2 = arrF_min_2{i};
+%     temp_vec3 = arr_G_min{i};
+%     temp_vec4 = arr_H_min{i};
+%     
+%     x_vec = i.*ones(length(temp_vec1),1);
+%     scatter(x_vec, log10(temp_vec1), 'MarkerEdgeColor','red')
+%     scatter(x_vec, log10(temp_vec2), 'MarkerEdgeColor','blue')
+%     
+%     x_vec = i.*ones(length(temp_vec3),1);
+%     scatter(x_vec, log10(temp_vec3), 'MarkerEdgeColor','green')
+%     x_vec = i.*ones(length(temp_vec4),1);
+%     scatter(x_vec, log10(temp_vec4), 'MarkerEdgeColor','yellow')
+% end
+% hold off
+
+
+
+
+
+
+if SETTINGS.PLOT_GRAPHS_PREPROCESSING == true
+
+    % % Plot Lambda, Mu, rho and theta
+    figure_name = strcat('Scaling : ',  SETTINGS.SCALING_METHOD);
+    figure('Name',figure_name);
+    hold on
+
+    plot(log10(vLambda), '-s', 'LineWidth',2, 'DisplayName','\lambda')
+    plot(log10(vMu), '-o','LineWidth',2, 'DisplayName','\mu')
+    plot(log10(vRho), '-*', 'LineWidth',2, 'DisplayName','\rho')
+    plot(log10(vTheta), 'LineWidth',2, 'DisplayName','\theta')
+
+    ylabel('$\log_{10} \left( \Re \right)$', 'Interpreter','latex')
+    xlabel('$k$', 'Interpreter','latex')
+    l = legend(gca,'show');
+    set(l,'location','southwest')
+    set(l,'FontSize',20)
+    hold off
+
+
+    % Plot Geometric Means
+    figure('Name','Geometric Means')
+    hold on
+
+    plot(log10(vGM_fx), '-s', 'DisplayName','$GM f(x)$')
+    plot(log10(vGM_gx), '-o', 'DisplayName','$GM g(x)$')
+    plot(log10(vGM_hx), '-', 'DisplayName','$GM h(x)$')
+    l = legend(gca,'show');
+    set(l,'Interpreter', 'latex')
+    hold off
+
+end
+
+% Plot Condition number
+figure('Name','Condition Numbers')
+hold on
+plot(log10(vCondition));
+hold off
 
 % %
 % %
@@ -142,7 +283,7 @@ end % End of for
 % Singular Values
 % Residuals
 
-global SETTINGS
+
 fprintf(sprintf('Metric used to compute degree of GCD : %s \n', SETTINGS.RANK_REVEALING_METRIC));
 
 switch SETTINGS.RANK_REVEALING_METRIC
@@ -152,24 +293,24 @@ switch SETTINGS.RANK_REVEALING_METRIC
             
             % Get Norms of each row in the matrix R1
             vR1_RowNorms = sqrt(sum(arr_R1{i}.^2,2))./norm(R1);
-
+            
             % Get maximum and minimum row norms of rows of R1.
             vMaxRowNormR1(i) = max(vR1_RowNorms);
             vMinRowNormR1(i) = min(vR1_RowNorms);
             
         end
         
-        metric = vMaxRowNormR1./vMinRowNormR1;
+        vMetric = log10(vMaxRowNormR1./vMinRowNormR1);
         
         plotMaxMinRowSum(vMaxRowNormR1, vMinRowNormR1, limits_k, limits_t);
-
+        
     case 'Row Diagonals'
         
         for i = 1:1:nSubresultants
             
             % Get Norms of diagonal eleements of R1
             vDiagsR1 = diag(arr_R1{i});
-
+            
             % Get maximum and minimum row diagonals of R1
             vMaxDiagR1(i) = max(vDiagsR1);
             vMinDiagR1(i) = min(vDiags1);
@@ -178,28 +319,52 @@ switch SETTINGS.RANK_REVEALING_METRIC
         
         plotMaxMinRowDiagonals(vMaxDiagR1, vMinDiagR1, limits_k, limits_t);
         
-        metric = vMaxDiagR1./vMinDiagR1;
+        vMetric = log10(vMaxDiagR1./vMinDiagR1);
         
-    case 'Singular Values'
-       
+    case 'Minimum Singular Values'
+        
         arr_SingularValues = cell(nSubresultants,1);
         
         for i = 1 : 1 : nSubresultants
-        
+            
             % Get singular values of S_{k}
             arr_SingularValues{i} = svd(arr_Sk{i});
-
+            
             % Get the minimal singular value from S_{k}
             vMinimumSingularValues(i) = min(arr_SingularValues{i});
-        
+            
         end
         
-        metric = vMinimumSingularValues;
+        vMetric = log10(vMinimumSingularValues);
         
         plotSingularValues(arr_SingularValues, limits_k, limits_t);
-        plotMinimumSingularValues(vMinimumSingularValues, limits_k, limits_t);
+        %plotMinimumSingularValues(vMinimumSingularValues, limits_k, limits_t, rank_range);
+        
+    case 'Normalised Minimum Singular Values'
+        
+        arr_NormalisedSingularValues = cell(nSubresultants,1);
+        
+        for i = 1 : 1 : nSubresultants
+            
+            % Get singular values of S_{k}
+            
+            vSingularValues = svd(arr_Sk{i});
+            vNormalisedSingularValues = vSingularValues./vSingularValues(1);
+            
+            arr_NormalisedSingularValues{i} = vNormalisedSingularValues;
+            
+            % Get the minimal singular value from S_{k}
+            vNormalisedMinimumSingularValues(i) = min(arr_NormalisedSingularValues{i});
+            
+        end
+        
+        vMetric = log10(vNormalisedMinimumSingularValues);
+        
+        plotSingularValues(arr_NormalisedSingularValues, limits_k, limits_t);
+        plotMinimumSingularValues(vNormalisedMinimumSingularValues, limits_k, limits_t, rank_range);
         
     case 'Residuals'
+        
         % Get the minimal residuals for each subresultant S_{k}.
         vMinimumResidual_QR(i) = GetMinimalDistance(arr_Sk{i},'QR');
         vMinimumResidual_SVD(i) = GetMinimalDistance(arr_Sk{i},'SVD');
@@ -216,8 +381,8 @@ end
 if (upperLimit_k == lowerLimit_k)
     
     % Set \alpha and \theta
-    alpha = vAlpha(1);
-    beta = vBeta(1);
+    lambda = vLambda(1);
+    mu = vMu(1);
     theta = vTheta(1);
     
     % Set Geometric means
@@ -235,26 +400,26 @@ end
 % If only one subresultant exists, use an alternative method.
 if (upperLimit_k - lowerLimit_k == 0 )
     
-        % Set the degree of the GCD
-        t = Get_GCD_Degree_OneSubresultant(vSingularValues);
+    % Set the degree of the GCD
+    t = Get_GCD_Degree_OneSubresultant(vSingularValues);
     
-        % Set \alpha and \theta
-        alpha = vAlpha(1);
-        beta = vBeta(1);
-        theta = vTheta(1);
-        
-        % Set geometric means
-        GM_fx = vGM_fx(1);
-        GM_gx = vGM_gx(1);
-        GM_hx = vGM_hx(1);
-        
-        return;
-        
+    % Set \alpha and \theta
+    lambda = vLambda(1);
+    mu = vMu(1);
+    theta = vTheta(1);
+    
+    % Set geometric means
+    GM_fx = vGM_fx(1);
+    GM_gx = vGM_gx(1);
+    GM_hx = vGM_hx(1);
+    
+    return;
+    
     
     
 else
     
-    [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(metric, limits_k);
+    [t] = Get_GCD_Degree_MultipleSubresultants_2Polys(vMetric, limits_k, limits_t, rank_range);
     
     
     % % Graph Plotting
@@ -266,7 +431,7 @@ else
     % Output all subresultants, all optimal alphas, all optimal thetas and all
     % geometric means for each subresultant S_{k} where k = 1,...,min(m,n)
     
-    alpha = vAlpha(t);
+    lambda = vLambda(t);
     theta = vTheta(t);
     
     GM_fx = vGM_fx(t);

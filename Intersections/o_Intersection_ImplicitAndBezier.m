@@ -63,7 +63,7 @@ poly = double(poly);
 % Caculate roots by matlab method
 vRoots = o_roots_matlab(poly);
 
-%%
+% % 
 % Define the global variables for my root finder.
 global SETTINGS
 SETTINGS.PLOT_GRAPHS = true;
@@ -81,7 +81,7 @@ SETTINGS.DECONVOLUTION_METHOD = 'single';
 % Calculate roots by my method
 %vRoots = o_roots_mymethod(poly);
 
-%% Print out the roots and the corresponding intersection points.
+% % Print out the roots and the corresponding intersection points.
 
 [num_roots,~] = size(vRoots);
 

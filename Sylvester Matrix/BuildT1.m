@@ -18,14 +18,14 @@ function T1 = BuildT1(fx,n_k)
 m = GetDegree(fx);
 
 % Initialise empty matrix T1, for storing Toeplitz T_{k}(f)
-T1 = zeros(m+n_k+1,n_k+1);
+T1 = zeros(m + n_k + 1, n_k + 1);
 
 % Get f(w) with binomial coefficients;
 fx_bi = GetWithBinomials(fx);
 
 % for each column of T1
-for j = 0:1:n_k
-    T1(j+1:m+j+1,j+1) = fx_bi;
+for j = 0 : 1 : n_k
+    T1(j+1 : m + j + 1, j + 1) = fx_bi;
 end
 
 

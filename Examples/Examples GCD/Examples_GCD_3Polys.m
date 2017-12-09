@@ -20,31 +20,12 @@ function [fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_3Polys(ex_num)
 % wx : (Vector) Coefficients of the polynomial u(x), given by h(x)/d(x)
 
 
-EXAMPLE_TYPE = 'From Coefficients';
 
-switch EXAMPLE_TYPE
-    case 'From Coefficients'
         
-        [fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_FromCoefficients_3Polys(ex_num);
+[fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_FromCoefficients_3Polys(ex_num);
         
         
-%     case 'From Roots'
-%         [f_root_mult_arr,g_root_mult_arr,d_root_mult_arr] = Examples_GCD_FromRoots(ex_num);
-%         
-%         f_exact_bi = BuildPolyFromRoots(f_root_mult_arr);
-%         g_exact_bi = BuildPolyFromRoots(g_root_mult_arr);
-%         d_exact_bi = BuildPolyFromRoots(d_root_mult_arr);
-% 
-%         % Get exact coefficients of a_{i},b_{i},u_{i},v_{i} and d_{i} of
-%         % polynomials f, g, u, v and d in standard bernstein form.
-%         fx = GetWithoutBinomials(f_exact_bi);
-%         gx = GetWithoutBinomials(g_exact_bi);
-%         dx = GetWithoutBinomials(d_exact_bi);
 
-    otherwise
-        error('err')
-        
-end
 
 end
 

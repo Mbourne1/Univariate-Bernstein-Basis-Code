@@ -23,14 +23,14 @@ function Q = BuildQ_3Polys(m, n, o, k)
 
 % Build first partition of Q corresponding to the binomial coefficients of
 % v(y). \binom{n-k}{i}
-Q1 = BuildQ1(n-k);
+Q1 = BuildQ1(n - k);
 
 % Build second partition of Q
-Q2 = BuildQ1(o-k);
+Q2 = BuildQ1(o - k);
 
 % Build third partition of Q corresponding to the binomial coefficients of
 % u(y). \binom{m-k}{i}
-Q3 = BuildQ1(m-k);
+Q3 = BuildQ1(m - k);
 
 
 % Join the two partitions as a diagonal matrix.

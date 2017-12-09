@@ -1,4 +1,4 @@
-function root_mult_matrix = GetRootsAndMultiplicities(fx, str_method)
+function [root_mult_matrix]= GetRootsAndMultiplicities(fx, str_method)
 %
 % % Inputs
 %
@@ -12,8 +12,7 @@ function root_mult_matrix = GetRootsAndMultiplicities(fx, str_method)
 % corresponding multiplicity of the root.
 
 switch str_method
-    case 'My Method'
-        root_mult_matrix = o_roots_mymethod(fx);
+    
         
     case 'Musser Method'
         root_mult_matrix = o_roots_Musser(fx);

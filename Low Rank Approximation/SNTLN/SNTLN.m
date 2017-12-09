@@ -53,7 +53,10 @@ n = GetDegree(gx);
 % column equivalent to the optimal column for removal from the Sylvester 
 % subresultant matrix, so that S_{t}(f,g)*M = A_{t}, where A_{t} is the
 % Sylvester subresultant matrix with the column removed.
-I = eye(m+n-2*k+2,m+n-2*k+2);
+I = eye(m + n - 2*k + 2, m + n - 2*k + 2);
+
+
+
 M = I;
 M(:, idx_col) = [];
 
@@ -87,15 +90,15 @@ DTQ_wrt_theta = BuildDTQ(fw_wrt_theta, vAlpha(ite).*gw_wrt_theta, k);
 % Initialise the vector z of structured perturbations
 % if we are working with strictly the roots problem, the number of entries
 % in z can be reduced.
-zk = zeros(m+n+2, 1);
-z_fx = zk(1 : m+1);
-z_gx = zk(m+2 : end);
+zk = zeros(m + n + 2, 1);
+z_fx = zk(1 : m + 1);
+z_gx = zk(m + 2 : end);
 
 % Initilaise the derivative of D_{k}NQ_{k} wrt alpha.
-DNQ_wrt_alpha   = zeros(m+n-k+1, m+n-(2*k)+2);
+DNQ_wrt_alpha   = zeros(m + n - k + 1, m + n - (2*k) + 2);
 
 % Initilaise the derivative of D_{k}NQ_{k} wrt theta.
-DNQ_wrt_theta   = zeros(m+n-k+1, m+n-(2*k)+2);
+DNQ_wrt_theta   = zeros(m + n - k + 1, m + n - (2*k) + 2);
 
 % Calculate the derivatives wrt alpha and theta of the column of DNQ
 % that is moved to the right hand side.
@@ -123,17 +126,24 @@ xk = SolveAx_b(At, ck);
 % Build Matrix Y
 
 % Get vector x_{k}
-x1 = xk(1 : idx_col-1) ;
+x1 = xk(1 : idx_col - 1) ;
 x2 = xk(idx_col : end) ;
 x = [x1; 0 ;x2] ;% Insert zero into vector
 
 DYQ = BuildDYQ_SNTLN(x, m, n, k, vAlpha(ite), vTheta(ite));
 
 % Calculate the initial residual r = ck - (Ak*x)
-res_vec = ck - (DTQ*M*xk);
+t = ck - (DTQ * M * xk);
 
 % Set the intial value of E to the identity matrix
-E = eye(2*m+2*n-2*k+5);
+H1 = eye(m + 1) * (n - k + 1);
+H2 = eye(n + 1) * (m - k + 1);
+H = blkdiag(H1, H2);
+
+E1 = [H zeros(m + n + 2, m + n - 2*k + 1)];
+d = (n + 1) * (m - k + 1);
+E = blkdiag(E1, d, 1);
+
 
 % Create the matrix D(T+N)Q
 DTNQ = BuildDTQ(fw, vAlpha(ite).*gw, k);
@@ -162,7 +172,7 @@ C       = [H_z H_x H_alpha H_theta];
 start_point     =   ...
     [...
         zk;...
-        xk;...
+        xk;
         vAlpha(ite);...
         vTheta(ite)
     ];
@@ -170,19 +180,21 @@ start_point     =   ...
 yy = start_point;
 
 % Set the initial value of vector p to be zero
-f = zeros(2*m+2*n-2*k+5, 1);
+s = (E * (start_point - yy));
 
 
 % Set the termination criterion to a large value. It will be
 % over written later.
-condition(ite) = norm(res_vec)/norm(ck);
+vCondition(ite) = norm(t)/norm(ck);
 
-while condition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
+while vCondition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
    
     
-    % Use the QR decomposition to solve the LSE problem
-    % min |y-p| subject to Cy=q
-    y = LSE(E, f, C, res_vec);
+    % usage: x = lse(A,b,C,d)
+    % Minimizes norm(A*x - b),
+    % subject to C*x = d
+    %y = LSE_new(E, s, C, t);
+    y = LSE_new(E,s,C,t);
     
     % Increment the iteration number
     ite = ite + 1;
@@ -221,7 +233,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     DTQ = BuildDTQ(fw, vAlpha(ite).*gw, k);
         
     % Get the partial derivative of f(\omega) with respect to \alpha
-    fw_wrt_alpha    = zeros(m+1, 1);
+    fw_wrt_alpha    = zeros(m + 1, 1);
     
     % Get the partial derivative of g(\omega) with respect to \alpha
     gw_wrt_alpha    = gw;
@@ -232,11 +244,11 @@ while condition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     gw_wrt_theta    = Differentiate_wrt_theta(gw, vTheta(ite));
     
     % Calculate the partial derivative of DTQ with respect to alpha.
-    DTQ_wrt_alpha = BuildDTQ(fw_wrt_alpha, gw_wrt_alpha,k);
+    DTQ_wrt_alpha = BuildDTQ(fw_wrt_alpha, gw_wrt_alpha, k);
         
     % Calculate the partial derivative of DTQ with respect to theta.
     DTQ_wrt_theta = BuildDTQ(fw_wrt_theta,...
-                vAlpha(ite).*gw_wrt_theta,k);
+                vAlpha(ite).*gw_wrt_theta, k);
         
     % Calculate the column c_{k} of DTQ that is moved to the right hand side
     ck = DTQ*e;
@@ -291,12 +303,12 @@ while condition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     % Calculate the paritial derivative of D_{t}(T+N)Q_{t} with respect to
     % alpha
     DTNQ_alpha = BuildDTQ(fw_wrt_alpha + zfw_wrt_alpha,...
-                gw_wrt_alpha + zgw_wrt_alpha,k);
+                gw_wrt_alpha + zgw_wrt_alpha, k);
         
     % Calculate the paritial derivative of D_{k}(T+N)Q_{k} with respect to
     % theta
     DTNQ_theta = BuildDTQ(fw_wrt_theta + zfw_wrt_theta,...
-                    vAlpha(ite).*(gw_wrt_theta + zgw_wrt_theta),k);
+                    vAlpha(ite).*(gw_wrt_theta + zgw_wrt_theta), k);
         
     % Calculate the matrix DY where Y is the Matrix such that E_{k}x = Y_{k}z.
     
@@ -314,7 +326,7 @@ while condition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     DPQ = BuildDPG_SNTLN(m, n, k, vAlpha(ite), vTheta(ite), idx_col);
     
     % Calculate the residual q and vector p.
-    res_vec = (ck + hk) - (DTNQ * M * xk);
+    t = (ck + hk) - (DTNQ * M * xk);
     
     % Create the matrix C. This is made up of four submatrices, HZ, Hx,
     % H_alpha and H_theta.
@@ -330,23 +342,24 @@ while condition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERATI
     C = [Hz, Hx, H_alpha, H_theta];  % the matrix C
        
     % Calculate the normalised residual of the solution.
-    condition(ite) = norm(res_vec)./ norm(ck + hk) ;
+    vCondition(ite) = norm(t)./ norm(ck + hk) ;
     
     % Update fnew - used in LSE Problem.
-    f = - (yy - start_point);
+    s = (E * (start_point - yy));
     
 
     
 end
 
-% Plot graphs
-Plot_STLN()
-PlotThetas(vTheta)
-PlotAlphas(vAlpha)
+if SETTINGS.PLOT_GRAPHS_LOW_RANK_APPROXIMATION
+    PlotResiduals(vCondition)
+    PlotThetas(vTheta)
+    PlotAlphas(vAlpha)
+end
 
 % Print the number of iterations required
 LineBreakLarge()
-fprintf([mfilename ' : ' sprintf('Iterations required for STLN : %i \n', ite)]);
+fprintf([mfilename ' : ' sprintf('Iterations required for SNTLN : %i \n', ite)]);
 LineBreakLarge()
 SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
 
@@ -374,7 +387,7 @@ vw_lr = x(1 : nCoefficients_vx);
 vx_lr = GetWithoutThetas(vw_lr, vTheta(ite));
 
 % Get polynomial coefficients v(\omega) from the vector x
-uw_lr = -1.*(x(nCoefficients_vx + 1 : end));
+uw_lr = -1 .* x(nCoefficients_vx + 1 : end);
 
 % Get u(x) from u(\omega)
 ux_lr = GetWithoutThetas(uw_lr, vTheta(ite));
@@ -385,36 +398,6 @@ theta_lr = vTheta(ite);
 
 end
 
-
-
-function PlotThetas(vTheta)
-%
-% % Inputs
-%
-% vTheta : vector of theta values for each iteration
-
-figure_name = sprintf([mfilename ' : Theta variation over SNTLN']);
-figure('name',figure_name)
-hold on
-plot(log10(vTheta),'-s','DisplayName','\theta')
-xlabel('Iteration');
-ylabel('log_{10}');
-hold off
-
-end
-
-function PlotAlphas(vAlpha)
-
-
-figure_name = sprintf([mfilename ' : Alpha variation over SNTLN']);
-figure('name',figure_name)
-hold on
-plot(log10(vAlpha),'-s','DisplayName','\alpha')
-xlabel('Iteration');
-ylabel('log_{10}');
-hold off
-
-end
 
 
 

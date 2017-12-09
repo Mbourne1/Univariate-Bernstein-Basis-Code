@@ -18,12 +18,11 @@ global SETTINGS
 
 
 % Get the number of polynomials in the array
-nPolys_arr_fx = size(arr_fx, 1);
+nPolynomials_arr_fx = size(arr_fx, 1);
 
 if( SETTINGS.PREPROC_DECONVOLUTIONS)
 
     theta = GetOptimalTheta(arr_fx);
-    fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
     
 else
     
@@ -47,24 +46,24 @@ x_temp = x;
 
 
 % Remove non-unique multiplicities.
-unique_vMult = unique(vMultiplicities);
+unique_vMultiplicity = unique(vMultiplicities);
 
 % Get the number of polynomials p_{i}(\omega)
-nPolys_arr_pw = length(unique_vMult);
+nPolynomials_arr_pw = length(unique_vMultiplicity);
 
 % Get unique polynomials p(\omega)
-arr_pw = cell(nPolys_arr_pw,1);
+arr_pw = cell(nPolynomials_arr_pw,1);
 
-for i = 1 : 1 : length(unique_vMult)
+for i = 1 : 1 : length(unique_vMultiplicity)
     
     % Get multiplicity
-    factor_multiplicity = unique_vMult(i);
+    factor_multiplicity = unique_vMultiplicity(i);
     
     % Get degree of polynomial p_{i}(\omega)
     factor_degree = GetDegree(arr_fx{factor_multiplicity}) - GetDegree(arr_fx{factor_multiplicity+1});
     
     % Get coefficients of polynomial p_{i}(\omega)
-    temp_poly = x_temp(1:factor_degree+1);
+    temp_poly = x_temp(1 : factor_degree + 1);
     arr_pw{i} = temp_poly;
     
     % Remove coefficients from the vector
@@ -77,20 +76,20 @@ end
 % h_{i}(x).
 
 % Get number of entries in array of polynomials p_{i}(x)
-nPolys_arr_px = size(arr_pw, 1);
+nPolynomials_arr_px = size(arr_pw, 1);
 
 % Initialise the array of h_{i}(x)
-arr_hw = cell(nPolys_arr_fx - 1, 1);
+arr_hw = cell(nPolynomials_arr_fx - 1, 1);
 
 % Initialise a count
 count = 1;
 
-for i = 1 : 1 : nPolys_arr_px
+for i = 1 : 1 : nPolynomials_arr_px
     
     if i == 1
-        nRepetitions = unique_vMult(i);
+        nRepetitions = unique_vMultiplicity(i);
     else
-        nRepetitions = (unique_vMult(i) - unique_vMult(i-1));
+        nRepetitions = (unique_vMultiplicity(i) - unique_vMultiplicity(i-1));
     end
     
     for j = 1 : 1 : nRepetitions

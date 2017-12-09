@@ -1,5 +1,5 @@
 function [fx_lr, gx_lr, hx_lr, dx_lr, ux_lr, vx_lr, wx_lr, alpha_lr, beta_lr, theta_lr] = ...
-    APF_3Polys(fx, gx, hx, ux, vx, wx, alpha, beta, theta, k)
+    APF_3Polys(fx, gx, hx, ux, vx, wx, alpha, beta, gamma, theta, k)
 %
 % % Inputs
 %
@@ -37,7 +37,12 @@ function [fx_lr, gx_lr, hx_lr, dx_lr, ux_lr, vx_lr, wx_lr, alpha_lr, beta_lr, th
 %
 % wx_lr : (Vector) Coefficients of output w(x)
 
-
+% if not 11 input arguments
+if (nargin ~= 11)
+   
+    error('Not enough input arguments');
+    
+end
 
 
 
@@ -61,9 +66,9 @@ switch SETTINGS.APF_METHOD
         error([mfilename ' : Code Not Yet Developed']);
         
         % Get f(\omega) and g(\omega)
-        fw = GetWithThetas(fx, theta);
-        a_gw = alpha.*GetWithThetas(gx, theta);
-        b_hw = GetWithThetas(hx, theta);
+        alpha_fw = alpha .* GetWithThetas(fx1, theta);
+        beta_gw = beta .* GetWithThetas(gx, theta);
+        gamma_hw = GetWithThetas(hx, theta);
         
         % Get u(\omega) and v(\omega)
         uw = GetWithThetas(ux, theta);
@@ -71,7 +76,7 @@ switch SETTINGS.APF_METHOD
         ww = GetWithThetas(wx, theta);
         
         % Get APF and d(\omega)
-        [fw_lr, a_gw_lr, dw_lr, uw_lr, vw_lr] = APF_Linear_3Polys(fw, a_gw, b_hw, uw, vw, ww, k);
+        [fw_lr, a_gw_lr, dw_lr, uw_lr, vw_lr] = APF_Linear_3Polys(alpha_fw, beta_gw, gamma_hw, uw, vw, ww, k);
         
         % Get f(x) and g(x) after linear APF function
         fx_lr = GetWithoutThetas(fw_lr, theta);
@@ -100,7 +105,11 @@ switch SETTINGS.APF_METHOD
         vx_lr = vx;
         wx_lr = wx;
         
-        dx_lr = GetGCDCoefficients_3Polys(ux, vx, wx, fx, gx, hx, k, alpha, beta, theta);
+        %alpha = 1;
+        %beta = 1;
+        %gamma = 1;
+        
+        dx_lr = GetGCDCoefficients_3Polys(ux, vx, wx, fx, gx, hx, k, alpha, beta, gamma, theta);
         
         % Get alpha and theta outputs
         alpha_lr = alpha;

@@ -44,15 +44,31 @@ if(SETTINGS.PLOT_GRAPHS)
     
 end
 
+average_singularValues = mean(vMetric);
+
 [maxDelta,~] = Analysis(vMetric);
 
 % If the change is smaller than the predefined threshold value, then plot
 % is considered 'flat'.
-if maxDelta < (0.5 * previousDelta)
+if maxDelta < (0.9 * previousDelta)
     
-    % The subresultant is of full rank, in which case t = 0
-    t = 0;
-    fprintf([mfilename ' : ' calling_function ' : ' 'The only Subresultant S_{1} appears to be of full rank. \n']);
+    
+    % All full rank or all rank deficient
+    
+    
+    if average_singularValues > rank_range_high
+        
+        % all full rank
+        t = 0;
+    elseif average_singularValues < rank_range_low
+            % all rank deficient
+            t = 1;
+            
+    else
+        % Average is somewhere in the middle
+        t = 1;
+    end
+    
     fprintf([mfilename ' : ' calling_function ' : ' sprintf('t = %i \n',t)]);
     return
     

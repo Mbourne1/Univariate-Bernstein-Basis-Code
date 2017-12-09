@@ -14,7 +14,7 @@ function x = SolveAx_b(A,b)
 % %
 % %
 
-warning('off')
+%warning('off')
 
 [~,n2] = size(A);
 [Q,R] = qr(A);
@@ -31,18 +31,18 @@ res_QR = b - (A*x_ls_QR);
 % %
 % % Get x_ls by matlab pinv method
 % %
-x_ls_SVD = pinv(A)*b;
+%x_ls_SVD = pinv(A)*b;
 
-res_SVD = b - (A*x_ls_SVD);
+%res_SVD = b - (A*x_ls_SVD);
 
 % %
 
-if (res_QR < res_SVD)
+%if (res_QR < res_SVD)
     x = x_ls_QR;
-else
-    x = x_ls_SVD;
-end
+%else
+%    x = x_ls_SVD;
+%end
 
-warning('on')
+%warning('on')
 
 end

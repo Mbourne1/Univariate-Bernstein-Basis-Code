@@ -1,7 +1,7 @@
 function [gm] = GetGeometricMean(fx, n_k)
-% This function calculates the geometric mean gm of the terms that
-% contain the coefficients of the polynomial c in the kth subresultant
-% matrix S(c,d). The integer n is the degree of the polynomial d.
+% This function calculates the geometric mean gm of the terms that contain
+% the coefficients of the polynomial c in the kth subresultant matrix
+% S(c,d). The integer n is the degree of the polynomial d.
 %
 % % Inputs
 %
@@ -21,13 +21,19 @@ function [gm] = GetGeometricMean(fx, n_k)
 % Dependent on which method is used, 1 - use logs, 0 - use nchoosek
 global SETTINGS
 
-if SETTINGS.BOOL_LOG
+switch SETTINGS.BOOL_LOG
     
-    gm = GMlog(fx,n_k);
-    
-else
-    gm = GMnchoosek(fx,n_k);
-    
+    case true
+        
+        gm = GMlog(fx,n_k);
+        
+    case false
+        
+        gm = GMnchoosek(fx,n_k);
+        
+    otherwise
+        
+        error('BOOL_LOG must be true or false')
 end
 
 
@@ -35,8 +41,9 @@ end
 
 
 function GM_fx = GMlog(fx, n_k)
-% Calculate the Geometric mean of the entries of the Coefficient matrix $C_{f}$
-% which may or may not contain Q. may or may not contain denominator.#
+% Calculate the Geometric mean of the entries of the Coefficient matrix
+% $C_{f}$ which may or may not contain Q. may or may not contain
+% denominator.#
 %
 % % Inputs.
 %
@@ -56,13 +63,13 @@ global SETTINGS
 
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
-% Values
-%   * T :
-%   * DT :
-%   * DTQ :
-%   * TQ :
-%   * DTQ Denominator Removed :
-%   * DTQ Rearranged :
+    % Values
+    %   * T :
+    %   * DT :
+    %   * DTQ :
+    %   * TQ :
+    %   * DTQ Denominator Removed :
+    %   * DTQ Rearranged :
     
     case 'DTQ'
         % Compute Geometric Mean of D^{-1}T(f,g)Q, which contains three
@@ -121,17 +128,16 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         GM_fx = 10.^(p1_log + p3_log + p3_log - p4_log);
         
     case 'DT'
-        % Exclude Q from Geometric mean calculations.
-        % Split this calculation in to three parts, Numerator_A, the
-        % coefficients of fx, Numerator_B : the binomial coefficients
-        % corresponding to the a_{i} in the scaled bernstein basis, and
-        % Denominator. When Sylvester Matrix is without Q, numerators
-        % consist of a_{i}\binom{m}{i}. Denominator changes for each row
-        % and is given by \binom{m+n-k}{i+j} where i is the row number and
-        % j is the column number, (index from 0).
+        % Exclude Q from Geometric mean calculations. Split this
+        % calculation in to three parts, Numerator_A, the coefficients of
+        % fx, Numerator_B : the binomial coefficients corresponding to the
+        % a_{i} in the scaled bernstein basis, and Denominator. When
+        % Sylvester Matrix is without Q, numerators consist of
+        % a_{i}\binom{m}{i}. Denominator changes for each row and is given
+        % by \binom{m+n-k}{i+j} where i is the row number and j is the
+        % column number, (index from 0).
         
-        % Geometric mean is given by
-        % $$\prod_{j=0}^{n-k}\prod_{i=0}^{m}$$
+        % Geometric mean is given by $$\prod_{j=0}^{n-k}\prod_{i=0}^{m}$$
         %
         %
         
@@ -196,13 +202,14 @@ function GM_fx = GMnchoosek(fx, n_k)
 %
 % fx : (Vector) Coefficients of the polynomial f(x)
 %
-% n_k : (Int) Degree of polynomial v_{k}(x), determines number of columns in
-% T_{n-k}(f(x))
+% n_k : (Int) Degree of polynomial v_{k}(x), determines number of columns
+% in T_{n-k}(f(x))
 %
 %
 % Outputs.
 %
-% gm : (Float) Geometric mean of entries of fx in the Syvlester Matrix S_{k}
+% gm : (Float) Geometric mean of entries of fx in the Syvlester Matrix
+% S_{k}
 %
 
 % Global Variables.
@@ -210,12 +217,12 @@ global SETTINGS
 
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
-%   * T :
-%   * DT :
-%   * DTQ :
-%   * TQ :
-%   * DTQ Denominator Removed :
-%   * DTQ Rearranged :
+    %   * T :
+    %   * DT :
+    %   * DTQ :
+    %   * TQ :
+    %   * DTQ Denominator Removed :
+    %   * DTQ Rearranged :
     case 'T'
         
     case 'DT'
@@ -251,9 +258,8 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         m = GetDegree(fx);
         p2 = 1;
         
-        % Get geometric mean of a_{i}
-        % \prod_{i=0}^{m} a_{i} .^(1/m+1)
-        % p1 = prod(abs(fx)).^(1./(m+1)) % without using geomean
+        % Get geometric mean of a_{i} \prod_{i=0}^{m} a_{i} .^(1/m+1) p1 =
+        % prod(abs(fx)).^(1./(m+1)) % without using geomean
         
         p1 = geomean(abs(fx));
         
@@ -270,10 +276,10 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         end
         p2 = temp_prod.^(1./((m+1)*(n_k+1)));
         
-       
+        
         % Denominator is included
         p3 = nchoosek(m+n_k,n_k);
-          
+        
         
         GM_fx = (p1.*p2.*p2) ./ p3;
         
@@ -281,10 +287,10 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
     case 'TQ'
         error('err')
-    
+        
     case 'DTQ Denominator Removed'
         error('err')
-
+        
     case 'DTQ Rearranged'
         error('err')
         

@@ -1,6 +1,7 @@
 function [] = SetGlobalVariables_Roots(ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,...
-    Sylvester_Build_Method, rank_revealing_metric, deconvolution_method_hx, deconvolution_method_wx)
+    Sylvester_Build_Method, rank_revealing_metric, deconvolution_method_hx,...
+    deconvolution_method_wx, deconvolution_preproc)
 % Set the global variables
 %
 % Inputs.
@@ -33,6 +34,16 @@ SETTINGS.SEED = 1024;
 
 % Outputs
 SETTINGS.PLOT_GRAPHS = false;
+SETTINGS.PLOT_GRAPHS_ROOTS = false;
+SETTINGS.PLOT_GRAPHS_PREPROCESSING = false;
+SETTINGS.PLOT_GRAPHS_GCD_DEGREE = false;
+SETTINGS.PLOT_GRAPHS_LOW_RANK_APPROXIMATION = false;
+SETTINGS.PLOT_GRAPHS_DECONVOLUTION_LRA = false;
+
+
+
+threshold = 1e-15;
+iterations = 20;
 
 % BOOL_LOG (Boolean)
 %   true : Use Logs
@@ -112,8 +123,8 @@ SETTINGS.SYLVESTER_BUILD_METHOD = Sylvester_Build_Method;
 %
 
 SETTINGS.LOW_RANK_APPROXIMATION_METHOD = low_rank_approx_method;
-SETTINGS.MAX_ERROR_SNTLN = 1e-13;
-SETTINGS.MAX_ITERATIONS_SNTLN = 10;
+SETTINGS.MAX_ERROR_SNTLN = threshold;
+SETTINGS.MAX_ITERATIONS_SNTLN = iterations;
 
 %--------------------------------------------------------------------------
 %
@@ -132,8 +143,8 @@ SETTINGS.APF_BUILD_METHOD = 'Standard';
 
 % Regarding the computation of the low rank approximation of the 
 % C = [C(u) ; C(v)] matrix
-SETTINGS.MAX_ERROR_APF = 1e-14;
-SETTINGS.MAX_ITERATIONS_APF = 50;
+SETTINGS.MAX_ERROR_APF = threshold;
+SETTINGS.MAX_ITERATIONS_APF = iterations;
 
 
 
@@ -160,15 +171,15 @@ SETTINGS.DECONVOLUTION_METHOD_HX = deconvolution_method_hx;
 % DECONVOLUTION_METHOD_WX_HX
 % Separate
 % Batch
-if (strcmp(deconvolution_method_wx, 'Batch') || strcmp(deconvolution_method_wx ,'Separate'))
+if (strcmp(deconvolution_method_wx, 'Batch') || strcmp(deconvolution_method_wx ,'Separate') || strcmp(deconvolution_method_wx ,'Batch With STLN') )
     SETTINGS.DECONVOLUTION_METHOD_WX = deconvolution_method_wx;
 else
     error('not valid')
 end
 
-SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-15;
-SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 10;
-SETTINGS.PREPROC_DECONVOLUTIONS = true;
+SETTINGS.MAX_ERROR_DECONVOLUTIONS = threshold;
+SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = iterations;
+SETTINGS.PREPROC_DECONVOLUTIONS = deconvolution_preproc;
 
 end
 

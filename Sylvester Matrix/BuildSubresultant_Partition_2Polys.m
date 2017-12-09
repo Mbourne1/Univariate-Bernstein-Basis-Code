@@ -1,4 +1,4 @@
-function [Cf] = BuildSubresultant_Partition_2Polys(fx,n_k)
+function [Cf] = BuildSubresultant_Partition_2Polys(fx, n_k)
 % BuildSubresultant_Partition_2Polys(fx, n_k)
 %
 % This function builds a partition of the kth subresultant matrix S_{k}(f,g)
@@ -26,31 +26,31 @@ m = GetDegree(fx);
 
 switch SETTINGS.SYLVESTER_BUILD_METHOD
     
-    case 'T'
+    case {'T'}
         
         T1 = BuildT1(fx, n_k);
         Cf = T1;
         
-    case 'DT'
+    case {'DT'}
         
         D = BuildD_2Polys(m, n_k);
         T1 = BuildT1(fx, n_k);
         Cf = D*T1;
         
-    case 'DTQ'
+    case {'DTQ'}
         
         D = BuildD_2Polys(m, n_k);
         T1 = BuildT1(fx, n_k);
         Q1 = BuildQ1(n_k);
         Cf = D*T1*Q1;
         
-    case 'TQ'
+    case {'TQ'}
         
         T1 = BuildT1(fx, n_k);
         Q1 = BuildQ1(n_k);
         Cf = T1*Q1;
         
-    case 'DTQ Denominator Removed'
+    case {'DTQ Denominator Removed'}
         
         DT1Q1 = BuildDT1Q1_Rearranged_RemovedDenom(fx, n_k);
         

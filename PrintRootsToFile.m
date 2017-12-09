@@ -1,5 +1,5 @@
 
-function [] = PrintRootsToFile(arr_RootFindingMethod, arr_ForwardErrors, arr_BackwardErrors)
+function [] = PrintRootsToFile(arr_RootFindingMethod, arr_BackwardErrors, arr_ForwardErrors, vError_arr_fx, vError_arr_hx, vError_arr_wx)
 % Print results of root finding computation to a text file
 %
 % % Inputs
@@ -7,7 +7,17 @@ function [] = PrintRootsToFile(arr_RootFindingMethod, arr_ForwardErrors, arr_Bac
 % arr_RootFindingMethod : (Array of Strings) Array of the names of the root
 % finding methods used
 %
+% arr_ForwardErrors :
+%
+% arr_BackwardErrors : 
+%
 % arr_errors : (Array of Floats)
+%
+% vErrors_arr_fx : (Vector)
+%
+% vErrors_arr_hx : (Vector)
+%
+% vErrors_arr_wx : (Vector)
 
 
 global SETTINGS
@@ -27,9 +37,13 @@ if exist(fullFileName, 'file')
         method_BackwardError = arr_BackwardErrors{i};
         method_ForwardError = arr_ForwardErrors{i};
         
+        error_fx = norm(vError_arr_fx);
+        error_hx = norm(vError_arr_hx);
+        error_wx = norm(vError_arr_wx);
+        
         % Only print results if my method
         if (strcmp(method_name, 'My Method'))
-            WriteNewLine(method_name, method_BackwardError, method_ForwardError);
+            WriteNewLine(method_name, method_BackwardError, method_ForwardError, error_fx, error_hx, error_wx);
         end
         
         
@@ -59,10 +73,10 @@ end
 
 
 
-    function WriteNewLine(method_name, myBackwardError, myForwardError)
+    function WriteNewLine(method_name, myBackwardError, myForwardError, error_fx, error_hx, error_wx)
         % Write a new line of the text file
         
-        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n',...
+        fprintf(fileID,'%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n',...
             datetime('now'),...
             SETTINGS.EX_NUM,...
             SETTINGS.MEAN_METHOD,...
@@ -79,15 +93,19 @@ end
             method_name,...
             SETTINGS.DECONVOLUTION_METHOD_HX,...
             SETTINGS.DECONVOLUTION_METHOD_WX,...
+            num2str(SETTINGS.PREPROC_DECONVOLUTIONS),...
+            myBackwardError,...
             myForwardError,...
-            myBackwardError...
+            error_fx,...
+            error_hx,...
+            error_wx...
             );
     end
 
 
     function WriteHeader()
         % If the file doesnt already exist, write a header to the text file
-        fprintf(fileID,'DATE, EX_NUM, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD, LOW_RANK_ITE, APF_METHOD, APF_ITE, BOOL_LOG, SYLVESTER_BUILD_METHOD, GCD_METHODM, METHOD_NAME, DECONVOLUTION_METHOD HX, DECONVOLUTION_METHOD WX, FORWARD_ERROR, BACKWARD_ERROR \n');
+        fprintf(fileID,'DATE, EX_NUM, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD, LOW_RANK_ITE, APF_METHOD, APF_ITE, BOOL_LOG, SYLVESTER_BUILD_METHOD, GCD_METHODM, METHOD_NAME, DECONVOLUTION_METHOD HX, DECONVOLUTION_METHOD WX, DECONVOLUTION_PREPROC, FORWARD_ERROR, BACKWARD_ERROR, ERROR_FX, ERROR_HX, ERROR_WX \n');
     end
 
 

@@ -29,10 +29,8 @@ m = GetDegree(fx);
 n = GetDegree(gx);
 
 % Initialise the vector of perturbations zf(x)
-z_fx = zeros(m+1, 1);
-
-% Initialise the vector of perturbations zg(x)
-z_gx = zeros(n+1, 1);
+z_fx = zeros(m + 1, 1);
+z_gx = zeros(n + 1, 1);
 
 % Initialise the vector of perturbations z.
 z = [z_fx ; z_gx];
@@ -49,17 +47,17 @@ DBQ = BuildDTQ(z_fx, z_gx, k);
 % Get A_{t} the LHS matrix, equivalent to S_{t} with the optimal column
 % removed.
 Ak = DTQ;
-Ak(:,idx_OptCol) = [];
+Ak(:, idx_OptCol) = [];
 
 % Get c_{t} the removed column of S_{t} to form A_{t}.
-ck = DTQ(:,idx_OptCol);
+ck = DTQ(:, idx_OptCol);
 
 % Get E_{t}, the matrix of strucured perturbations corresponding to A_{t}.
 Bk = DBQ;
-Bk(:,idx_OptCol) = [];
+Bk(:, idx_OptCol) = [];
 
 % Get h_{t}, the vector of strucutred perturbations corresponding to c_{t}
-hk = DBQ(:,idx_OptCol);
+hk = DBQ(:, idx_OptCol);
 
 % Build DP
 DPQ = BuildDPG_STLN(m, n, k, idx_OptCol);
@@ -68,108 +66,142 @@ DPQ = BuildDPG_STLN(m, n, k, idx_OptCol);
 xk = SolveAx_b(Ak + Bk, ck + hk);
 
 % Get residual vector
-res_vec = (ck + hk) - (Ak+Bk)*xk;
+t = (ck + hk) - (Ak + Bk)*xk;
 
 % Get the vector x with a zero included in the x_ls solution.
-x = [xk(1:idx_OptCol-1) ; 0 ; xk(idx_OptCol:end)];
-
-
+x = [xk(1 : idx_OptCol - 1) ; 0 ; xk(idx_OptCol : end)];
 
 % Build the matrix Y_{t}
 DYQ = BuildDYQ_STLN(x, m, n, k);
 
 % Build the Matrx C for LSE problem
+C_z = DYQ - DPQ;
+C_x = Ak + Bk;
 
-H_z = DYQ - DPQ;
-H_x = Ak + Bk;
-
-C = [H_z H_x];
+C = [C_z C_x];
 
 % Build the identity matrix E.
-E = blkdiag(eye(m+n+2), zeros(m+n-2*k+1, m+n-2*k+1));
+%E = blkdiag(eye(m + n + 2), zeros(m + n - 2*k + 1, m + n - 2*k + 1));
+
+%H1 = (n-k+1) * eye(m + 1);
+%H2 = (m-k+1) * eye(n + 1);
+
+
+
+H1 =  eye(m + 1) .* (n - k + 1);
+H2 =  eye(n + 1) .* (m - k + 1);
+
+D = blkdiag(H1,H2);
+zeroblock = zeros(m + n +2, m + n - 2*k + 1);
+E = [D zeroblock];
+
 
 
 % Define the starting vector for the iterations for the LSE problem.
-start_point     =   ...
+start_point = ...
     [...
         z;...
-        xk;
+        xk;...
     ];
 
+% start_point     =   ...
+%     [...
+%         z;...
+%         xk;
+%     ];
 
 % Initialise yy the vector of accumulated perturbations.
 yy = start_point;
 
 % Set the initial value of vector p to be zero
-f = -(yy - start_point);
+s = (D * z);
 
 
 % Initialise the iteration counter
 ite = 1;
 
 % Set the termination criterion.
-condition(ite) = norm(res_vec)./norm(ck);
+vCondition(ite) = norm(t)./norm(ck);
 
 
-while condition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
+while vCondition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATIONS_SNTLN
     
     % increment iteration number
     ite = ite + 1;
     
-    % Get small changes in vector y
-    y_lse = LSE(E, f, C, res_vec);
+    % usage: x = lse(A,b,C,d)
+    % Minimizes norm(A*x - b),
+    % subject to C*x = d
+    y_lse = LSE_new(E, s, C, t);
+    
+    % usage: x = lse(E,p,C,q)
+    % Minimizes norm(E*w - p),
+    % subject to C*w = q
+    
     
     % add small changes to cummulative changes
     yy = yy + y_lse;
     
     % obtain the small changes in z and x
-    delta_zk        = y_lse(1 : m+n+2,1);
-    delta_xk        = y_lse((m+n+3) : (2*m+2*n-2*k+3),1);
+    delta_zk        = y_lse(1 : m + n + 2, 1);
+    delta_xk        = y_lse((m + n + 3) : (2*m + 2*n - 2*k + 3), 1);
     
     % Update z and x
     z = z + delta_zk;
     xk = xk + delta_xk;
     
+    
     % Split z into z_f and z_g
-    z_fx = z(1 : m+1);
-    z_gx = z(m+2 : end);
+    z_fx = z(1 : m + 1);
+    z_gx = z(m+ 2  : end);
     
     % Build the matrix E = D^{-1} * B(zf,zg) * Q
     DBQ = BuildDTQ(z_fx, z_gx, k);
     
     % Build the matrix Bt = DBQ with opt column removed.
     Bk = DBQ;
-    Bk(:,idx_OptCol) = [];
+    Bk(:, idx_OptCol) = [];
     
     % Get h_{t}, the optimal column removed from BDQ
-    hk = DBQ(:,idx_OptCol);
+    hk = DBQ(:, idx_OptCol);
     
+   
     % Get the vector x
-    x = [xk(1:idx_OptCol-1) ; 0 ; xk(idx_OptCol:end)];
+    x = [xk(1 : idx_OptCol - 1) ; 0 ; xk(idx_OptCol : end)];
     
     % Separate the component parts of x into x_v and x_u, where x_v is an
     % approximation of v(x) and x_u is an approximation u(x).
-    DYQ = BuildDYQ_SNTLN(x, m, n, k, 1, 1);
+    DYQ = BuildDYQ_STLN(x, m, n, k);
     
     % Get updated residual vector
-    res_vec = (ck + hk) - ((Ak + Bk)*xk);
+    t = (ck + hk) - ((Ak + Bk)*xk);
     
     % Update the matrix C
-    H_z = DYQ - DPQ;
-    H_x = Ak + Bk;
-    C = [H_z H_x];
+    C_z = DYQ - DPQ;
+    C_x = Ak + Bk;
+    C = [C_z C_x];
     
     % Update fnew - used in LSE Problem.
-    f = -(yy-start_point);
+    s = (E * (start_point - yy));
     
     % Update the termination criterion.
-    condition(ite) = norm(res_vec) ./ norm(ck + hk) ;
+    vCondition(ite) = norm(t) ./ norm(ck + hk) ;
+    
+    
     
 end
 
+cond(Ak)
+cond(Ak + Bk)
 
-% Plot graphs
-Plot_STLN()
+
+if SETTINGS.PLOT_GRAPHS_LOW_RANK_APPROXIMATION
+    PlotResiduals(vCondition)
+end
+
+
+
+
 
 % Print the number of iterations required
 LineBreakLarge()
@@ -189,16 +221,16 @@ gx_lr = gx + z_gx;
 % % Get polynomials u(x) and v(x)
 
 % Get u(x) and v(x) from x_ls
-x = [xk(1 : idx_OptCol - 1) ; -1 ; xk(idx_OptCol : end)];
+x_bar = [xk(1 : idx_OptCol - 1) ; -1 ; xk(idx_OptCol : end)];
 
 % Get the number of coefficients in v(x)
 nCoefficients_vx = n - k + 1;
 
 % Get the polynomial v(x) from the vector x
-vx_lr = x(1 : nCoefficients_vx);
+vx_lr = x_bar(1 : nCoefficients_vx);
 
 % Get the polynomial u(x) from the vector x
-ux_lr = -1.* x(nCoefficients_vx + 1 : end) ;
+ux_lr = -1.* x_bar(nCoefficients_vx + 1 : end) ;
 
 
 end

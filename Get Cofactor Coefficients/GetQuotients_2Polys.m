@@ -4,15 +4,17 @@ function [ux, vx] = GetQuotients_2Polys(fx, gx, k)
 %
 % % Inputs
 %
-% [fx, gx] : Coefficients of the polynomial f(x) and g(x) in the Bernstein 
-% basis
+% fx : (Vector) Coefficients of the polynomial f(x)
+%
+% gx : (Vector) Coefficients of the polynomial g(x) 
 % 
-% k : Degree of common divisor
+% k : (Int) Degree of common divisor
 %
 % % Outputs
 %
-% [ux, vx] : Coefficients of the polynomial u(x) and v(x) in the Bernstein
-% basis.
+% ux : (Vector) Coefficients of the polynomial u(x) 
+%
+% vx : (Vector) Coefficients of the polynomial v(x) 
 
 global SETTINGS
 
@@ -26,12 +28,19 @@ St = BuildSubresultant_2Polys(fx, gx, k);
 % Get the optimal column for removal
 [~,idx_col] = GetMinDistance(St);
 
+if idx_col > n - k + 1
+    fprintf('Second partition')
+end
+
 % Remove optimal column
 At = St;
 At(:,idx_col) = [];
 
 % Get the optimal column c_{t} removed from S_{k}
 ct = St(:,idx_col);
+
+% Get condition number of At
+display(cond(At))
 
 % Obtain the solution vector x = [-v;u]
 x_ls = SolveAx_b(At,ct);

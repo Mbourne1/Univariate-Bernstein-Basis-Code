@@ -1,4 +1,4 @@
-function plotMaxMinRowDiagonals(vMaxDiagR1,vMinDiagR1, limits_k, limits_t, rank_range)
+function plotMaxMinRowDiagonals(vMaxDiagR1, vMinDiagR1, limits_k, limits_t, rank_range)
 %
 % % Inputs
 %
@@ -23,9 +23,11 @@ x_vec = lowerLimit_k : 1 : upperLimit_k;
 % Plot Graph of ratio of max : min element of the diagonal elements of R1 from the QR decompositions.
 figure_name = sprintf('%s : Max:min Row Diagonals',mfilename);
 figure('name',figure_name)
-vRatio_MaxMin_Diagonals_R = log10(vMinDiagR1)./log10(vMaxDiagR1);
+
+vRatio_MaxMin_Diagonals_R = vMinDiagR1./vMaxDiagR1;
+
 plot(x_vec, log10(vRatio_MaxMin_Diagonals_R),'red-s');
-%xlim([lowerLimit_k upperLimit_k]);
+xlim([lowerLimit_k upperLimit_k]);
 
 hline([rank_range mean(rank_range)],{'-r','-r','-b'})
 

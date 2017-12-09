@@ -1,8 +1,8 @@
 function plotMaxMinSingularValues(vMaximumSingularValues, vMinimumSingularValues, limits_k, limits_t, rank_range)
 % Plot the minimum/maximum singular values
 %
-% % Inputs 
-% 
+% % Inputs
+%
 % vMaximumSingularValues : (Vector) Vector of Maximum singular values from
 % each S_{k}(f,g)
 %
@@ -15,7 +15,7 @@ function plotMaxMinSingularValues(vMaximumSingularValues, vMinimumSingularValues
 % limits_t : [Int Int] The range of values in which the degree 't' of the
 % GCD must lie.
 %
-% rank_range : [Float Float] 
+% rank_range : [Float Float]
 
 %
 lowerLimit_k = limits_k(1);
@@ -27,11 +27,12 @@ figure_name = sprintf('%s : max:min Singular Values of %s',mfilename,SETTINGS.SY
 figure('name',figure_name);
 hold on
 try
-xlim([lowerLimit_k upperLimit_k]);
+    xlim([lowerLimit_k upperLimit_k]);
 catch
 end
 x_vec = lowerLimit_k : 1 : upperLimit_k;
-plot(x_vec,log10(vMinimumSingularValues./vMaximumSingularValues),'-s','DisplayName','Singular Values')
+vMetric = log10(vMinimumSingularValues) - log10(vMaximumSingularValues);
+plot(x_vec,vMetric,'-s','DisplayName','Singular Values')
 
 
 
@@ -44,7 +45,7 @@ ylabel('log (\sigma_{k})')
 xlabel('k')
 legend(gca,'show');
 
-
+grid on
 
 hold off
 

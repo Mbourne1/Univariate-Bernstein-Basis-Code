@@ -35,17 +35,18 @@ end
 
 % Define M to be the total number of all coefficients of the first d polynomials
 % f_{0}...f_{d-1},
-M = sum(vDeg_arr_fx+1) - (vDeg_arr_fx(end)+1);
+M = sum(vDeg_arr_fx + 1) - (vDeg_arr_fx(end) + 1);
 
 % Define M1 to be the total number of all coefficients of polynomials
 % f_{0},...,f_{d}
-nCoefficients_fx = sum(vDeg_arr_fx+1);
+nCoefficients_fx = sum(vDeg_arr_fx + 1);
+
+
 
 % Preprocess
 if(SETTINGS.PREPROC_DECONVOLUTIONS)
     
     theta = GetOptimalTheta(arr_fx);
-    fprintf([mfilename ' : ' sprintf('Optimal theta : %e \n',theta)])
     
 else
     theta = 1;
@@ -69,10 +70,10 @@ RHS_vec_fw = BuildRHSF(arr_fw);
 
 
 % % Get the vector containing coefficients of polynomials p_{i}(\omega)
-vec_pw = SolveAx_b(DT_fwQ, RHS_vec_fw);
+v_pw = SolveAx_b(DT_fwQ, RHS_vec_fw);
 
 % Get number of coefficients in all the polynomials p_{i}(\omega)
-nCoefficients_px = length(vec_pw);
+nCoefficients_px = length(v_pw);
 
 unique_vMult = unique(vMult);
 
@@ -98,7 +99,7 @@ end
 % %
 % Get the polynomials p_{i}(x) repeated to give the set of polynomials
 % h_{i}(x).
-arr_pw = GetPolynomialArrayFromVector(vec_pw, vDegree_arr_px);
+arr_pw = GetPolynomialArrayFromVector(v_pw, vDegree_arr_px);
 
 % %
 % %
@@ -116,36 +117,34 @@ for i = 1:1:nPolys_arr_fx
 end
 
 % Build vector z(\omega) consisting of all vectors in z_{i}(x)
-v_zw = cell2mat(arr_zw);
+v_qw = cell2mat(arr_zw);
 
 % Build the matrix P
-P = [eye(M) zeros(M,nCoefficients_fx-M)];
+P = [eye(M) zeros(M, nCoefficients_fx - M)];
 
 % DY_hQ
-DY_hQ = BuildDYQ(arr_hw,vDeg_arr_fx);
+DY_hQ = BuildDYQ(arr_hw, vDeg_arr_fx);
 
 % Set iteration number
 ite = 1;
 
 % Build the matrix F
-F = eye(nCoefficients_px + nCoefficients_fx);
-
+E = [eye(nCoefficients_fx) zeros(nCoefficients_fx, nCoefficients_px)];
 
 % Build the matrix G
 
 % Build component H_h of G
-H_h = DT_fwQ;
-
 % Build component H_z of G
-H_z = DY_hQ - P;
+C_z = DY_hQ - P;
+C_h = DT_fwQ;
 
-G = [H_h H_z];
+C = [C_z C_h];
 
 % Compute the first residual
-res_vec = RHS_vec_fw + (P*v_zw) - (DT_fwQ * vec_pw);
+t = RHS_vec_fw + (P*v_qw) - (DT_fwQ * v_pw);
 
 % Update Matrix P*z
-Pz = P*v_zw;
+Pq = P*v_qw;
 
 % Perform test
 %for i = 1 : 1 : nPolys_arr_fx
@@ -155,64 +154,59 @@ Pz = P*v_zw;
 %test2 = DT_fwQ * v_pw;
 %test1./test2
 
-condition(ite) = norm(res_vec)./norm(RHS_vec_fw + Pz);
+vCondition(ite) = norm(t)./norm(RHS_vec_fw + Pq);
 
 start_point = ...
     [
-    vec_pw;
-    v_zw;
+        v_qw;
+        v_pw;
     ];
 
 %Get the iterated value
 yy = start_point;
 
 % Get
-s = -(yy - start_point);
+s = E * (start_point - yy);
 
 
 
-while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
+while (vCondition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
         (ite < SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS)
     
     % Use the QR decomposition to solve the LSE problem and then
     % update the solution.
     % min |Fy-s| subject to Gy=t
-    y = LSE(F,s,G,res_vec);
+    y = LSE_new(E,s,C,t);
     
     yy = yy + y;
     
     % output y gives delta p and delta z
-    delta_pw = y(1 : nCoefficients_px);
-    delta_zw = y(nCoefficients_px+1 : end);
+    delta_qw = y(1 : nCoefficients_fx);
+    delta_pw = y(nCoefficients_fx + 1 : nCoefficients_fx + nCoefficients_px);
     
     % Add structured perturbations to vector p(\omega)
-    vec_pw = vec_pw + delta_pw;
-    
-    % Add structured perturbations to vector z(\omega)
-    v_zw = v_zw + delta_zw;
+    v_pw = v_pw + delta_pw;
+    v_qw = v_qw + delta_qw;
     
     % Get the updated array of polynomials p_{i}(\omega)
-    arr_pw = GetPolynomialArrayFromVector(vec_pw, vDegree_arr_px);
+    arr_pw = GetPolynomialArrayFromVector(v_pw, vDegree_arr_px);
+    arr_zw = GetPolynomialArrayFromVector(v_qw, vDeg_arr_fx);
     
-    arr_zw = GetPolynomialArrayFromVector(v_zw, vDeg_arr_fx);
+    arr_hw = Get_hx(arr_pw, unique_vMult);
     
-    arr_hw = Get_hx(arr_pw,unique_vMult);
+    s = E*(start_point - yy);
     
-    s = -(yy-start_point);
-    
-    DY_hQ = BuildDYQ(arr_hw,vDeg_arr_fx);
+    DY_hQ = BuildDYQ(arr_hw, vDeg_arr_fx);
     
     % Build the matrix C(f)
-    DT_fwQ = BuildDTQ(arr_fw,vMult);
-    
-    % Build the matrix C(z)
-    DT_zwQ = BuildDTQ(arr_zw,vMult);
+    DT_fwQ = BuildDTQ(arr_fw, vMult);
+    DT_zwQ = BuildDTQ(arr_zw, vMult);
     
     % Build G
-    H_z = DY_hQ - P;
-    H_h = DT_fwQ + DT_zwQ;
+    C_z = DY_hQ - P;
+    C_h = DT_fwQ + DT_zwQ;
     
-    G = [H_h H_z];
+    C = [C_z C_h];
     
     % Update the RHS vector
     RHS_vec_fw = BuildRHSF(arr_fw);
@@ -220,13 +214,13 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     
     
     % Calculate residual and increment t in LSE Problem
-    res_vec = ((RHS_vec_fw+RHS_vec_Pz) - ((DT_fwQ + DT_zwQ)*vec_pw));
+    t = ((RHS_vec_fw+RHS_vec_Pz) - ((DT_fwQ + DT_zwQ)*v_pw));
     
     % Increment iteration number
     ite = ite + 1;
     
     % Get condition number
-    condition(ite) = norm(res_vec)./norm(RHS_vec_fw + RHS_vec_Pz);
+    vCondition(ite) = norm(t)./norm(RHS_vec_fw + RHS_vec_Pz);
 end
 
 
@@ -240,9 +234,16 @@ LineBreakLarge();
 fprintf([mfilename ' : ' sprintf('Required Number of iterations : %i \n',ite)]);
 LineBreakLarge();
 
+if (SETTINGS.PLOT_GRAPHS_DECONVOLUTION_LRA)
+    figure()
+    hold on
+    plot(log10(vCondition))
+    hold off
 end
 
-function LHS_Matrix = BuildDTQ(arr_fx,vMult)
+end
+
+function LHS_Matrix = BuildDTQ(arr_fx, vMult)
 % %
 % %
 % Build the LHS Coefficient matrix

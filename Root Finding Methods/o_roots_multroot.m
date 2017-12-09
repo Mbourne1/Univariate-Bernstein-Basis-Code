@@ -5,7 +5,7 @@ function [roots_Bb] = o_roots_multroot(fx)
 % % Inputs.
 %
 % fx : (Vector) Vector of coefficients of the polynomial f(x) in Bernstein
-%   form.
+%   form.
 %
 % % Outputs.
 %
@@ -16,22 +16,17 @@ function [roots_Bb] = o_roots_multroot(fx)
 
 addpath 'Root Finding Methods/multroot/multroot'
 
-% Get the degree of polynomial f(x) 
-[r,~] = size(fx);
-m = r-1;
+% Get the degree of polynomial f(x) 
+m = GetDegree(fx);
 
 % Build the vector of corresponding binomial coefficients
 Bi_m = GetBinomials(m);
 
-roots_calc = multroot(fx.*Bi_m);
-    
+fx_bi = fx.* Bi_m;
+
+fx_bi = flipud(fx_bi);
+
+roots_calc = multroot(fx_bi);
 
 % convert roots wrt t, Bernstein basis
-roots_Bb = [1- roots_calc(:,1)./(1+roots_calc(:,1)) roots_calc(:,2)];
-
-
-
-
-
-end
-
+roots_Bb = [roots_calc(:,1)./(1+roots_calc(:,1)) roots_calc(:,2)];

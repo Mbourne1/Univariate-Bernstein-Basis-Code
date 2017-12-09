@@ -24,7 +24,7 @@ nPolys_arr_fx = size(arr_fx, 1);
 arr_hx = cell(nPolys_arr_fx - 1, 1);
 
 % for each item in set g starting at
-for i = 1:1:nPolys_arr_fx - 1
+for i = 1 : 1 : nPolys_arr_fx - 1
     
     % Get the two polynomials which are to be deconvolved
     % f{i},f{i+1}

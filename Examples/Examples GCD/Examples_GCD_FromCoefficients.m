@@ -42,6 +42,13 @@ display(dx_sym)
 display(ux_sym)
 display(vx_sym)
 
+m = feval(symengine, 'degree', fx_sym);
+n = feval(symengine, 'degree', gx_sym);
+t = feval(symengine, 'degree', dx_sym);
+
+fprintf('Degree f(x) : %i \n', m)
+fprintf('Degree g(x) : %i \n', n)
+fprintf('Degree d(x) : %i \n', t)
 end
 
 

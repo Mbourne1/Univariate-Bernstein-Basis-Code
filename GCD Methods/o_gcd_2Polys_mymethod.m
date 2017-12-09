@@ -34,29 +34,34 @@ function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t, rank_range] = ...
 
 
 
-% Use this to compute the degree of the GCD using ONLY one Sylvester matrix
-% onesub = 'y'. This code is included as a test to show that computing GCD degree by
-% method using ALL subresultant matrices gives better results than using 
-% just the first subresultant.
-onesub = 'n';
-if onesub == 'y'
-    
-    Get_GCD_Degree_One_Subresultant(fx,gx);
-    fx_o = [];
-    gx_o = [];
-    dx_o = [];
-    ux_o = [];
-    vx_o = [];
-    alpha_o = [];
-    theta_o = [];
-    t = [];
-    
-    return;
-end
+% % Use this to compute the degree of the GCD using ONLY one Sylvester matrix
+% % onesub = 'y'. This code is included as a test to show that computing GCD degree by
+% % method using ALL subresultant matrices gives better results than using 
+% % just the first subresultant.
+% onesub = 'n';
+% if onesub == 'y'
+%     
+%     Get_GCD_Degree_One_Subresultant(fx,gx);
+%     fx_o = [];
+%     gx_o = [];
+%     dx_o = [];
+%     ux_o = [];
+%     vx_o = [];
+%     alpha_o = [];
+%     theta_o = [];
+%     t = [];
+%     
+%     return;
+% end
 
-% % Get the degree of the GCD
 
-[t, alpha, theta, GM_fx, GM_gx, rank_range] = Get_GCD_Degree_2Polys(fx, gx, limits_t, rank_range);
+% Get the degree of the GCD
+[t, alpha, theta, GM_fx, GM_gx, rank_range] = ...
+    Get_GCD_Degree_2Polys(fx, gx, limits_t, rank_range);
+
+
+
+
 LineBreakLarge();
 
 
@@ -81,8 +86,8 @@ end
 % Normalise f(x) and g(x) by Geometric mean to obtain fx_n and gx_n.
 % Normalise by geometric mean obtained by entries of f(x) and g(x) in the
 % subresultant S_{t}
-fx_n = fx./ GM_fx;
-gx_n = gx./ GM_gx;
+fx_n = fx ./ GM_fx;
+gx_n = gx ./ GM_gx;
 
 % % Get the optimal column of the sylvester matrix to be removed. Where
 % % removal of the optimal column gives the minmal residual in (Ak x = ck)
@@ -92,15 +97,22 @@ fw = GetWithThetas(fx_n, theta);
 a_gw = alpha.* GetWithThetas(gx_n, theta);
 
 % Build S_{t}(f,g)
-St_preproc = BuildSubresultant_2Polys(fw, a_gw, t);
+St_preproccessed = BuildSubresultant_2Polys(fw, a_gw, t);
 
 % Get index of optimal column for removal
-[~,idx_col] = GetMinDistance(St_preproc);
+[~,idx_col] = GetMinDistance(St_preproccessed);
+
+
+
 
 % % Get Low rank approximation of the Sylvester matrix S_{t}(f,g)
 % suffix 'lr' stands for 'low rank'
 [fx_lr, gx_lr, ux_lr, vx_lr, alpha_lr, theta_lr] = ...
-    LowRankApproximation_2Polys(fx_n, gx_n, alpha, theta, t, idx_col);
+    LowRankApproximation_2Polys(fx, gx, GM_fx, GM_gx, alpha, theta, t, idx_col);
+
+
+
+
 
 % Get the coefficients of the GCD by APF or other method.
 % suffix alr stands for 'approx low rank' 

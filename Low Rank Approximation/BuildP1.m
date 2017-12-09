@@ -21,6 +21,6 @@ P1 = zeros(m+n_k+1,m+1);
 mat = eye(m+1);
 
 % 
-P1(idx_col:idx_col+m, :) = mat;
+P1(idx_col : idx_col + m, :) = mat;
 
 end

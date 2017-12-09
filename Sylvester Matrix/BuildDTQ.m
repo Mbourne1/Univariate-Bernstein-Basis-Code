@@ -22,13 +22,13 @@ m = GetDegree(fx);
 n = GetDegree(gx);
 
 % Build matrix D^{-1}
-D = BuildD_2Polys(m,n-k);
+D = BuildD_2Polys(m, n - k);
 
 % Build matrix T(f,g) = T_{n-k}(f) T_{m-k}*(g)
-T = BuildT_2Polys(fx,gx,k);
+T = BuildT_2Polys(fx, gx, k);
 
 % Build matrix Q = [Q_{n-k} Q_{m-k}]
-Q = BuildQ_2Polys(m,n,k);
+Q = BuildQ_2Polys(m, n, k);
 
 % Get D^{-1} * T(f,g) * Q
 DTQ = D*T*Q;

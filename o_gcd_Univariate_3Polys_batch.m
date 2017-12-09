@@ -5,14 +5,15 @@ function [] = o_gcd_Univariate_3Polys_batch()
 %
 %
 
-ex_num_arr = {'1'};
-%ex_num_arr = {  '2'};
+ex_num_arr = {'1','2','3','4','5','6','7','8','9','10','11','12'};
 bool_alpha_theta_arr = {true, false};
 emin_arr = {1e-08,1e-10,1e-12};
 %emin_arr = {1e-08,1e-10};
-low_rank_approx_method_arr = {'Standard SNTLN', 'Standard STLN', 'None'};
-apf_method_arr = {'Standard APF Nonlinear', 'None'};
-mean_method_arr = {'Geometric Mean Matlab Method','None'};
+
+%low_rank_approx_method_arr = {'Standard SNTLN', 'Standard STLN', 'None'};
+low_rank_approx_method_arr = {'None'};
+apf_method_arr = {'None'};
+mean_method_arr = {'Geometric Mean Matlab Method', 'None'};
 bool_log_arr = {false};
 gcd_coefficient_method_arr = {'ux and vx'};
 %Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ','DTQ Denominator Removed','DTQ Rearranged'};
@@ -20,6 +21,7 @@ gcd_coefficient_method_arr = {'ux and vx'};
 
 Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ'};
 
+arrRankRevealingMetric = {'Minimum Singular Values'};
 
 global SETTINGS
 
@@ -64,21 +66,26 @@ for i1 = 1:1:length(bool_log_arr)
                                 for i9 = 1:1:length(apf_method_arr)
                                     
                                     apf_method = apf_method_arr{i9};
-                                    try
+                                    
+                                    for i10 = 1: 1: length(arrRankRevealingMetric)
                                         
-                                        close all;
-                                        clc;
-                                        o_gcd_Univariate_3Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method,sylvester_build_method)
-                                        fileId = fopen('log_GCD_3Polys.txt','a')
-                                        fprintf(fileId,'%s \n',datetime('now') , 'Success');
-                                        fclose(fileId);
+                                        rank_revealing_metric = arrRankRevealingMetric{i10};
                                         
-                                    catch err
-                                        
-                                        fileId = fopen('log_GCD_3Polys.txt','a')
-                                        fprintf(fileId,'%s %s \n\n\n',datetime('now'), getReport(err));
-                                        fclose(fileId);
-                                        
+                                        %try
+                                            
+                                            close all;
+                                            clc;
+                                            o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, rank_revealing_metric)
+                                            fileId = fopen('log_GCD_3Polys.txt','a')
+                                            fprintf(fileId,'%s \n',datetime('now') , 'Success');
+                                            fclose(fileId);
+                                            
+                                        %catch err
+                                            
+                                        %    fileId = fopen('log_GCD_3Polys.txt','a')
+                                        %    fprintf(fileId,'%s %s \n\n\n',datetime('now'), getReport(err));
+                                        %    fclose(fileId);
+                                        %end
                                     end
                                 end
                             end

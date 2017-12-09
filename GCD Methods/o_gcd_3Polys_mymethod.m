@@ -1,5 +1,5 @@
-function [fx_o, gx_o, hx_o, dx_o, ux_o, vx_o, wx_o, alpha_o, beta_o, theta_o, t ] = ...
-    o_gcd_3Polys_mymethod(fx, gx, hx, limits_t)
+function [fx_o, gx_o, hx_o, dx_o, ux_o, vx_o, wx_o,  lambda_o, mu_o, rho_o, t ] = ...
+    o_gcd_3Polys_mymethod(fx, gx, hx, limits_t, rank_range)
 % This function computes the GCD d(x) of two noisy polynomials f(x) and g(x).
 %
 % Inputs:
@@ -32,15 +32,22 @@ function [fx_o, gx_o, hx_o, dx_o, ux_o, vx_o, wx_o, alpha_o, beta_o, theta_o, t 
 %
 % wx : (Vector) Coefficients of polynomial w(x) = h(x)/d(x)
 %
-% alpha : (Float) Optimal \alpha
+% lambda : (Float) Optimal \lambda
 %
-% beta : (Float) Optimal \beta
+% mu : (Float) Optimal \mu
+%
+% rho : (Float) Optimal \rho
 %
 % theta : (Float) Optimal \theta
 
 
+
+
+
+
 % % Get the degree of the GCD of f(x) g(x) and h(x)
-[t, alpha, beta, theta, gm_fx, gm_gx, gm_hx] = Get_GCD_Degree_3Polys(fx, gx, hx, limits_t);
+[t, lambda, mu, rho, theta, gm_fx, gm_gx, gm_hx] = ...
+    Get_GCD_Degree_3Polys(fx, gx, hx, limits_t, rank_range);
 
 LineBreakLarge();
 
@@ -53,9 +60,9 @@ if t == 0 % If degree of GCD is 0, polynomials are coprime
     ux_o = fx;
     vx_o = gx;
     
-    alpha_o = 1;
-    beta_o = 1; 
-    theta_o = 1;
+    lambda_o = 1;
+    mu_o = 1; 
+    rho_o = 1;
     
     return
     
@@ -77,24 +84,25 @@ hx_n = hx ./ gm_hx;
 % % removal of the optimal column gives the minmal residual in (Ak x = ck)
 
 % Get f(\omega) and \alpha.*g(\omega)
-fw      = GetWithThetas(fx_n, theta);
-a_gw    = alpha.* GetWithThetas(gx_n, theta);
-b_hw    = beta.* GetWithThetas(hx_n, theta);
+lambda_fw = lambda .* GetWithThetas(fx_n, theta);
+mu_gw  = mu .* GetWithThetas(gx_n, theta);
+rho_hw = rho .* GetWithThetas(hx_n, theta);
 
 
 % Build S_{t}(f,g,h)
-St_preproc = BuildSubresultant_3Polys(fw, a_gw, b_hw, t);
+St_preproc = BuildSubresultant_3Polys(lambda_fw, mu_gw, rho_hw, t);
 
 % Get index of optimal column for removal
 [~, idx_col] = GetMinDistance(St_preproc);
 
 % % Get Low rank approximation of the Sylvester matrix S_{t}
-[fx_lr, gx_lr, hx_lr, ux_lr, vx_lr, wx_lr, alpha_lr, beta_lr, theta_lr] = ...
-    LowRankApproximation_3Polys(fx_n, gx_n, hx_n, alpha, beta, theta, t, idx_col);
+[fx_lr, gx_lr, hx_lr, ux_lr, vx_lr, wx_lr, lambda_lr, mu_lr, ...
+    rho_lr, theta_lr] = LowRankApproximation_3Polys(fx_n, ...
+    gx_n, hx_n, lambda, mu, rho, theta, t, idx_col);
 
 % Get the coefficients of the GCD by APF or other method.
 [fx_alr, gx_alr, hx_alr, dx_alr, ux_alr, vx_alr, wx_alr, alpha_alr, beta_alr, theta_alr] = ...
-    APF_3Polys(fx_lr, gx_lr, hx_lr, ux_lr, vx_lr, wx_lr, alpha_lr, beta_lr, theta_lr, t);
+    APF_3Polys(fx_lr, gx_lr, hx_lr, ux_lr, vx_lr, wx_lr, lambda_lr, mu_lr, rho_lr, theta_lr, t);
 
 % Get outputs
 fx_o = fx_alr;
@@ -107,9 +115,9 @@ ux_o = ux_alr;
 vx_o = vx_alr;
 wx_o = wx_alr;
 
-alpha_o = alpha_alr;
-beta_o = beta_alr;
-theta_o = theta_alr;
+lambda_o = alpha_alr;
+mu_o = beta_alr;
+rho_o = theta_alr;
 
 
 

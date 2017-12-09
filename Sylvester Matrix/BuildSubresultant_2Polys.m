@@ -49,6 +49,10 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         Q = BuildQ_2Polys(m, n, k);
         Sk = D*T*Q;
         
+    case 'DTQ log'
+        
+        Sk = BuildDTQ_log(fx,gx,k);
+        
     case 'TQ'
         
         T = BuildT_2Polys(fx, gx, k);

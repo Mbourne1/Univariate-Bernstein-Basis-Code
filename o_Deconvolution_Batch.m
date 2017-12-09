@@ -17,7 +17,7 @@ parfor i1 = 1:1:length(arr_ex_num)
             bool_preproc = arr_bool_preproc{i3};
             
             
-            %try
+            try
                 close all;
                 clc;
                 o_Deconvolution(ex_num, emin, bool_preproc)
@@ -32,19 +32,19 @@ parfor i1 = 1:1:length(arr_ex_num)
                 
                 fclose(fileId);
                 
-            %catch err
-%                 % Print failure to log file
-%                 fileId = fopen(log_filename, 'a');
-%                 
-%                
-%                 
-%                 fprintf(fileId, '%s %s \n', ...
-%                     datetime('now'),...
-%                     getReport(err)...
-%                 );
-%                 
-%                 fclose(fileId);
-%            end
+            catch err
+                % Print failure to log file
+                fileId = fopen(log_filename, 'a');
+                
+               
+                
+                fprintf(fileId, '%s %s \n', ...
+                    datetime('now'),...
+                    getReport(err)...
+                );
+                
+                fclose(fileId);
+           end
         end
     end
 end

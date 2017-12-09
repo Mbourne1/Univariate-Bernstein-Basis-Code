@@ -1,4 +1,6 @@
-function [] = o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, Sylvester_Build_Method)
+function [] = o_gcd_Univariate_3Polys(ex_num_var, emin, emax, mean_method, ...
+    bool_alpha_theta, low_rank_approx_method, apf_method, ...
+    sylvester_build_method, nEquations, rank_revealing_metric)
 % o_gcd_3Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
@@ -38,40 +40,38 @@ function [] = o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alph
 %           'DTQ Denominator Removed'
 %           'DTQ Rearranged'
 %
+% nEquations : (String)
+%
+%   '2' : Syvlester matrix defined by 2 equations, and has 2 x 3 structure
+%   '3' : Sylvester matrix defined by 3 equations, and has 3 x 3 structure
+%
+%
+%
+%
+%
+%
 % % Example
-% >> o_gcd_Univariate_3Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ')
-% >> o_gcd_Univariate_3Polys('1', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'Standard APF Nonlinear', 'DTQ')
+% >> o_gcd_Univariate_3Polys('1a', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'None', 'None', 'DTQ', '2' 'Minimum Singular Values', true)
+% >> o_gcd_Univariate_3Polys('1a', 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'Standard APF Nonlinear', 'DTQ', '2', 'Minimum Singular Values', true)
 %
 % % Custom Example
 %
 % ex_num = 'Custom:m=10 n=10 t=5 low=0 high=1'
-% >> o_gcd_Univariate_3Polys(ex_num, 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ')
+% >> o_gcd_Univariate_3Polys(ex_num, 1e-12, 1e-10, 'Geometric Mean Matlab Method', true, 'Standard STLN', 'None', 'DTQ', 'Minimum Singular Values')
+
+
+% if not 11 arguments then error
+if (nargin ~= 10)
+    error('Not enough input arguments')
+end
 
 global SETTINGS
 
-% Set the problem type to a GCD problem
-problemType = 'GCD';
+
 
 % Add subfolders
 restoredefaultpath
-addpath(...
-    'Basis Conversion',...
-    'Bernstein Methods',...
-    'Build Matrices',...
-    'Formatting',...
-    'GCD Methods',...
-    'Get Cofactor Coefficients',...
-    'Get GCD Coefficients',...
-    'Measures',...
-    'Plotting',...
-    'Preprocessing',...
-    'Results',...
-    'Sylvester Matrix')
-
-addpath(genpath('APF'));
-addpath(genpath('Examples'));
-addpath(genpath('Get GCD Degree'));
-addpath(genpath('Low Rank Approximation'));
+addpath(genpath(pwd))
 
 
 % % Ensure that minimum noise level is less than maximum noise level
@@ -82,28 +82,32 @@ if emin > emax
 end
 
 % % Set global variables.
-SetGlobalVariables(problemType,...
-    ex_num,...
+SetGlobalVariables_GCD_3Polys(...
+    ex_num_var,...
     emin,...
     emax,...
     mean_method,...
     bool_alpha_theta,...
     low_rank_approx_method,...
     apf_method,...
-    Sylvester_Build_Method);
+    sylvester_build_method, ...
+    nEquations,...
+    rank_revealing_metric);
 
 % Print the parameters.
 LineBreakLarge()
-fprintf('INPUT VARIABLES\n')
-fprintf('\t EXAMPLE NUMBER : %s \n',ex_num)
-fprintf('\t EMIN : %s \n' , num2str(SETTINGS.EMIN))
-fprintf('\t EMAX : %s \n' , num2str(SETTINGS.EMAX))
-fprintf('\t MEAN METHOD : %s \n', SETTINGS.MEAN_METHOD)
-fprintf('\t ALPHA_THETA : %s \n', num2str(SETTINGS.BOOL_ALPHA_THETA))
+fprintf('INPUT VARIABLES\n');
+fprintf('\t EXAMPLE NUMBER : %s \n', ex_num_var);
+fprintf('\t EMIN : %s \n' , num2str(SETTINGS.EMIN));
+fprintf('\t EMAX : %s \n' , num2str(SETTINGS.EMAX));
+fprintf('\t MEAN METHOD : %s \n', SETTINGS.MEAN_METHOD);
+fprintf('\t ALPHA_THETA : %s \n', num2str(SETTINGS.BOOL_ALPHA_THETA));
 fprintf('\t LOW RANK APPROX METHOD : %s \n', SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
-fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD)
-fprintf('\t LOG: %s \n', SETTINGS.BOOL_LOG)
-fprintf('\t SYLVESTER BUILD METHOD: %s \n', SETTINGS.SYLVESTER_BUILD_METHOD)
+fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD);
+fprintf('\t LOG: %s \n', SETTINGS.BOOL_LOG);
+fprintf('\t SYLVESTER BUILD METHOD: %s \n', SETTINGS.SYLVESTER_BUILD_METHOD);
+fprintf('\t SYLVESTER n EQUATIONS: %s \n', SETTINGS.SYLVESTER_EQUATIONS);
+fprintf('\t SCALING METHOD: %s \n', SETTINGS.SCALING_METHOD);
 LineBreakLarge()
 
 % o - gcd - Calculate GCD of two Arbitrary polynomials
@@ -114,91 +118,92 @@ LineBreakLarge()
 
 
 % Get roots from example file
-[fx_exact, gx_exact, hx_exact, dx_exact, ux_exact, vx_exact, wx_exact] ...
-    = Examples_GCD_3Polys(ex_num);
+[fx_exact, gx_exact, hx_exact, dx_exact, ux_exact, vx_exact, wx_exact] = ...
+    Examples_GCD_3Polys(ex_num_var);
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
 fx = AddVariableNoiseToPoly(fx_exact, emin, emax);
 gx = AddVariableNoiseToPoly(gx_exact, emin, emax);
 hx = AddVariableNoiseToPoly(hx_exact, emin, emax);
 
+
+%PlotCoefficients({fx, gx, hx}, {'fx','gx','hx'});
+
+m = GetDegree(fx);
+n = GetDegree(gx);
+o = GetDegree(hx);
+t_exact = GetDegree(dx_exact);
+
+
+LineBreakLarge()
+fprintf('\t m : %i \n', m)
+fprintf('\t n : %i \n', n)
+fprintf('\t o : %i \n', o)
+fprintf('\t t : %i \n', t_exact)
+LineBreakLarge()
+
+
 % set upper and lower limit of the degree of the GCD. Since this is a
 % general GCD problem, no prior limits are known.
 lower_limit_t = 1;
-upper_limit_t = min([GetDegree(fx), GetDegree(gx), GetDegree(hx)]);
+upper_limit_t = min([m n o]);
 
-limits_t = [lower_limit_t,upper_limit_t];
+limits_t = [lower_limit_t, upper_limit_t];
+rank_range = [0 0];
+
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~,~,~,dx, ux ,vx, wx] = o_gcd_3Polys_mymethod(fx, gx, hx, limits_t);
+[~,~,~,dx_calc, ux_calc, vx_calc, wx_calc] = ...
+    o_gcd_3Polys_mymethod(fx, gx, hx, limits_t, rank_range);
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
 
 LineBreakMedium();
-try
-    
-    error.dx = GetError('d', dx_exact, dx);
-    error.ux = GetError('u', ux_exact, ux);
-    error.vx = GetError('v', vx_exact, vx);
-    error.wx = GetError('w', wx_exact, wx);
-    
-catch
-    
-    error.dx = 1000;
-    error.ux = 1000;
-    error.vx = 1000;
-    error.wx = 1000;
-    
-end
+
+% try
+    my_error.dx = GetPolynomialError(dx_exact, dx_calc);
+    my_error.ux = GetPolynomialError(ux_exact, ux_calc);
+    my_error.vx = GetPolynomialError(vx_exact, vx_calc);
+    my_error.wx = GetPolynomialError(wx_exact, wx_calc);
+% catch
+%     my_error.dx = 1000;
+%     my_error.ux = 1000;
+%     my_error.vx = 1000;
+%     my_error.wx = 1000;
+% end
+
+fprintf('Error u(x) : %e \n', my_error.ux);
+fprintf('Error v(x) : %e \n', my_error.vx);
+fprintf('Error w(x) : %e \n', my_error.wx);
+fprintf('Error d(x) : %e \n', my_error.dx);
+fprintf('Average Error : %e \n', mean([my_error.ux, my_error.vx, my_error.dx]))
+
 
 % Print results to results file
-PrintToFile(GetDegree(fx), GetDegree(gx), GetDegree(hx), GetDegree(dx), error)
+%PrintToFile(GetDegree(fx), GetDegree(gx), GetDegree(hx), GetDegree(dx_calc), my_error)
 LineBreakMedium();
 
 end
 
-function [error] = GetError(name,f_calc,f_exact)
-% Get distance between f(x) and the calulated f(x)
-
-% Get the angle between the two vectors
-% angle = dot(f_calc,f_exact) ./ (norm(f_calc) * norm(f_exact));
-% angle_error = 1 - angle;
-% fprintf('\tCalculated angle error : %8.2e \n', angle_error)
-
-f_calc  = Normalise(f_calc);
-f_exact = Normalise(f_exact);
-
-% Calculate relative errors in outputs
-rel_error_f = norm(abs(f_calc - f_exact) ./ f_exact);
-
-fprintf('\tCalculated relative error %s : %8.2e \n ',name,rel_error_f);
-
-error = norm(abs(f_calc - f_exact) );
-
-fprintf('\tCalculated error %s : %8.2e \n', name,error);
 
 
 
-end
-
-
-
-function [] = PrintToFile(m,n,o,t,error)
+function [] = PrintToFile(m, n, o, t, error)
 % Print Results to file
 %
 % % Inputs
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% n : Degree of polynomial g(x)
-% 
-% o : Degree of polynomial h(x)
+% n : (Int) Degree of polynomial g(x)
 %
-% t : Computed degree of the GCD d(x)
+% o : (Int) Degree of polynomial h(x)
+%
+% t : (Int) Computed degree of the GCD d(x)
 %
 % error : array of errors e
-%   error.dx
+%   error.dx : (Float)
 %   error.ux
 %   error.vx
 %   error.wx
@@ -212,7 +217,7 @@ fullFileName = sprintf('Results/Results_o_gcd_3Polys.txt');
 % If file already exists append a line
 if exist(fullFileName, 'file')
     
-    fileID = fopen(fullFileName,'a');
+    fileID = fopen(fullFileName, 'a');
     WriteNewLine()
     fclose(fileID);
     
@@ -262,5 +267,4 @@ end
 
 
 end
-
 

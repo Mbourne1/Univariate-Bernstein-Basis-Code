@@ -17,20 +17,20 @@ function arr_hx = Deconvolve_Batch(arr_fx)
 global SETTINGS
 
 % Get the number of polynomials f_{i}(x) in the set arr_fx
-nPolys_arr_fx = size(arr_fx, 1);
+nPolynomials_arr_fx = size(arr_fx, 1);
 
 % Intialise vector to store the degree of the set of polynomaisl f_{i}
-vDegree_arr_fx = zeros(1,nPolys_arr_fx);
+vDegree_arr_fx = zeros(1,nPolynomials_arr_fx);
 
 % For each polynomial f_{i}(x), get its degree and store in a vector
-for i = 1:1:nPolys_arr_fx
+for i = 1 : 1 : nPolynomials_arr_fx
     
     vDegree_arr_fx(i) = GetDegree(arr_fx{i});
     
 end
 
 % Get the degrees n{i} of each polynomials h_{i} = f_{i}/f_{i+1}.
-vDegree_arr_hx = (vDegree_arr_fx(1:end-1) - vDegree_arr_fx(2:end))';
+vDegree_arr_hx = (vDegree_arr_fx(1 : end - 1) - vDegree_arr_fx(2 : end))';
 
 
 % Obtain theta such that the ratio of max element to min element is
@@ -38,7 +38,7 @@ vDegree_arr_hx = (vDegree_arr_fx(1:end-1) - vDegree_arr_fx(2:end))';
 if(SETTINGS.PREPROC_DECONVOLUTIONS)
     
     theta = GetOptimalTheta(arr_fx);
-    fprintf([mfilename ' : ' sprintf('Optimal theta : %2.4f \n',theta)])
+    
     
 else
     theta = 1;

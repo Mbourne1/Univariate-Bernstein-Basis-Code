@@ -1,4 +1,4 @@
-function fw = GetWithThetas(fx,th)
+function fw = GetWithThetas(fx, th)
 % Take the coefficients of polynomial f(x,y) and include thetas so that
 % the ouput is the coefficients of f(w,w), in the modified Bernstein
 % basis.
