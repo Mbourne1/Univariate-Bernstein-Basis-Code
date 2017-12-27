@@ -17,7 +17,7 @@ function [] = SylvesterMatrixHeatMap_3Polys(m, n, o, k)
 %
 % >> SylvesterMatrixHeatMap_3Polys(5, 15, 7, 3, true)
 
-
+% Initialise vectors of coefficients of f(x), g(x) and h(x)
 fx = ones(m + 1, 1);
 gx = ones(n + 1, 1);
 hx = ones(o + 1, 1);
@@ -28,19 +28,19 @@ hx = ones(o + 1, 1);
 %end
 
 
-arrSubresultantFomat = {'T', 'DT', 'TQ', 'DTQ'};
+arrSubresultantMatrixVariant = {'T', 'DT', 'TQ', 'DTQ'};
 SYLVESTER_EQUATIONS = '2';
 
 
-nFormats = length(arrSubresultantFomat);
+nVariants = length(arrSubresultantMatrixVariant);
 
-
-for i = 1:1:nFormats
+% For each variant of subresultant matrix
+for i = 1 : 1 : nVariants
     
-    subresultantFomat = arrSubresultantFomat{i};
+    subresultantVariant = arrSubresultantMatrixVariant{i};
     
     
-    switch subresultantFomat
+    switch subresultantVariant
         
         case 'T'
             
@@ -122,11 +122,11 @@ for i = 1:1:nFormats
             
             
         otherwise
-            error('%s is not a valid format', subresultantFomat)
+            error('%s is not a valid format', subresultantVariant)
             
     end
     
-    figure_name = sprintf('%s : Heat Map', subresultantFomat);
+    figure_name = sprintf('%s : Heat Map', subresultantVariant);
     figure('Name',figure_name)
     
     % Note - neccesary to take absolute values since one partition is
@@ -141,7 +141,23 @@ end
 end
 
 
-function [fx,gx,hx,m,n,o] = ReorderPolys(fx,gx,hx,m,n,o)
+function [fx,gx,hx,m,n,o] = ReorderPolys(fx, gx, hx, m, n, o)
+% 
+% % Inputs
+%
+% fx : (Vector) Coefficients of polynomial f(x)
+%
+% gx : (Vector) Coefficients of polynomial g(x)
+%
+% hx : (Vector) Coefficients of polynomial h(x)
+%
+% m : (Int) Degree of polynomial f(x)
+%
+% n : (Int) Degree of polynomial g(x)
+%
+% o : (Int) Degree of polynomial h(x)
+
+
 
 [~, index] = min([m n o]);
 
@@ -153,8 +169,8 @@ switch index
         
     case 2 % gx is iminimum, swap f and g
         
-        [fx,gx] = PolySwap(fx,gx);
-        [m, n] = DegreeSwap(m,n);
+        [fx, gx] = PolySwap(fx, gx);
+        [m, n] = DegreeSwap(m, n);
         
     case 3 % hx is minimum, swap f and h
         
@@ -171,7 +187,12 @@ end
 
 
 function [fx, gx] = PolySwap(fx, gx)
-
+%
+% % Input
+%
+% fx : (Vector) Coefficients of polynomail f(x)
+%
+% gx : (Vector) Coefficients of polynomial g(x)
 
 fx_temp = fx;
 fx = gx;

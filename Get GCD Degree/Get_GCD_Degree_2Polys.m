@@ -7,9 +7,9 @@ function [t, alpha, theta, GM_fx, GM_gx, rank_range] = ...
 %
 % % Inputs.
 %
-% fx : (Vector) coefficients of polynomial f, expressed in Bernstein Basis
+% fx : (Vector) Coefficients of the polynomial f(x), expressed in Bernstein Basis
 %
-% gx : (Vector) coefficients of polynomail g, expressed in Bernstein Basis
+% gx : (Vector) Coefficients of the polynomail g(x), expressed in Bernstein Basis
 %
 % t_limits : [(Int) (Int)] Set the upper and lower bound of the degree of the
 % GCD of polynomials f(x) and g(x). Usually used when using o_roots() where
@@ -133,7 +133,7 @@ for k = lowerLimit_k : 1 : upperLimit_k
             vec2 = n - k + 2 : 1 : m + n - (2*k) + 2;
             
             % Get the vector of maximum length
-            [myLength, vecIndex] = min([n - k + 1, m - k + 1])
+            [myLength, vecIndex] = min([n - k + 1, m - k + 1]);
             
             vec1_temp = vec1(1:myLength);
             vec2_temp = vec2(1:myLength);

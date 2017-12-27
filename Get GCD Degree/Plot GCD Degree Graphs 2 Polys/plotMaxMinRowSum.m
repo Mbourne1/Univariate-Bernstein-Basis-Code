@@ -1,14 +1,21 @@
 function plotMaxMinRowSum(vMaxRowNormR1, vMinRowNormR1, limits_k, limits_t, rank_range)
-% 
+% Plots the max : min ratio of the row sums of R_{1, k}  for a range of k
+% values, where k is the index of the k-th subresultant matrix and R_{1,k}
+% is obtained by QR decomposition of S_{k}(f,g)
+%
 % % Inputs
 %
-% vMaxRowNormR1 : (Vector)
+% vMaxRowNormR1 : (Vector) Maximum of the sum of the rows of R_{1,k} for
+% various values of k
 %
-% vMinRowNormR1 : (Vector)
+% vMinRowNormR1 : (Vector) Minimum of the sum of the rows of R_{1,k} for
+% various values of k
 %
-% limits_k : [(Int) (Int)]
+% limits_k : [Int Int] Range of k values for which the Condition numbers of
+% S_{k} have been computed
 %
-% limits_t : [(Int) (Int)]
+% limits_t : [Int Int] Range of k which are candidates for the degree of
+% the GCD of f(x) and g(x)
 %
 % rank_range : [(Float) (Float)]
 % 

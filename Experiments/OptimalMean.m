@@ -1,4 +1,6 @@
 % Get optimal mean method
+
+
 close all; clc; 
 
 ex_num = '8';

@@ -1,13 +1,18 @@
 function [] = plotConditionNumbers(vConditionNumbers, limits_k, limits_t)
-%
+% Plot the condition number of the set of subresultant matrices S_{k}(f,g)
+% 
 % % Inputs
 %
-% vConditionNumbers : (Vector of Floats)
+% vConditionNumbers : (Vector of Floats) Condition number of the
+% subresultant matrices S_{k}
 %
-% limits_k : [Int Int]
+% limits_k : [Int Int] Range of k values for which the Condition numbers of
+% S_{k} have been computed
 %
-% limits_t : [Int Int]
+% limits_t : [Int Int] Range of k which are candidates for the degree of
+% the GCD of f(x) and g(x)
 
+% Get lower and upper limit of k values.
 lowerLimit_k = limits_k(1);
 upperLimit_k = limits_k(2);
 

@@ -1,4 +1,4 @@
-function [] = MaxMinEntriesDTQ_Univariate(m,n_k)
+function [] = MaxMinEntriesDTQ_Univariate(m, n_k)
 % MaxMinEntriesDTQ_Univariate(m,n_k)
 %
 % Each coefficient a_{i} appears in n-k+1 columns of the Sylvester matrix,
@@ -10,24 +10,27 @@ function [] = MaxMinEntriesDTQ_Univariate(m,n_k)
 %
 % m : Degree of polynomial f(x)
 %
-% n : Degree of polynomial v(x)
+% n_k : 
 %
-% >> MaxMinEntriesDTQ_Univariate(m,n_k)
+% >> MaxMinEntriesDTQ_Univariate(m, n_k)
+% >> MaxMinEntriesDTQ_Univariate(10, 2)
 
 
 
+vScalar = zeros(m + 1, n_k + 1);
+vProduct = zeros(1, m + 1);
+vSum = zeros(1, m + 1);
 
-vScalar = zeros(m+1,n_k+1);
-vProduct = zeros(1,m+1);
-vSum = zeros(1,m+1);
-
-% for each a_{i}
-for i = 0:1:m
+% for each coefficient a_{i}
+for i = 0 : 1 : m
+    
+    % For each column of the partition of the k-th subresultant matrix
     
     for j = 0:1:n_k
-        vScalar(i+1,j+1) = (nchoosek(i+j,i) ...
-            * nchoosek(m+n_k-(i+j),m-i)) ...
-            / nchoosek(m+n_k,m);
+    
+        vScalar(i+1,j+1) = (nchoosek(i + j,i) ...
+            * nchoosek(m + n_k - (i + j),m - i)) ...
+            / nchoosek(m + n_k, m);
         
     end
     
@@ -35,12 +38,12 @@ for i = 0:1:m
 end
 
 % % Plot
-figure_name = sprintf('%s : Scaling effect',mfilename);
+figure_name = sprintf('%s : Scaling effect', mfilename);
 figure('name',figure_name)
 hold on
 for i = 0:1:m
     name = sprintf('Coefficient : a_{%i}',i);
-    vProduct(i+1) = prod(vScalar(i+1,:));
+    vProduct(i+1) = prod(vScalar(i + 1,:));
     vSum(i+1) = sum(vScalar(i+1,:));
     plot((vScalar(i+1,:)),'DisplayName',name);
 end

@@ -1,4 +1,4 @@
-function [] = MaxMinEntriesDTQ_Univariate2(m,max_n_k)
+function [] = MaxMinEntriesDTQ_Univariate2(m, max_n_k)
 % MaxMinEntriesDTQ_Univariate(m,n_k)
 %
 % Each coefficient a_{i} appears in n-k+1 columns of the Sylvester matrix,

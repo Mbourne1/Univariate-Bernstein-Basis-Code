@@ -3,24 +3,36 @@ function [dx] = GetGCDCoefficients_2Polys(ux, vx, fx, gx, t)
 %
 % % Inputs
 %
-% [ux, vx] : Coefficients of cofactor polynomials u(x) and v(x) in the
-% Bernstein basis.
+% ux : (Vector) Coefficients of the polynomial u(x) 
 %
-% [fx, gx] : Coefficients of polynomial f(x) and g(x) in the Bernstein basis.
+% vx : (Vector) Coefficients of the polynomial v(x) 
 %
-% k : Degree of common divisor.
+% fx : (Vector) Coefficients of the polynomial f(x)
 %
-% alpha : Optimal value of \alpha
+% gx : (Vector) Coefficients of the polynomial g(x) 
 %
-% theta : Optimal value of \theta
+% k : (Int) Degree of common divisor of f(x) and g(x)
+%
+% alpha : (Float) Optimal value of \alpha
+%
+% theta : (Float) Optimal value of \theta
 
 
 % Global variables
 global SETTINGS
 
+% Coefficients of d(x) are computed from the system : 
+%
+% [C(u)] * d = f 
+%
+% or 
+%
+% [C(u) ; C(v) ] * d = [f ; g]
 
 switch SETTINGS.GCD_COEFFICIENT_METHOD
+    
     case 'ux and vx'
+        
         % Build solution vector bk = [f;g]
         bk = [fx ; gx];
         
@@ -31,11 +43,12 @@ switch SETTINGS.GCD_COEFFICIENT_METHOD
         dx = SolveAx_b(HCG,bk);
         
     case 'ux'
+        
         bk = fx;
         
-        H1C1G = BuildH1C1G(ux,t);
+        H1C1G = BuildH1C1G(ux, t);
         
-        dx = SolveAx_b(H1C1G,bk);
+        dx = SolveAx_b(H1C1G, bk);
         
         
     otherwise

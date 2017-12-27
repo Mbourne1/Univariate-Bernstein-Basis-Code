@@ -14,11 +14,13 @@ close all; clc;
 emin = 1e-10;
 emax = 1e-8;
 
+% Set preprocessing related variables
 switch bool_preproc
-    
     case true
+        
         mean_method = 'Geometric Mean Matlab Method';
         bool_alpha_theta = true;
+        
     case false
         
         mean_method = 'None';

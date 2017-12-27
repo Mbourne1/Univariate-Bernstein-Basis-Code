@@ -1,32 +1,34 @@
 function [] = PrintCoefficients_Bivariate_Bernstein(fxy,f)
 % Given the polynomial f(x,y) print out the polynomial.
 %
-%   Input.
+% % Input.
 %
-%   fxy :   Matrix of coefficients of polynomial f(x,y), where (i-1,j-1)
-%           entry is the coefficient of a_{i,j}B_{i}(x)B_{j}(y).
+% fxy : (Matrix) of coefficients of polynomial f(x,y), where (i-1,j-1) 
+% entry is the coefficient of a_{i,j}B_{i}(x)B_{j}(y).
 %
-%   f   :   String indicating the name of the function 'f' or 'g'
+% f :   (String) indicating the name of the function 'f' or 'g'
 
 
 
 % Get the degree of polynomial f(x,y)
-[m1,m2] = GetDegree_Bivariate(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 
 
 if m2 == 0
     str = sprintf('%s(x) = ',f);
 else
+    
 % Initialise output string
 str = sprintf('%s(x,y) = ',f);
 end
 
 
-% for each row of matrix f(x,y)
-for i = 0:1:m1
-    % for each column of matrix f(x,y)
-    for j = 0:1:m2
+% For each row of matrix f(x,y)
+for i = 0 : 1 : m1
+    
+    % For each column of matrix f(x,y)
+    for j = 0 : 1 : m2
         
         
         if (i==0 && j == 0) % If first coefficient

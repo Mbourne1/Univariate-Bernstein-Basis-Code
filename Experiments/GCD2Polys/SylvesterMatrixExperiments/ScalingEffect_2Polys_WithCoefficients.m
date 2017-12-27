@@ -8,36 +8,29 @@ function [] = ScalingEffect_2Polys_WithCoefficients(ex_num)
 %
 % Inputs
 %
-% m : Degree of polynomial f(x)
-%
-% n : Degree of polynomial v(x)
-%
+% ex_num : (String) Example number
 %
 
-close all; clc;
-
+close all; 
+clc;
 
 % Get roots from example file
-[fx, gx, dx, ux_exact, vx_exact] = Examples_GCD(ex_num);
+[fx, gx, ~, ~, ~] = Examples_GCD(ex_num);
 
+% Get degree of f(x) and g(x)
 m = GetDegree(fx);
 n = GetDegree(gx);
-t = GetDegree(dx);
 
+% Set k = 1 (Only consider first subresultant matrix.
 k = 1;
 
 
-
-
-% Get an array of Sylvester matrix formats
+% Get an array of Sylvester matrix variants
 arrSylvesterMatrixType = {'DTQ', 'TQ', 'DT', 'T', 'DTQ Denominator Removed'};
 
-% Get number of formats in the array
+% Get number of sylvester matrix variants in the array
 nFormats = length(arrSylvesterMatrixType);
 
-% for each coefficient a_{i} i=0,...,m
-arrScaling_fx = cell(m + 1, 1);
-arrScaling_gx = cell(n + 1, 1);
 
 % For each Sylvester subresultant format
 for i = 1 : 1 : nFormats
@@ -64,18 +57,20 @@ function [arrScaling_gx] = GetScalingArray(gx, m_k, subresultantFormat)
 %
 % % Inputs
 %
-% gx : (Vector)
+% gx : (Vector) Coefficients of polynomial g(x)
 %
-% m_k : (Int) 
+% m_k : (Int) number of columns in partition of k-th subresultant matrix
 
 
+% Get the degree of g(x)
 n = GetDegree(gx);
 
 
 
-% For each of the coefficients a_{i}
+% For each of the coefficients b_{i}
 for i = 0 : 1 : n
     
+    % Get the coefficient
     bi = gx(i + 1);
     
     
@@ -163,15 +158,18 @@ end
 
 function vScaling = GetScalingVector(m, n_k, i, sylvesterMatrixFormat)
 %
+% Return a vector of scaling/ coefficient multipliers for the i-th 
+% coefficient of f(x), in each of the (n - k + 1) columns of S_{k}(f,g)
+%
 % % Inputs
 %
-% m : (Int)
+% m : (Int) Degree of polynomial f(x)
 %
-% n_k : (Int)
+% n_k : (Int) Number of columns in the k-th subresultant matrix partition
 %
-% i : (Int)
+% i : (Int) Index of coefficient 
 %
-% sylvesterMatrixFormat : (String)
+% sylvesterMatrixFormat : (String) 
 
 
 vScaling = zeros(n_k + 1, 1);

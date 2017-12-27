@@ -1,130 +1,140 @@
 function [] = Experiment_DeconvolutionMethods(ex_num)
+% This experiment considers the various deconvolution methods when
+% deconvolving the set of polynomials f_{i}(x) to obtain the set of
+% polynomials h_{i}(x)
+%
+% % Inputs
+%
+% ex_num : (String) Example number
 %
 %
+% % Examples
 %
 % >> Experiment_DeconvolutionMethods('1')
 
-close all; clc;
+
+close all;
+clc;
 
 
 %
 % -------------------------------------------------------------------------
 % Constants
 
+% Set noise level
 emin = 1e-10;
 emax = 1e-10;
 
-%mean_method = 'None';
-%bool_alpha_theta = false;
+% Set variables relating to preprocessing
+bool_preproc = true;
 
-mean_method = 'Geometric Mean Matlab Method';
-bool_alpha_theta = true;
+switch bool_preproc
+    case true
+        
+        mean_method = 'Geometric Mean Matlab Method';
+        bool_alpha_theta = true;
+        
+    case false
+        
+        mean_method = 'None';
+        bool_alpha_theta = false;
+        
+end
+
+
+% Set other variables
+
+% % Sylvester Build Method
+% 'T'
+% 'DT'
+% 'TQ'
+% 'DTQ'
+sylvester_build_method = 'DTQ';
 
 apf_method = 'None';
-sylvester_build_method = 'DTQ';
+
+% Method used to determine the degree of the GCD
+% 'R1 Row Norms',
+% 'R1 Row Diagonals',
+% 'Minimum Singular Values',
+% 'Normalised Minimum Singular Values'
 rank_revealing_metric = 'Minimum Singular Values';
 
 
-
-
-%low_rank_approx_method = 'Standard SNTLN';
+% % Low Rank Approximation Method
+% 'None'
+% 'Standard STLN';
+% 'Standard SNTLN'
 low_rank_approx_method = 'None';
-%low_rank_approx_method = 'Standard STLN';
 
 
+
+% Deconvolution method
+% 'Separate'
+% 'Batch'
 deconvolution_method_wx = 'Batch';
 
 %
 % -------------------------------------------------------------------------
-% Variables 
+% Variables
+
+
+%
+deconvolution_method_hx_arr = {...
+    'Separate', ...
+    'Batch', ...
+    'Batch with STLN', ...
+    'Batch Constrained', ...
+    'Batch Constrained with STLN'};
 
 
 
+% -------------------------------------------------------------------------
+
+
+
+% 
 bool_deconvolution_preproc = false;
 
-
-
-deconvolution_method_hx = 'Separate';
-        
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
-
-
-deconvolution_method_hx = 'Batch';
-
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
-
-
-deconvolution_method_hx = 'Batch With STLN';
-
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
-
-
-deconvolution_method_hx = 'Batch Constrained';
-
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
-
-deconvolution_method_hx = 'Batch Constrained With STLN';
-
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
+for i = 1 : 1 : length(deconvolution_method_hx_arr)
+    
+    deconvolution_method_hx = deconvolution_method_hx_arr{i};
+    
+    
+    o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+        low_rank_approx_method, apf_method, sylvester_build_method, ...
+        rank_revealing_metric, deconvolution_method_hx, ...
+        deconvolution_method_wx, bool_deconvolution_preproc)
+    
+end
 
 
 
+% -------------------------------------------------------------------------
 
-
-
-
-
-
-
-
+% Set preprocessing in the deconvolution problem = true
 bool_deconvolution_preproc = true;
 
 
-
-deconvolution_method_hx = 'Batch';
-
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
-
-
-deconvolution_method_hx = 'Batch With STLN';
-
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
+deconvolution_method_hx_arr = {...
+    'Separate', ...
+    'Batch', ...
+    'Batch with STLN', ...
+    'Batch Constrained', ...
+    'Batch Constrained with STLN'};
 
 
-deconvolution_method_hx = 'Batch Constrained';
-
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
-
-deconvolution_method_hx = 'Batch Constrained With STLN';
-
-o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
-    rank_revealing_metric, deconvolution_method_hx, ...
-    deconvolution_method_wx, bool_deconvolution_preproc)
+for i = 1 : 1 : length(deconvolution_method_hx_arr)
+    
+    deconvolution_method_hx = deconvolution_method_hx_arr{i};
+    
+    
+    o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+        low_rank_approx_method, apf_method, sylvester_build_method, ...
+        rank_revealing_metric, deconvolution_method_hx, ...
+        deconvolution_method_wx, bool_deconvolution_preproc)
+    
+end
 
 
 sameaxes()

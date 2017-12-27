@@ -1,53 +1,72 @@
 
 function [] = PlotCoefficients(arrPolys, arrLabels, arrStyles)
-% Plot coefficients of the set of polynomials stored in the array
+% Plot coefficients of the set of polynomials stored in the array 'arrPolys'
 %
 % % Inputs
 %
-% arrPolys : (Array of vectors)
+% arrPolys : (Array of vectors) Array of coefficients of polynomials
 %
-% arrLabels : (Array of Strings)
+% arrLabels : (Array of Strings) Array of labels for each polynomial
+%
+% arrStyles : (Array of Strings) Style of each of the polynomials
+
 
 global SETTINGS
 if SETTINGS.PLOT_GRAPHS
     
+    % Plot on log scale
+    bool_log = true;
+    
+    
+    % Get number of polynomials in the array
     nPolys = length(arrPolys);
+    
+    % Initalise a figure
     figure()
     hold on
     
+    % Initliase a vector to store the degree of each polynomial
     vDegree = zeros(nPolys,1);
     
+    
+    % For each polynomial, plot its coefficients
     for i = 1 : 1 : nPolys
         
-        mystyle = arrStyles{i};
+        myStyle = arrStyles{i};
+        
+        % Get vector of coefficients of the i-th polynomial
         fx = arrPolys{i};
         
+        % Get name of the i-th polynomial
         name = arrLabels{i};
         
+        % Get the degree of the i-th polynomial
         vDegree(i) = GetDegree(fx);
         
+        % Initialise vector of x values
         vec_x = 0 : 1 : vDegree(i);
         
-        bool_log = true;
+        
         if (bool_log == true)
             fx = log10(abs(fx));
         end
         
-        plot(vec_x, fx, mystyle, 'DisplayName',name,'LineWidth',2)
+        % Plot i-th polynomial
+        plot(vec_x, fx, myStyle, 'DisplayName',name,'LineWidth',2)
         
     end
     
     xlim([1, max(vDegree)]);
     
-    % Labels and legends
+    % Labels and legends set up
     xlabel('$i$ : Coefficient Index','Interpreter','latex', 'FontSize', 20);
     ylabel('$\log_{10} \left( \Re \right)$', 'Interpreter', 'latex', 'FontSize',20);
     l = legend(gca,'show');
     set(l,{'Interpreter','FontSize','Location'},{'latex',20, 'southwest'});
     hold off
-
-
-    % Figure size and location
+    
+    
+    % Figure size and location set up
     myplot = gca;
     myval_side = 0.10;
     myval_base = 0.08;

@@ -18,7 +18,7 @@ function [ux, vx] = GetQuotients_2Polys(fx, gx, k)
 
 global SETTINGS
 
-% Get degree of input polynomial g(x)
+% Get degree of input polynomial f(x) and g(x)
 m = GetDegree(fx);
 n = GetDegree(gx);
 
@@ -26,10 +26,10 @@ n = GetDegree(gx);
 St = BuildSubresultant_2Polys(fx, gx, k);
 
 % Get the optimal column for removal
-[~,idx_col] = GetMinDistance(St);
+[~, idx_col] = GetMinDistance(St);
 
 if idx_col > n - k + 1
-    fprintf('Second partition')
+    fprintf('Optimal column is from the second partition')
 end
 
 % Remove optimal column
@@ -48,9 +48,9 @@ x_ls = SolveAx_b(At,ct);
 % Insert a zero into the position corresponding to the index of the optimal
 % column so that S(f,g)*vec_x = 0.
 vec_x =[
-    x_ls(1:idx_col-1);
+    x_ls(1 : idx_col - 1);
     -1;
-    x_ls(idx_col:end);
+    x_ls(idx_col : end);
     ]  ;
 
 % Obtain values for quotient polynomials u and v. still expressed in the

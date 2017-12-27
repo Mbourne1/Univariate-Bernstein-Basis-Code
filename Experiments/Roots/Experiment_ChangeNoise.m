@@ -1,28 +1,59 @@
+function [] = Experiment_ChangeNoise(ex_num)
+% This experiment repeats a root finding example for a variety of noise
+% levels
+%
+% % Inputs
+%
+% ex_num : (String) Example number
 
+close all;
+clc;
 
-close all; clc;
-
-
-
-
-ex_num = '1';
-arrEmax = {1e-10,1e-8,1e-6};
+% Set minimum noise level
 emin = 1e-12;
 
-mean_method = 'Geometric Mean Matlab Method';
-bool_alpha_theta = true;
+% Get array of maximum noise levels
+arrEmax = {1e-10, 1e-8, 1e-6};
+
+% Set preprocessing related variables
+switch bool_preproc
+    case true
+        mean_method = 'Geometric Mean Matlab Method';
+        bool_alpha_theta = true;
+    case false
+        mean_method = 'None';
+        bool_alpha_theta = false;
+end
+
 
 low_rank_approx_method = 'None';
 apf_method = 'None';
 
+% Set the sylvester matrix variant to be used.
+% 'T'
+% 'DT'
+% 'TQ'
+% 'DTQ'
 sylvester_build_method = 'DTQ';
+
+% Method used to determine the degree of the GCD
+% 'R1 Row Norms',
+% 'R1 Row Diagonals',
+% 'Minimum Singular Values',
+% 'Normalised Minimum Singular Values'
 rank_revealing_metric = 'Minimum Singular Values';
 
 
-arrDeconvolution_method = {'Separate', 'Batch', 'Batch With STLN', 'Batch Constrained', 'Batch Constrained With STLN'};
+arrDeconvolution_method = {'Separate', ...
+    'Batch', ...
+    'Batch With STLN', ...
+    'Batch Constrained', ...
+    'Batch Constrained With STLN'};
+
 arrDeconvolution_preproc = {true, false};
 
-arrDeconvolution_method_wx = {'Batch', 'Separate'};
+arrDeconvolution_method_wx = {'Batch', ...
+    'Separate'};
 
 
 parfor i = 1:1:length(arrDeconvolution_method)

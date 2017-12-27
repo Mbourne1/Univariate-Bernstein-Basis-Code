@@ -2,36 +2,40 @@ function [] = SylvesterMatrixHeatMap_2Polys(m, n, k)
 %
 % % Inputs
 %
-% m : (Int)
+% m : (Int) Degree of polynomial f(x)
 %
-% n : (Int)
+% n : (Int) Degree of polynomial g(x)
 %
-% k : (Int)
+% k : (Int) Index of k-th subresultant matrix
 %
 % % Outputs
-%
 %
 % % Example
 %
 % >> SylvesterMatrixHeatMap(5, 15, 4)
 
-close all; clc;
+close all; 
+clc;
 
 
-
+% Initialise two polynomials with coefficients all set to '1'.
 fx = ones(m + 1, 1);
 gx = ones(n + 1, 1);
 
+% Get an array of subresultant matrix variants
 arrSubresultantFomat = {'T','DT','TQ','DTQ', 'DTQ Denominator Removed'};
 
+% Get number of variants considered
 nFormats = length(arrSubresultantFomat);
 
-for i = 1:1:nFormats
+% For each variant of subresultant matrix
+for i = 1 : 1 : nFormats
     
-    subresultantFomat = arrSubresultantFomat{i};
+    
+    subresultantVariant = arrSubresultantFomat{i};
     
     
-    switch subresultantFomat
+    switch subresultantVariant
         
         case 'T'
             
@@ -72,11 +76,11 @@ for i = 1:1:nFormats
             Sk = [DT1Q1 DT2Q2];
             
         otherwise
-            error('%s is not a valid format', subresultantFomat)
+            error('%s is not a valid format', subresultantVariant)
             
     end
     
-    figure_name = sprintf('%s : Heat Map', subresultantFomat);
+    figure_name = sprintf('%s : Heat Map', subresultantVariant);
     figure('Name',figure_name)
     
     Sk_rounded = log10(Sk);

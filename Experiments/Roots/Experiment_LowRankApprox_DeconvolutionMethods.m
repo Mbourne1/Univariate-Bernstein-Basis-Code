@@ -1,20 +1,30 @@
 function [] = Experiment_LowRankApprox_DeconvolutionMethods(ex_num, bool_preproc)
 %
+% % Inputs
 %
+% ex_num : (String) Example number
+%
+% bool_preproc : (Boolean) Determine whether preprocessing is used in the
+% computation of the degree of the GCD in each GCD computation as part of
+% the factorisation algorithm
+%
+% % Examples
 %
 % >> Experiment_LowRankApprox_DeconvolutionMethods('10')
 
-close all; clc;
+close all;
+clc;
 
 
 %
 % -------------------------------------------------------------------------
 % Constants
 
+% Upper and lower noise level
 emin = 1e-4;
 emax = 1e-4;
 
-
+% Preprocessing related variables
 switch bool_preproc
     
     case true
@@ -27,20 +37,25 @@ switch bool_preproc
 end
 
 
+% Other variables 
 
 apf_method = 'None';
+
+% Set the sylvester matrix variant to be used. 
+% 'T'
+% 'DT'
+% 'TQ'
+% 'DTQ'
 sylvester_build_method = 'DTQ';
+
+% Method used to determine the degree of the GCD
+% 'R1 Row Norms',
+% 'R1 Row Diagonals',
+% 'Minimum Singular Values',
+% 'Normalised Minimum Singular Values'
 rank_revealing_metric = 'Minimum Singular Values';
 
-%
-% -------------------------------------------------------------------------
-% Irrelevant - only interested in what happens before deconvolution stages
 
-
-
-
-
-%low_rank_approx_method = 'Standard SNTLN';
 
 %
 % -------------------------------------------------------------------------
@@ -51,9 +66,11 @@ deconvolution_method_wx = 'Batch';
 bool_deconvolution_preproc = true;
 
 %arr_deconvolution_method_hx = {'Separate', 'Batch', 'Batch With STLN', 'Batch Constrained', 'Batch Constrained With STLN'};
-arr_deconvolution_method_hx = {'Separate', 'Batch'};
+arr_deconvolution_method_hx = {'Separate', ...
+    'Batch'};
 
-arr_low_rank_approx_method = {'None', 'Standard SNTLN'};
+arr_low_rank_approx_method = {'None', ...
+    'Standard SNTLN'};
 
 
 

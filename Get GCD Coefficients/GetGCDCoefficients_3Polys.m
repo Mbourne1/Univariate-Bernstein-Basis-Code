@@ -3,25 +3,25 @@ function [dx] = GetGCDCoefficients_3Polys(ux, vx, wx, fx, gx, hx, k, alpha, beta
 %
 % % Inputs
 %
-% ux : (Vector)
+% ux : (Vector) Coefficients of the polynomial u(x)
 %
-% vx : (Vector)
+% vx : (Vector) Coefficients of the polynomial v(x)
 %
-% wx : (Vector) Coefficients of cofactor polynomial w(x)
+% wx : (Vector) Coefficients of the polynomial w(x)
 %
-% fx : (Vector) 
+% fx : (Vector) Coefficients of the polynomial f(x)
 %
-% gx : (Vector)
+% gx : (Vector) Coefficients of the polynomial g(x)
 %
-% hx : (Vector) Coefficients of polynomial h(x)
+% hx : (Vector) Coefficients of the polynomial h(x)
 %
 % k : (Int) Degree of common divisor.
 %
 % alpha : (Float) Optimal value of \alpha
 %
-% beta : (Float)
+% beta : (Float) Optimal value of \beta
 %
-% gamma : (Float)
+% gamma : (Float) Optimal value of \gamma
 %
 % theta : (Float) Optimal value of \theta
 %
@@ -36,12 +36,12 @@ end
 % Global variables
 global SETTINGS
 
-% Get f(w) and g(w)
+% Get f(\omega) and g(\omega) and h(\omega)
 fw = GetWithThetas(fx, theta);
 gw = GetWithThetas(gx, theta);
 hw = GetWithThetas(hx, theta); 
 
-% Get u(w) and v(w)
+% Get u(\omega), v(\omega) and w(\omega)
 uw = GetWithThetas(ux, theta);
 vw = GetWithThetas(vx, theta);
 ww = GetWithThetas(wx, theta);

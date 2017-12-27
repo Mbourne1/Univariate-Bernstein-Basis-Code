@@ -1,21 +1,27 @@
-function [] = ConditionNumbersExperiments(ex_num)
+function [] = ConditionNumbersExperiments_2Polys(ex_num)
+%
+% % Inputs
+%
+% ex_num : (String) Example number
 
-close all; clc;
-% Get coefficients of f(x,y) and g(x,y)
 
+close all; 
+clc;
+
+% Get coefficients of f(x) and g(x)
 [fx, gx] = Examples_GCD_FromCoefficients(ex_num);
 
-% Get degree of polynomial f(x,y)
+% Get degree of polynomial f(x) and g(x)
 m = GetDegree(fx);
-
-% Get degree of polynomial g(x,y)
 n = GetDegree(gx);
 
-
+% Get an array of formats of subresultant matrix
 arrFormat = {'T','DT','TQ','DTQ', 'DTQ Denominator Removed'};
 
+% Get number of formats
 nFormats = length(arrFormat);
 
+% Initialise arrays
 arrConditionVec = cell(nFormats, 1);
 arrConditionVec_P1 = cell(nFormats, 1);
 arrConditionVec_P2 = cell(nFormats, 1);

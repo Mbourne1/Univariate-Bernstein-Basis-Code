@@ -1,33 +1,34 @@
 function [] = ScalingEffect_2Polys(m, n_k)
-% MaxMinEntriesDT(m,n_k)
+% ScalingEffect_2Polys(m, n_k)
 %
-% Each coefficient a_{i} appears in n-k+1 columns of the Sylvester matrix,
-% and has two binomial coefficients in D^{-1}T(f,g).
+% Each coefficient a_{i} appears in n - k + 1 columns of the k-th 
+% subresultant matrix, and has two binomial coefficients in D^{-1}T(f,g).
 % This experiment looks at the scaling effect of the two binomial
-% coefficients of each a_{i} in each column j = 0,...,n-k.
+% coefficients of each a_{i} in each of the n - k + 1 columns.
 %
 % Inputs
 %
-% m : Degree of polynomial f(x)
+% m : (Int) Degree of polynomial f(x)
 %
-% n : Degree of polynomial v(x)
+% n_k : (Int) Number of columns in partition of k-th subresultant matrix
 %
-% >> MaxMinEntriesDT(m,n_k)
+% >> ScalingEffect_2Polys(m, n_k)
 
 
-close all; clc;
+close all; 
+clc;
 
 % Get an array of Sylvester matrix formats
 arrSylvesterMatrixType = {'DTQ', 'TQ', 'DT', 'T', 'DTQ Denominator Removed'};
 
 % Get number of formats in the array
-nFormats = length(arrSylvesterMatrixType);
+nVariants = length(arrSylvesterMatrixType);
 
-% for each coefficient a_{i} i=0,...,m
-arrScaling = cell(m+1,1);
+% Initialise an array to store
+arrScaling = cell(m + 1, 1);
 
-% For each Sylvester subresultant format
-for j = 1 : 1 : nFormats
+% For each subresultant matrix variant
+for j = 1 : 1 : nVariants
     
     % For each of the coefficients a_{i}
     for i = 0 : 1 : m
@@ -95,10 +96,10 @@ for j = 1 : 1 : nFormats
     grid on
     box on
     
-    hLines = findobj(gca,'Type','line')
+    hLines = findobj(gca,'Type','line');
 
     for k = 1:length(hLines)
-        activeLine = hLines(k)
+        activeLine = hLines(k);
         
         set(activeLine,'LineWidth',6)
         set(activeLine,'markers',1)

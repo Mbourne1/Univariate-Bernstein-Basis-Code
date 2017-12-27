@@ -2,7 +2,7 @@ function [] = PrintCoefficients_Bivariate_Power(fxy,f)
 % Given the polynomial f(x,y) print out the polynomial.
 
 % Get degree of polynomial f(x,y)
-[m1,m2] = GetDegree(fxy);
+[m1, m2] = GetDegree_Bivariate(fxy);
 
 % Initialise string
 str = sprintf('%s(x,y) = ',f);

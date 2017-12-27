@@ -1,28 +1,43 @@
 function [] = Experiment7_DegreeElevation(ex_num, bool_preproc, p, q)
+% This experiment looks at the effect of degree elevation in the
+% computation of the degree of the GCD of two univariate polynomials in
+% Bernstein form.
+%
+% % Inputs
+%
+% ex_num : (String) Example number
+%
+% bool_preproc : (Boolean) 
+%
+% p : (Int) Number of degree elevations of f(x)
+%
+% q : (Int) Number of degree elevations of g(x)
 
-
-%ex_num = '1';
+% Set min and max noise level
 emin = 1e-12;
 emax = 1e-12;
 
+% Set preprocessing related variables
 switch bool_preproc
-    case true
+    case true      
         
         mean_method = 'Geometric Mean Matlab Method';
         bool_alpha_theta = true;
+        
     case false
         
         mean_method = 'None';
         bool_alpha_theta = false;
+        
 end
 
+% Set other variables
 low_rank_approx_method = 'None';
 apf_method = 'None';
 Sylvester_Build_Method = 'DTQ';
 rank_revealing_metric = 'Minimum Singular Values';
-%p = 5;
-%q = 5;
 
+% Compute the GCD 
 o_gcd_Univariate_2Polys_DegreeElevationTest(ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, ...
     Sylvester_Build_Method, rank_revealing_metric, p, q)

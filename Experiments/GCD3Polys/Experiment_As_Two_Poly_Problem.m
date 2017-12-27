@@ -10,9 +10,11 @@ function [] = Experiment_As_Two_Poly_Problem(ex_number, bool_preproc)
 
 close all; clc;
 
+% Set max and min noise level
 emin = 1e-9;
 emax = 1e-9;
 
+% set preprocessing related variables
 switch bool_preproc
     case true
         mean_method = 'Geometric Mean Matlab Method';
@@ -24,8 +26,25 @@ end
 
 % Constants
 apf_method = 'None';
+
+% % Low Rank Approximation Method
+% 'None'
+% 'Standard STLN'
+% 'Standard SNTLN'
 low_rank_approx_method = 'None';
+
+% Method used to determine the degree of the GCD
+% 'R1 Row Norms',
+% 'R1 Row Diagonals',
+% 'Minimum Singular Values',
+% 'Normalised Minimum Singular Values'
 rank_revealing_metric = 'Minimum Singular Values';
+
+% Set the sylvester matrix variant to be used. 
+% 'T'
+% 'DT'
+% 'TQ'
+% 'DTQ'
 sylvester_build_method = 'DTQ';
 
 arr_ex_variant = {'a','b','c'};
@@ -39,13 +58,21 @@ for i = 1 : 1  : length(arr_ex_variant)
     
 end
 
-nEquations = '2';
+
+
+
+
 
 three_poly_problem = false;
 
 if three_poly_problem == true
     
     % Three Polynomials - 2 x 3 subresutlant - f appears twice S(f,g,h)
+    
+    % nEquations refers to the choice of a (2x3) or a (3x3) partitioned
+    % subresultant matrix.
+    nEquations = '2';
+    
     for i = 1 : 1 : length(arr_ex_variant)
         ex_variant = arr_ex_variant{i};
         ex_num = strcat(ex_number, ex_variant);

@@ -113,36 +113,33 @@ for k = lowerLimit_k : 1 : upperLimit_k
             
     end
 
-    
+    % Store geometric means of entries of f(x), g(x) and h(x) found in the 
+    % i-th subresultant matrix
     vGM_fx(i) = GM_fx;
     vGM_gx(i) = GM_gx;
     vGM_hx(i) = GM_hx;
     
-    
+    % Store optimal values of \lambda, \mu, \rho and \theta in the i-th
+    % subresultant matrix
     vLambda(i) = lambda;
     vMu(i) = mu;
     vRho(i) = rho;
     vTheta(i) = theta;
-    
-
     
     % Divide f(x) and g(x) by geometric means
     fx_n = fx./ vGM_fx(i);
     gx_n = gx./ vGM_gx(i);
     hx_n = hx./ vGM_hx(i);
     
-    
-    % Construct the kth subresultant matrix S_{k}(f(\theta),g(\theta))
+    % Construct the i-th preprocessed subresultant matrix 
+    % S_{k}(f(\theta),g(\theta))
     alpha_fw = lambda .* GetWithThetas(fx_n, vTheta(i));
     beta_gw = mu .* GetWithThetas(gx_n, vTheta(i));
     gamma_hw = rho .* GetWithThetas(hx_n, vTheta(i));
     
-    % Build the k-th subresultant    
+    % Build the i-th subresutlant matrix
     arr_Sk{i} = BuildSubresultant_3Polys(alpha_fw, beta_gw, gamma_hw, k);
     
-    
-    
-
     if k == lowerLimit_k
         
 

@@ -1,4 +1,5 @@
 global SETTINGS
+
 LineBreakLarge();
 fprintf('PARAMETERS: \n')
 fprintf('\t EXAMPLE NUMBER : %s \n', SETTINGS.EX_NUM)

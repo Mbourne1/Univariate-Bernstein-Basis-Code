@@ -118,20 +118,35 @@ end
 
 
 function [] = PlotCoefficients(arrPolynomials, arrNames)
+%
+% % Inputs
+%
+% arrPolynomails : (Array of Vectors) Each vector contains coefficients of
+% a polynomial f_{i}(x)
+%
+% arrNames : (Array of Strings) Labels associated with the array of
+% polynomials f_{i}(x)
 
-
+% Get number of polynomials in the array
 nPolynomials = length(arrPolynomials);
 
 figure()
 hold on
-for i = 1:1:nPolynomials
+
+for i = 1 : 1 : nPolynomials
     
-    poly = arrPolynomials{i};
+    % Get the coefficients of the i-th polynomial
+    vPolyCoefficients = arrPolynomials{i};
+    
+    % Get name of polynomail
     polyName = arrNames{i};
     
-    nCoefficients = length(poly);
+    % Get number of coefficients
+    nCoefficients = length(vPolyCoefficients);
+    
     x_vec = 1 : 1 : nCoefficients;
-    plot(x_vec, log10(abs(poly)), 'DisplayName',polyName);
+    
+    plot(x_vec, log10(abs(vPolyCoefficients)), 'DisplayName',polyName);
     
     
 end
