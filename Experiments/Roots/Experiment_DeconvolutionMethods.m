@@ -124,7 +124,7 @@ deconvolution_method_hx_arr = {...
     'Batch Constrained with STLN'};
 
 
-for i = 1 : 1 : length(deconvolution_method_hx_arr)
+parfor i = 1 : 1 : length(deconvolution_method_hx_arr)
     
     deconvolution_method_hx = deconvolution_method_hx_arr{i};
     

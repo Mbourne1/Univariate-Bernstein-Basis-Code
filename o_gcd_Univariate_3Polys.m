@@ -153,7 +153,7 @@ rank_range = [0 0];
 
 
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~,~,~,dx_calc, ux_calc, vx_calc, wx_calc] = ...
+[~, ~, ~, dx_calc, ux_calc, vx_calc, wx_calc] = ...
     o_gcd_3Polys_mymethod(fx, gx, hx, limits_t, rank_range);
 
 % Check coefficients of calculated polynomials are similar to those of the

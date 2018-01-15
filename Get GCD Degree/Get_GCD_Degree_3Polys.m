@@ -97,7 +97,7 @@ for k = lowerLimit_k : 1 : upperLimit_k
     
     i = k - lowerLimit_k + 1;
     
-
+    
     
     switch SETTINGS.SYLVESTER_EQUATIONS
         
@@ -112,8 +112,8 @@ for k = lowerLimit_k : 1 : upperLimit_k
             error('err')
             
     end
-
-    % Store geometric means of entries of f(x), g(x) and h(x) found in the 
+    
+    % Store geometric means of entries of f(x), g(x) and h(x) found in the
     % i-th subresultant matrix
     vGM_fx(i) = GM_fx;
     vGM_gx(i) = GM_gx;
@@ -131,7 +131,7 @@ for k = lowerLimit_k : 1 : upperLimit_k
     gx_n = gx./ vGM_gx(i);
     hx_n = hx./ vGM_hx(i);
     
-    % Construct the i-th preprocessed subresultant matrix 
+    % Construct the i-th preprocessed subresultant matrix
     % S_{k}(f(\theta),g(\theta))
     alpha_fw = lambda .* GetWithThetas(fx_n, vTheta(i));
     beta_gw = mu .* GetWithThetas(gx_n, vTheta(i));
@@ -142,37 +142,39 @@ for k = lowerLimit_k : 1 : upperLimit_k
     
     if k == lowerLimit_k
         
-
-        figure_name = sprintf('Heat Map : %s : %s', SETTINGS.SYLVESTER_BUILD_METHOD, SETTINGS.EX_NUM);
-        figure('Name',figure_name)
-        hold on
-        colormap('hot');
-        data = log10(abs(arr_Sk{i}));
-        imagesc(flipud(data));
-        colorbar;
-        hold off
-        
-
-        PlotCoefficients(...
-            {...
-            fx, alpha_fw,...
-            gx, beta_gw,...
-            hx, gamma_hw...
-            },...
-            {...
-            '$f(x)$', '$\lambda \tilde{f}(\omega)$',...
-            '$g(x)$', '$\mu \tilde{g}(\omega)$',...
-            '$h(x)$', '$\rho \tilde{h}(\omega)$'...
-            },...
-            {'--','-s','--','-s','--','-s'}...
-            );
+        if SETTINGS.PLOT_GRAPHS_PREPROCESSING == true
+            figure_name = sprintf('Heat Map : %s : %s', SETTINGS.SYLVESTER_BUILD_METHOD, SETTINGS.EX_NUM);
+            figure('Name',figure_name)
+            hold on
+            colormap('hot');
+            data = log10(abs(arr_Sk{i}));
+            imagesc(flipud(data));
+            colorbar;
+            hold off
+            
+            
+            PlotCoefficients(...
+                {...
+                fx, alpha_fw,...
+                gx, beta_gw,...
+                hx, gamma_hw...
+                },...
+                {...
+                '$f(x)$', '$\lambda \tilde{f}(\omega)$',...
+                '$g(x)$', '$\mu \tilde{g}(\omega)$',...
+                '$h(x)$', '$\rho \tilde{h}(\omega)$'...
+                },...
+                {'--','-s','--','-s','--','-s'}...
+                );
+            
+        end
         
         %PlotCoefficients({fx, alpha_fw1}, {'f(x)', '\alpha f(\omega)'});
         %PlotCoefficients({gx, beta_gw}, {'g(x)', '\beta g(\omega)'});
         %PlotCoefficients({hx, gamma_hw}, {'h(x)', '\gamma h(\omega)'});
     end
     
-
+    
     
     vCondition(i) = cond(arr_Sk{i});
     
@@ -189,37 +191,37 @@ end % End of for
 % figure()
 % hold on
 % for i = 1 : 1 : nSubresultants
-%    
+%
 %     temp_vec1 = arrF_max_1{i};
 %     temp_vec2 = arrF_max_2{i};
 %     temp_vec3 = arr_G_max{i};
 %     temp_vec4 = arr_H_max{i};
-%     
+%
 %     x_vec = i.*ones(length(temp_vec1),1);
 %     scatter(x_vec, log10(temp_vec1), 'MarkerEdgeColor','red')
 %     scatter(x_vec, log10(temp_vec2), 'MarkerEdgeColor','blue')
-%     
+%
 %     x_vec = i.*ones(length(temp_vec3),1);
 %     scatter(x_vec, log10(temp_vec3), 'MarkerEdgeColor','green')
 %     x_vec = i.*ones(length(temp_vec4),1);
 %     scatter(x_vec, log10(temp_vec4), 'MarkerEdgeColor','yellow')
 % end
 % hold off
-% 
+%
 % % Plot fmax
 % figure()
 % hold on
 % for i = 1 : 1 : nSubresultants
-%    
+%
 %     temp_vec1 = arrF_min_1{i};
 %     temp_vec2 = arrF_min_2{i};
 %     temp_vec3 = arr_G_min{i};
 %     temp_vec4 = arr_H_min{i};
-%     
+%
 %     x_vec = i.*ones(length(temp_vec1),1);
 %     scatter(x_vec, log10(temp_vec1), 'MarkerEdgeColor','red')
 %     scatter(x_vec, log10(temp_vec2), 'MarkerEdgeColor','blue')
-%     
+%
 %     x_vec = i.*ones(length(temp_vec3),1);
 %     scatter(x_vec, log10(temp_vec3), 'MarkerEdgeColor','green')
 %     x_vec = i.*ones(length(temp_vec4),1);
@@ -233,43 +235,45 @@ end % End of for
 
 
 if SETTINGS.PLOT_GRAPHS_PREPROCESSING == true
-
+    
     % % Plot Lambda, Mu, rho and theta
     figure_name = strcat('Scaling : ',  SETTINGS.SCALING_METHOD);
     figure('Name',figure_name);
     hold on
-
+    
     plot(log10(vLambda), '-s', 'LineWidth',2, 'DisplayName','\lambda')
     plot(log10(vMu), '-o','LineWidth',2, 'DisplayName','\mu')
     plot(log10(vRho), '-*', 'LineWidth',2, 'DisplayName','\rho')
     plot(log10(vTheta), 'LineWidth',2, 'DisplayName','\theta')
-
+    
     ylabel('$\log_{10} \left( \Re \right)$', 'Interpreter','latex')
     xlabel('$k$', 'Interpreter','latex')
     l = legend(gca,'show');
     set(l,'location','southwest')
     set(l,'FontSize',20)
     hold off
-
-
+    
+    
     % Plot Geometric Means
     figure('Name','Geometric Means')
     hold on
-
+    
     plot(log10(vGM_fx), '-s', 'DisplayName','$GM f(x)$')
     plot(log10(vGM_gx), '-o', 'DisplayName','$GM g(x)$')
     plot(log10(vGM_hx), '-', 'DisplayName','$GM h(x)$')
     l = legend(gca,'show');
     set(l,'Interpreter', 'latex')
     hold off
-
+    
+    % Plot Condition number
+    figure('Name','Condition Numbers')
+    hold on
+    plot(log10(vCondition));
+    hold off
+    
 end
 
-% Plot Condition number
-figure('Name','Condition Numbers')
-hold on
-plot(log10(vCondition));
-hold off
+
 
 % %
 % %

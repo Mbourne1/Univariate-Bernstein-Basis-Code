@@ -1,4 +1,4 @@
-function [] = Experiment1SylvesterFormat_2Polys(ex_num)
+function [] = Experiment1SylvesterFormat_2Polys(ex_num, bool_preprocessing)
 % This example, we want to see the computation of the degree of the GCD
 % with different forms of the sylvester subresultant matrix.
 %
@@ -16,12 +16,12 @@ close all;
 clc;
 
 % Constants
-el = 1e-14;
-eu = 1e-14;
+el = 1e-12;
+eu = 1e-1;
 
 
 % Determine whether preprocessing is included
-bool_preprocessing = true;
+
 if (bool_preprocessing == true)
     mean_method = 'Geometric Mean Matlab Method';
     bool_preproc = true;

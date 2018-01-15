@@ -13,9 +13,6 @@ function [] = Experiment4SylvesterFormat_ColumnOrdering(ex_num, bool_preproc)
 
 close all; clc;
 
-emin = 1e-9;
-emax = 1e-9;
-
 % arrEx_num = {'11'}; emin = 1e-9; emax = 1e-9;
 
 % Good Examples
@@ -40,9 +37,19 @@ apf_method = 'None';
 rank_revealing_metric = 'Minimum Singular Values';
 
 
+
+
+
+
+% Variables
+
 arrSylvesterFormat = {'DTQ'};
 
-arr_ex_num_variant = {strcat(ex_num,'a'), strcat(ex_num,'b'), strcat(ex_num,'c')} ;
+%arr_ex_num_variant = {strcat(ex_num,'a'), strcat(ex_num,'b'), strcat(ex_num,'c')} ;
+arr_ex_num_variant = {strcat(ex_num,'c')};
+
+arr_noise = {1e-14, 1e-12, 1e-10, 1e-8, 1e-6, 1e-4};
+
 
 
 
@@ -54,30 +61,42 @@ arr_ex_num_variant = {strcat(ex_num,'a'), strcat(ex_num,'b'), strcat(ex_num,'c')
 
 nEquations = '2';
 
+% For each subresultant matrix variant
 for i1 = 1 : 1 : length(arrSylvesterFormat)
     
+    % For each example number variant 'a', 'b' or 'c'
     for i2 = 1 : 1 : length(arr_ex_num_variant)
         
-        sylvester_build_method = arrSylvesterFormat{i1};
         
-        ex_num_variant = arr_ex_num_variant{i2};
-        
-        o_gcd_Univariate_3Polys(ex_num_variant, emin, emax, mean_method, ...
-            bool_alpha_theta, low_rank_approx_method, apf_method,...
-            sylvester_build_method, nEquations, rank_revealing_metric)
-        
-        %SavePlots(ex_num, 'fgh', sylvester_build_method)
-        %close all; clc;
+        for i3 = 1 : 1 : length(arr_noise)
+            
+            emin = arr_noise{i3};
+            emax = arr_noise{i3};
+            
+            
+            % Set subresultant matrix variant
+            sylvester_build_method = arrSylvesterFormat{i1};
+            
+            % Set example number
+            ex_num_variant = arr_ex_num_variant{i2};
+            
+            o_gcd_Univariate_3Polys(ex_num_variant, emin, emax, mean_method, ...
+                bool_alpha_theta, low_rank_approx_method, apf_method,...
+                sylvester_build_method, nEquations, rank_revealing_metric)
+            
+            %SavePlots(ex_num, 'fgh', sylvester_build_method)
+            %close all; clc;
+        end
     end
     
 end
 
-nEquations = '3';
-ex_num_variant = strcat(ex_num,'a');
-
-o_gcd_Univariate_3Polys(ex_num_variant, emin, emax, mean_method, ...
-    bool_alpha_theta, low_rank_approx_method, apf_method,...
-    sylvester_build_method, nEquations, rank_revealing_metric)
+% nEquations = '3';
+% ex_num_variant = strcat(ex_num,'a');
+%
+% o_gcd_Univariate_3Polys(ex_num_variant, emin, emax, mean_method, ...
+%     bool_alpha_theta, low_rank_approx_method, apf_method,...
+%     sylvester_build_method, nEquations, rank_revealing_metric)
 
 
 

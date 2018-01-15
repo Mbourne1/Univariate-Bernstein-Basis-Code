@@ -55,7 +55,7 @@ rank_revealing_metric = 'Minimum Singular Values';
 % 'None'
 % 'Standard STLN'
 % 'Standard SNTLN'
-low_rank_approx_method = 'Standard SNTLN';
+low_rank_approx_method = 'Standard STLN';
 
 % % Deconvolution Method
 % 'Separate'
@@ -63,7 +63,7 @@ low_rank_approx_method = 'Standard SNTLN';
 % 'Batch with STLN'
 % 'Batch Constrained'
 % 'Batch Constrained with STLN'
-deconvolution_method_hx = 'Batch Constrained With STLN';
+deconvolution_method_hx = 'Batch Constrained';
 
 % % Deconvolution Method
 % 'Batch'

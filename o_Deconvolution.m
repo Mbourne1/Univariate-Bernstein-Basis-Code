@@ -22,7 +22,7 @@ function [] = o_Deconvolution(ex_num, emin, bool_preproc)
 % Set global settings
 global SETTINGS
 SETTINGS.PLOT_GRAPHS = true;
-SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-17;
+SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-12;
 SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;
 SETTINGS.BOOL_LOG = false;
 SETTINGS.PREPROC_DECONVOLUTIONS = bool_preproc;
@@ -273,8 +273,19 @@ if (SETTINGS.PLOT_GRAPHS)
     l = legend(gca,'show');
     set(l,'Interpreter','latex')
     
+    
+    
+    % Resizing and Repositioning
+    myplot = gca;
+    myval_side = 0.10;
+    myval_base = 0.08;
+    set(myplot, 'Position', [ myval_side myval_base 0.98 - myval_side 0.98 - myval_base])
+
+    grid on
+    box on
+    
     xlim([1 nPolynomials_hx]);
-    xlabel('i : Index of $f_{i}(x)$','Interpreter','latex','FontSize',20)
+    xlabel('i : Index of $f_{i}(x)$','Interpreter','latex','FontSize', 20)
     ylabel('$\log_{10}\left( \epsilon \right)$','Interpreter','latex','FontSize', 20)
     hold off
     

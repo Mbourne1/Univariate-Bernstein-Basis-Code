@@ -305,3 +305,103 @@ DATE, EX_NUM, BOOL_PREPROC, NOISE, method_name, error_norm
 28-Oct-2017 20:05:44,13,1,0.0001,Batch With STLN,0.0017453 
 28-Oct-2017 20:05:44,13,1,0.0001,Batch Constrained,0.0023647 
 28-Oct-2017 20:05:44,13,1,0.0001,Batch Constrained With STLN,0.0062109 
+09-Jan-2018 14:10:48,9,0,0.0001,Separate,0.015191 
+09-Jan-2018 14:10:48,9,0,0.0001,Batch,0.015191 
+09-Jan-2018 14:10:48,9,0,0.0001,Batch With STLN,0.0087641 
+09-Jan-2018 14:10:48,9,0,0.0001,Batch Constrained,0.01229 
+09-Jan-2018 14:10:48,9,0,0.0001,Batch Constrained With STLN,0.0031247 
+09-Jan-2018 14:10:54,9,1,0.0001,Separate,0.015191 
+09-Jan-2018 14:10:54,9,1,0.0001,Batch,0.00076162 
+09-Jan-2018 14:10:54,9,1,0.0001,Batch With STLN,0.00094537 
+09-Jan-2018 14:10:54,9,1,0.0001,Batch Constrained,0.00036628 
+09-Jan-2018 14:10:54,9,1,0.0001,Batch Constrained With STLN,0.0034682 
+09-Jan-2018 14:14:14,9,0,0.0001,Separate,0.015191 
+09-Jan-2018 14:14:14,9,0,0.0001,Batch,0.015191 
+09-Jan-2018 14:14:14,9,0,0.0001,Batch With STLN,0.0087641 
+09-Jan-2018 14:14:14,9,0,0.0001,Batch Constrained,0.01229 
+09-Jan-2018 14:14:14,9,0,0.0001,Batch Constrained With STLN,0.0031247 
+09-Jan-2018 14:14:18,9,1,0.0001,Separate,0.015191 
+09-Jan-2018 14:14:18,9,1,0.0001,Batch,0.00076162 
+09-Jan-2018 14:14:18,9,1,0.0001,Batch With STLN,0.00094537 
+09-Jan-2018 14:14:18,9,1,0.0001,Batch Constrained,0.00036628 
+09-Jan-2018 14:14:18,9,1,0.0001,Batch Constrained With STLN,0.0034682 
+09-Jan-2018 14:18:13,9,1,1e-06,Separate,0.00015229 
+09-Jan-2018 14:18:13,9,1,1e-06,Batch,7.6179e-06 
+09-Jan-2018 14:18:13,9,1,1e-06,Batch With STLN,9.4551e-06 
+09-Jan-2018 14:18:13,9,1,1e-06,Batch Constrained,3.6632e-06 
+09-Jan-2018 14:18:13,9,1,1e-06,Batch Constrained With STLN,3.4704e-05 
+09-Jan-2018 14:18:17,9,1,1e-08,Separate,1.5152e-06 
+09-Jan-2018 14:18:17,9,1,1e-08,Batch,7.618e-08 
+09-Jan-2018 14:18:17,9,1,1e-08,Batch With STLN,9.4552e-08 
+09-Jan-2018 14:18:17,9,1,1e-08,Batch Constrained,3.6633e-08 
+09-Jan-2018 14:18:17,9,1,1e-08,Batch Constrained With STLN,3.4704e-07 
+09-Jan-2018 14:18:21,9,1,1e-10,Separate,2.2658e-08 
+09-Jan-2018 14:18:21,9,1,1e-10,Batch,7.6191e-10 
+09-Jan-2018 14:18:21,9,1,1e-10,Batch With STLN,9.4552e-10 
+09-Jan-2018 14:18:21,9,1,1e-10,Batch Constrained,3.6663e-10 
+09-Jan-2018 14:18:21,9,1,1e-10,Batch Constrained With STLN,3.4704e-09 
+09-Jan-2018 14:18:25,9,1,1e-12,Separate,2.2813e-08 
+09-Jan-2018 14:18:25,9,1,1e-12,Batch,8.0311e-12 
+09-Jan-2018 14:18:25,9,1,1e-12,Batch With STLN,8.0311e-12 
+09-Jan-2018 14:18:25,9,1,1e-12,Batch Constrained,4.3315e-12 
+09-Jan-2018 14:18:25,9,1,1e-12,Batch Constrained With STLN,4.3315e-12 
+09-Jan-2018 14:19:53,9,1,1e-14,Separate,2.2865e-08 
+09-Jan-2018 14:19:53,9,1,1e-14,Batch,2.1942e-12 
+09-Jan-2018 14:19:53,9,1,1e-14,Batch With STLN,2.1942e-12 
+09-Jan-2018 14:19:53,9,1,1e-14,Batch Constrained,1.7642e-12 
+09-Jan-2018 14:19:53,9,1,1e-14,Batch Constrained With STLN,1.7642e-12 
+09-Jan-2018 14:19:57,9,1,1e-12,Separate,2.2813e-08 
+09-Jan-2018 14:19:57,9,1,1e-12,Batch,8.0311e-12 
+09-Jan-2018 14:19:57,9,1,1e-12,Batch With STLN,8.0311e-12 
+09-Jan-2018 14:19:57,9,1,1e-12,Batch Constrained,4.3315e-12 
+09-Jan-2018 14:19:57,9,1,1e-12,Batch Constrained With STLN,4.3315e-12 
+09-Jan-2018 14:20:01,9,1,1e-10,Separate,2.2658e-08 
+09-Jan-2018 14:20:01,9,1,1e-10,Batch,7.6191e-10 
+09-Jan-2018 14:20:01,9,1,1e-10,Batch With STLN,9.4552e-10 
+09-Jan-2018 14:20:01,9,1,1e-10,Batch Constrained,3.6663e-10 
+09-Jan-2018 14:20:01,9,1,1e-10,Batch Constrained With STLN,3.4704e-09 
+09-Jan-2018 14:20:04,9,1,1e-08,Separate,1.5152e-06 
+09-Jan-2018 14:20:04,9,1,1e-08,Batch,7.618e-08 
+09-Jan-2018 14:20:04,9,1,1e-08,Batch With STLN,9.4552e-08 
+09-Jan-2018 14:20:04,9,1,1e-08,Batch Constrained,3.6633e-08 
+09-Jan-2018 14:20:05,9,1,1e-08,Batch Constrained With STLN,3.4704e-07 
+09-Jan-2018 14:20:09,9,1,1e-06,Separate,0.00015229 
+09-Jan-2018 14:20:09,9,1,1e-06,Batch,7.6179e-06 
+09-Jan-2018 14:20:09,9,1,1e-06,Batch With STLN,9.4551e-06 
+09-Jan-2018 14:20:09,9,1,1e-06,Batch Constrained,3.6632e-06 
+09-Jan-2018 14:20:09,9,1,1e-06,Batch Constrained With STLN,3.4704e-05 
+09-Jan-2018 14:20:13,9,1,0.0001,Separate,0.015191 
+09-Jan-2018 14:20:13,9,1,0.0001,Batch,0.00076162 
+09-Jan-2018 14:20:13,9,1,0.0001,Batch With STLN,0.00094537 
+09-Jan-2018 14:20:13,9,1,0.0001,Batch Constrained,0.00036628 
+09-Jan-2018 14:20:13,9,1,0.0001,Batch Constrained With STLN,0.0034682 
+09-Jan-2018 14:48:30,9,0,1e-14,Separate,2.2865e-08 
+09-Jan-2018 14:48:30,9,0,1e-14,Batch,2.2865e-08 
+09-Jan-2018 14:48:30,9,0,1e-14,Batch With STLN,2.3214e-08 
+09-Jan-2018 14:48:30,9,0,1e-14,Batch Constrained,1.7708e-08 
+09-Jan-2018 14:48:30,9,0,1e-14,Batch Constrained With STLN,1.2451e-08 
+09-Jan-2018 14:48:34,9,0,1e-12,Separate,2.2813e-08 
+09-Jan-2018 14:48:34,9,0,1e-12,Batch,2.2813e-08 
+09-Jan-2018 14:48:34,9,0,1e-12,Batch With STLN,2.3169e-08 
+09-Jan-2018 14:48:34,9,0,1e-12,Batch Constrained,1.7588e-08 
+09-Jan-2018 14:48:34,9,0,1e-12,Batch Constrained With STLN,1.2421e-08 
+09-Jan-2018 14:48:39,9,0,1e-10,Separate,2.2658e-08 
+09-Jan-2018 14:48:39,9,0,1e-10,Batch,2.2658e-08 
+09-Jan-2018 14:48:39,9,0,1e-10,Batch With STLN,2.0163e-08 
+09-Jan-2018 14:48:39,9,0,1e-10,Batch Constrained,5.7342e-09 
+09-Jan-2018 14:48:39,9,0,1e-10,Batch Constrained With STLN,9.4538e-09 
+09-Jan-2018 14:48:43,9,0,1e-08,Separate,1.5152e-06 
+09-Jan-2018 14:48:43,9,0,1e-08,Batch,1.5152e-06 
+09-Jan-2018 14:48:43,9,0,1e-08,Batch With STLN,8.6492e-07 
+09-Jan-2018 14:48:43,9,0,1e-08,Batch Constrained,1.2141e-06 
+09-Jan-2018 14:48:43,9,0,1e-08,Batch Constrained With STLN,3.0053e-07 
+09-Jan-2018 14:48:47,9,0,1e-06,Separate,0.00015229 
+09-Jan-2018 14:48:47,9,0,1e-06,Batch,0.00015229 
+09-Jan-2018 14:48:47,9,0,1e-06,Batch With STLN,8.765e-05 
+09-Jan-2018 14:48:47,9,0,1e-06,Batch Constrained,0.00012315 
+09-Jan-2018 14:48:47,9,0,1e-06,Batch Constrained With STLN,3.1246e-05 
+09-Jan-2018 14:48:52,9,0,0.0001,Separate,0.015191 
+09-Jan-2018 14:48:52,9,0,0.0001,Batch,0.015191 
+09-Jan-2018 14:48:52,9,0,0.0001,Batch With STLN,0.0087641 
+09-Jan-2018 14:48:52,9,0,0.0001,Batch Constrained,0.01229 
+09-Jan-2018 14:48:52,9,0,0.0001,Batch Constrained With STLN,0.0031247 

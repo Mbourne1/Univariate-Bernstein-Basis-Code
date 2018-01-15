@@ -37,7 +37,7 @@ switch DECONVOLUTION_METHOD
         % Deconvolve Batch Method
         arr_hx = Deconvolve_Batch(arr_fx);
         
-    case 'Batch With STLN'
+    case 'Batch with STLN'
         
         arr_hx = Deconvolve_Batch_With_STLN(arr_fx);
         
@@ -65,7 +65,7 @@ switch DECONVOLUTION_METHOD
         % Get array of polynomials h_{i}(x)
         arr_hx = Deconvolve_Batch_Constrained(arr_fx, vMultiplicity);
         
-    case 'Batch Constrained With STLN'
+    case 'Batch Constrained with STLN'
         
         % Get number of polynomials in batch
         nPolynomials_fx = size(arr_fx,1);
@@ -94,9 +94,9 @@ switch DECONVOLUTION_METHOD
             'SETTINGS.DECONVOLUTION_METHOD must be one of the following:\n'...
             '\t*Separate \n '...
             '\t*Batch \n '...
-            '\t*Batch With STLN \n '...
+            '\t*Batch with STLN \n '...
             '\t*Batch Constrained\n '...
-            '\t*Batch Constrained With STLN\n'...
+            '\t*Batch Constrained with STLN\n'...
             ]);
         error(err_msg);
 end
