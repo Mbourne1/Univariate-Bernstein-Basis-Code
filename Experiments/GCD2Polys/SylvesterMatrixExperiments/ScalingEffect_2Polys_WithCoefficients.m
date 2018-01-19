@@ -224,7 +224,7 @@ ax.Position = [0.0842    0.0821    0.9018    0.9019];
 end
 
 
-function [] = SaveFigure(sylvester_build_method, polyName, ex_num)
+function [] = SaveFigure(sylvester_matrix_variant, polyName, ex_num)
 %
 % % Inputs
 %
@@ -232,7 +232,7 @@ function [] = SaveFigure(sylvester_build_method, polyName, ex_num)
 %
 % str : (String)
 %
-% sylvester_build_method
+% sylvester_matrix_variant : (String) 
 
 directory_name = strcat('UnivariateSylvesterFormatFigures_Coefficients/Example',(ex_num),'/');
 
@@ -240,9 +240,9 @@ mkdir(directory_name)
 
 myplot = gca;
 
-myFileName = strcat(polyName, '_', sylvester_build_method);
+myFileName = strcat(polyName, '_', sylvester_matrix_variant);
 
-for i=2:1:2
+for i = 2 : 1 : 2
     
     %saveas(h(i), [directory_name num2str(length(h) + 1 - i)], 'fig');
     saveas(myplot, [directory_name myFileName], 'fig');

@@ -1,22 +1,26 @@
-function [t, alpha, theta, GM_fx, GM_gx] = Get_GCD_Degree_One_S1_2Polys(fx, gx)
+function [t, alpha, theta, GM_fx, GM_gx] = Get_GCD_Degree_S1_2Polys(fx, gx)
 % Compute the degree of the GCD of two polynomials by computing the
 % singular values of S(f,g).
 %
 % % Inputs
 %
-% [fx, gx] : Coefficients of polynomials f(x) and g(x)
+% fx : (Vector) Coefficients of the polynomial f(x)
+%
+% gx : (Vector) Coefficients of the polynomial g(x)
 %
 % % Outputs
 %
-% t
+% t : (Int) Degree of the GCD of f(x) and g(x)
 %
-% alpha
+% alpha : (Float) Optimal value of \alpha
 %
-% theta
+% theta : (Float) Optimal value of \theta
 %
-% GM_fx
+% GM_fx : (Float) Geometric mean of the non-zero entries of f(x) in the
+% t-th subresultant matrix
 %
-% GM_gx
+% GM_gx : (Float) Geometric mean of the non-zero entries of g(x) in the 
+% t-th subresultant matrix
 
 
 k = 1;
@@ -44,7 +48,10 @@ vSingularValues = svd(Sk);
 
 global SETTINGS
 if (SETTINGS.PLOT_GRAPHS)
-    figure_name = sprintf([mfilename sprintf('Singular Values of %s',SETTINGS.SYLVESTER_BUILD_METHOD)]);
+    
+    figure_name = sprintf([mfilename sprintf('Singular Values of %s', ...
+        SETTINGS.SYLVESTER_MATRIX_VARIANT)]);
+    
     figure('name',figure_name)
     hold on
     plot(log10(vSingularValues),'-s');
@@ -59,7 +66,7 @@ vDeltaMetric = abs(diff(log10(vMetric)));
 % Get the maximum change in rowsum ratio and its index
 [maxDelta, indexMaxDelta] = max(vDeltaMetric);
 
-
-t = (m+n) - indexMaxDelta;
+% Get degree of the GCD
+t = (m + n) - indexMaxDelta;
 
 end

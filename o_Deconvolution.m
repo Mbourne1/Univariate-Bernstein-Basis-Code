@@ -178,7 +178,7 @@ function [] = PrintToResultsFile(ex_num, bool_preproc, noise, arr_DeconvolutionM
 % arr_ErrorNorm : (Array of floats)
 
 
-fullFileName = sprintf('Results/Results_o_deconvolutions.txt');
+fullFileName = sprintf('Results/Results_o_deconvolutions.dat');
 nMethods = length(arr_DeconvolutionMethod);
 
 % If file already exists append a line

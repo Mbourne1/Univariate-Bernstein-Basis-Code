@@ -58,7 +58,7 @@ vec_x =[
 
 nCoefficients_vx = n - k + 1;
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     case 'T'
         
         vx_bi = vec_x(1:nCoefficients_vx);

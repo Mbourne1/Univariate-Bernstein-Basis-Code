@@ -46,7 +46,7 @@ end
 
 
 
-function [Sk] = BuildSubresultant_3Polys_2Eqns(fx,gx,hx,k)
+function [Sk] = BuildSubresultant_3Polys_2Eqns(fx, gx, hx, k)
 
 
 % Get the degree of the polynomial f(x)
@@ -56,7 +56,7 @@ o = GetDegree(hx);
 
 global SETTINGS
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     
     case 'T'
         
@@ -76,9 +76,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         Q = BuildQ_3Polys(m, n, o, k);
         
         
-        
-        
-        
+
         Sk = T*Q;
         
     case 'DTQ'
@@ -95,7 +93,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD is either standard or rearranged')
+        error('SETTINGS.SYLVESTER_MATRIX_VARIANT is either standard or rearranged')
 end
 
 
@@ -158,7 +156,16 @@ end
 
 
 function [Sk] = BuildSubresultant_3Polys_3Eqns(fx, gx, hx, k)
-
+%
+% % Inputs
+% 
+% fx : (Vector) The coefficients of the polynomial f(x)
+%
+% gx : (Vector) The coefficients of the polynomial g(x)
+%
+% hx : (Vector) The coefficients of the polynomial h(x)
+%
+% k : (Integer) 
 
 % Get the degree of the polynomial f(x)
 m = GetDegree(fx);
@@ -167,7 +174,7 @@ o = GetDegree(hx);
 
 global SETTINGS
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     
     case 'T'
         
@@ -208,7 +215,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD is either standard or rearranged')
+        error('SETTINGS.SYLVESTER_MATRIX_VARIANT is either standard or rearranged')
 end
 
 end

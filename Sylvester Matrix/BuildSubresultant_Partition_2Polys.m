@@ -24,7 +24,7 @@ global SETTINGS
 m = GetDegree(fx);
 
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     
     case {'T'}
         
@@ -65,7 +65,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         Cf = DT1Q1;
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD is either standard or rearranged')
+        error('SETTINGS.SYLVESTER_MATRIX_VARIANT is either standard or rearranged')
 end
 
 end

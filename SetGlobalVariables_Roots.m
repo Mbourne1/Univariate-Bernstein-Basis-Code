@@ -1,6 +1,6 @@
 function [] = SetGlobalVariables_Roots(ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,...
-    Sylvester_Build_Method, rank_revealing_metric, deconvolution_method_hx,...
+    sylvester_matrix_variant, rank_revealing_metric, deconvolution_method_hx,...
     deconvolution_method_wx, deconvolution_preproc)
 % Set the global variables
 %
@@ -93,7 +93,7 @@ SETTINGS.GCD_COEFFICIENT_METHOD = 'ux and vx';
 %--------------------------------------------------------------------------
 
 % Structuring the Sylvester Matrix
-SETTINGS.SYLVESTER_BUILD_METHOD = Sylvester_Build_Method;
+SETTINGS.SYLVESTER_MATRIX_VARIANT = sylvester_matrix_variant;
 
 % T : 
 % DT :

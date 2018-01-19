@@ -70,7 +70,13 @@ SETTINGS.PLOT_GRAPHS = true;
 SETTINGS.BOOL_LOG = false;
 SETTINGS.BOOL_ALPHA_THETA = true;
 SETTINGS.MEAN_METHOD = 'Geometric Mean Matlab Method';
-SETTINGS.SYLVESTER_BUILD_METHOD = 'DTQ';
+
+% Set the sylvester matrix variant to be used. 
+% 'T'
+% 'DT'
+% 'TQ'
+% 'DTQ'
+SETTINGS.SYLVESTER_MATRIX_VARIANT = 'DTQ';
 
 SETTINGS.SNTLN_METHOD = 'None';
 SETTINGS.APF_METHOD = 'None';

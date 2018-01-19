@@ -1,8 +1,9 @@
 function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, ...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    Sylvester_Build_Method,  rank_revealing_metric)
+    sylvester_matrix_variant,  rank_revealing_metric)
 % o_gcd_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-%   low_rank_approx_method, apf_method, Sylvester_Build_Method)
+%   low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
+%   rank_revealing_metric)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
 % g(x) as defined in the example file.
@@ -35,7 +36,7 @@ function [] = o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, ...
 %   * 'Standard APF Linear'
 %   * 'None'
 %
-% Sylvester_Build_Method : (String)
+% sylvester_matrix_variant : (String)
 %   * 'T'
 %   * 'DT'
 %   * 'DTQ'
@@ -80,7 +81,7 @@ SetGlobalVariables_GCD_2Polys(...
     bool_alpha_theta,...
     low_rank_approx_method,...
     apf_method,...
-    Sylvester_Build_Method, ... 
+    sylvester_matrix_variant, ... 
     rank_revealing_metric);
 
 % Print the parameters.
@@ -95,9 +96,7 @@ fprintf('\t RANK REVEALING METRIC : %s \n', SETTINGS.RANK_REVEALING_METRIC);
 fprintf('\t LOW RANK APPROX METHOD : %s \n', SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
 fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD);
 fprintf('\t LOG: %s \n', num2str(SETTINGS.BOOL_LOG));
-fprintf('\t SYLVESTER BUILD METHOD: %s \n', SETTINGS.SYLVESTER_BUILD_METHOD);
-
- 
+fprintf('\t SYLVESTER MATRIX VARIANT : %s \n', SETTINGS.SYLVESTER_MATRIX_VARIANT);
 LineBreakLarge()
 
 % o - gcd - Calculate GCD of two Arbitrary polynomials
@@ -111,9 +110,8 @@ LineBreakLarge()
 [fx_exact, gx_exact, dx_exact, ux_exact, vx_exact] = Examples_GCD(ex_num);
 
 
-%gx_exact = gx_exact * 10^(6);
 
-% Get degree of f(x) and g(x)
+% Get degree of f(x), g(x) and d(x)
 m = GetDegree(fx_exact);
 n = GetDegree(gx_exact);
 t_exact = GetDegree(dx_exact);
@@ -157,13 +155,13 @@ display(error.dx_bez_lu)
 LineBreakMedium();
 try
     
+    % Get error between \hat{f}(x) and inexact polynomial f(x)
     error.fx = GetPolynomialError(fx_exact, fx_noisy);
     error.fx_calc = GetPolynomialError(fx_exact, fx_calc);
     
-    
+    % Get error between \hat{g}(x) and inexact polynomial g(x)
     error.gx = GetPolynomialError(gx_exact, gx_noisy);
     error.gx_calc = GetPolynomialError(gx_exact, gx_calc);
-    
     
     
     error.ux = GetPolynomialError(ux_exact, ux_calc);
@@ -197,7 +195,8 @@ catch
 end
 
 % Print results to results file
-PrintGCDToFile(m, n, t_exact, t_calc, error)
+PrintGCDToFile(m, n, t_exact, t_calc, error);
+
 LineBreakMedium();
 
 end

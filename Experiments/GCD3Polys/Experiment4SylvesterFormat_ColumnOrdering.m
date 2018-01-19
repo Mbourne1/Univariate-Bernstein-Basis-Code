@@ -75,28 +75,22 @@ for i1 = 1 : 1 : length(arrSylvesterFormat)
             
             
             % Set subresultant matrix variant
-            sylvester_build_method = arrSylvesterFormat{i1};
+            sylvester_matrix_variant = arrSylvesterFormat{i1};
             
             % Set example number
             ex_num_variant = arr_ex_num_variant{i2};
             
             o_gcd_Univariate_3Polys(ex_num_variant, emin, emax, mean_method, ...
                 bool_alpha_theta, low_rank_approx_method, apf_method,...
-                sylvester_build_method, nEquations, rank_revealing_metric)
+                sylvester_matrix_variant, nEquations, rank_revealing_metric)
             
-            %SavePlots(ex_num, 'fgh', sylvester_build_method)
+            %SavePlots(ex_num, 'fgh', sylvester_matrix_variant)
             %close all; clc;
         end
     end
     
 end
 
-% nEquations = '3';
-% ex_num_variant = strcat(ex_num,'a');
-%
-% o_gcd_Univariate_3Polys(ex_num_variant, emin, emax, mean_method, ...
-%     bool_alpha_theta, low_rank_approx_method, apf_method,...
-%     sylvester_build_method, nEquations, rank_revealing_metric)
 
 
 
@@ -106,7 +100,7 @@ end
 
 end
 
-function [] = SavePlots(ex_num, str, sylvester_build_method)
+function [] = SavePlots(ex_num, str, sylvester_matrix_variant)
 %
 % % Inputs
 %
@@ -114,14 +108,14 @@ function [] = SavePlots(ex_num, str, sylvester_build_method)
 %
 % str : (String)
 %
-% sylvester_build_method
+% sylvester_matrix_variant : (String)
 
 directory_name = strcat('Example',(ex_num),'/Figures_',str,'/');
 
 mkdir(directory_name)
 h = get(0,'children');
 
-myFileName = strcat(sylvester_build_method, '_', str);
+myFileName = strcat(sylvester_matrix_variant, '_', str);
 
 for i=2:1:2
     

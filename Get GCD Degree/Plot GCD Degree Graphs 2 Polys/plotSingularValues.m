@@ -19,7 +19,7 @@ nSubresultants = upperLimit_k - lowerLimit_k + 1;
 
 global SETTINGS
 
-figure_name = sprintf('%s : All Singular Values of %s ',mfilename, SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('%s : All Singular Values of %s ',mfilename, SETTINGS.SYLVESTER_MATRIX_VARIANT);
 figure('name', figure_name);
 hold on
 

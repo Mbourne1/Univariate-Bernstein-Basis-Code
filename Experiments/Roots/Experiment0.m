@@ -42,7 +42,7 @@ apf_method = 'None';
 % 'DT'
 % 'TQ'
 % 'DTQ'
-sylvester_build_method = 'DTQ';
+sylvester_matrix_variant = 'DTQ';
 
 % Method used to determine the degree of the GCD
 % 'R1 Row Norms',
@@ -77,7 +77,7 @@ deconvolution_preproc = true;
 
 % Compute the roots of f(x)
 o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-    low_rank_approx_method, apf_method, sylvester_build_method, ...
+    low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
     rank_revealing_metric, deconvolution_method_hx, ...
     deconvolution_method_wx, deconvolution_preproc)
 

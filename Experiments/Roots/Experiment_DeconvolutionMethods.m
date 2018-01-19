@@ -49,7 +49,7 @@ end
 % 'DT'
 % 'TQ'
 % 'DTQ'
-sylvester_build_method = 'DTQ';
+sylvester_matrix_variant = 'DTQ';
 
 apf_method = 'None';
 
@@ -102,7 +102,7 @@ for i = 1 : 1 : length(deconvolution_method_hx_arr)
     
     
     o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-        low_rank_approx_method, apf_method, sylvester_build_method, ...
+        low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
         rank_revealing_metric, deconvolution_method_hx, ...
         deconvolution_method_wx, bool_deconvolution_preproc)
     
@@ -130,7 +130,7 @@ parfor i = 1 : 1 : length(deconvolution_method_hx_arr)
     
     
     o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-        low_rank_approx_method, apf_method, sylvester_build_method, ...
+        low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
         rank_revealing_metric, deconvolution_method_hx, ...
         deconvolution_method_wx, bool_deconvolution_preproc)
     

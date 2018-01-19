@@ -32,8 +32,8 @@ for i = 1 : 1 : length(arr_RowDiagonals)
 end
 
 xlabel('k')
-%ylabel(sprintf('Diagonals of R1 from QR decomposition of %s',SETTINGS.SYLVESTER_BUILD_METHOD))
-%title(sprintf('Diagonals of R1 from QR decomposition of %s',SETTINGS.SYLVESTER_BUILD_METHOD));
+%ylabel(sprintf('Diagonals of R1 from QR decomposition of %s',SETTINGS.SYLVESTER_MATRIX_VARIANT))
+%title(sprintf('Diagonals of R1 from QR decomposition of %s',SETTINGS.SYLVESTER_MATRIX_VARIANT));
 
 grid on
 

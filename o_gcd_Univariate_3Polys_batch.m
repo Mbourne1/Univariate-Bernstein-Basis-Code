@@ -13,13 +13,13 @@ emin_arr = {1e-08,1e-10,1e-12};
 %low_rank_approx_method_arr = {'Standard SNTLN', 'Standard STLN', 'None'};
 low_rank_approx_method_arr = {'None'};
 apf_method_arr = {'None'};
+
 mean_method_arr = {'Geometric Mean Matlab Method', 'None'};
+
 bool_log_arr = {false};
 gcd_coefficient_method_arr = {'ux and vx'};
-%Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ','DTQ Denominator Removed','DTQ Rearranged'};
-%Sylvester_Build_Method_arr = {'DTQ'};
 
-Sylvester_Build_Method_arr = {'T','DT','DTQ','TQ'};
+Sylvester_Matrix_Variant_arr = {'T','DT','DTQ','TQ'};
 
 arrRankRevealingMetric = {'Minimum Singular Values'};
 
@@ -59,9 +59,9 @@ for i1 = 1:1:length(bool_log_arr)
                         for i7 = 1:1:length(mean_method_arr)
                             mean_method = mean_method_arr{i7};
                             
-                            for i8 = 1:1:length(Sylvester_Build_Method_arr)
+                            for i8 = 1:1:length(Sylvester_Matrix_Variant_arr)
                                 
-                                sylvester_build_method = Sylvester_Build_Method_arr{i8};
+                                sylvester_matrix_variant = Sylvester_Matrix_Variant_arr{i8};
                                 
                                 for i9 = 1:1:length(apf_method_arr)
                                     
@@ -75,7 +75,7 @@ for i1 = 1:1:length(bool_log_arr)
                                             
                                             close all;
                                             clc;
-                                            o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, rank_revealing_metric)
+                                            o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_matrix_variant, rank_revealing_metric)
                                             fileId = fopen('log_GCD_3Polys.txt','a')
                                             fprintf(fileId,'%s \n',datetime('now') , 'Success');
                                             fclose(fileId);

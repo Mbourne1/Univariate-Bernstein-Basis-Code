@@ -23,7 +23,9 @@ upperLimit_k = limits_k(2);
 
 global SETTINGS
 
-figure_name = sprintf('%s : max:min Singular Values of %s',mfilename,SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('%s : max:min Singular Values of %s',mfilename, ...
+    SETTINGS.SYLVESTER_MATRIX_VARIANT);
+
 figure('name',figure_name);
 hold on
 try

@@ -41,7 +41,8 @@ end
 
 xlabel('k')
 ylabel('log10 Row Norm of R1 from QR decomposition of S_{k}')
-title(sprintf('log10 Row Norm of R1 from the QR decomposition of each subresultant %s', SETTINGS.SYLVESTER_BUILD_METHOD));
+title(sprintf('log10 Row Norm of R1 from the QR decomposition of each subresultant %s',...
+    SETTINGS.SYLVESTER_MATRIX_VARIANT));
 xlim([lowerLimit_k, upperLimit_k]);
 
 vline(limits_t, {'-b','-b'});

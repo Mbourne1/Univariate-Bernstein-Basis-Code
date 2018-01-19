@@ -21,7 +21,13 @@ k = 2;
 
 global SETTINGS
 SETTINGS.BOOL_LOG = false;
-SETTINGS.SYLVESTER_BUILD_METHOD = 'DTQ';
+
+% SYLVESTER MATRIX_VARIANT
+%   'T'
+%   'DT'
+%   'TQ'
+%   'DTQ'
+SETTINGS.SYLVESTER_MATRIX_VARIANT = 'DTQ';
 
 % Get Geometric mean of the entries of f(x) and g(x) in the k-th
 % subresultant matrix

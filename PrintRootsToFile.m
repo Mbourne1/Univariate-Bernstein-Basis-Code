@@ -1,5 +1,6 @@
 
-function [] = PrintRootsToFile(arr_RootFindingMethod, arr_BackwardErrors, arr_ForwardErrors, vError_arr_fx, vError_arr_hx, vError_arr_wx)
+function [] = PrintRootsToFile(arr_RootFindingMethod, arr_BackwardErrors, ...
+    arr_ForwardErrors, vError_arr_fx, vError_arr_hx, vError_arr_wx)
 % Print results of root finding computation to a text file
 %
 % % Inputs
@@ -7,17 +8,20 @@ function [] = PrintRootsToFile(arr_RootFindingMethod, arr_BackwardErrors, arr_Fo
 % arr_RootFindingMethod : (Array of Strings) Array of the names of the root
 % finding methods used
 %
-% arr_ForwardErrors :
+% arr_ForwardErrors : 
 %
 % arr_BackwardErrors : 
 %
 % arr_errors : (Array of Floats)
 %
-% vErrors_arr_fx : (Vector)
+% vErrors_arr_fx : (Vector) Vector of errors where the ith entry
+% corresponds to the error in f_{i}(x)
 %
-% vErrors_arr_hx : (Vector)
+% vErrors_arr_hx : (Vector) Vector of errors where the ith entry
+% corresponds to the error in h_{i}(x)
 %
-% vErrors_arr_wx : (Vector)
+% vErrors_arr_wx : (Vector) Vector of errors where the ith entry
+% corresponds to the error in w_{i}(x)
 
 
 global SETTINGS
@@ -25,7 +29,7 @@ global SETTINGS
 
 nMethods = length(arr_RootFindingMethod);
 
-fullFileName = sprintf('Results/Results_o_roots.txt');
+fullFileName = sprintf('Results/Results_o_roots.dat');
 
 % If file already exists append a line
 if exist(fullFileName, 'file')
@@ -43,7 +47,8 @@ if exist(fullFileName, 'file')
         
         % Only print results if my method
         if (strcmp(method_name, 'My Method'))
-            WriteNewLine(method_name, method_BackwardError, method_ForwardError, error_fx, error_hx, error_wx);
+            WriteNewLine(method_name, method_BackwardError, ...
+                method_ForwardError, error_fx, error_hx, error_wx);
         end
         
         
@@ -88,7 +93,7 @@ end
             SETTINGS.APF_METHOD,...
             num2str(SETTINGS.APF_REQ_ITE),...
             num2str(SETTINGS.BOOL_LOG),...
-            SETTINGS.SYLVESTER_BUILD_METHOD,...
+            SETTINGS.SYLVESTER_MATRIX_VARIANT,...
             SETTINGS.GCD_COEFFICIENT_METHOD,...
             method_name,...
             SETTINGS.DECONVOLUTION_METHOD_HX,...
@@ -105,7 +110,14 @@ end
 
     function WriteHeader()
         % If the file doesnt already exist, write a header to the text file
-        fprintf(fileID,'DATE, EX_NUM, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD, LOW_RANK_ITE, APF_METHOD, APF_ITE, BOOL_LOG, SYLVESTER_BUILD_METHOD, GCD_METHODM, METHOD_NAME, DECONVOLUTION_METHOD HX, DECONVOLUTION_METHOD WX, DECONVOLUTION_PREPROC, FORWARD_ERROR, BACKWARD_ERROR, ERROR_FX, ERROR_HX, ERROR_WX \n');
+        strHeaders = ['DATE, EX_NUM, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN,'...
+            'EMAX, LOW_RANK_APPROX_METHOD, LOW_RANK_ITE, APF_METHOD, '...
+            'APF_ITE, BOOL_LOG, SYLVESTER_MATRIX_VARIANT, GCD_METHOD,'...
+            'METHOD_NAME, DECONVOLUTION_METHOD HX, '...
+            'DECONVOLUTION_METHOD WX, DECONVOLUTION_PREPROC,' ...
+            'FORWARD_ERROR, BACKWARD_ERROR, ERROR_FX, ERROR_HX, ERROR_WX \n'];
+        
+        fprintf(fileID, strHeaders);
     end
 
 

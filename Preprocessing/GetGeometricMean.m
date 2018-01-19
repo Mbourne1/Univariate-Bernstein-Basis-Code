@@ -62,7 +62,7 @@ global SETTINGS
 
 
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     % Values
     %   * T :
     %   * DT :
@@ -186,7 +186,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         error([mfilename ' : ' 'Code Not Developed']);
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD not valid');
+        error('SETTINGS.SYLVESTER_MATRIX_VARIANT not valid');
         
 end
 
@@ -216,13 +216,15 @@ function GM_fx = GMnchoosek(fx, n_k)
 global SETTINGS
 
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     %   * T :
     %   * DT :
     %   * DTQ :
     %   * TQ :
     %   * DTQ Denominator Removed :
     %   * DTQ Rearranged :
+    
+    
     case 'T'
         
     case 'DT'
@@ -233,20 +235,20 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         fx = abs(fx);
         
         % Get the product of the numerators
-        prod_numerator = prod(fx.*GetBinomials(m));
+        prod_numerator = prod(fx .* GetBinomials(m));
         
         
         % Initialise the product of the denominator at 1.
         prod_denom =1 ;
         
-        for i = 0:1:m
-            for j = 0:1:n_k
+        for i = 0 : 1 : m
+            for j = 0 : 1 : n_k
                 prod_denom = prod_denom * nchoosek(m+n_k,i+j);
             end
         end
         
-        num =prod_numerator .^(1./(m+1));
-        denom = prod_denom .^(1./((m+1)*(n_k+1)));
+        num = prod_numerator .^(1 ./ (m + 1));
+        denom = prod_denom .^(1 ./ ((m + 1)*(n_k + 1)));
         
         GM_fx = num/denom;
         
@@ -269,11 +271,13 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         % is equal to the product of the binomial coefficient B in the
         % numerator, only calulate this once.
         temp_prod = 1;
-        for j = 0:1:n_k
-            for i = 0:1:m
+        
+        for j = 0 : 1 : n_k
+            for i = 0 : 1 : m
                 temp_prod = temp_prod .* nchoosek(i+j,j);
             end
         end
+        
         p2 = temp_prod.^(1./((m+1)*(n_k+1)));
         
         
@@ -286,17 +290,17 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
         
     case 'TQ'
-        error('err')
+        error('err - NOT COMPLETED')
         
     case 'DTQ Denominator Removed'
-        error('err')
+        error('err - NOT COMPLETED')
         
     case 'DTQ Rearranged'
-        error('err')
+        error('err - NOT COMPLETED')
         
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD is not valid')
+        error('SETTINGS.SYLVESTER_MATRIX_VARIANT is not valid')
 end
 end
 

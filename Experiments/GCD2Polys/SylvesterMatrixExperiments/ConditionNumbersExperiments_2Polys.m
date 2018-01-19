@@ -181,7 +181,7 @@ switch strFormat
         Sk = [D1T1Q D2T2Q];
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD must be one of the following *T or *DT or *DTQ or *TQ or *DTQ Denominator Removed or *DTQ Rearranged')
+        error('SETTINGS.SYLVESTER_MATRIX_VARIANT must be one of the following *T or *DT or *DTQ or *TQ or *DTQ Denominator Removed or *DTQ Rearranged')
 end
 
 end

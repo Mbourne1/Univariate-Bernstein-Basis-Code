@@ -26,11 +26,11 @@ rank_revealing_metric = 'Minimum Singular Values';
 bool_preprocessing = true;
 if (bool_preprocessing == true)
     mean_method = 'Geometric Mean Matlab Method';
-    bool_preproc = true;
+    bool_alpha_theta = true;
     
 else
     mean_method = 'None';
-    bool_preproc = false;
+    bool_alpha_theta = false;
     
 end
 
@@ -42,7 +42,7 @@ apf_method = 'None';
 % 'DT'
 % 'TQ'
 % 'DTQ'
-sylvester_build_method = 'DTQ';
+sylvester_matrix_variant = 'DTQ';
 
 
 % Get array of low rank approximation methods
@@ -53,7 +53,8 @@ for i = 1 : 1 : length(arr_low_rank_approx_method)
     
     low_rank_approx_method = arr_low_rank_approx_method{i};
     
-    o_gcd_Univariate_2Polys(ex_num, el, eu, mean_method, bool_preproc, low_rank_approx_method, apf_method, sylvester_build_method, rank_revealing_metric) ;
+    o_gcd_Univariate_2Polys(ex_num, el, eu, mean_method, bool_alpha_theta, ...
+        low_rank_approx_method, apf_method, sylvester_matrix_variant, rank_revealing_metric) ;
     
 end
 

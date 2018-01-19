@@ -1,33 +1,61 @@
-function [] = Experiment6_LowRankApprox_3Polys(ex_num)
+function [] = Experiment6_LowRankApprox_3Polys(ex_num, bool_preproc)
+% Experiment considers low rank approximation methods
+%
+% % Inputs
+%
+% ex_num : (String) Example number
+%
+% bool_preproc : (Boolean) Preprocessing
 
-close all; clc; 
 
+close all; clc;
+
+% Noise levels
 emin = 1e-10;
 emax = 1e-8;
 
 nEquations = '2';
 
-
+% apf_method 
+%   'None'
 apf_method = 'None';
 
-sylvester_build_method = 'DTQ';
+% Set the sylvester matrix variant to be used.
+% 'T'
+% 'DT'
+% 'TQ'
+% 'DTQ'
+sylvester_matrix_variant = 'DTQ';
+
+% rank_revealing_metric
+%   'Minimum Singular Values'
+%   'Normalised Minimum Singular Values'
 rank_revealing_metric = 'Minimum Singular Values';
 
 
 
 global SETTINGS
- 
+
 SETTINGS.SCALING_METHOD = 'lambda_mu_rho';
 
-mean_method = 'Geometric Mean Matlab Method';
-bool_alpha_theta = true;
-%mean_method = 'None';
-%bool_alpha_theta = false;
+switch bool_preproc
+    case 1
+        mean_method = 'Geometric Mean Matlab Method';
+        bool_alpha_theta = true;
+        
+    case 0
+        mean_method = 'None';
+        bool_alpha_theta = false;
+        
+    otherwise
+        error('err')
+end
+
 
 low_rank_approx_method = 'None';
 
 o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta,...
-    low_rank_approx_method, apf_method, sylvester_build_method, nEquations, ...
+    low_rank_approx_method, apf_method, sylvester_matrix_variant, nEquations, ...
     rank_revealing_metric)
 
 
@@ -35,7 +63,7 @@ o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta,...
 low_rank_approx_method = 'Standard STLN';
 
 o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta,...
-    low_rank_approx_method, apf_method, sylvester_build_method, nEquations, ...
+    low_rank_approx_method, apf_method, sylvester_matrix_variant, nEquations, ...
     rank_revealing_metric)
 
 

@@ -10,7 +10,7 @@ function [] = Experiment1SylvesterFormat_2Polys(ex_num, bool_preprocessing)
 % Variable : Sylvester Build Type
 %
 %
-% >> Experiment1SylvesterFormat_2Polys('1')
+% >> Experiment1SylvesterFormat_2Polys('1', true)
 
 close all;
 clc;
@@ -54,22 +54,23 @@ end
 
 
 
-function [] = SavePlots(ex_num, str, sylvester_build_method)
+function [] = SavePlots(ex_num, str, sylvester_matrix_variant)
 %
 % % Inputs
 %
 % ex_num : (String)
 %
-% str : (String)
+% str : (String) String included in filename for plot
 %
-% sylvester_build_method
+% sylvester_matrix_variant : (String) Sylvester matrix variant is either
+%   'T', 'DT', 'TQ', 'DTQ'
 
 directory_name = strcat('UnivariateSylvesterFormatFigures/Example',(ex_num),'/Figures_',str,'/');
 
 mkdir(directory_name)
 h = get(0,'children');
 
-myFileName = strcat(sylvester_build_method, '_', str);
+myFileName = strcat(sylvester_matrix_variant, '_', str);
 
 for i=2:1:2
     try

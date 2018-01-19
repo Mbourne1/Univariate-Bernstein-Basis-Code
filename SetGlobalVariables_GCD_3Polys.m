@@ -1,6 +1,6 @@
 function [] = SetGlobalVariables_GCD_3Polys( ex_num, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,...
-    sylvester_build_method, nEquations, rank_revealing_metric)
+    sylvester_matrix_variant, nEquations, rank_revealing_metric)
 % Set the global variables
 %
 % Inputs.
@@ -27,7 +27,7 @@ function [] = SetGlobalVariables_GCD_3Polys( ex_num, emin, emax, ...
 %
 % apf_method : (String)
 %
-% Sylvester_Build_Method : (String)
+% Sylvester_matrix_variant : (String)
 %   * T : 
 %   * DT :
 %   * DTQ :
@@ -116,22 +116,20 @@ SETTINGS.GCD_COEFFICIENT_METHOD = 'ux and vx';
 %--------------------------------------------------------------------------
 
 % Structuring the Sylvester Matrix
-SETTINGS.SYLVESTER_BUILD_METHOD = sylvester_build_method;
-
-% SYLVESTER_BUILD_METHOD
+% SYLVESTER_MATRIX_VARIANT
 %   * T : 
 %   * DT :
 %   * DTQ :
 %   * TQ : 
 %   * DTQ Denominator Removed :
 %   * DTQ Rearranged :
+SETTINGS.SYLVESTER_MATRIX_VARIANT = sylvester_matrix_variant;
 
-SETTINGS.SYLVESTER_EQUATIONS = nEquations;
 
 % SYLVESTER_EQUATIONS 
 %   * '2' : Sylvester Matrix defined by 2 equations
 %   * '3' : Sylvester Matrix defined by 3 equations
-
+SETTINGS.SYLVESTER_EQUATIONS = nEquations;
 
 %-------------------------------------------------------------------------
 

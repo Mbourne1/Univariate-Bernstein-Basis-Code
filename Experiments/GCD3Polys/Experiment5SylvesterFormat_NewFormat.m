@@ -40,13 +40,13 @@ ex_num = '13';
 ex_num_variant = strcat(ex_num,'a');
 
 for i1 = 1 : 1 : length(arrSylvesterFormat)
-    sylvester_build_method = arrSylvesterFormat{i1};
+    sylvester_matrix_variant = arrSylvesterFormat{i1};
     
     
     
     o_gcd_Univariate_3Polys(ex_num_variant, emin, emax, mean_method, ...
         bool_alpha_theta, low_rank_approx_method, apf_method,...
-        sylvester_build_method, rank_revealing_metric, bool_reorder_polys)
+        sylvester_matrix_variant, rank_revealing_metric, bool_reorder_polys)
     
     
     

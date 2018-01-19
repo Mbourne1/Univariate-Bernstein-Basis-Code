@@ -1,0 +1,5 @@
+DATE, EX_NUM, m, n, t, t_computed, ERROR_UX, ERROR_VX, ERROR_DX, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,BOOL_LOG,SYLVESTER_MATRIX_VARIANT,GCD_METHOD, RANK_REVEALING_METRIC
+19-Jan-2018 15:15:19,1,4,4,3,3,0.0016448,0.0034252,0.0064273,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-01,None,0,None,0,0,T,ux and vx,Minimum Singular Values 
+19-Jan-2018 15:15:20,1,4,4,3,3,0.00075094,0.00033449,0.0067465,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-01,None,0,None,0,0,DT,ux and vx,Minimum Singular Values 
+19-Jan-2018 15:15:21,1,4,4,3,3,0.0016448,0.0034252,0.0064273,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-01,None,0,None,0,0,TQ,ux and vx,Minimum Singular Values 
+19-Jan-2018 15:15:23,1,4,4,3,3,0.00075094,0.00033449,0.0067465,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-01,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 

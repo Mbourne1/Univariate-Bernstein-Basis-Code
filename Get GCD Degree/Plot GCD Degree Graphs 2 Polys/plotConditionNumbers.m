@@ -18,7 +18,9 @@ upperLimit_k = limits_k(2);
 
 global SETTINGS
 
-figure_name = sprintf('%s : Condition Numbers of %s',mfilename,SETTINGS.SYLVESTER_BUILD_METHOD);
+figure_name = sprintf('%s : Condition Numbers of %s', mfilename, ...
+    SETTINGS.SYLVESTER_MATRIX_VARIANT);
+
 figure('name',figure_name);
 hold on
 try
@@ -35,8 +37,12 @@ vline(limits_t,{'r','r'})
 
 
 % Plot Labels and legends
-ylabel('$\log_{10} \left( \kappa_{k} \right)$', 'Interpreter', 'latex', 'FontSize',20)
-xlabel('$k$', 'Interpreter', 'latex','FontSize',20)
+ylabel('$\log_{10} \left( \kappa_{k} \right)$', ...
+    'Interpreter', 'latex', ...
+    'FontSize',20)
+
+
+xlabel('$k$', 'Interpreter', 'latex', 'FontSize',20)
 
 l = legend(gca, 'show');
 set(l,{'Interpreter', 'FontSize','Location'},{'latex', 20, 'southwest'});

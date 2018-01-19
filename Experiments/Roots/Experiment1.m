@@ -27,8 +27,23 @@ end
 
 % Set other variables
 low_rank_approx_method = 'None';
+
+
 apf_method = 'None';
-sylvester_build_method = 'DTQ';
+
+% Set the sylvester matrix variant to be used. 
+% 'T'
+% 'DT'
+% 'TQ'
+% 'DTQ'
+sylvester_matrix_variant = 'DTQ';
+
+
+% Method used to determine the degree of the GCD
+% 'R1 Row Norms',
+% 'R1 Row Diagonals',
+% 'Minimum Singular Values',
+% 'Normalised Minimum Singular Values'
 rank_revealing_metric = 'Minimum Singular Values';
 
 
@@ -57,7 +72,7 @@ for i1 = 1 : 1 : length(arrDeconvolution_method)
         
         % Compute roots
         o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
-            low_rank_approx_method, apf_method, sylvester_build_method, ...
+            low_rank_approx_method, apf_method, sylvester_matrix_variant, ...
             rank_revealing_metric, deconvolution_method_hx, ...
             deconvolution_method_wx, deconvolution_preproc)
         

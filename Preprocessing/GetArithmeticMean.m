@@ -15,7 +15,7 @@ global SETTINGS
 
 
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD 
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT 
 % Possible Values.
 %   * T : 
 %   * DT :

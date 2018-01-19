@@ -127,9 +127,9 @@ for k = lowerLimit_k : 1 : upperLimit_k
     vTheta(i) = theta;
     
     % Divide f(x) and g(x) by geometric means
-    fx_n = fx./ vGM_fx(i);
-    gx_n = gx./ vGM_gx(i);
-    hx_n = hx./ vGM_hx(i);
+    fx_n = fx ./ vGM_fx(i);
+    gx_n = gx ./ vGM_gx(i);
+    hx_n = hx ./ vGM_hx(i);
     
     % Construct the i-th preprocessed subresultant matrix
     % S_{k}(f(\theta),g(\theta))
@@ -142,8 +142,12 @@ for k = lowerLimit_k : 1 : upperLimit_k
     
     if k == lowerLimit_k
         
-        if SETTINGS.PLOT_GRAPHS_PREPROCESSING == true
-            figure_name = sprintf('Heat Map : %s : %s', SETTINGS.SYLVESTER_BUILD_METHOD, SETTINGS.EX_NUM);
+        if (SETTINGS.PLOT_GRAPHS_PREPROCESSING == true)
+            
+            figure_name = sprintf('Heat Map : %s : %s', ...
+                SETTINGS.SYLVESTER_MATRIX_VARIANT, ...
+                SETTINGS.EX_NUM);
+            
             figure('Name',figure_name)
             hold on
             colormap('hot');

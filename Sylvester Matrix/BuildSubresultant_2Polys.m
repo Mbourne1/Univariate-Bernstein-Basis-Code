@@ -29,7 +29,7 @@ m = GetDegree(fx);
 n = GetDegree(gx);
 
 
-switch SETTINGS.SYLVESTER_BUILD_METHOD
+switch SETTINGS.SYLVESTER_MATRIX_VARIANT
     
     case 'T'
         
@@ -86,7 +86,7 @@ switch SETTINGS.SYLVESTER_BUILD_METHOD
         
         
     otherwise
-        error('SETTINGS.SYLVESTER_BUILD_METHOD must be one of the following *T or *DT or *DTQ or *TQ or *DTQ Denominator Removed or *DTQ Rearranged')
+        error('SETTINGS.SYLVESTER_MATRIX_VARIANT must be one of the following *T or *DT or *DTQ or *TQ or *DTQ Denominator Removed or *DTQ Rearranged')
 end
 
 end

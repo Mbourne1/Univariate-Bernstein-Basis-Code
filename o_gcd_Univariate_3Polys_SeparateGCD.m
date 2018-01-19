@@ -1,6 +1,6 @@
 function [] = o_gcd_Univariate_3Polys_SeparateGCD(ex_num, emin, emax, mean_method, ...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
-    sylvester_build_method, nEquations, rank_revealing_metric)
+    sylvester_matrix_variant, nEquations, rank_revealing_metric)
 % o_gcd_3Polys_Separate_GCD(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
@@ -32,7 +32,7 @@ function [] = o_gcd_Univariate_3Polys_SeparateGCD(ex_num, emin, emax, mean_metho
 %           'Standard APF Linear'
 %           'None'
 %
-% Sylvester_Build_Method : (String)
+% sylvester_matrix_variant : (String)
 %           'T'
 %           'DT'
 %           'DTQ'
@@ -90,7 +90,7 @@ SetGlobalVariables_GCD(...
     bool_alpha_theta,...
     low_rank_approx_method,...
     apf_method,...
-    sylvester_build_method, ...
+    sylvester_matrix_variant, ...
     nEquations,...
     rank_revealing_metric);
 
@@ -105,7 +105,7 @@ fprintf('\t ALPHA_THETA : %s \n', num2str(SETTINGS.BOOL_ALPHA_THETA));
 fprintf('\t LOW RANK APPROX METHOD : %s \n', SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
 fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD);
 fprintf('\t LOG: %s \n', SETTINGS.BOOL_LOG);
-fprintf('\t SYLVESTER BUILD METHOD: %s \n', SETTINGS.SYLVESTER_BUILD_METHOD);
+fprintf('\t SYLVESTER MATRIX VARIANT : %s \n', SETTINGS.SYLVESTER_MATRIX_VARIANT);
 fprintf('\t SYLVESTER n EQUATIONS: %s \n', SETTINGS.SYLVESTER_EQUATIONS);
 LineBreakLarge()
 
@@ -213,7 +213,7 @@ function [] = PrintToFile(m, n, o, t, error)
 global SETTINGS
 
 % Specify file name
-fullFileName = sprintf('Results/Results_o_gcd_3Polys.txt');
+fullFileName = sprintf('Results/Results_o_gcd_3Polys.dat');
 
 % If file already exists append a line
 if exist(fullFileName, 'file')
@@ -255,7 +255,7 @@ end
             SETTINGS.APF_METHOD,...
             num2str(SETTINGS.APF_REQ_ITE),...
             SETTINGS.BOOL_LOG,...
-            SETTINGS.SYLVESTER_BUILD_METHOD,...
+            SETTINGS.SYLVESTER_MATRIX_VARIANT,...
             SETTINGS.GCD_COEFFICIENT_METHOD...
             );
         % 21 inputs
@@ -263,7 +263,13 @@ end
     end
 
     function WriteHeader()
-        fprintf(fileID,'DATE,EX_NUM,m,n,o,t,ERROR_UX,ERROR_VX,ERROW_WX,ERROR_DX,MEAN_METHOD,BOOL_ALPHA_THETA, EMIN, EMAX, LOW_RANK_APPROX_METHOD,LOW_RANK_ITE, APF_METHOD, APF_ITE,BOOL_LOG,SYLVESTER_BUILD_METHOD,GCD_METHOD\n');
+        
+        strHeader = ['DATE, EX_NUM, m, n, o, t, ERROR_UX, ERROR_VX, ' ...
+            'ERROW_WX, ERROR_DX, MEAN_METHOD, BOOL_ALPHA_THETA, EMIN,' ...
+            'EMAX, LOW_RANK_APPROX_METHOD, LOW_RANK_ITE, APF_METHOD,' ...
+            'APF_ITE, BOOL_LOG, SYLVESTER_MATRIX_VARIANT, GCD_METHOD \n'];
+        
+        fprintf(fileID, strHeader);
     end
 
 

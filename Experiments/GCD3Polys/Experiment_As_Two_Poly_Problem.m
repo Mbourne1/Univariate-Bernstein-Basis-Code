@@ -1,9 +1,21 @@
 function [] = Experiment_As_Two_Poly_Problem(ex_number, bool_preproc)
+% This experiment considers the GCD of three polynomials as two polynomial
+% problems
+% 
+% % Inputs
+%
+% ex_number : (String) Example number
+%
+% bool_preproc : (Boolean) 
+
+
 
 % Variable : Preprocessing
 
-% Good Examples
 
+
+% Good Examples
+%
 % Example 11 - 1e-10 , 1e-12
 
 
@@ -45,7 +57,7 @@ rank_revealing_metric = 'Minimum Singular Values';
 % 'DT'
 % 'TQ'
 % 'DTQ'
-sylvester_build_method = 'DTQ';
+sylvester_matrix_variant = 'DTQ';
 
 arr_ex_variant = {'a','b','c'};
 
@@ -53,7 +65,9 @@ for i = 1 : 1  : length(arr_ex_variant)
     
     ex_variant = arr_ex_variant{i};
     ex_num = strcat(ex_number, ex_variant);
-    o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, rank_revealing_metric) ;
+    o_gcd_Univariate_2Polys(ex_num, emin, emax, mean_method, ...
+        bool_alpha_theta, low_rank_approx_method, apf_method, ...
+        sylvester_matrix_variant, rank_revealing_metric) ;
     
     
 end
@@ -76,7 +90,9 @@ if three_poly_problem == true
     for i = 1 : 1 : length(arr_ex_variant)
         ex_variant = arr_ex_variant{i};
         ex_num = strcat(ex_number, ex_variant);
-        o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, nEquations, rank_revealing_metric)
+        o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, ...
+            bool_alpha_theta, low_rank_approx_method, apf_method, ...
+            sylvester_matrix_variant, nEquations, rank_revealing_metric)
     end
     
     
@@ -84,7 +100,9 @@ if three_poly_problem == true
     % Three polynomials - 3 x 3 subresultant
     
     nEquations = '3';
-    o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, nEquations, rank_revealing_metric)
+    o_gcd_Univariate_3Polys(ex_num, emin, emax, mean_method, ...
+        bool_alpha_theta, low_rank_approx_method, apf_method, ...
+        sylvester_matrix_variant, nEquations, rank_revealing_metric)
     
 end
 

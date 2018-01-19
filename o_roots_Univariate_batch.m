@@ -10,7 +10,7 @@ arrMeanMethod = {'None', 'Geometric Mean Matlab Method'};
 arrBoolAlphaTheta = {true, false};
 arrLowRankApproxMethod = {'None', 'Standard STLN', 'Standard SNTLN'};
 arrAPFMethod = {'None'};
-arrSylvesterBuildMethod = {'DTQ'};%, 'TQ', 'DT', 'T'};
+arrSylvesterMatrixVariant = {'DTQ'};%, 'TQ', 'DT', 'T'};
 arrDeconvolutionMethod_hx = {'Separate', 'Batch', 'Batch Constrained', 'Batch Constrained With STLN', 'Batch With STLN'};
 arrDeconvolutionMethod_wx = {'Separate', 'Batch'};
 arrRankRevealingMetric = {'Minimum Singular Values'};%, 'Max/Min Singular Values', 'R1 Row Norms', 'R1 Row Diagonals', 'Residuals'};
@@ -23,7 +23,7 @@ parfor i1 = 1:1:length(arrExampleNumber)
             for i4 = 1:1:length(arrBoolAlphaTheta)
                 for i5 = 1:1:length(arrLowRankApproxMethod)
                     for i6 = 1:1:length(arrAPFMethod)
-                        for i7 = 1:1:length(arrSylvesterBuildMethod)
+                        for i7 = 1:1:length(arrSylvesterMatrixVariant)
                             for i8 = 1 : 1 : length(arrDeconvolutionMethod_hx)
                                 for i9 = 1:1:length(arrDeconvolutionMethod_wx)
                                     for i10 = 1:1:length(arrRankRevealingMetric)
@@ -37,7 +37,7 @@ parfor i1 = 1:1:length(arrExampleNumber)
                                             bool_alpha_theta = arrBoolAlphaTheta{i4};
                                             low_rank_approx_method = arrLowRankApproxMethod{i5};
                                             apf_method = arrAPFMethod{i6};
-                                            sylvester_build_method = arrSylvesterBuildMethod{i7};
+                                            sylvester_matrix_variant = arrSylvesterMatrixVariant{i7};
                                             deconvolution_method_hx =  arrDeconvolutionMethod_hx{i8};
                                             deconvolution_method_wx = arrDeconvolutionMethod_wx{i9};
                                             rank_revealing_metric = arrRankRevealingMetric{i10};
@@ -47,7 +47,7 @@ parfor i1 = 1:1:length(arrExampleNumber)
                                             try
                                                 close all;
                                                 clc;
-                                                o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_build_method, rank_revealing_metric, deconvolution_method_hx, deconvolution_method_wx, deconvolution_preproc)
+                                                o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_matrix_variant, rank_revealing_metric, deconvolution_method_hx, deconvolution_method_wx, deconvolution_preproc)
                                                 fileId = fopen(file_name,'a');
                                                 fprintf(fileId,'%s %s \n', datetime('now'), 'Success' );
                                                 fclose(fileId);
