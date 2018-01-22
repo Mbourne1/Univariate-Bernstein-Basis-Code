@@ -1,4 +1,5 @@
-function [] =  o_Intersection_2DBezier_2DBezier(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+function [] =  o_Intersection_2DBezier_2DBezier(ex_num, emin, emax, ...
+    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method)
 % o_Intersection_2DBezier_2DBezier(ex_num, emin, emax, mean_method, ...
 %       bool_alpha_theta, low_rank_approx_method, apf_method)
 %
@@ -34,9 +35,20 @@ function [] =  o_Intersection_2DBezier_2DBezier(ex_num,emin,emax,mean_method,boo
 % 4. Substitute the parametric expressions of f for x and y in t, into the
 %    implicit polynomial g.
 
-addpath('Root Finding Methods')
+close all; clc; 
 
-SetGlobalVariables(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method);
+
+sylvester_matrix_variant = 'DTQ';
+rank_revealing_metric = 'Minimum Singular Values';
+deconvolution_method_hx = 'Batch';
+deconvolution_method_wx = 'Batch';
+deconvolution_preproc = true;
+
+
+SetGlobalVariables_Roots(ex_num, emin, emax, ...
+    mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,...
+    sylvester_matrix_variant, rank_revealing_metric, deconvolution_method_hx,...
+    deconvolution_method_wx, deconvolution_preproc);
 
 switch ex_num
     case '1'
@@ -62,7 +74,17 @@ Plot2DBezier(array_cp);
 % Implicitize the Bezier Control Points of g
 
 fprintf('Implicit representation of g:\n')
-[gxy,symbolic_expression] = ImplicitizeBezierBySylvester(CP_g);
+[gxy, symbolic_expression] = ImplicitizeBezierBySylvester(CP_g);
+
+
+figure()
+hold on
+xmin = 0;
+xmax = 1.2;
+ymin = -1;
+ymax = 2;
+ezplot(symbolic_expression , [xmin,xmax,ymin,ymax])
+hold off
 
 % Print the coefficients of the polynomial g(x,y) in Bernstein form.
 PrintCoefficients_Bivariate_Bernstein(gxy,'C_{2}:')
@@ -86,92 +108,37 @@ f_y =  CP_f(2,:);
 
 % Get Coefficients of the Bernstein polynomial obtained by susbstituting
 % x(t) and y(t) from f(x,y) into g(x,y).
-coef_Bernstein_Poly = Substitute(CP_f,gxy);
+
+
+vCoefficients_Bernstein_Poly = Substitute(CP_f, gxy);
+m = GetDegree(vCoefficients_Bernstein_Poly);
+x_vec = 0:(1/(m)):1;
+
+arrCP{1} = [x_vec; vCoefficients_Bernstein_Poly'];
+
+Plot2DBezier(arrCP);
+
 
 % % Get the roots of the polynomial
-roots = o_roots_mymethod(coef_Bernstein_Poly);
-roots = o_roots_matlab(coef_Bernstein_Poly);
+roots = o_roots_mymethod(vCoefficients_Bernstein_Poly);
+%roots = o_roots_Matlab(coef_Bernstein_Poly);
 
 % % 
 % Given roots are calculated, plug in roots to one of the original 
 % parametric equations
-[num_rts,~] = size(roots);
+[nRoots,~] = size(roots);
 
 % for each root
-for i = 1:1:num_rts
+for i = 1:1:nRoots
     r_i = roots(i);
     if isreal(r_i)
-    x = Bernstein_Evaluate(f_x,r_i);
-    y = Bernstein_Evaluate(f_y',r_i);
-    fprintf('The root %2.4e gives intersection point %2.3f , %2.3f \n',r_i,x,y)
+        x = Bernstein_Evaluate(f_x,r_i);
+        y = Bernstein_Evaluate(f_y',r_i);
+        fprintf('The root %2.4e gives intersection point %2.3f , %2.3f \n',r_i,x,y)
    
     end
 end
 end
 
 
-function [coef_Bernstein_Poly]= Substitute(CP_f,gxy)
-%% Substitute x(t) and y(t) from f(x,y) into g(x,y)
 
-% Get degree of input polynomial 
-[~,c] = size(CP_f);
-n = c-1;
-
-% Get coefficients of f(x)
-f_x =  CP_f(1,:)';
-
-% Get Coefficients of f(y)
-f_y =  CP_f(2,:);
-
-% Get Degree of g(x,y)
-[n1,n2] = GetDegree_Bivariate(gxy);
-
-% Initialise the univariate Bernstein basis polynomial obtained from the
-% substitution.
-coef_Bernstein_Poly = zeros((n^2)+1,1);
-
-% for each row in the implicit representation of g(x,y)
-for i = 0:1:n1
-    % for each column of g(x,y)
-    for j = 0:1:n2
-        
-        
-        % Get the coefficient b_{i,j} in g(x,y)
-        coef = gxy(i+1,j+1);
-        
-        % Coefficient b_{i,j} has x^{i}
-        
-        % Get x(t)^{i}
-        x_component = 1;
-        for k = 1:1:i   
-            x_component = Bernstein_Multiply(x_component,f_x);
-        end
-        
-        % Get y(t)^{j}
-        y_component = 1;
-        for k = 1:1:j
-            y_component = Bernstein_Multiply(y_component',f_y')';
-        end
-        
-        % Get x(t)^i * y(t)^j
-        xy_comp = Bernstein_Multiply(x_component,y_component);
-        
-        
-        uij =  xy_comp;
-        
-        % output polynomial will be of degree 2n
-        m = n^2;
-        
-        % degree elevate uij
-        [r1,~] = size(uij);
-        curr_deg_uij = r1-1;
-        num_deg_elv_req =  m-curr_deg_uij;
-
-        uij = DegreeElevate_Univariate(uij,num_deg_elv_req);
-        
-        uij = coef .* uij;
-        
-        coef_Bernstein_Poly = coef_Bernstein_Poly + uij;
-    end
-end
-end

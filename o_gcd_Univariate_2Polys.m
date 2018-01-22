@@ -111,6 +111,9 @@ LineBreakLarge()
 
 
 
+
+
+
 % Get degree of f(x), g(x) and d(x)
 m = GetDegree(fx_exact);
 n = GetDegree(gx_exact);
@@ -139,13 +142,21 @@ rank_range = [0 0];
 %
 % BEZOUT METHOD
 %
-bool_preproc = true;
-[dx_calc_bez_qr, dx_calc_bez_lu] = o_mod(fx_noisy, gx_noisy, bool_preproc);
-error.dx_bez_qr = GetPolynomialError(dx_exact, (dx_calc_bez_qr));
-error.dx_bez_lu = GetPolynomialError(dx_exact, (dx_calc_bez_lu));
 
-display(error.dx_bez_qr)
-display(error.dx_bez_lu)
+if SETTINGS.BOOL_BEZOUTIAN
+
+    bool_preproc = true;
+    [dx_calc_bez_qr, dx_calc_bez_lu] = o_mod(fx_noisy, gx_noisy, bool_preproc);
+    error.dx_bez_qr = GetPolynomialError(dx_exact, (dx_calc_bez_qr));
+    error.dx_bez_lu = GetPolynomialError(dx_exact, (dx_calc_bez_lu));
+
+    display(error.dx_bez_qr)
+    display(error.dx_bez_lu)
+
+
+end
+
+
 %[d, u, v] = o_GCD_matlab(fx_noisy, gx_noisy);
 
 

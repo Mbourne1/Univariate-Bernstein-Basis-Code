@@ -6,18 +6,30 @@ function [] = SetGlobalVariables_Roots(ex_num, emin, emax, ...
 %
 % Inputs.
 %
-% bool_preproc
+% ex_num : (String) Example Number
 %
-% low_rank_approx_method
+% emin : (Float)
 %
-% apf_method
+% emax : (Float) 
 %
+% mean_method : (String)
 %
+% bool_alpha_theta : (Boolean)
 %
+% low_rank_approx_method : (String)
 %
+% apf_method : (String)
 %
+% sylvester_matrix_variant  : (String)
 %
+% rank_revealing_metric : (String)
 %
+% deconvolution_method_hx : (String) 
+%
+% deconvolution_method_wx : (String)
+%
+% deconvolution_preproc : (Boolean)
+
 
 global SETTINGS
 
@@ -36,7 +48,7 @@ SETTINGS.SEED = 1024;
 SETTINGS.PLOT_GRAPHS = false;
 SETTINGS.PLOT_GRAPHS_ROOTS = false;
 SETTINGS.PLOT_GRAPHS_PREPROCESSING = false;
-SETTINGS.PLOT_GRAPHS_GCD_DEGREE = false;
+SETTINGS.PLOT_GRAPHS_GCD_DEGREE = true;
 SETTINGS.PLOT_GRAPHS_LOW_RANK_APPROXIMATION = false;
 SETTINGS.PLOT_GRAPHS_DECONVOLUTION_LRA = false;
 

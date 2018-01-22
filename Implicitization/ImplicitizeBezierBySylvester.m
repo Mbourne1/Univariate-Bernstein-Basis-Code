@@ -15,8 +15,13 @@ function [implic_matrix,symbolic_expression] = ImplicitizeBezierBySylvester(CP)
 %
 % implic : The coefficients of the polynomial in implicit form.
 
+nRows = size(CP,1);
+if ( nRows ~=2 )
+    error('Matrix CP must have 2 Rows');
+end
+
 % Get the degree of the polynomial
-n = size(CP,2)-1;
+n = size(CP, 2) - 1;
 
 % get the coefficients of polynomial f
 x = sym('x');
@@ -26,10 +31,8 @@ f = (xt - x);
 
 
 % Multiply f by corresponding binomial coefficient
-binoms_f = zeros(n+1,1);
-for i = 0:1:n
-    binoms_f(i+1) = nchoosek(n,i);
-end
+binoms_f = GetBinomials(n);
+
 
 f = f .* binoms_f;
 

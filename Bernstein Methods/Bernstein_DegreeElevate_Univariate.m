@@ -1,4 +1,4 @@
-function [c] = DegreeElevate_Univariate(ft,r)
+function [c] = Bernstein_DegreeElevate_Univariate(ft,r)
 % Function performs degree elevation of a polynomial f(x) in the Bernstein
 % basis.
 %

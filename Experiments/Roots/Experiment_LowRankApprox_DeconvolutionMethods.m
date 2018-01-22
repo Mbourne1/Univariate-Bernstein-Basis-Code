@@ -31,9 +31,12 @@ switch bool_preproc
         
         mean_method = 'Geometric Mean Matlab Method';
         bool_alpha_theta = true;
+        
     case false
+        
         mean_method = 'None';
         bool_alpha_theta = false;
+        
 end
 
 

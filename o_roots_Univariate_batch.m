@@ -47,7 +47,8 @@ parfor i1 = 1:1:length(arrExampleNumber)
                                             try
                                                 close all;
                                                 clc;
-                                                o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, low_rank_approx_method, apf_method, sylvester_matrix_variant, rank_revealing_metric, deconvolution_method_hx, deconvolution_method_wx, deconvolution_preproc)
+                                                o_roots_Univariate(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+                                                    low_rank_approx_method, apf_method, sylvester_matrix_variant, rank_revealing_metric, deconvolution_method_hx, deconvolution_method_wx, deconvolution_preproc)
                                                 fileId = fopen(file_name,'a');
                                                 fprintf(fileId,'%s %s \n', datetime('now'), 'Success' );
                                                 fclose(fileId);

@@ -22,6 +22,10 @@ addpath(genpath('../Examples'));
 [f_root_mult_arr, g_root_mult_arr, d_root_mult_arr, u_root_mult_arr, v_root_mult_arr] = ...
     GCD_Examples_Univariate_2Polys(ex_num);
 
+
+
+PlotRoots(f_root_mult_arr, g_root_mult_arr, d_root_mult_arr);
+
 % Get the coefficients of the polynomials f(x), g(x) and d(x).
 fx = BuildPolyFromRootsSymbolic(f_root_mult_arr);
 gx = BuildPolyFromRootsSymbolic(g_root_mult_arr);
@@ -49,6 +53,67 @@ t = feval(symengine, 'degree', dx_sym);
 fprintf('Degree f(x) : %i \n', m)
 fprintf('Degree g(x) : %i \n', n)
 fprintf('Degree d(x) : %i \n', t)
+
+end
+
+function PlotRoots(f_root_mult_arr, g_root_mult_arr, d_root_mult_arr)
+
+
+figure()
+hold on
+
+const = 0.1;
+% for each root
+for i = 1 : 1: size(f_root_mult_arr, 1)
+   
+    color = 'r';
+    factor = f_root_mult_arr(i,1);
+    vCoeffs = coeffs(factor);
+    root = vCoeffs(1);
+    mult = f_root_mult_arr(i,2);
+    circle(root, 0 ,mult * const, color);
+    
+    
+end
+
+for i = 1 : 1: size(g_root_mult_arr, 1)
+   
+    color = 'b';
+    factor = g_root_mult_arr(i,1);
+    vCoeffs = coeffs(factor);
+    root = vCoeffs(1);
+    mult = g_root_mult_arr(i,2);
+    h = circle(root, 0 ,mult * const, color);
+    
+    
+end
+
+for i = 1 : 1: size(d_root_mult_arr, 1)
+   
+    color = 'g';
+    factor = d_root_mult_arr(i,1);
+    vCoeffs = coeffs(factor);
+    root = vCoeffs(1);
+    mult = d_root_mult_arr(i,2);
+    h = circle(root, 0 ,mult * const, color);
+    
+    
 end
 
 
+grid on
+hold off
+
+end
+
+
+
+function h = circle(x,y,r, color)
+    hold on
+    th = 0:pi/50:2*pi;
+    xunit = r * cos(th) + x;
+    yunit = r * sin(th) + y;
+    h = plot(xunit, yunit, color);
+    h2 = plot(x,y,'-s','color',color);
+    hold off
+end

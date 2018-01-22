@@ -51,6 +51,8 @@ end
 % 'DTQ'
 sylvester_matrix_variant = 'DTQ';
 
+%apf_method
+%   'None'
 apf_method = 'None';
 
 % Method used to determine the degree of the GCD

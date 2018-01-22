@@ -1,8 +1,8 @@
-function [] = o_Intersection_3DBezier_3DBezier()
+function [] = o_Intersection_3DBezier_3DBezier(ex_num)
 % Get the points of intersection of two Bezier curves defined in 3
 % Dimensional space
 
-%% Get the control points of the first Curve
+% % Get the control points of the first Curve
 % [x y z]
 CP1 = Examples_3DBezier_ControlPoints(ex_num)
 
@@ -37,7 +37,7 @@ display(CP1)
 fprintf('Control Points of Curve C_{2}: \n')
 display(CP2)
 
-%% Graph the curves
+% % Graph the curves
 
 % For Graphing the curve
 t = linspace (0, 1, 100);
@@ -58,7 +58,7 @@ plot3 (CP1 (1, :), CP1 (2, :), CP1 (3, :), ' ro')
 plot3 (CP2 (1, :), CP2 (2, :), CP2 (3, :), ' ro')
 hold off
 
-%% Implicitize the curve C2
+% % Implicitize the curve C2
 x = sym('x')
 y = sym('y')
 z = sym('z')

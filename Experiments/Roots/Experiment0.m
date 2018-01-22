@@ -11,6 +11,9 @@ function [] = Experiment0(ex_num, bool_preproc)
 %
 % bool_preproc : (Boolean) True or false determines whether polynomials are
 % preprocessed.
+%
+%
+% >> Experiment0('1', true)
 
 close all; 
 clc;
@@ -55,7 +58,8 @@ rank_revealing_metric = 'Minimum Singular Values';
 % 'None'
 % 'Standard STLN'
 % 'Standard SNTLN'
-low_rank_approx_method = 'Standard STLN';
+low_rank_approx_method = 'None';
+
 
 % % Deconvolution Method
 % 'Separate'
@@ -63,7 +67,7 @@ low_rank_approx_method = 'Standard STLN';
 % 'Batch with STLN'
 % 'Batch Constrained'
 % 'Batch Constrained with STLN'
-deconvolution_method_hx = 'Batch Constrained';
+deconvolution_method_hx = 'Batch Constrained with STLN';
 
 % % Deconvolution Method
 % 'Batch'

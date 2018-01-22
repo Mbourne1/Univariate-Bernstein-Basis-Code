@@ -1,18 +1,21 @@
-function [] = Experiment4LowRankApprox_2Polys(ex_num)
+function [] = Experiment4LowRankApprox_2Polys(ex_num, bool_preproc)
 % Experiment with optimal low rank approximation method for the t-th
 % subresultant matrix. Where 't' is the degree of the GCD.
 %
 % % Inputs
 %
 % ex_num : (String) Example number
+%
+% bool_preproc : (Boolean) 
 
-close all;
-clc;
+
+
+close all; clc;
 
 
 % Set upper and lower noise level
-el = 1e-8;
-eu = 1e-7;
+el = 1e-12;
+eu = 1e-10;
 
 
 % Method used to determine the degree of the GCD
@@ -23,9 +26,11 @@ eu = 1e-7;
 rank_revealing_metric = 'Minimum Singular Values';
 
 % Set preprocessing related variables
-bool_preprocessing = true;
-if (bool_preprocessing == true)
-    mean_method = 'Geometric Mean Matlab Method';
+
+
+if (bool_preproc == true)
+    
+    mean_method = 'Arithmetic Mean';
     bool_alpha_theta = true;
     
 else
