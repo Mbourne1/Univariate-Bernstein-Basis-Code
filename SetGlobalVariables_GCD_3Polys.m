@@ -1,19 +1,22 @@
-function [] = SetGlobalVariables_GCD_3Polys( ex_num, emin, emax, ...
+function [] = SetGlobalVariables_GCD_3Polys( ex_num, ex_num_variant, emin, emax, ...
     mean_method, bool_alpha_theta, low_rank_approx_method, apf_method,...
     sylvester_matrix_variant, nEquations, rank_revealing_metric)
 % Set the global variables
 %
 % Inputs.
 %
-% ex_num : (String)
+% ex_num : (String) Example number
 %
-% emin : (Float)
+% ex_num_variant : (String) 'a', 'b' or 'c' determines ordering of the
+% polynomials f(x), g(x) and h(x)
 %
-% emax : (Float)
+% emin : (Float) Mininimum componentwise signal to noise
+%
+% emax : (Float) Maximum componentwise signal to noise
 %
 % mean_method : (String)
-%   * None
-%   * Geometric Mean Matlab Method
+%   * 'None'
+%   * 'Geometric Mean Matlab Method'
 % 
 % bool_alpha_theta : (Boolean)
 %   * true
@@ -47,21 +50,20 @@ function [] = SetGlobalVariables_GCD_3Polys( ex_num, emin, emax, ...
 %   * R1 Row Diagonals :
 %   * Residuals :
 
-if (nargin ~= 10)
-   error('Not enough input arguments') 
+if (nargin ~= 11)
+   error('Custom Alert : Not enough input arguments') 
 end
 
 global SETTINGS
 
 SETTINGS.EX_NUM = ex_num;
+SETTINGS.EX_NUM_VARIANT = ex_num_variant;
 SETTINGS.EMIN = emin;
 SETTINGS.EMAX = emax;
 SETTINGS.SEED = 1024;
 
 
 % PLOT_GRAPHS
-%   * true
-%   * false
 SETTINGS.PLOT_GRAPHS = true;
 SETTINGS.PLOT_GRAPHS_GCD_DEGREE = true;
 SETTINGS.PLOT_GRAPHS_PREPROCESSING = false;
@@ -75,7 +77,7 @@ SETTINGS.BOOL_LOG = false;
 
 %--------------------------------------------------------------------------
 %               
-%                            Preprocessing
+% Preprocessing related values
 %
 %
 SETTINGS.BOOL_ALPHA_THETA = bool_alpha_theta;
@@ -84,7 +86,7 @@ SETTINGS.MEAN_METHOD = mean_method;
 
 % -------------------------------------------------------------------------
 % 
-%                   SETTINGS IN COMPUTING GCD DEGREE
+% SETTINGS IN COMPUTING GCD DEGREE
 %
 
 % Set the metric for measuring the degree of the GCD.
@@ -100,7 +102,7 @@ SETTINGS.RANK_REVEALING_METRIC = rank_revealing_metric;
 
 % -------------------------------------------------------------------------
 %
-%               SETTINGS FOR COMPUTING GCD COEFFICIENTS
+% SETTINGS FOR COMPUTING GCD COEFFICIENTS
 %
 %
 
@@ -132,7 +134,7 @@ SETTINGS.SYLVESTER_MATRIX_VARIANT = sylvester_matrix_variant;
 SETTINGS.SYLVESTER_EQUATIONS = nEquations;
 
 %-------------------------------------------------------------------------
-
+%
 % LOW_RANK_APPROXIMATION_METHOD:
 %
 %   * None : No perturbations added
@@ -147,7 +149,7 @@ SETTINGS.MAX_ITERATIONS_SNTLN = 20;
 
 %--------------------------------------------------------------------------
 %
-%           APF RELATED SETTINGS.
+% APF RELATED SETTINGS.
 %
 %
 
@@ -169,6 +171,11 @@ SETTINGS.MAX_ITERATIONS_APF = 50;
 
 
 
+
+
+% -------------------------------------------------------------------------
+% Print the parameters to console
+PrintParameters_GCD_3Polys()
 
 end
 

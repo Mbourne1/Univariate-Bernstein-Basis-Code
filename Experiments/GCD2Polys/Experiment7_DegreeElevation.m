@@ -3,7 +3,9 @@ function [] = Experiment7_DegreeElevation(ex_num, bool_preproc, p, q)
 % computation of the degree of the GCD of two univariate polynomials in
 % Bernstein form.
 %
+%
 % % Inputs
+%
 %
 % ex_num : (String) Example number
 %
@@ -12,6 +14,15 @@ function [] = Experiment7_DegreeElevation(ex_num, bool_preproc, p, q)
 % p : (Int) Number of degree elevations of f(x)
 %
 % q : (Int) Number of degree elevations of g(x)
+%
+% 
+%
+%
+% % Examples
+%
+% >> Experiment7_DegreeElevation('1', true, 5, 2)
+
+
 
 
 % Constants --------------------------------------------------------------

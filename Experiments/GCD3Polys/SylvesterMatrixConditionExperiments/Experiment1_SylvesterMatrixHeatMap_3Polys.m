@@ -1,5 +1,5 @@
 function [] = Experiment1_SylvesterMatrixHeatMap_3Polys(m, n, o, k)
-% This experiment considers heat maps of the coefficient multipliers in the
+% This experiment plots heat maps of the coefficient multipliers in the
 % subresultant matrices
 %
 % Consider three alternative orderings of polynomials f(x), g(x) and h(x)
@@ -7,11 +7,11 @@ function [] = Experiment1_SylvesterMatrixHeatMap_3Polys(m, n, o, k)
 % 
 % % Inputs
 %
-% m : (Int) Degree of polynomial f(x)
+% m : (Int) The degree of the polynomial f(x)
 % 
-% n : (Int) Degree of polynomial g(x)
+% n : (Int) The degree of the polynomial g(x)
 %
-% o : (Int) Degree of polynomial h(x) 
+% o : (Int) The degree of the polynomial h(x) 
 %
 % k : (Int) Index of k-th subresultant matrix
 %
@@ -27,10 +27,10 @@ clc;
 %
 bool_reorder_polynomials = false;
 
-% Get heat map of S(f,g,h)
+% Get heat map of \hat{S}(f(x), g(x), h(x))
 SylvesterMatrixHeatMap_3Polys(m, n, o, k, bool_reorder_polynomials);
 
-% Get heat map of S(g,f,h)
+% Get heat map of \hat{S}(g(x), f(x), h(x))
 SylvesterMatrixHeatMap_3Polys(n, m, o, k, bool_reorder_polynomials);
 
 % Get heat map of S(h,f,g)

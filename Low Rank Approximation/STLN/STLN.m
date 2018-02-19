@@ -132,7 +132,7 @@ while vCondition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATI
     % usage: x = lse(A,b,C,d)
     % Minimizes norm(A*x - b),
     % subject to C*x = d
-    y_lse = LSE_new(E, s, C, t);
+     y_lse = LSE(E, s, C, t);
     
     % usage: x = lse(E,p,C,q)
     % Minimizes norm(E*w - p),
@@ -191,8 +191,8 @@ while vCondition(ite) >  SETTINGS.MAX_ERROR_SNTLN &&  ite < SETTINGS.MAX_ITERATI
     
 end
 
-cond(Ak)
-cond(Ak + Bk)
+%cond(Ak)
+%cond(Ak + Bk)
 
 
 if SETTINGS.PLOT_GRAPHS_LOW_RANK_APPROXIMATION

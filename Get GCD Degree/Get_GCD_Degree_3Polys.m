@@ -7,11 +7,11 @@ function [t, lambda, mu, rho, theta, GM_fx, GM_gx, GM_hx] = ...
 %
 % % Inputs.
 %
-% fx : (Vector) coefficients of polynomial f(x)
+% fx : (Vector) Vector of the coefficients of the polynomial f(x)
 %
-% gx : (Vector) coefficients of polynomail g(x)
+% gx : (Vector) Vector of the coefficients of the polynomail g(x)
 %
-% hx : (Vector) Coefficients of polynomial h(x)
+% hx : (Vector) Vector of the coefficients of the polynomial h(x)
 %
 % limits_t : [Int Int] Set the upper and lower bound of the degree of the
 % GCD of polynomials f(x) and g(x). Usually used when using o_roots() where
@@ -26,27 +26,41 @@ function [t, lambda, mu, rho, theta, GM_fx, GM_gx, GM_hx] = ...
 %
 % t : (Int) Degree of GCD of f(x) and g(x)
 %
-% alpha : (Float) optimal value of alpha
+% lambda : (Float) Optimal value of \lambda_{t} in preprocessing the
+% coefficients of f(x) in the t-th subresultant matrix S_{t}(f,g,h)
 %
-% beta : (Float)
+% mu : (Float) Optimal value of \mu_{t} in preprocessing the coefficients
+% of the polynomial g(x) in the t-th subresultant matrix S_{t}(f,g,h)
 %
-% theta : (Float) optimal value of theta
+% rho : (Float) Optimal value of \rho_{t} in preprocessing the coefficients
+% of the polynomial h(x) in the t-th subresultant matrix S_{t}(f,g,h)
 %
-% GM_fx : (Float) Geometric mean of entries of f(x)
+% theta : (Float) optimal value of \theta in the t-th subresultant matrix
 %
-% GM_gx : (Float) Geometric mean of entries of g(x)
+% GM_fx : (Float) Geometric mean of the entries of f(x) in the t-th
+% subresultant matrix
 %
-% GM_hx : (Float) Geometric mean of entries of h(x)
+% GM_gx : (Float) Geometric mean of the entries of g(x) in the t-th
+% subresultant matrix
 %
+% GM_hx : (Float) Geometric mean of the entries of h(x) in the t-th 
+% subresultant matrix 
+
 
 global SETTINGS
+
+
+
 
 % if not 5 input arguments, then error
 if (nargin ~= 5)
     error('Not enough input arguments');
 end
 
-% Get degree of polynomail f(x)
+
+
+
+% Get the degree of the polynomails f(x), g(x) and h(x)
 m = GetDegree(fx);
 n = GetDegree(gx);
 o = GetDegree(hx);
@@ -57,14 +71,22 @@ lowerLimit_k = 1;
 upperLimit_k = min([m, n, o]);
 limits_k = [lowerLimit_k upperLimit_k];
 
-% Get the number of subresultants which must be constructed.
-nSubresultants = upperLimit_k - lowerLimit_k +1 ;
+
+
+% Get the number of subresultants which must be constructed - Note that we
+% always construct all subresultant matrices in the general GCD finding 
+% problem, however, limits can be defined in the GCD problem in the
+% polynomial square free factorisation algorithm.
+nSubresultants = upperLimit_k - lowerLimit_k + 1 ;
+
+
+
 
 % %
 % Initialisation stage
 
 % Initialise vectors to store all optimal alphas and theta, and each
-% geometric mean for f and g in each S_{k} for k = 1,...,min(m,n)
+% geometric mean for f(x), g(x) and h(x) in each S_{k} for k = 1,...,min(m,n)
 vLambda = zeros(nSubresultants, 1);
 vMu = zeros(nSubresultants, 1);
 vRho = zeros(nSubresultants, 1);
@@ -73,9 +95,11 @@ vGM_fx = zeros(nSubresultants, 1);
 vGM_gx = zeros(nSubresultants, 1);
 vGM_hx = zeros(nSubresultants, 1);
 
+% Initialise arrays to store Sylvester matrices
 arr_Sk = cell(nSubresultants, 1);
 arr_R1 = cell(nSubresultants, 1);
 
+% Initialise vectors
 vMaxDiagR1 = zeros(nSubresultants,1);
 vMinDiagR1 = zeros(nSubresultants,1);
 vMaxRowNormR1 = zeros(nSubresultants,1);
@@ -90,6 +114,7 @@ vMinimumResidual_SVD = zeros(nSubresultants,1);
 % subresultant S_{i}(f,g), where i is between the upper and lower bound.
 vMinimumSingularValues = zeros(nSubresultants,1);
 
+vCondition = zeros(nSubresultants,1);
 
 
 % For each subresultant $S_{k}$
@@ -140,6 +165,9 @@ for k = lowerLimit_k : 1 : upperLimit_k
     % Build the i-th subresutlant matrix
     arr_Sk{i} = BuildSubresultant_3Polys(alpha_fw, beta_gw, gamma_hw, k);
     
+    
+    
+    
     if k == lowerLimit_k
         
         if (SETTINGS.PLOT_GRAPHS_PREPROCESSING == true)
@@ -172,10 +200,6 @@ for k = lowerLimit_k : 1 : upperLimit_k
                 );
             
         end
-        
-        %PlotCoefficients({fx, alpha_fw1}, {'f(x)', '\alpha f(\omega)'});
-        %PlotCoefficients({gx, beta_gw}, {'g(x)', '\beta g(\omega)'});
-        %PlotCoefficients({hx, gamma_hw}, {'h(x)', '\gamma h(\omega)'});
     end
     
     
@@ -191,64 +215,22 @@ for k = lowerLimit_k : 1 : upperLimit_k
 end % End of for
 
 
-% % Plot fmax
-% figure()
-% hold on
-% for i = 1 : 1 : nSubresultants
-%
-%     temp_vec1 = arrF_max_1{i};
-%     temp_vec2 = arrF_max_2{i};
-%     temp_vec3 = arr_G_max{i};
-%     temp_vec4 = arr_H_max{i};
-%
-%     x_vec = i.*ones(length(temp_vec1),1);
-%     scatter(x_vec, log10(temp_vec1), 'MarkerEdgeColor','red')
-%     scatter(x_vec, log10(temp_vec2), 'MarkerEdgeColor','blue')
-%
-%     x_vec = i.*ones(length(temp_vec3),1);
-%     scatter(x_vec, log10(temp_vec3), 'MarkerEdgeColor','green')
-%     x_vec = i.*ones(length(temp_vec4),1);
-%     scatter(x_vec, log10(temp_vec4), 'MarkerEdgeColor','yellow')
-% end
-% hold off
-%
-% % Plot fmax
-% figure()
-% hold on
-% for i = 1 : 1 : nSubresultants
-%
-%     temp_vec1 = arrF_min_1{i};
-%     temp_vec2 = arrF_min_2{i};
-%     temp_vec3 = arr_G_min{i};
-%     temp_vec4 = arr_H_min{i};
-%
-%     x_vec = i.*ones(length(temp_vec1),1);
-%     scatter(x_vec, log10(temp_vec1), 'MarkerEdgeColor','red')
-%     scatter(x_vec, log10(temp_vec2), 'MarkerEdgeColor','blue')
-%
-%     x_vec = i.*ones(length(temp_vec3),1);
-%     scatter(x_vec, log10(temp_vec3), 'MarkerEdgeColor','green')
-%     x_vec = i.*ones(length(temp_vec4),1);
-%     scatter(x_vec, log10(temp_vec4), 'MarkerEdgeColor','yellow')
-% end
-% hold off
 
 
 
 
 
-
-if SETTINGS.PLOT_GRAPHS_PREPROCESSING == true
+if (SETTINGS.PLOT_GRAPHS_PREPROCESSING == true)
     
     % % Plot Lambda, Mu, rho and theta
     figure_name = strcat('Scaling : ',  SETTINGS.SCALING_METHOD);
     figure('Name',figure_name);
     hold on
     
-    plot(log10(vLambda), '-s', 'LineWidth',2, 'DisplayName','\lambda')
-    plot(log10(vMu), '-o','LineWidth',2, 'DisplayName','\mu')
-    plot(log10(vRho), '-*', 'LineWidth',2, 'DisplayName','\rho')
-    plot(log10(vTheta), 'LineWidth',2, 'DisplayName','\theta')
+    plot(log10(vLambda), '-s', 'LineWidth', 2, 'DisplayName', '\lambda')
+    plot(log10(vMu), '-o', 'LineWidth', 2, 'DisplayName', '\mu')
+    plot(log10(vRho), '-*', 'LineWidth', 2, 'DisplayName', '\rho')
+    plot(log10(vTheta), 'LineWidth', 2, 'DisplayName', '\theta')
     
     ylabel('$\log_{10} \left( \Re \right)$', 'Interpreter','latex')
     xlabel('$k$', 'Interpreter','latex')
@@ -381,6 +363,12 @@ switch SETTINGS.RANK_REVEALING_METRIC
 end
 
 
+
+
+
+
+
+
 % % Analysis of Minimum Singular values
 
 if (upperLimit_k == lowerLimit_k)
@@ -400,6 +388,14 @@ if (upperLimit_k == lowerLimit_k)
     
     return;
 end
+
+
+
+
+
+
+
+
 
 
 % If only one subresultant exists, use an alternative method.

@@ -4,21 +4,21 @@ function [ux, vx, wx] = GetQuotients_3Polys(fx, gx, hx, k)
 %
 % % Inputs
 %
-% fx : (Vector) Coefficients of polynomial f(x)
+% fx : (Vector) The coefficients of the polynomial f(x)
 % 
-% gx : (Vector) Coefficients of polynomial g(x)
+% gx : (Vector) The coefficients of the polynomial g(x)
 %
-% hx : (Vector) Coefficients of polynomial h(x)
+% hx : (Vector) The coefficients of the polynomial h(x)
 % 
-% k : (Int) Degree of common divisor
+% k : (Int) The Degree of common divisor
 %
 % % Outputs
 %
-% ux : (Vector) Coefficients of polynomial u(x)
+% ux : (Vector) Coefficients of the polynomial u(x)
 %
-% vx : (Vector) Coefficients of polynomial v(x)
+% vx : (Vector) Coefficients of the polynomial v(x)
 %
-% wx : (Vector) Coefficients of polynomial w(x)
+% wx : (Vector) Coefficients of the polynomial w(x)
 
 
 if (nargin ~= 4)

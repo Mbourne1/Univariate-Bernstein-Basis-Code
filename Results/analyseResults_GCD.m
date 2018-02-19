@@ -8,7 +8,9 @@ T = readtable("Results_o_gcd.dat");
 
 
 
-% Filter based on example number
-filteredTable = T(T.EX_NUM == ex_num, : )
+
+filteredTable = T(strcmp(T.EX_NUM , num2str(ex_num)), : )
+
+
 
 end

@@ -1,6 +1,10 @@
-function [lambda] = GetMean(fx,n_k)
-% Calculate Geometric means of input polynomials f(x,y) and g(x,y)
-
+function [lambda] = GetMean(fx, n_k)
+% Calculate Geometric means of the polynomial f(x) in the matrix
+% C_{n-k}(f(x))
+%
+% % Inputs
+%
+% fx : (Vector) The vector of coefficients of the polynomial f(x)
 
 global SETTINGS
 
@@ -13,6 +17,7 @@ switch SETTINGS.MEAN_METHOD
        
         
     case 'Geometric Mean My Method'
+        
         lambda = GetGeometricMean(fx, n_k);
         
         

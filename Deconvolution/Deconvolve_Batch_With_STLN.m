@@ -5,7 +5,7 @@ function [arr_hx] = Deconvolve_Batch_With_STLN(arr_fx)
 %
 % Input
 %
-% arr_fx : (Array of Vectors) Each cell of the array contains coefficients 
+% arr_fx : (Array of Vectors) Each cell of the array contains the coefficients 
 % of the polynomials f_{i}(x) 
 %
 % Output:
@@ -140,7 +140,7 @@ while (condition(ite) > SETTINGS.MAX_ERROR_DECONVOLUTIONS)  && ...
     % Use the QR decomposition to solve the LSE problem and then
     % update the solution.
     % min |Fy-s| subject to Gy=t
-    y = LSE_new(E, s, C, t);
+    y = LSE(E, s, C, t);
     
     % Update vector yy
     yy = yy + y;

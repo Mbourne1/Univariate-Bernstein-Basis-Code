@@ -10,9 +10,13 @@ function [] = o_Deconvolution(ex_num, emin, bool_preproc)
 %
 % bool_preproc : (Boolean) Bool determining whether to include preprocessing
 %
+%
+%
 % % Outputs
 %
-% Results are printed to a file
+%
+% Results are printed to a dat file
+%
 %
 % % Example
 %
@@ -22,10 +26,14 @@ function [] = o_Deconvolution(ex_num, emin, bool_preproc)
 % Set global settings
 global SETTINGS
 SETTINGS.PLOT_GRAPHS = true;
+SETTINGS.PLOT_GRAPHS_DECONVOLUTION_LRA = false;
+
 SETTINGS.MAX_ERROR_DECONVOLUTIONS = 1e-12;
 SETTINGS.MAX_ITERATIONS_DECONVOLUTIONS = 50;
+
 SETTINGS.BOOL_LOG = false;
 SETTINGS.PREPROC_DECONVOLUTIONS = bool_preproc;
+
 SETTINGS.SEED = 1024;
 
 

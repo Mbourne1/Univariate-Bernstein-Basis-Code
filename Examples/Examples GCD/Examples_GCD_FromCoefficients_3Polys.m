@@ -1,106 +1,122 @@
-function [fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_FromCoefficients_3Polys(ex_num_var)
+function [fx, gx, hx, PolyDx, ux, vx, wx] = ...
+    Examples_GCD_FromCoefficients_3Polys(ex_num, ex_num_variant)
 %
 % % Inputs
 %
-% ex_num : Example number
+% ex_num : (String) Example number
+%
+% ex_num_variant : (String) "a", "b" or "c"
 %
 % % Outputs
 %
-% [fx, gx, hx] : Coefficients of the polynomials 
-%                   f(x)
-%                   g(x)
-%                   d(x)
+% fx : (Vector) Vector of the coefficients of the polynomial f(x)
 %
-% dx : Coefficients of the GCD d(x)
+% gx : (Vector) Vector of the coefficients of the polynomial g(x)
 %
-% [ux, vx, wx] : Coefficients of the polynomials 
-%                   u(x) given by f(x)/d(x)
-%                   v(x) given by g(x)/d(x)
-%                   w(x) given by h(x)/d(x)
+% hx : (Vector) Vector of the coefficients of the polynomial h(x)
+%                   
+% dx : (Vector) Vector of the coefficients of the polynomial GCD d(x)
+%
+% ux : (Vector) Vector of the coefficients of the polynomial u(x)
+%
+% vx : (Vector) Vector of the coefficients of the polynomial v(x)
+%
+% wx : (Vector) Vector of the coefficients of the polynomial w(x)
 
 addpath(genpath('../Examples'))
 
-ex_num = ex_num_var(1 : end - 1);
-ex_num_variant = ex_num_var(end);
 
 % Get roots and multiplicities from example file
-[PolyA_root_mult_arr, PolyB_root_mult_arr, PolyC_root_mult_arr, ...
-    d_root_mult_arr,...
-    Poly1_root_mult_arr, Poly2_root_mult_arr, Poly3_root_mult_arr] = ...
+[PolyAx_rm_arr, PolyBx_rm_arr, PolyCx_rm_arr, ...
+    PolyDx_rm_arr, PolyPx_rm_arr, PolyQx_rm_arr, Poly_Rx_rm_arr] = ...
     GCD_Examples_Univariate_3Polys(ex_num);
 
-% Get the coefficients of the polynomials f(x), g(x) and h(x).
-PolyA_sym = GetSymbolicPolyFromSymbolicRoots(PolyA_root_mult_arr);
-PolyB_sym = GetSymbolicPolyFromSymbolicRoots(PolyB_root_mult_arr);
-PolyC_sym = GetSymbolicPolyFromSymbolicRoots(PolyC_root_mult_arr);
 
-% Get the coefficients of the polynomials f(x), g(x) and d(x).
-PolyA = BuildPolyFromRootsSymbolic(PolyA_root_mult_arr);
-PolyB = BuildPolyFromRootsSymbolic(PolyB_root_mult_arr);
-PolyC = BuildPolyFromRootsSymbolic(PolyC_root_mult_arr);
 
-Poly1 = BuildPolyFromRootsSymbolic(Poly1_root_mult_arr);
-Poly2 = BuildPolyFromRootsSymbolic(Poly2_root_mult_arr);
-Poly3 = BuildPolyFromRootsSymbolic(Poly3_root_mult_arr);
+% Get the coefficients of the polynomials f(x), g(x) and h(x) and their GCD
+% d(x)
+Poly_Ax_sym = GetSymbolicPolyFromSymbolicRoots(PolyAx_rm_arr);
+Poly_Bx_sym = GetSymbolicPolyFromSymbolicRoots(PolyBx_rm_arr);
+Poly_Cx_sym = GetSymbolicPolyFromSymbolicRoots(PolyCx_rm_arr);
+Poly_Dx_sym = GetSymbolicPolyFromSymbolicRoots(PolyDx_rm_arr);
 
-% Get the coefficients of the polynomial d(x)
-dx = BuildPolyFromRootsSymbolic(d_root_mult_arr);
-dx_sym = GetSymbolicPolyFromSymbolicRoots(d_root_mult_arr);
 
+% Get the coefficients of the polynomials f(x), g(x) and d(x) and their GCD
+% d(x)
+PolyAx = BuildPolyFromRootsSymbolic(PolyAx_rm_arr);
+PolyBx = BuildPolyFromRootsSymbolic(PolyBx_rm_arr);
+PolyCx = BuildPolyFromRootsSymbolic(PolyCx_rm_arr);
+PolyDx = BuildPolyFromRootsSymbolic(PolyDx_rm_arr);
+
+
+% Get the coefficients of the cofactor polynomials u(x), v(x) and w(x)
+PolyPx = BuildPolyFromRootsSymbolic(PolyPx_rm_arr);
+PolyQx = BuildPolyFromRootsSymbolic(PolyQx_rm_arr);
+PolyRx = BuildPolyFromRootsSymbolic(Poly_Rx_rm_arr);
+
+
+
+
+
+
+% % Note - Added extra code to allow poor scaling to be introduced
 bad_scaling = false;
-
 if bad_scaling == true
    
-    PolyA = PolyA * 10^(5);
-    PolyB = PolyB * 10^(5);
-    PolyC = PolyC * 10^(-5);
+    PolyAx = PolyAx * 10^(5);
+    PolyBx = PolyBx * 10^(5);
+    PolyCx = PolyCx * 10^(-5);
+    
 end
 
-switch ex_num_variant
+
+
+
+switch ex_num_variant % Consider the three different polynomial orderings.
     
-    case 'a'
+    case 'a' % Variant a 
         
-        fx = PolyA;
-        fx_sym = PolyA_sym;
+        fx = PolyAx;
+        fx_sym = Poly_Ax_sym;
         
-        gx = PolyB;
-        gx_sym = PolyB_sym;
+        gx = PolyBx;
+        gx_sym = Poly_Bx_sym;
         
-        hx = PolyC;
-        hx_sym = PolyC_sym;
+        hx = PolyCx;
+        hx_sym = Poly_Cx_sym;
         
-        ux = Poly1;
-        vx = Poly2;
-        wx = Poly3;
+        ux = PolyPx;
+        vx = PolyQx;
+        wx = PolyRx;
         
         
     case 'b'
         
-        gx = PolyA;
-        gx_sym = PolyA_sym;
+        gx = PolyAx;
+        gx_sym = Poly_Ax_sym;
         
-        fx = PolyB;
-        fx_sym = PolyB_sym;
-        hx = PolyC;
-        hx_sym = PolyC_sym;
-        vx = Poly1;
-        ux = Poly2;
-        wx = Poly3;
+        fx = PolyBx;
+        fx_sym = Poly_Bx_sym;
+        hx = PolyCx;
+        hx_sym = Poly_Cx_sym;
+        vx = PolyPx;
+        ux = PolyQx;
+        wx = PolyRx;
         
     case 'c'
         
-        hx = PolyA;
-        hx_sym = PolyA_sym;
+        hx = PolyAx;
+        hx_sym = Poly_Ax_sym;
         
-        gx = PolyB;
-        gx_sym = PolyB_sym;
+        gx = PolyBx;
+        gx_sym = Poly_Bx_sym;
         
-        fx = PolyC;
-        fx_sym = PolyC_sym;
+        fx = PolyCx;
+        fx_sym = Poly_Cx_sym;
         
-        wx = Poly1;
-        vx = Poly2;
-        ux = Poly3;
+        wx = PolyPx;
+        vx = PolyQx;
+        ux = PolyRx;
         
     otherwise
         error('Not valid ordering')
@@ -111,9 +127,7 @@ end
 display(fx_sym)
 display(gx_sym)
 display(hx_sym)
-
-% Display common divisor d(x)
-display(dx_sym)
+display(Poly_Dx_sym)
 
 
 end

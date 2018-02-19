@@ -8,6 +8,12 @@ function [] = Experiment2VariableNoise(ex_num, bool_preproc)
 %
 % bool_preproc : (boolean) Set whether to include or exclude preprocessing 
 %                   of the polynomials {f_{i}(x)}
+%
+%
+% % Outputs
+%
+% Outputs are saved to a .dat file
+
 
 close all;
 clc;

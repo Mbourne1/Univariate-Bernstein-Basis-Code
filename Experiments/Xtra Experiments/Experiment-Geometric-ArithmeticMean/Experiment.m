@@ -5,14 +5,16 @@ function [] = Experiment(ex_num)
 % % Input
 % 
 % ex_num : (String) Example number
+%
+%
 
 close all;
 clc;
 
-% Get coefficients of f(x) and g(x)
+% Get the coefficients of the polynomials f(x) and g(x)
 [fx, gx] = Examples_GCD_FromCoefficients(ex_num);
 
-% Get degree of polynomial f(x) and g(x)
+% Get degree of polynomials f(x) and g(x)
 m = GetDegree(fx);
 n = GetDegree(gx);
 

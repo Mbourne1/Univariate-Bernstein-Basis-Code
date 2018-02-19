@@ -194,8 +194,8 @@ while vCondition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERAT
     % Minimizes norm(A*x - b),
     % subject to C*x = d
     %y = LSE_new(E, s, C, t);
-    y = LSE_new(E,s,C,t);
-    
+    y = LSE(E,s,C,t);
+
     % Increment the iteration number
     ite = ite + 1;
     
@@ -219,10 +219,8 @@ while vCondition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERAT
     % Update least squares solution
     xk = xk + delta_xk;
         
-    % Update \alpha 
+    % Update \alpha and \theta
     vAlpha(ite) = vAlpha(ite - 1) + delta_alpha;
-    
-    % Update \theta
     vTheta(ite) = vTheta(ite - 1) + delta_theta;
 
     % Get f(\omega) from f(x) and g(\omega) from g(x)
@@ -232,10 +230,9 @@ while vCondition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERAT
     % Construct the subresultant matrix of DTQ.
     DTQ = BuildDTQ(fw, vAlpha(ite).*gw, k);
         
-    % Get the partial derivative of f(\omega) with respect to \alpha
+    % Get the partial derivative of f(\omega) and \alpha g(\omega) with 
+    % respect to \alpha
     fw_wrt_alpha    = zeros(m + 1, 1);
-    
-    % Get the partial derivative of g(\omega) with respect to \alpha
     gw_wrt_alpha    = gw;
     
     % Get the partial derivative of f(\omega) with respect to \theta 
@@ -264,8 +261,6 @@ while vCondition(ite) > (SETTINGS.MAX_ERROR_SNTLN) &&  ite < SETTINGS.MAX_ITERAT
     
     % Get z_{f}(\omega) from z_{f}(x)
     z_fw = GetWithThetas(z_fx, vTheta(ite));
-    
-    % Get z_{g}(\omega) from z_{g}(x)
     z_gw = GetWithThetas(z_gx, vTheta(ite));
     
     % Calculate the derivatives of z_fw and z_gw with repect to alpha.
@@ -363,6 +358,10 @@ fprintf([mfilename ' : ' sprintf('Iterations required for SNTLN : %i \n', ite)])
 LineBreakLarge()
 SETTINGS.LOW_RANK_APPROX_REQ_ITE = ite;
 
+
+
+
+
 % %
 % Get polynomials for output
 
@@ -372,12 +371,17 @@ fx_lr = fx + z_fx;
 % Get the polynomial g(x) + \delta g(x)
 gx_lr = gx + z_gx;
 
+
+
+
+
+
 % % Get polynomials u(x) and v(x)
 
-% Get u(x) and v(x) from x_ls
+% Get u(x) and v(x) from vector x
 x = [xk(1 : idx_col - 1) ; -1 ; xk(idx_col : end)];
 
-% Get the number of coefficients in v(x)
+% Get the number of coefficients in the polynomial v(x)
 nCoefficients_vx = n - k + 1;
 
 % Get coefficients of v(\omega) from the vector x
@@ -395,6 +399,9 @@ ux_lr = GetWithoutThetas(uw_lr, vTheta(ite));
 % Get \alpha and \theta
 alpha_lr = vAlpha(ite);
 theta_lr = vTheta(ite);
+
+
+
 
 end
 

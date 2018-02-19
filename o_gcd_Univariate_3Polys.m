@@ -1,7 +1,8 @@
-function [] = o_gcd_Univariate_3Polys(ex_num_var, emin, emax, mean_method, ...
+function [] = o_gcd_Univariate_3Polys(ex_num, ex_num_variant, emin, emax, mean_method, ...
     bool_alpha_theta, low_rank_approx_method, apf_method, ...
     sylvester_matrix_variant, nEquations, rank_revealing_metric)
-% o_gcd_3Polys(ex_num,emin,emax,mean_method,bool_alpha_theta,low_rank_approx_method,apf_method)
+% o_gcd_3Polys(ex_num, emin, emax, mean_method, bool_alpha_theta, ...
+%   low_rank_approx_method, apf_method)
 %
 % Obtain the Greatest Common Divisor (GCD) d(x) of two polynomials f(x) and
 % g(x) as defined in the example file.
@@ -11,6 +12,9 @@ function [] = o_gcd_Univariate_3Polys(ex_num_var, emin, emax, mean_method, ...
 %
 % ex : (String) Example Number
 %
+% ex_num_variant : (String) 'a', 'b' or 'c' determines the ordering of the
+% polynomials f(x), g(x) and h(x) in the subresultant matrices.
+%
 % emin: (Float) Signal to noise ratio (minimum)
 %
 % emax: (Float) Signal to noise ratio (maximum)
@@ -19,7 +23,9 @@ function [] = o_gcd_Univariate_3Polys(ex_num_var, emin, emax, mean_method, ...
 %           'Geometric Mean Matlab Method'
 %           'Geometric Mean My Method'
 %
-% bool_alpha_theta : (Bool) if preprocessing is performed
+% bool_alpha_theta : (Bool) 
+%           true
+%           false
 %
 % low_rank_approx_method : (String)
 %           'Standard STLN'
@@ -61,7 +67,7 @@ function [] = o_gcd_Univariate_3Polys(ex_num_var, emin, emax, mean_method, ...
 
 
 % if not 11 arguments then error
-if (nargin ~= 10)
+if (nargin ~= 11)
     error('Not enough input arguments')
 end
 
@@ -83,7 +89,8 @@ end
 
 % % Set global variables.
 SetGlobalVariables_GCD_3Polys(...
-    ex_num_var,...
+    ex_num,...
+    ex_num_variant,...
     emin,...
     emax,...
     mean_method,...
@@ -94,21 +101,8 @@ SetGlobalVariables_GCD_3Polys(...
     nEquations,...
     rank_revealing_metric);
 
-% Print the parameters.
-LineBreakLarge()
-fprintf('INPUT VARIABLES\n');
-fprintf('\t EXAMPLE NUMBER : %s \n', ex_num_var);
-fprintf('\t EMIN : %s \n' , num2str(SETTINGS.EMIN));
-fprintf('\t EMAX : %s \n' , num2str(SETTINGS.EMAX));
-fprintf('\t MEAN METHOD : %s \n', SETTINGS.MEAN_METHOD);
-fprintf('\t ALPHA_THETA : %s \n', num2str(SETTINGS.BOOL_ALPHA_THETA));
-fprintf('\t LOW RANK APPROX METHOD : %s \n', SETTINGS.LOW_RANK_APPROXIMATION_METHOD);
-fprintf('\t APF METHOD : %s \n ', SETTINGS.APF_METHOD);
-fprintf('\t LOG: %s \n', SETTINGS.BOOL_LOG);
-fprintf('\t SYLVESTER MATRIX VARIANT : %s \n', SETTINGS.SYLVESTER_MATRIX_VARIANT);
-fprintf('\t SYLVESTER n EQUATIONS: %s \n', SETTINGS.SYLVESTER_EQUATIONS);
-fprintf('\t SCALING METHOD: %s \n', SETTINGS.SCALING_METHOD);
-LineBreakLarge()
+
+
 
 % o - gcd - Calculate GCD of two Arbitrary polynomials
 % Given two sets of polynomial roots, form polynomials f and g, expressed
@@ -119,7 +113,7 @@ LineBreakLarge()
 
 % Get roots from example file
 [fx_exact, gx_exact, hx_exact, dx_exact, ux_exact, vx_exact, wx_exact] = ...
-    Examples_GCD_3Polys(ex_num_var);
+    Examples_GCD_3Polys(ex_num, ex_num_variant);
 
 % Add componentwise noise to coefficients of polynomials in 'Standard Bernstein Basis'.
 fx = AddVariableNoiseToPoly(fx_exact, emin, emax);
@@ -129,6 +123,8 @@ hx = AddVariableNoiseToPoly(hx_exact, emin, emax);
 
 %PlotCoefficients({fx, gx, hx}, {'fx','gx','hx'});
 
+% Get the degree of the polynomials f(x), g(x) and h(x) and the degree of
+% the exact GCD d(x).
 m = GetDegree(fx);
 n = GetDegree(gx);
 o = GetDegree(hx);
@@ -143,70 +139,84 @@ fprintf('\t t : %i \n', t_exact)
 LineBreakLarge()
 
 
-% set upper and lower limit of the degree of the GCD. Since this is a
-% general GCD problem, no prior limits are known.
+
+
+
+% Set the upper and lower limit of the degree of the GCD. Since this is a
+% general GCD problem, no prior limits are known so these values are set to
+% 1 and min(m,n,o).
 lower_limit_t = 1;
 upper_limit_t = min([m n o]);
-
 limits_t = [lower_limit_t, upper_limit_t];
+
+
+
+% Set the rank_range. Again, since this is a stand alone GCD problem limits
+% of the rank_revealing_metric are not known, so set to [0,0]
 rank_range = [0 0];
 
 
+
+
+
+
 % Obtain the coefficients of the GCD d and quotient polynomials u and v.
-[~, ~, ~, dx_calc, ux_calc, vx_calc, wx_calc] = ...
+[fx_calc, gx_calc, wx_calc, dx_calc, ux_calc, vx_calc, wx_calc, ...
+    lambda_calc, mu_calc, rho_calc, theta_calc] = ...
     o_gcd_3Polys_mymethod(fx, gx, hx, limits_t, rank_range);
+
+
+
+
 
 % Check coefficients of calculated polynomials are similar to those of the
 % exact polynomials.
 
+
+
+my_error.dx = GetPolynomialError(dx_exact, dx_calc);
+my_error.ux = GetPolynomialError(ux_exact, ux_calc);
+my_error.vx = GetPolynomialError(vx_exact, vx_calc);
+my_error.wx = GetPolynomialError(wx_exact, wx_calc);
+
+
 LineBreakMedium();
-
-% try
-    my_error.dx = GetPolynomialError(dx_exact, dx_calc);
-    my_error.ux = GetPolynomialError(ux_exact, ux_calc);
-    my_error.vx = GetPolynomialError(vx_exact, vx_calc);
-    my_error.wx = GetPolynomialError(wx_exact, wx_calc);
-% catch
-%     my_error.dx = 1000;
-%     my_error.ux = 1000;
-%     my_error.vx = 1000;
-%     my_error.wx = 1000;
-% end
-
 fprintf('Error u(x) : %e \n', my_error.ux);
 fprintf('Error v(x) : %e \n', my_error.vx);
 fprintf('Error w(x) : %e \n', my_error.wx);
 fprintf('Error d(x) : %e \n', my_error.dx);
 fprintf('Average Error : %e \n', mean([my_error.ux, my_error.vx, my_error.dx]))
+LineBreakMedium();
 
 
 % Print results to results file
-PrintToFile(GetDegree(fx), GetDegree(gx), GetDegree(hx), GetDegree(dx_calc), my_error)
-LineBreakMedium();
+PrintResultToFile(GetDegree(fx), GetDegree(gx), GetDegree(hx), GetDegree(dx_calc), my_error)
+
+
 
 end
 
 
 
 
-function [] = PrintToFile(m, n, o, t, error)
+function [] = PrintResultToFile(m, n, o, t, my_error)
 % Print Results to file
 %
 % % Inputs
 %
-% m : (Int) Degree of polynomial f(x)
+% m : (Int) The degree of the polynomial f(x)
 %
-% n : (Int) Degree of polynomial g(x)
+% n : (Int) The degree of the polynomial g(x)
 %
-% o : (Int) Degree of polynomial h(x)
+% o : (Int) The degree of the polynomial h(x)
 %
-% t : (Int) Computed degree of the GCD d(x)
+% t : (Int) The computed degree of the GCD d(x)
 %
 % error : array of errors e
 %   error.dx : (Float)
-%   error.ux
-%   error.vx
-%   error.wx
+%   error.ux : (Float)
+%   error.vx : (Float)
+%   error.wx : (Float)
 
 
 global SETTINGS
@@ -241,10 +251,10 @@ end
             int2str(n),...
             int2str(o),...
             int2str(t),...
-            num2str(error.ux),...
-            num2str(error.vx),...
-            num2str(error.wx),...
-            num2str(error.dx),...
+            num2str(my_error.ux),...
+            num2str(my_error.vx),...
+            num2str(my_error.wx),...
+            num2str(my_error.dx),...
             SETTINGS.MEAN_METHOD,...
             num2str(SETTINGS.BOOL_ALPHA_THETA),...
             SETTINGS.EMIN,...

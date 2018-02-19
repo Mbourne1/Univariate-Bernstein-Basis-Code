@@ -3,9 +3,13 @@ function [] = Experiment6_LowRankApprox_3Polys(ex_num, bool_preproc)
 %
 % % Inputs
 %
+%
 % ex_num : (String) Example number
 %
 % bool_preproc : (Boolean) Preprocessing
+%
+%
+
 
 
 close all; clc;
@@ -14,11 +18,16 @@ close all; clc;
 emin = 1e-10;
 emax = 1e-8;
 
+% nEquations : Determines the structure of the three-polynomial subresulant
+% matrix 
+%       '2' : Subresultant matrices have a 2 by 3 partitioned structure
+%       '3' : Subresutlant matrices have a 3 by 3 partitioned structure
 nEquations = '2';
 
 % apf_method 
 %   'None'
 apf_method = 'None';
+
 
 % Set the sylvester matrix variant to be used.
 % 'T'
@@ -26,6 +35,7 @@ apf_method = 'None';
 % 'TQ'
 % 'DTQ'
 sylvester_matrix_variant = 'DTQ';
+
 
 % rank_revealing_metric
 %   'Minimum Singular Values'

@@ -30,7 +30,7 @@ rank_revealing_metric = 'Minimum Singular Values';
 
 if (bool_preproc == true)
     
-    mean_method = 'Arithmetic Mean';
+    mean_method = 'Geometric Mean Matlab Method';
     bool_alpha_theta = true;
     
 else

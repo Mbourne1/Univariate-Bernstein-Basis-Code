@@ -125,3 +125,87 @@ DATE, EX_NUM, m, n, t, t_computed, ERROR_UX, ERROR_VX, ERROR_DX, MEAN_METHOD, BO
 21-Jan-2018 18:30:07,test7d,31,20,12,19,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
 21-Jan-2018 18:30:20,test7d,31,20,12,12,2.0824e-08,4.6611e-07,3.4462e-07,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
 22-Jan-2018 12:29:15,2,19,16,5,5,6.6056e-07,1.0927e-07,1.2259e-06,Geometric Mean Matlab Method,1,1.000000e-10,1.000000e-08,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:05:06,1,4,4,3,3,7.2127e-13,3.8003e-13,6.8352e-12,Arithmetic Mean,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:05:07,1,4,4,3,3,2.2901e-12,9.5533e-13,6.64e-12,Arithmetic Mean,1,1.000000e-12,1.000000e-10,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:05:08,1,4,4,3,3,5.6581e-12,3.2655e-12,5.2701e-12,Arithmetic Mean,1,1.000000e-12,1.000000e-10,Standard SNTLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:05:51,5,9,9,6,6,2.6834e-11,1.241e-11,5.3427e-11,Arithmetic Mean,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:05:52,5,9,9,6,6,4.3325e-11,9.6885e-12,2.8032e-12,Arithmetic Mean,1,1.000000e-12,1.000000e-10,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:05:53,5,9,9,6,6,1.8928e-10,2.785e-11,1.6871e-11,Arithmetic Mean,1,1.000000e-12,1.000000e-10,Standard SNTLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:06:14,5,9,9,6,6,2.6645e-06,1.2293e-06,5.3078e-06,Arithmetic Mean,1,1.000000e-08,1.000000e-05,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:06:15,5,9,9,6,6,4.2853e-06,9.6167e-07,2.7769e-07,Arithmetic Mean,1,1.000000e-08,1.000000e-05,Standard STLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:06:17,5,9,9,6,6,1.891e-05,2.7768e-06,1.6829e-06,Arithmetic Mean,1,1.000000e-08,1.000000e-05,Standard SNTLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:07:25,5,9,9,6,6,2.6645e-06,1.2293e-06,5.3078e-06,Arithmetic Mean,1,1.000000e-08,1.000000e-05,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:07:26,5,9,9,6,6,4.2853e-06,9.6167e-07,2.7769e-07,Arithmetic Mean,1,1.000000e-08,1.000000e-05,Standard STLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:07:27,5,9,9,6,6,1.891e-05,2.7768e-06,1.6829e-06,Arithmetic Mean,1,1.000000e-08,1.000000e-05,Standard SNTLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:08:14,5,9,9,6,6,2.8871e-06,1.3546e-06,5.6906e-06,Arithmetic Mean,1,1.000000e-06,1.000000e-05,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:08:16,5,9,9,6,6,4.8051e-06,1.0406e-06,3.0653e-07,Arithmetic Mean,1,1.000000e-06,1.000000e-05,Standard STLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:08:17,5,9,9,6,6,1.9102e-05,2.8695e-06,1.7294e-06,Arithmetic Mean,1,1.000000e-06,1.000000e-05,Standard SNTLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:09:16,5,9,9,6,6,5.3477e-06,2.4972e-06,9.2137e-06,Arithmetic Mean,1,1.000000e-05,1.000000e-05,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:09:17,5,9,9,6,6,9.6079e-06,1.7596e-06,5.7132e-07,Arithmetic Mean,1,1.000000e-05,1.000000e-05,Standard STLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:09:18,5,9,9,6,6,2.0858e-05,3.7129e-06,2.1543e-06,Arithmetic Mean,1,1.000000e-05,1.000000e-05,Standard SNTLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:09:43,6,26,28,16,19,1000,1000,1000,Arithmetic Mean,1,1.000000e-05,1.000000e-05,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:09:44,6,26,28,16,19,1000,1000,1000,Arithmetic Mean,1,1.000000e-05,1.000000e-05,Standard STLN,9,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:00,6,26,28,16,19,1000,1000,1000,Arithmetic Mean,1,1.000000e-06,1.000000e-06,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:02,6,26,28,16,19,1000,1000,1000,Arithmetic Mean,1,1.000000e-06,1.000000e-06,Standard STLN,9,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:14,6,26,28,16,18,1000,1000,1000,Arithmetic Mean,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:16,6,26,28,16,18,1000,1000,1000,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard STLN,8,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:39,7,30,38,16,1,1000,1000,1000,Arithmetic Mean,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:41,7,30,38,16,1,1000,1000,1000,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard STLN,1,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:43,7,30,38,16,1,1000,1000,1000,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard SNTLN,1,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:51,8,25,24,16,16,1.6844e-07,8.6347e-09,2.9747e-08,Arithmetic Mean,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:53,8,25,24,16,16,4.7097e-06,3.9585e-08,6.7289e-08,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:10:55,8,25,24,16,16,0.0046117,0.00056226,0.00075675,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard SNTLN,7,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:12:04,9,35,31,23,23,1.6585e-06,8.9498e-09,3.2764e-08,Arithmetic Mean,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:12:06,9,35,31,23,23,1.0327e-05,3.3465e-09,3.6012e-08,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard STLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:12:43,10,35,31,23,23,3.2377e-05,1.5679e-06,5.4186e-07,Arithmetic Mean,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:12:45,10,35,31,23,23,5.7491e-05,3.1153e-06,1.0961e-06,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:12:55,11,42,39,28,29,1000,1000,1000,Arithmetic Mean,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:13:05,12,10,8,5,5,4.2068e-06,1.739e-06,1.5576e-06,Arithmetic Mean,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:13:07,12,10,8,5,5,2.8287e-06,1.1085e-06,9.9813e-07,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard STLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:13:08,12,10,8,5,5,1.1037e-05,3.2636e-06,3.1903e-06,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard SNTLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:37:57,13,4,4,3,3,3.62e-09,2.6921e-09,8.4866e-10,Arithmetic Mean,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:37:58,13,4,4,3,3,1.6197e-09,1.9072e-09,1.006e-09,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:37:59,13,4,4,3,3,1.0457e-08,5.2842e-09,1.7194e-09,Arithmetic Mean,1,1.000000e-07,1.000000e-07,Standard SNTLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:38:37,13,4,4,3,3,3.62e-09,2.6921e-09,4.4526e-09,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:38:38,13,4,4,3,3,9.7885e-10,1.7572e-09,1.1417e-09,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:38:39,13,4,4,3,3,8.8164e-09,3.7815e-09,1.1303e-09,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard SNTLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:39:06,13,4,4,3,3,3.62e-09,2.6921e-09,4.4526e-09,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:39:24,15,13,11,8,1,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:39:26,15,13,11,8,1,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,1,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:39:28,15,13,11,8,1,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard SNTLN,1,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:40:13,16,44,11,8,9,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:40:15,16,44,11,8,9,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:40:29,16,44,11,8,9,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:40:31,16,44,11,8,9,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:40:33,16,44,11,8,9,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard SNTLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:40:42,17,37,6,3,3,3.559e-08,4.9842e-08,7.0933e-08,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:40:43,17,37,6,3,3,3.558e-08,4.9823e-08,7.0923e-08,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:40:45,17,37,6,3,3,3.5581e-08,4.9827e-08,7.0928e-08,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard SNTLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:41:23,18,55,6,3,3,8.6034e-09,4.9822e-08,7.0923e-08,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:41:25,18,55,6,3,3,8.6033e-09,4.9823e-08,7.0923e-08,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:41:27,18,55,6,3,3,8.6219e-09,4.9864e-08,7.0348e-08,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard SNTLN,4,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:42:06,19,59,18,7,13,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:42:20,19,59,18,7,13,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:42:57,19,59,18,7,13,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard SNTLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:47:56,20,39,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:47:59,20,39,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:48:04,20,39,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard SNTLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:48:14,21,38,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:48:17,21,38,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:48:21,21,38,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-07,1.000000e-07,Standard SNTLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:50:40,22,38,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-10,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:50:44,22,38,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-10,1.000000e-10,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:50:55,22,38,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:50:59,22,38,38,7,2,1000,1000,1000,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:52:32,22a,11,11,7,7,8.775e-12,3.4519e-13,9.5947e-12,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:52:33,22a,11,11,7,7,1.827e-11,3.3569e-13,6.9592e-12,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard STLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:52:35,22a,11,11,7,7,4.38e-12,7.5193e-13,1.5503e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard SNTLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:53:48,22b,23,23,7,7,1.7069e-11,1.8011e-13,4.4738e-08,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:53:49,22b,23,23,7,7,1.7933e-07,1.0438e-12,1.6063e-11,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:53:51,22b,23,23,7,7,1.3889e-11,1.6342e-13,5.8829e-12,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard SNTLN,2,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:54:36,22b,28,23,7,7,8.2313e-12,1.7971e-13,6.0977e-08,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:54:38,22b,28,23,7,7,1.1218e-07,6.9639e-11,9.1948e-10,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:54:40,22b,28,23,7,7,5.2994e-11,1.809e-13,6.0515e-12,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard SNTLN,3,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:55:21,22b,28,28,7,7,1.6303e-12,6.9712e-14,5.1046e-06,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,None,0,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:55:23,22b,28,28,7,7,6.4179e-06,4.9264e-06,0.00027889,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard STLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 
+24-Jan-2018 12:55:25,22b,28,28,7,7,9.5493e-11,1.7087e-13,8.0678e-12,Geometric Mean Matlab Method,1,1.000000e-12,1.000000e-10,Standard SNTLN,20,None,0,0,DTQ,ux and vx,Minimum Singular Values 

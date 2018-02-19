@@ -1,7 +1,10 @@
-function [fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_3Polys(ex_num)
+function [fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_3Polys(ex_num, ex_num_variant)
 % Inputs. 
 %
-% ex_num : Example number
+% ex_num : (String) Example number
+%
+% ex_num_variant : (String) 'a', 'b' or 'c' determines the ordering of the
+%   polynomials found in the example file.
 %
 % Outputs.
 %
@@ -21,8 +24,10 @@ function [fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_3Polys(ex_num)
 
 
 
-        
-[fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_FromCoefficients_3Polys(ex_num);
+% Get the coefficients of the polynomials f(x), g(x), h(x) and the GCD 
+% d(x), as well as the coefficients of the cofactor polynomials u(x), v(x) 
+% and w(x).
+[fx, gx, hx, dx, ux, vx, wx] = Examples_GCD_FromCoefficients_3Polys(ex_num, ex_num_variant);
         
         
 

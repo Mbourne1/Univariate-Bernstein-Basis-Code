@@ -31,7 +31,7 @@ T6 = BuildT1(hx, m - k);
 
 
 % Concatenate the partitions.
-T = [T1 T2 T3; T4 -T5 T6];
+T = [T1 T2 T3; T4 T5 T6];
 
 
 end

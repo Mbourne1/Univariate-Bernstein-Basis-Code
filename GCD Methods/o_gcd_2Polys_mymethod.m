@@ -12,6 +12,8 @@ function [fx_o, gx_o, dx_o, ux_o, vx_o, alpha_o, theta_o, t, rank_range] = ...
 % limits_t : [(Int) (Int)] Upper and lower limits for GCD degree may be defined here
 % otherwise set to [0,min(m,n)]
 %
+% rank_range : [Float Float] Defined when GCD problem is part of a root
+% finding problem. 
 %
 %
 % Outputs:
@@ -100,7 +102,7 @@ a_gw = alpha.* GetWithThetas(gx_n, theta);
 St_preproccessed = BuildSubresultant_2Polys(fw, a_gw, t);
 
 % Get index of optimal column for removal
-[~,idx_col] = GetMinDistance(St_preproccessed);
+[~, idx_col] = GetMinDistance(St_preproccessed);
 
 
 
