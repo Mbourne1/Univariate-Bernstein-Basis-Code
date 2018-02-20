@@ -13,47 +13,46 @@ function [] = o_gcd_Univariate_3Polys(ex_num, ex_num_variant, emin, emax, mean_m
 % ex : (String) Example Number
 %
 % ex_num_variant : (String) 'a', 'b' or 'c' determines the ordering of the
-%   polynomials f(x), g(x) and h(x) in the subresultant matrices.
+% polynomials f(x), g(x) and h(x) in the subresultant matrices.
 %
 % emin: (Float) Signal to noise ratio (minimum)
 %
 % emax: (Float) Signal to noise ratio (maximum)
 %
-% mean_method : Method for taking mean of non-zero entires in the 
-%   subresutlant matrices S_{k}.
+% mean_method : Method for taking mean of entires in S_{k}
 %   'Geometric Mean Matlab Method'
 %   'Geometric Mean My Method'
 %   'None'
 %
 % bool_alpha_theta : (Bool) Boolean value determines whether the
-%   subresultant matrices of the subresultant matrix sequence are
-%   preprocessed. Note the variable name refers to alpha and theta, but
-%   optimal values of \lamda_{k}, \mu_{k}, \rho_{k} and \theta_{k} are
-%   computed. 
+% subresultant matrices of the subresultant matrix sequence are
+% preprocessed. Note the variable name refers to alpha and theta, but
+% optimal values of \lamda_{k}, \mu_{k}, \rho_{k} and \theta_{k} are
+% computed 
 %           true : Subresultant matrices are to be preprocessed
 %           false : Subresultant matrices are not preprocessed
 %
 % low_rank_approx_method : (String)
-%   'Standard STLN'
-%   'Standard SNTLN'
-%   'Root Specific SNTLN'
-%   'None'
+%           'Standard STLN'
+%           'Standard SNTLN'
+%           'Root Specific SNTLN'
+%           'None'
 %
 % apf_method : (String)
-%   'Standard APF NonLinear'
-%   'Standard APF Linear'
-%   'None'
+%           'Standard APF NonLinear'
+%           'Standard APF Linear'
+%           'None'
 %
 % sylvester_matrix_variant : (String)
-%   'T'
-%   'DT'
-%   'DTQ'
-%   'TQ'
-%   'DTQ Denominator Removed'
-%   'DTQ Rearranged'
+%           'T'
+%           'DT'
+%           'DTQ'
+%           'TQ'
+%           'DTQ Denominator Removed'
+%           'DTQ Rearranged'
 %
-% nEquations : (String) The number of equations used to define the
-%   subresutlant matrices.
+% nEquations : (String)
+%
 %   '2' : Syvlester matrix defined by 2 equations, and has 2 x 3 structure
 %   '3' : Sylvester matrix defined by 3 equations, and has 3 x 3 structure
 %

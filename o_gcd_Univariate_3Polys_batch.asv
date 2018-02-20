@@ -9,40 +9,22 @@ function [] = o_gcd_Univariate_3Polys_batch()
 % Initialise array of example numbers
 ex_num_arr = {'1','2','3','4','5','6','7','8','9','10','11','12'};
 
-% Arrays of various noise levels
-emin_arr = {1e-08,1e-10,1e-12};
-
-
-% Initialise arrays related to preprocessing
+% Initialis
 bool_alpha_theta_arr = {true, false};
-mean_method_arr = {'Geometric Mean Matlab Method', 'None'};
+emin_arr = {1e-08,1e-10,1e-12};
+%emin_arr = {1e-08,1e-10};
 
-
-% Array of methods used to compute low rank approximation of the tth
-% subresultant matrix - note that 'Standard STLN' and 'Standard SNTLN' are
-% not working.
+%low_rank_approx_method_arr = {'Standard SNTLN', 'Standard STLN', 'None'};
 low_rank_approx_method_arr = {'None'};
-
-% Array of methods for APF
 apf_method_arr = {'None'};
 
+mean_method_arr = {'Geometric Mean Matlab Method', 'None'};
 
-% Only 
 bool_log_arr = {false};
-
-%
 gcd_coefficient_method_arr = {'ux and vx'};
 
-% Array of Sylvester subresultant matrix variants
-%   'T'
-%   'DT'
-%   'TQ'
-%   'DTQ'
 Sylvester_Matrix_Variant_arr = {'T','DT','DTQ','TQ'};
 
-% Array of Rank Revealing metrics
-%   'Minimum Singular Values'
-%
 arrRankRevealingMetric = {'Minimum Singular Values'};
 
 global SETTINGS
