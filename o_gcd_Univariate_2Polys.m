@@ -174,12 +174,12 @@ try
     error.gx = GetPolynomialError(gx_exact, gx_noisy);
     error.gx_calc = GetPolynomialError(gx_exact, gx_calc);
     
-    
+    %
     error.ux = GetPolynomialError(ux_exact, ux_calc);
     error.vx = GetPolynomialError(vx_exact, vx_calc);
     error.dx = GetPolynomialError(dx_exact, dx_calc);
     
-    
+    %
     error.uw = GetPolynomialError(GetWithThetas(ux_exact, theta_calc), GetWithThetas(ux_calc, theta_calc));
     error.vw = GetPolynomialError(alpha_calc * GetWithThetas(vx_exact, theta_calc), alpha_calc * GetWithThetas(vx_calc, theta_calc));
     error.dw = GetPolynomialError(GetWithThetas(dx_exact, theta_calc), GetWithThetas(dx_calc, theta_calc));

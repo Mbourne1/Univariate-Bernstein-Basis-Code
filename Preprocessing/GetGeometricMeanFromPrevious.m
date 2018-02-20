@@ -1,15 +1,18 @@
 function [GM] = GetGeometricMeanFromPrevious(fx, GM_prev, m, n_k)
+% This function allows for the computation of the geometric mean of the
+% entries in the $k$th subresultant matrix when given the geometric mean of
+% the entries in the (k-1)th subresultant matrix.
 %
 % % Inputs
 %
-% fx : (Vector) Coefficients of polynomial f(x)
+% fx : (Vector) The coefficients of the polynomial f(x)
 %
-% GM_Prev : (float) Geometric mean of coefficients of f(x) in previous Sylvester
-% subresultant matrix S_{k-1}
+% GM_Prev : (float) The Geometric mean of coefficients of f(x) in the 
+% previous Sylvester subresultant matrix S_{k-1}
 %
-% m : (int) Degree of polynomial f(x)
+% m : (Int) The degree of polynomial f(x)
 %
-% n_k : n-k is the degree of polynomial v(x) and determines the number of columns in
+% n_k : (Int) is the degree of polynomial v(x) and determines the number of columns in
 % T_{n-k}(f(x)), where nCols = n-k+1.
 
 

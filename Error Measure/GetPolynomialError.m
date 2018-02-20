@@ -6,11 +6,11 @@ function [myError] = GetPolynomialError(fx_exact, fx_calc)
 %
 % % Inputs
 %
-% name : (String)
+% name : (String) Name of the polynomial eg 'f(x)'
 %
-% fx_calc : (Vector) Coefficients of f(x) calculated
+% fx_calc : (Vector) The coefficients of the polynomial f(x) as calculated
 %
-% fx_exact : (Vector) Coefficients of f(x) exact
+% fx_exact : (Vector) The coefficients of the exact polynomial f(x)
 
 
 % Check both vectors are column vectors of the same size
@@ -20,7 +20,10 @@ function [myError] = GetPolynomialError(fx_exact, fx_calc)
 if (nRows1 ~= nRows2) || (nCols1 ~= nCols2)
    myError = 10000000000;
    display('Error in Comparing Polynomials : GetPolynomialError()')
+   return
 end
+
+
 
 % Get the angle between the two vectors
 % angle = dot(f_calc,f_exact) ./ (norm(f_calc) * norm(f_exact));

@@ -6,7 +6,6 @@ function fw = GetWithThetas(fx, th)
 m = GetDegree(fx);
 
 % Multiply coefficients of f(x) a_{i} by \theta^{i}
-
 fw = fx .* (th.^(0:1:m)');
 
 

@@ -10,11 +10,20 @@ function [vMax_ai,vMin_ai] = GetMaxMin(fx, n_k)
 %
 % % Outputs
 %
-% vMax_ai : Max occurence of a_{i} in the matrix C_{n-k}(f)
+% vMax_ai : (Vector) For each coefficient a_{i}, the vector contains the 
+%   maximum occurence of a_{i} in the matrix C_{n-k}(f).
 % 
-% vMin_ai : Min occurence of a_{i} in the matrix C_{n-k}(f)
+% vMin_ai : (Vector) For each coefficient a_{i}, the vector contains the 
+%   minimum occurence of a_{i} in the matrix C_{n-k}(f)
 %
-% Note - The matrix C_{n-k}(f) can take many forms. See how
+%
+%
+%
+% Note : The matrix C_{n-k}(f) can take many forms, called variants
+
+
+
+
 
 % Get the degree of f(x)
 m = GetDegree(fx);
@@ -30,7 +39,7 @@ vMin_ai = zeros(m + 1, 1);
 % Build the matrix C_{n-k}(f)
 Cf = BuildSubresultant_Partition_2Polys(fx, n_k);
 
-nRows_Cf = n_k+1;
+nRows_Cf = n_k + 1;
 
 % For each coefficient a_{i} of polynomial f(x)
 for i = 0:1:m
@@ -39,9 +48,11 @@ for i = 0:1:m
     if (nRows_Cf) > 1
         
         vec_ai = diag(Cf, -i);
+        
     else
         
         vec_ai = Cf(i + 1, 1);
+        
     end
     
     

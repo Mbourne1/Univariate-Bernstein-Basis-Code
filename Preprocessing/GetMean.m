@@ -5,10 +5,19 @@ function [lambda] = GetMean(fx, n_k)
 % % Inputs
 %
 % fx : (Vector) The vector of coefficients of the polynomial f(x)
+%
+% n_k : (Int)
+% 
+%
+% % Outputs
+%
+% 
+% lamda : (Float) 
+
 
 global SETTINGS
 
-
+% Get mean method
 switch SETTINGS.MEAN_METHOD
     case 'Geometric Mean Matlab Method'
         

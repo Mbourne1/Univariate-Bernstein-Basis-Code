@@ -1,12 +1,13 @@
-function [] = PrintCoefficients_Bivariate_Bernstein(fxy,f)
+function [] = PrintCoefficients_Bivariate_Bernstein(fxy, poly_name)
 % Given the polynomial f(x,y) print out the polynomial.
 %
 % % Input.
 %
-% fxy : (Matrix) of coefficients of polynomial f(x,y), where (i-1,j-1) 
-% entry is the coefficient of a_{i,j}B_{i}(x)B_{j}(y).
 %
-% f :   (String) indicating the name of the function 'f' or 'g'
+% fxy : (Matrix) Matrix of the coefficients of the polynomial f(x,y), where
+% (i-1,j-1) entry is the coefficient of a_{i,j}B_{i}(x)B_{j}(y).
+%
+% f : (String) The name of the function 'f' or 'g'
 
 
 
@@ -16,18 +17,18 @@ function [] = PrintCoefficients_Bivariate_Bernstein(fxy,f)
 
 
 if m2 == 0
-    str = sprintf('%s(x) = ',f);
+    str = sprintf('%s(x) = ',poly_name);
 else
     
-% Initialise output string
-str = sprintf('%s(x,y) = ',f);
+    % Initialise output string
+    str = sprintf('%s(x,y) = ',poly_name);
 end
 
 
-% For each row of matrix f(x,y)
+% For each row of matrix of coefficients of f(x,y)
 for i = 0 : 1 : m1
     
-    % For each column of matrix f(x,y)
+    % For each column of matrix of coefficients of f(x,y)
     for j = 0 : 1 : m2
         
         
@@ -72,3 +73,8 @@ end
 % Print string to screen
 fprintf(str)
 fprintf('\n')
+
+
+
+
+end

@@ -47,19 +47,17 @@ function GM_fx = GMlog(fx, n_k)
 %
 % % Inputs.
 %
-% fx :  Polynomial coefficients of fx
+% fx : (Vector) Vector containing the coefficients of the polynomial f(x)
 %
-% n-k :   Degree of polynomial v(x)
+% n_k : (Int) The degree of polynomial v(x)
 %
 % % Outputs.
 %
-% gm :  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
+% gm : (Float)  Geometric mean of entries of fx in the Syvlester Matrix S_{k}
 
-% Global Variables.
 
 
 global SETTINGS
-
 
 
 switch SETTINGS.SYLVESTER_MATRIX_VARIANT
